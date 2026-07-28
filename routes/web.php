@@ -14,7 +14,7 @@ Route::get('/dashboard', function () {
     $resolveStatut = function (array $projet): string {
         $statut = $projet['statut'] ?? '';
 
-        if (in_array($statut, ['actif', 'attente', 'annule'], true)) {
+        if (in_array($statut, ['actif', 'attente', 'annule', 'execute'], true)) {
             return $statut;
         }
 
@@ -64,6 +64,7 @@ Route::get('/dashboard', function () {
         'actif' => $projetsCollection->where('statut', 'actif')->count(),
         'attente' => $projetsCollection->where('statut', 'attente')->count(),
         'annule' => $projetsCollection->where('statut', 'annule')->count(),
+        'execute' => $projetsCollection->where('statut', 'execute')->count(),
     ];
 
     return view('dashboard', [
@@ -281,7 +282,7 @@ Route::post('/projets', function (Request $request) {
         'delai' => ['required', 'string', 'max:255'],
         'budget' => ['required', 'numeric', 'min:0'],
         'avance' => ['nullable', 'numeric', 'min:0'],
-        'statut' => ['required', 'string', 'in:actif,attente,annule'],
+        'statut' => ['required', 'string', 'in:actif,attente,annule,execute'],
     ]);
 
     $budget = (float) $data['budget'];
@@ -318,7 +319,7 @@ Route::put('/projets/{id}', function (Request $request, string $id) {
         'client' => ['required', 'string', 'max:255'],
         'delai' => ['required', 'string', 'max:255'],
         'budget' => ['required', 'numeric', 'min:0'],
-        'statut' => ['required', 'string', 'in:actif,attente,annule'],
+        'statut' => ['required', 'string', 'in:actif,attente,annule,execute'],
     ]);
 
     $projets = session('projets', []);
@@ -351,7 +352,7 @@ Route::put('/projets/{id}', function (Request $request, string $id) {
 
 Route::patch('/projets/{id}/statut', function (Request $request, string $id) {
     $data = $request->validate([
-        'statut' => ['required', 'string', 'in:actif,attente,annule'],
+        'statut' => ['required', 'string', 'in:actif,attente,annule,execute'],
     ]);
 
     $projets = session('projets', []);

@@ -644,13 +644,22 @@
             box-shadow: 0 0 10px rgba(240, 113, 120, 0.12);
         }
 
+        .statue-badge.execute {
+            color: #7ee8b0;
+            background: rgba(61, 207, 138, 0.16);
+            border: 1px solid rgba(61, 207, 138, 0.4);
+            box-shadow: 0 0 10px rgba(61, 207, 138, 0.12);
+        }
+
         #projet_statut option[value="actif"] { color: #7ec4ff; }
         #projet_statut option[value="attente"] { color: #ffc857; }
         #projet_statut option[value="annule"] { color: #ff9aa0; }
+        #projet_statut option[value="execute"] { color: #7ee8b0; }
 
         #projet_statut.statue-actif { color: #7ec4ff; border-color: rgba(126, 196, 255, 0.45); }
         #projet_statut.statue-attente { color: #ffc857; border-color: rgba(240, 180, 41, 0.45); }
         #projet_statut.statue-annule { color: #ff9aa0; border-color: rgba(240, 113, 120, 0.45); }
+        #projet_statut.statue-execute { color: #7ee8b0; border-color: rgba(61, 207, 138, 0.45); }
 
         .statue-form {
             display: inline-block;
@@ -697,6 +706,12 @@
             color: #ff9aa0;
             background-color: rgba(240, 113, 120, 0.16);
             border: 1px solid rgba(240, 113, 120, 0.4);
+        }
+
+        .statue-select.execute {
+            color: #7ee8b0;
+            background-color: rgba(61, 207, 138, 0.16);
+            border: 1px solid rgba(61, 207, 138, 0.4);
         }
 
         .data-table .empty { color: var(--muted); padding: 2rem; }
@@ -1068,7 +1083,7 @@
 
         .cards {
             display: grid;
-            grid-template-columns: repeat(5, minmax(0, 1fr));
+            grid-template-columns: repeat(6, minmax(0, 1fr));
             gap: 0.75rem;
             width: 100%;
             position: sticky;
@@ -1109,6 +1124,7 @@
         .card:nth-child(3) { animation-delay: 0.15s; }
         .card:nth-child(4) { animation-delay: 0.2s; }
         .card:nth-child(5) { animation-delay: 0.25s; }
+        .card:nth-child(6) { animation-delay: 0.3s; }
 
         .card::after {
             content: '';
@@ -1123,6 +1139,7 @@
         .card.actif::after { background: linear-gradient(90deg, var(--green), transparent); }
         .card.attente::after { background: linear-gradient(90deg, var(--amber), transparent); }
         .card.annule::after { background: linear-gradient(90deg, var(--rose), transparent); }
+        .card.execute::after { background: linear-gradient(90deg, var(--green), transparent); }
         .card.revenu::after { background: linear-gradient(90deg, var(--cyan), transparent); }
         .card.solde::after { background: linear-gradient(90deg, var(--violet), transparent); }
 
@@ -1158,6 +1175,7 @@
         .card.actif .card-icon { background: rgba(61, 207, 138, 0.12); color: var(--green); }
         .card.attente .card-icon { background: rgba(240, 180, 41, 0.12); color: var(--amber); }
         .card.annule .card-icon { background: rgba(240, 113, 120, 0.12); color: var(--rose); }
+        .card.execute .card-icon { background: rgba(61, 207, 138, 0.12); color: var(--green); }
         .card.revenu .card-icon { background: rgba(77, 212, 234, 0.12); color: var(--cyan); }
         .card.solde .card-icon { background: rgba(155, 123, 255, 0.12); color: var(--violet); }
 
@@ -1174,6 +1192,7 @@
         .card.actif .card-value { color: #7ee8b0; }
         .card.attente .card-value { color: #ffc857; }
         .card.annule .card-value { color: #ff9aa0; }
+        .card.execute .card-value { color: #7ee8b0; }
         .card.revenu .card-value { color: #7ee8f5; }
         .card.solde .card-value { color: #c4b0ff; }
 
@@ -1234,6 +1253,12 @@
             color: #ff9aa0;
             background: rgba(240, 113, 120, 0.14);
             border-color: rgba(240, 113, 120, 0.35);
+        }
+
+        .statue-badge.execute {
+            color: #7ee8b0;
+            background: rgba(61, 207, 138, 0.14);
+            border-color: rgba(61, 207, 138, 0.35);
         }
 
         .card-hint {
@@ -1329,6 +1354,7 @@
         html[data-theme="light"] .card.actif .card-value { color: #14965c; }
         html[data-theme="light"] .card.attente .card-value { color: #b8860b; }
         html[data-theme="light"] .card.annule .card-value { color: #c9434d; }
+        html[data-theme="light"] .card.execute .card-value { color: #14965c; }
         html[data-theme="light"] .card.revenu .card-value { color: #0f8fa8; }
         html[data-theme="light"] .card.solde .card-value { color: #6b4fd6; }
 
@@ -1712,6 +1738,16 @@
                             <div class="card-value">{{ $dashboardCounts['annule'] ?? 0 }}</div>
                         </article>
 
+                        <article class="card execute">
+                            <div class="card-top">
+                                <span class="card-label">Projets Exécutés</span>
+                                <div class="card-icon" aria-hidden="true">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><path d="M22 4 12 14.01l-3-3"/></svg>
+                                </div>
+                            </div>
+                            <div class="card-value">{{ $dashboardCounts['execute'] ?? 0 }}</div>
+                        </article>
+
                         <article class="card revenu">
                             <div class="card-top">
                                 <span class="card-label">Total Revenu</span>
@@ -1759,6 +1795,7 @@
                                             'actif' => 'EN COURS',
                                             'attente' => 'EN ATTENTE',
                                             'annule' => 'ANNULÉ',
+                                            'execute' => 'EXÉCUTÉ',
                                         ];
                                     @endphp
                                     @forelse (($projets ?? []) as $projet)
@@ -1911,6 +1948,7 @@
                                                     <option value="actif" @selected($statueKey === 'actif')>EN COURS</option>
                                                     <option value="attente" @selected($statueKey === 'attente')>EN ATTENTE</option>
                                                     <option value="annule" @selected($statueKey === 'annule')>ANNULÉ</option>
+                                                    <option value="execute" @selected($statueKey === 'execute')>EXÉCUTÉ</option>
                                                 </select>
                                             </form>
                                         </td>
@@ -2286,6 +2324,7 @@
                             <option value="actif">EN COURS</option>
                             <option value="attente">EN ATTENTE</option>
                             <option value="annule">ANNULÉ</option>
+                            <option value="execute">EXÉCUTÉ</option>
                         </select>
                     </div>
                     <div class="field">
@@ -2446,6 +2485,7 @@
             actif: 'EN COURS',
             attente: 'EN ATTENTE',
             annule: 'ANNULÉ',
+            execute: 'EXÉCUTÉ',
         };
 
         function formatPdfValue(value) {
@@ -2835,7 +2875,7 @@
         function updateProjetStatutColor() {
             const select = document.getElementById('projet_statut');
             if (!select) return;
-            select.classList.remove('statue-actif', 'statue-attente', 'statue-annule');
+            select.classList.remove('statue-actif', 'statue-attente', 'statue-annule', 'statue-execute');
             if (select.value) {
                 select.classList.add(`statue-${select.value}`);
             }
