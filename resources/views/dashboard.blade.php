@@ -2261,7 +2261,7 @@
                                         <td>{{ $paiement['titre_projet'] }}</td>
                                         <td>{{ $paiement['client'] }}</td>
                                         <td>{{ number_format($paiement['budget'], 2, '.', ' ') }}</td>
-                                        <td>{{ number_format($paiement['montant_paye'], 2, '.', ' ') }}</td>
+                                        <td>{{ number_format((float) ($paiement['increment_paye'] ?? $paiement['montant_paye'] ?? 0), 2, '.', ' ') }}</td>
                                         <td>{{ $paiement['tresorerie'] }}</td>
                                         <td class="solde-cell">{{ number_format($paiement['solde'], 2, '.', ' ') }}</td>
                                         <td>
@@ -2408,9 +2408,10 @@
                         <input type="text" id="paiement_titre_display" readonly placeholder="—">
                     </div>
                     <div class="field">
-                        <label for="paiement_budget">Budget (auto)</label>
+                        <label for="paiement_budget_display">Solde restant</label>
                         <input type="text" id="paiement_budget_display" readonly>
                         <input type="hidden" id="paiement_budget" name="budget">
+                        <input type="hidden" id="paiement_solde_actuel" value="0">
                     </div>
                     <div class="field">
                         <label for="paiement_montant_paye">Montant payé</label>
@@ -3394,6 +3395,7 @@
             const titre = document.getElementById('paiement_titre');
             const budgetHidden = document.getElementById('paiement_budget');
             const budgetDisplay = document.getElementById('paiement_budget_display');
+            const soldeActuel = document.getElementById('paiement_solde_actuel');
             const projetIdHidden = document.getElementById('paiement_projet_id');
 
             if (!projet) {
@@ -3401,16 +3403,22 @@
                 titre.value = '';
                 budgetHidden.value = '';
                 budgetDisplay.value = '';
+                soldeActuel.value = '0';
                 projetIdHidden.value = '';
                 updatePaiementSolde();
                 return;
             }
 
+            const budget = parseFloat(projet.budget) || 0;
+            const dejaPaye = parseFloat(projet.montant_paye) || 0;
+            const restant = Math.max(0, parseFloat(projet.solde ?? (budget - dejaPaye)) || 0);
+
             projetIdHidden.value = projet.id;
             titre.value = projet.nom;
             titreDisplay.value = projet.nom;
-            budgetHidden.value = projet.budget;
-            budgetDisplay.value = formatMontant(parseFloat(projet.budget) || 0);
+            budgetHidden.value = budget;
+            soldeActuel.value = restant;
+            budgetDisplay.value = formatMontant(restant);
             updatePaiementSolde();
         }
 
@@ -3419,14 +3427,24 @@
             const projet = projetsData.find((p) => p.id === projetId);
             const montantSaisi = parseFloat(document.getElementById('paiement_montant_paye')?.value) || 0;
             const budget = parseFloat(projet?.budget) || 0;
-            let paye = parseFloat(projet?.montant_paye) || 0;
+            const dejaPaye = parseFloat(projet?.montant_paye) || 0;
+            let soldeRestant = parseFloat(projet?.solde);
 
-            if (paiementFormMode === 'edit') {
-                paye = Math.max(0, paye - paiementEditIncrement);
+            if (Number.isNaN(soldeRestant)) {
+                soldeRestant = Math.max(0, budget - dejaPaye);
             }
 
-            const solde = budget - paye - montantSaisi;
+            if (paiementFormMode === 'edit') {
+                soldeRestant = Math.max(0, soldeRestant + (paiementEditIncrement || 0));
+            }
+
+            const solde = Math.max(0, soldeRestant - montantSaisi);
             document.getElementById('paiement_solde').value = formatMontant(solde);
+
+            const budgetDisplay = document.getElementById('paiement_budget_display');
+            if (budgetDisplay && paiementFormMode === 'create') {
+                budgetDisplay.value = formatMontant(soldeRestant);
+            }
         }
 
         const paiementForm = document.getElementById('paiementForm');
@@ -3478,13 +3496,23 @@
             document.getElementById('paiement_titre').value = paiement.titre_projet || '';
             document.getElementById('paiement_titre_display').value = paiement.titre_projet || '';
             document.getElementById('paiement_budget').value = paiement.budget ?? '';
-            document.getElementById('paiement_budget_display').value = formatMontant(parseFloat(paiement.budget) || 0);
             document.getElementById('paiement_projet_id').value = paiement.projet_id || '';
             document.getElementById('paiement_montant_paye').value = paiement.increment_paye ?? '';
             document.getElementById('paiement_type_reg').value = paiement.type_reg || '';
             document.getElementById('paiement_bnq').value = paiement.bnq || '';
             document.getElementById('paiement_tresorerie').value = paiement.tresorerie || '';
             paiementEditIncrement = parseFloat(paiement.increment_paye) || 0;
+
+            const projet = projetsData.find((p) => p.id === paiement.projet_id);
+            const budget = parseFloat(projet?.budget ?? paiement.budget) || 0;
+            const dejaPaye = parseFloat(projet?.montant_paye) || 0;
+            let soldeRestant = parseFloat(projet?.solde);
+            if (Number.isNaN(soldeRestant)) {
+                soldeRestant = Math.max(0, budget - dejaPaye);
+            }
+            soldeRestant = Math.max(0, soldeRestant + paiementEditIncrement);
+            document.getElementById('paiement_solde_actuel').value = soldeRestant;
+            document.getElementById('paiement_budget_display').value = formatMontant(soldeRestant);
             updatePaiementSolde();
         }
 
@@ -3504,6 +3532,7 @@
             document.getElementById('paiement_titre').value = '';
             document.getElementById('paiement_budget').value = '';
             document.getElementById('paiement_budget_display').value = '';
+            document.getElementById('paiement_solde_actuel').value = '0';
             document.getElementById('paiement_montant_paye').value = '';
             document.getElementById('paiement_projet_id').value = '';
             document.getElementById('paiement_type_reg').selectedIndex = 0;
