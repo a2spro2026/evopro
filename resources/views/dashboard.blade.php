@@ -25,6 +25,25 @@
             --violet: #9b7bff;
         }
 
+        html[data-theme="light"] {
+            --bg: #f4f8ff;
+            --bg-soft: #eef4fc;
+            --sidebar: #e8f0fb;
+            --panel: rgba(255, 255, 255, 0.94);
+            --line: rgba(30, 90, 180, 0.16);
+            --accent: #1e6fd9;
+            --accent-soft: #3b9eff;
+            --text: #0a1628;
+            --muted: rgba(20, 40, 70, 0.62);
+        }
+
+        html[data-theme="light"] body {
+            background:
+                radial-gradient(ellipse 60% 45% at 10% 0%, rgba(59, 158, 255, 0.12), transparent 60%),
+                radial-gradient(ellipse 50% 40% at 90% 100%, rgba(30, 111, 217, 0.08), transparent 55%),
+                linear-gradient(160deg, #f8fbff 0%, #eef4fc 45%, #f4f8ff 100%);
+        }
+
         * { box-sizing: border-box; margin: 0; padding: 0; }
 
         body {
@@ -278,6 +297,100 @@
             font-size: 0.78rem;
             color: var(--muted);
         }
+
+        .sidebar-header {
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            gap: 0.5rem;
+        }
+
+        .sidebar-header .side-brand {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .sidebar-close {
+            display: none;
+            width: 36px;
+            height: 36px;
+            flex-shrink: 0;
+            border: 1px solid var(--line);
+            border-radius: 10px;
+            background: rgba(59, 158, 255, 0.08);
+            color: var(--text);
+            cursor: pointer;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .sidebar-close svg { width: 18px; height: 18px; }
+
+        .sidebar-backdrop {
+            display: none;
+            position: fixed;
+            inset: 0;
+            z-index: 35;
+            background: rgba(4, 10, 20, 0.55);
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.25s ease;
+        }
+
+        .sidebar-backdrop.open {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .sidebar-footer {
+            display: flex;
+            flex-direction: column;
+            gap: 0.65rem;
+            margin-top: auto;
+            padding-top: 0.5rem;
+        }
+
+        .btn-theme-toggle {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.55rem;
+            width: 100%;
+            padding: 0.65rem 0.85rem;
+            border-radius: 12px;
+            border: 1px solid var(--line);
+            background: rgba(59, 158, 255, 0.08);
+            color: var(--text);
+            font-size: 0.76rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.2s ease, border-color 0.2s ease;
+        }
+
+        .btn-theme-toggle:hover {
+            background: rgba(59, 158, 255, 0.14);
+            border-color: rgba(126, 196, 255, 0.35);
+        }
+
+        .btn-theme-toggle svg { width: 18px; height: 18px; flex-shrink: 0; }
+
+        .btn-sidebar-logout {
+            width: 100%;
+            justify-content: center;
+            border-radius: 12px;
+            padding: 0.65rem 0.85rem;
+        }
+
+        .toolbar-actions {
+            display: flex;
+            align-items: center;
+            gap: 0.65rem;
+            flex-wrap: wrap;
+        }
+
+        .menu-toggle .icon-close { display: none; }
+        .menu-toggle.is-open .icon-menu { display: none; }
+        .menu-toggle.is-open .icon-close { display: block; }
 
         .panel { display: none; }
         .panel.active { display: block; animation: fadeUp 0.35s ease both; }
@@ -1074,7 +1187,7 @@
 
         .menu-toggle svg { width: 20px; height: 20px; }
 
-        @media (max-width: 960px) {
+        @media (max-width: 1100px) {
             .shell { grid-template-columns: 1fr; }
 
             .sidebar {
@@ -1090,6 +1203,10 @@
 
             .sidebar.open { transform: translateX(0); }
 
+            .sidebar-close { display: inline-flex; }
+
+            .sidebar-backdrop { display: block; }
+
             .menu-toggle { display: inline-flex; }
 
             .cards { grid-template-columns: repeat(2, 1fr); }
@@ -1102,17 +1219,28 @@
     </style>
 </head>
 <body>
+    <script>
+        (function () {
+            const theme = localStorage.getItem('evopro-theme') || 'dark';
+            document.documentElement.setAttribute('data-theme', theme);
+        })();
+    </script>
     <div class="shell">
         <aside class="sidebar" id="sidebar">
-            <div class="side-brand">
-                <div class="mark" aria-hidden="true">
-                    <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <path d="M7 7h8.5a3.5 3.5 0 0 1 0 7H11" stroke="#fff" stroke-width="2.2" stroke-linecap="round"/>
-                        <path d="M7 12h6.5a3 3 0 0 1 0 6H7" stroke="#fff" stroke-width="2.2" stroke-linecap="round"/>
-                        <path d="M15 17l3 0 0-3" stroke="#b8e0ff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                    </svg>
+            <div class="sidebar-header">
+                <div class="side-brand">
+                    <div class="mark" aria-hidden="true">
+                        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M7 7h8.5a3.5 3.5 0 0 1 0 7H11" stroke="#fff" stroke-width="2.2" stroke-linecap="round"/>
+                            <path d="M7 12h6.5a3 3 0 0 1 0 6H7" stroke="#fff" stroke-width="2.2" stroke-linecap="round"/>
+                            <path d="M15 17l3 0 0-3" stroke="#b8e0ff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                    </div>
+                    <div class="brand-glow" style="font-size:1.25rem;">Evo<span>Pro</span></div>
                 </div>
-                <div class="brand-glow" style="font-size:1.25rem;">Evo<span>Pro</span></div>
+                <button type="button" class="sidebar-close" id="sidebarClose" aria-label="Fermer le menu">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M18 6L6 18M6 6l12 12"/></svg>
+                </button>
             </div>
 
             <nav class="nav-list" aria-label="Navigation principale">
@@ -1180,21 +1308,56 @@
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/><path d="M8 13h8"/><path d="M8 17h6"/></svg>
                     Rapports
                 </a>
-                <a href="#configuration" class="nav-item" data-panel="dashboard">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9c.3.6.9 1 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg>
-                    Configuration
-                </a>
+                <div class="nav-group" id="configGroup">
+                    <button type="button" class="nav-item nav-parent" id="configToggle">
+                        <span class="nav-left">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9c.3.6.9 1 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg>
+                            Configuration
+                        </span>
+                        <svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>
+                    </button>
+                    <div class="submenu">
+                        <a href="#fiche-utilisateur" class="submenu-link" data-panel="fiche-utilisateur">Utilisateur</a>
+                    </div>
+                </div>
                 </div>
             </nav>
 
-            <div class="side-foot">EvoPro — Système de Gestion</div>
+            <div class="sidebar-footer">
+                <button type="button" class="btn-theme-toggle" id="themeToggle" aria-label="Changer le thème">
+                    <span class="theme-icon-dark" aria-hidden="true">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+                    </span>
+                    <span class="theme-icon-light" aria-hidden="true" style="display:none;">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>
+                    </span>
+                    <span id="themeToggleLabel">Mode Clair</span>
+                </button>
+                <form method="post" action="{{ route('logout') }}">
+                    @csrf
+                    <button type="submit" class="btn-logout btn-sidebar-logout" aria-label="Se déconnecter">
+                        <span class="btn-logout-icon" aria-hidden="true">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
+                                <polyline points="16 17 21 12 16 7"/>
+                                <line x1="21" y1="12" x2="9" y2="12"/>
+                            </svg>
+                        </span>
+                        <span class="btn-logout-text">Se Déconnecter</span>
+                    </button>
+                </form>
+                <div class="side-foot">EvoPro — Système de Gestion</div>
+            </div>
         </aside>
+
+        <div class="sidebar-backdrop" id="sidebarBackdrop" aria-hidden="true"></div>
 
         <div class="main">
             <header class="navbar">
                 <div style="display:flex;align-items:center;gap:0.85rem;">
                     <button class="menu-toggle" type="button" id="menuToggle" aria-label="Ouvrir le menu">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 6h16M4 12h16M4 18h16"/></svg>
+                        <svg class="icon-menu" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 6h16M4 12h16M4 18h16"/></svg>
+                        <svg class="icon-close" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M18 6L6 18M6 6l12 12"/></svg>
                     </button>
                     <div class="navbar-brand">
                         <div class="brand-glow">Evo<span>Pro</span></div>
@@ -1203,23 +1366,18 @@
                 </div>
 
                 <div class="nav-right">
+                    <button type="button" class="btn-theme-toggle" id="themeToggleNav" aria-label="Changer le thème" style="width:auto;padding:0.48rem 0.85rem;">
+                        <span class="theme-icon-dark-nav" aria-hidden="true">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+                        </span>
+                        <span class="theme-icon-light-nav" aria-hidden="true" style="display:none;">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>
+                        </span>
+                    </button>
                     <div class="user-chip">
                         <span class="avatar">{{ strtoupper(substr(session('login', 'U'), 0, 1)) }}</span>
                         <span>{{ session('login', 'Utilisateur') }}</span>
                     </div>
-                    <form method="post" action="{{ route('logout') }}" style="display:inline;">
-                        @csrf
-                        <button type="submit" class="btn-logout" aria-label="Se déconnecter">
-                            <span class="btn-logout-icon" aria-hidden="true">
-                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                    <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
-                                    <polyline points="16 17 21 12 16 7"/>
-                                    <line x1="21" y1="12" x2="9" y2="12"/>
-                                </svg>
-                            </span>
-                            <span class="btn-logout-text">Se Déconnecter</span>
-                        </button>
-                    </form>
                 </div>
             </header>
 
@@ -1627,6 +1785,77 @@
                         </table>
                     </div>
                 </section>
+
+                <section class="panel" id="panel-fiche-utilisateur">
+                    <div class="section-toolbar">
+                        <div class="content-head" style="margin-bottom:0;">
+                            <h1>Utilisateur</h1>
+                        </div>
+                        <div class="toolbar-actions">
+                            <button type="button" class="btn-add" id="btnAddUtilisateur">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>
+                                Ajouter
+                            </button>
+                            <button type="button" class="btn-ghost" id="btnCloseUtilisateur">Fermer</button>
+                        </div>
+                    </div>
+
+                    <div class="table-wrap">
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>Date</th>
+                                    <th>Nom Complet</th>
+                                    <th>Statue</th>
+                                    <th>Login</th>
+                                    <th>Mot de Passe</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody id="utilisateursTableBody">
+                                @php
+                                    $userStatueLabels = [
+                                        'admin' => 'Administrateur',
+                                        'manager' => 'Manager',
+                                        'comptable' => 'Comptable',
+                                        'vendeur' => 'Vendeur',
+                                        'stock' => 'Responsable stock',
+                                    ];
+                                @endphp
+                                @forelse (($utilisateurs ?? []) as $utilisateur)
+                                    <tr data-id="{{ $utilisateur['id'] }}">
+                                        <td>{{ $utilisateur['date'] }}</td>
+                                        <td>{{ $utilisateur['nom_complet'] }}</td>
+                                        <td>{{ $userStatueLabels[$utilisateur['statue']] ?? strtoupper($utilisateur['statue']) }}</td>
+                                        <td>{{ $utilisateur['login'] }}</td>
+                                        <td>••••••••</td>
+                                        <td>
+                                            <div class="actions">
+                                                <button type="button" class="action-btn voir" title="Voir" aria-label="Voir">
+                                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8S1 12 1 12z"/><circle cx="12" cy="12" r="3"/></svg>
+                                                </button>
+                                                <button type="button" class="action-btn modifier" title="Modifier" aria-label="Modifier">
+                                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4 12.5-12.5z"/></svg>
+                                                </button>
+                                                <form method="post" action="{{ url('/utilisateurs/'.$utilisateur['id']) }}" style="display:inline;" onsubmit="return confirm('Supprimer cet utilisateur ?');">
+                                                    @csrf
+                                                    @method('DELETE')
+                                                    <button type="submit" class="action-btn supprimer" title="Supprimer" aria-label="Supprimer">
+                                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18"/><path d="M8 6V4h8v2"/><path d="M19 6l-1 14H6L5 6"/></svg>
+                                                    </button>
+                                                </form>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                @empty
+                                    <tr class="empty-row">
+                                        <td colspan="6" class="empty">Aucun utilisateur enregistré. Cliquez sur Ajouter.</td>
+                                    </tr>
+                                @endforelse
+                            </tbody>
+                        </table>
+                    </div>
+                </section>
             </main>
         </div>
     </div>
@@ -1823,33 +2052,97 @@
         </div>
     </div>
 
+    <div class="modal-backdrop" id="utilisateurModal" aria-hidden="true">
+        <div class="modal" role="dialog" aria-modal="true" aria-labelledby="utilisateurModalTitle">
+            <div class="modal-head">
+                <h2 id="utilisateurModalTitle">Ajouter Utilisateur</h2>
+                <button type="button" class="modal-close" id="closeUtilisateurModal" aria-label="Fermer">×</button>
+            </div>
+            <form method="post" action="{{ url('/utilisateurs') }}" id="utilisateurForm">
+                @csrf
+                <input type="hidden" name="_method" id="utilisateur_http_method" value="POST" disabled>
+                <div class="modal-body">
+                    <div class="field">
+                        <label for="utilisateur_date">Date</label>
+                        <input type="text" id="utilisateur_date" name="date" readonly>
+                    </div>
+                    <div class="field full">
+                        <label for="utilisateur_nom_complet">Nom Complet</label>
+                        <input type="text" id="utilisateur_nom_complet" name="nom_complet" required placeholder="Nom complet">
+                    </div>
+                    <div class="field full">
+                        <label for="utilisateur_statue">Statue</label>
+                        <select id="utilisateur_statue" name="statue" required>
+                            <option value="" disabled selected>Sélectionner une statue</option>
+                            <option value="admin">Administrateur</option>
+                            <option value="manager">Manager</option>
+                            <option value="comptable">Comptable</option>
+                            <option value="vendeur">Vendeur</option>
+                            <option value="stock">Responsable stock</option>
+                        </select>
+                    </div>
+                    <div class="field">
+                        <label for="utilisateur_login">Login</label>
+                        <input type="text" id="utilisateur_login" name="login" required placeholder="Identifiant" autocomplete="username">
+                    </div>
+                    <div class="field">
+                        <label for="utilisateur_password">Mot de Passe</label>
+                        <input type="password" id="utilisateur_password" name="password" placeholder="Mot de passe" autocomplete="new-password">
+                    </div>
+                </div>
+                <div class="modal-foot">
+                    <button type="button" class="btn-ghost" id="cancelUtilisateurModal">Fermer</button>
+                    <button type="submit" class="btn-primary" id="utilisateurSubmitBtn">Valider</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
     <script>
         const sidebar = document.getElementById('sidebar');
         const toggle = document.getElementById('menuToggle');
+        const sidebarClose = document.getElementById('sidebarClose');
+        const sidebarBackdrop = document.getElementById('sidebarBackdrop');
         const clientGroup = document.getElementById('clientGroup');
         const clientToggle = document.getElementById('clientToggle');
         const projetGroup = document.getElementById('projetGroup');
         const projetToggle = document.getElementById('projetToggle');
         const paiementGroup = document.getElementById('paiementGroup');
         const paiementToggle = document.getElementById('paiementToggle');
+        const configGroup = document.getElementById('configGroup');
+        const configToggle = document.getElementById('configToggle');
         const panels = document.querySelectorAll('.panel');
         const modal = document.getElementById('clientModal');
         const projetModal = document.getElementById('projetModal');
         const paiementModal = document.getElementById('paiementModal');
+        const utilisateurModal = document.getElementById('utilisateurModal');
         const btnAdd = document.getElementById('btnAddClient');
         const btnAddProjet = document.getElementById('btnAddProjet');
         const btnAddPaiement = document.getElementById('btnAddPaiement');
+        const btnAddUtilisateur = document.getElementById('btnAddUtilisateur');
+        const btnCloseUtilisateur = document.getElementById('btnCloseUtilisateur');
         const closeModal = document.getElementById('closeClientModal');
         const cancelModal = document.getElementById('cancelClientModal');
         const closeProjetModal = document.getElementById('closeProjetModal');
         const cancelProjetModal = document.getElementById('cancelProjetModal');
         const closePaiementModal = document.getElementById('closePaiementModal');
         const cancelPaiementModal = document.getElementById('cancelPaiementModal');
+        const closeUtilisateurModal = document.getElementById('closeUtilisateurModal');
+        const cancelUtilisateurModal = document.getElementById('cancelUtilisateurModal');
         const projetsData = @json($projets ?? []);
         const clientsData = @json($clients ?? []);
         const paiementsData = @json($paiements ?? []);
+        const utilisateursData = @json($utilisateurs ?? []);
         const chartProjetsData = @json($chartProjets ?? []);
+
+        const userStatueLabels = {
+            admin: 'Administrateur',
+            manager: 'Manager',
+            comptable: 'Comptable',
+            vendeur: 'Vendeur',
+            stock: 'Responsable stock',
+        };
 
         const statueLabels = {
             actif: 'EN COURS',
@@ -1895,7 +2188,40 @@
             };
         }
 
-        toggle?.addEventListener('click', () => sidebar.classList.toggle('open'));
+        function isMobileSidebar() {
+            return window.innerWidth <= 1100;
+        }
+
+        function updateMenuToggleState(isOpen) {
+            if (!toggle) return;
+            toggle.classList.toggle('is-open', isOpen);
+            toggle.setAttribute('aria-label', isOpen ? 'Fermer le menu' : 'Ouvrir le menu');
+        }
+
+        function openSidebar() {
+            sidebar?.classList.add('open');
+            sidebarBackdrop?.classList.add('open');
+            sidebarBackdrop?.setAttribute('aria-hidden', 'false');
+            if (isMobileSidebar()) document.body.style.overflow = 'hidden';
+            updateMenuToggleState(true);
+        }
+
+        function closeSidebar() {
+            sidebar?.classList.remove('open');
+            sidebarBackdrop?.classList.remove('open');
+            sidebarBackdrop?.setAttribute('aria-hidden', 'true');
+            document.body.style.overflow = '';
+            updateMenuToggleState(false);
+        }
+
+        function toggleSidebar() {
+            if (sidebar?.classList.contains('open')) closeSidebar();
+            else openSidebar();
+        }
+
+        toggle?.addEventListener('click', toggleSidebar);
+        sidebarClose?.addEventListener('click', closeSidebar);
+        sidebarBackdrop?.addEventListener('click', closeSidebar);
 
         clientToggle?.addEventListener('click', () => {
             clientGroup.classList.toggle('open');
@@ -1908,6 +2234,35 @@
         paiementToggle?.addEventListener('click', () => {
             paiementGroup.classList.toggle('open');
         });
+
+        configToggle?.addEventListener('click', () => {
+            configGroup.classList.toggle('open');
+        });
+
+        function applyTheme(theme) {
+            document.documentElement.setAttribute('data-theme', theme);
+            localStorage.setItem('evopro-theme', theme);
+            const isLight = theme === 'light';
+
+            document.querySelectorAll('.theme-icon-dark, .theme-icon-dark-nav').forEach((el) => {
+                el.style.display = isLight ? 'none' : '';
+            });
+            document.querySelectorAll('.theme-icon-light, .theme-icon-light-nav').forEach((el) => {
+                el.style.display = isLight ? '' : 'none';
+            });
+
+            const label = document.getElementById('themeToggleLabel');
+            if (label) label.textContent = isLight ? 'Mode Sombre' : 'Mode Clair';
+        }
+
+        function toggleTheme() {
+            const current = document.documentElement.getAttribute('data-theme') || 'dark';
+            applyTheme(current === 'light' ? 'dark' : 'light');
+        }
+
+        document.getElementById('themeToggle')?.addEventListener('click', toggleTheme);
+        document.getElementById('themeToggleNav')?.addEventListener('click', toggleTheme);
+        applyTheme(document.documentElement.getAttribute('data-theme') || 'dark');
 
         function showPanel(name) {
             panels.forEach((panel) => panel.classList.toggle('active', panel.id === `panel-${name}`));
@@ -1927,11 +2282,15 @@
                 paiementGroup.classList.add('open');
                 paiementToggle.classList.add('active');
                 document.querySelector('[data-panel="fiche-paiement"]')?.classList.add('active');
+            } else if (name === 'fiche-utilisateur') {
+                configGroup.classList.add('open');
+                configToggle.classList.add('active');
+                document.querySelector('[data-panel="fiche-utilisateur"]')?.classList.add('active');
             } else if (name === 'dashboard') {
                 document.querySelector(`.nav-item[data-panel="dashboard"]`)?.classList.add('active');
             }
 
-            if (window.innerWidth <= 960) sidebar.classList.remove('open');
+            if (isMobileSidebar()) closeSidebar();
         }
 
         document.querySelectorAll('[data-panel]').forEach((link) => {
@@ -2061,6 +2420,116 @@
         cancelModal?.addEventListener('click', closeClientModal);
         modal?.addEventListener('click', (e) => {
             if (e.target === modal) closeClientModal();
+        });
+
+        function fillUtilisateurForm(utilisateur) {
+            document.getElementById('utilisateur_date').value = utilisateur.date || '';
+            document.getElementById('utilisateur_nom_complet').value = utilisateur.nom_complet || '';
+            document.getElementById('utilisateur_statue').value = utilisateur.statue || '';
+            document.getElementById('utilisateur_login').value = utilisateur.login || '';
+            document.getElementById('utilisateur_password').value = utilisateur.password || '';
+        }
+
+        const utilisateurFieldIds = ['utilisateur_nom_complet', 'utilisateur_statue', 'utilisateur_login', 'utilisateur_password'];
+
+        function setUtilisateurFormFields(mode) {
+            utilisateurFieldIds.forEach((id) => {
+                const field = document.getElementById(id);
+                if (field) field.disabled = mode === 'view';
+            });
+        }
+
+        function openUtilisateurModal() {
+            const utilisateurForm = document.getElementById('utilisateurForm');
+            const utilisateurModalTitle = document.getElementById('utilisateurModalTitle');
+            const utilisateurSubmitBtn = document.getElementById('utilisateurSubmitBtn');
+            const utilisateurHttpMethod = document.getElementById('utilisateur_http_method');
+            const passwordField = document.getElementById('utilisateur_password');
+
+            utilisateurForm.action = '{{ url('/utilisateurs') }}';
+            utilisateurHttpMethod.disabled = true;
+            utilisateurHttpMethod.value = 'POST';
+            utilisateurModalTitle.textContent = 'Ajouter Utilisateur';
+            utilisateurSubmitBtn.style.display = '';
+            passwordField.required = true;
+
+            document.getElementById('utilisateur_date').value = todayFr();
+            document.getElementById('utilisateur_nom_complet').value = '';
+            document.getElementById('utilisateur_statue').value = '';
+            document.getElementById('utilisateur_login').value = '';
+            passwordField.value = '';
+
+            setUtilisateurFormFields('create');
+
+            utilisateurModal.classList.add('open');
+            utilisateurModal.setAttribute('aria-hidden', 'false');
+            document.getElementById('utilisateur_nom_complet').focus();
+        }
+
+        function openUtilisateurView(utilisateur) {
+            const utilisateurModalTitle = document.getElementById('utilisateurModalTitle');
+            const utilisateurSubmitBtn = document.getElementById('utilisateurSubmitBtn');
+
+            fillUtilisateurForm(utilisateur);
+            utilisateurModalTitle.textContent = 'Voir Utilisateur';
+            utilisateurSubmitBtn.style.display = 'none';
+            setUtilisateurFormFields('view');
+
+            utilisateurModal.classList.add('open');
+            utilisateurModal.setAttribute('aria-hidden', 'false');
+        }
+
+        function openUtilisateurEdit(utilisateur) {
+            const utilisateurForm = document.getElementById('utilisateurForm');
+            const utilisateurModalTitle = document.getElementById('utilisateurModalTitle');
+            const utilisateurSubmitBtn = document.getElementById('utilisateurSubmitBtn');
+            const utilisateurHttpMethod = document.getElementById('utilisateur_http_method');
+            const passwordField = document.getElementById('utilisateur_password');
+
+            utilisateurForm.action = `{{ url('/utilisateurs') }}/${utilisateur.id}`;
+            utilisateurHttpMethod.disabled = false;
+            utilisateurHttpMethod.value = 'PUT';
+            fillUtilisateurForm(utilisateur);
+            utilisateurModalTitle.textContent = 'Modifier Utilisateur';
+            utilisateurSubmitBtn.style.display = '';
+            passwordField.required = false;
+            passwordField.value = '';
+            passwordField.placeholder = 'Laisser vide pour ne pas changer';
+            setUtilisateurFormFields('edit');
+
+            utilisateurModal.classList.add('open');
+            utilisateurModal.setAttribute('aria-hidden', 'false');
+            document.getElementById('utilisateur_nom_complet').focus();
+        }
+
+        function closeUtilisateurModalFn() {
+            const passwordField = document.getElementById('utilisateur_password');
+            passwordField.placeholder = 'Mot de passe';
+            utilisateurModal.classList.remove('open');
+            utilisateurModal.setAttribute('aria-hidden', 'true');
+        }
+
+        document.getElementById('utilisateursTableBody')?.addEventListener('click', (e) => {
+            const row = e.target.closest('tr[data-id]');
+            if (!row) return;
+
+            const utilisateur = utilisateursData.find((u) => u.id === row.dataset.id);
+            if (!utilisateur) return;
+
+            if (e.target.closest('.action-btn.voir')) openUtilisateurView(utilisateur);
+            if (e.target.closest('.action-btn.modifier')) openUtilisateurEdit(utilisateur);
+        });
+
+        btnAddUtilisateur?.addEventListener('click', openUtilisateurModal);
+        btnCloseUtilisateur?.addEventListener('click', () => showPanel('dashboard'));
+        closeUtilisateurModal?.addEventListener('click', closeUtilisateurModalFn);
+        cancelUtilisateurModal?.addEventListener('click', closeUtilisateurModalFn);
+        utilisateurModal?.addEventListener('click', (e) => {
+            if (e.target === utilisateurModal) closeUtilisateurModalFn();
+        });
+
+        window.addEventListener('resize', () => {
+            if (!isMobileSidebar()) closeSidebar();
         });
 
         function nextProjetRef() {
@@ -2669,6 +3138,10 @@
 
         @if (session('open_fiche_paiement'))
             showPanel('fiche-paiement');
+        @endif
+
+        @if (session('open_fiche_utilisateur'))
+            showPanel('fiche-utilisateur');
         @endif
     </script>
 </body>

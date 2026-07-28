@@ -72,6 +72,7 @@ Route::get('/dashboard', function () {
         'clients' => $clients,
         'projets' => $projets,
         'paiements' => session('paiements', []),
+        'utilisateurs' => session('utilisateurs', []),
         'dashboardCounts' => $dashboardCounts,
         'totalRevenu' => $projetsCollection->sum(fn ($p) => (float) ($p['montant_paye'] ?? 0)),
         'totalSolde' => $projetsCollection->sum(fn ($p) => (float) ($p['solde'] ?? 0)),
@@ -199,6 +200,77 @@ Route::delete('/clients/{id}', function (string $id) {
         ->route('dashboard')
         ->with('open_fiche_client', true);
 })->name('clients.destroy');
+
+Route::post('/utilisateurs', function (Request $request) {
+    $data = $request->validate([
+        'date' => ['required', 'string'],
+        'nom_complet' => ['required', 'string', 'max:255'],
+        'statue' => ['required', 'string', 'in:admin,manager,comptable,vendeur,stock'],
+        'login' => ['required', 'string', 'max:255'],
+        'password' => ['required', 'string', 'max:255'],
+    ]);
+
+    $utilisateurs = session('utilisateurs', []);
+    $utilisateurs[] = [
+        'id' => uniqid('usr_', true),
+        'date' => $data['date'],
+        'nom_complet' => $data['nom_complet'],
+        'statue' => $data['statue'],
+        'login' => $data['login'],
+        'password' => $data['password'],
+    ];
+
+    session(['utilisateurs' => $utilisateurs]);
+
+    return redirect()
+        ->route('dashboard')
+        ->with('open_fiche_utilisateur', true);
+})->name('utilisateurs.store');
+
+Route::put('/utilisateurs/{id}', function (Request $request, string $id) {
+    $data = $request->validate([
+        'nom_complet' => ['required', 'string', 'max:255'],
+        'statue' => ['required', 'string', 'in:admin,manager,comptable,vendeur,stock'],
+        'login' => ['required', 'string', 'max:255'],
+        'password' => ['nullable', 'string', 'max:255'],
+    ]);
+
+    $utilisateurs = session('utilisateurs', []);
+    $index = collect($utilisateurs)->search(fn ($u) => ($u['id'] ?? '') === $id);
+
+    if ($index === false) {
+        return redirect()
+            ->route('dashboard')
+            ->with('open_fiche_utilisateur', true);
+    }
+
+    $utilisateurs[$index]['nom_complet'] = $data['nom_complet'];
+    $utilisateurs[$index]['statue'] = $data['statue'];
+    $utilisateurs[$index]['login'] = $data['login'];
+
+    if (! empty($data['password'])) {
+        $utilisateurs[$index]['password'] = $data['password'];
+    }
+
+    session(['utilisateurs' => $utilisateurs]);
+
+    return redirect()
+        ->route('dashboard')
+        ->with('open_fiche_utilisateur', true);
+})->name('utilisateurs.update');
+
+Route::delete('/utilisateurs/{id}', function (string $id) {
+    $utilisateurs = collect(session('utilisateurs', []))
+        ->reject(fn ($u) => ($u['id'] ?? '') === $id)
+        ->values()
+        ->all();
+
+    session(['utilisateurs' => $utilisateurs]);
+
+    return redirect()
+        ->route('dashboard')
+        ->with('open_fiche_utilisateur', true);
+})->name('utilisateurs.destroy');
 
 Route::post('/projets', function (Request $request) {
     $data = $request->validate([
