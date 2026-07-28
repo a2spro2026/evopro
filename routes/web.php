@@ -131,6 +131,7 @@ Route::post('/clients', function (Request $request) {
 
 Route::put('/clients/{id}', function (Request $request, string $id) {
     $data = $request->validate([
+        'date' => ['required', 'string'],
         'nom' => ['required', 'string', 'max:255'],
         'ville' => ['required', 'string', 'max:255'],
         'contact' => ['required', 'string', 'max:255'],
@@ -149,6 +150,7 @@ Route::put('/clients/{id}', function (Request $request, string $id) {
     $ancienNom = $clients[$index]['nom'] ?? '';
     $nouveauNom = $data['nom'];
 
+    $clients[$index]['date'] = $data['date'];
     $clients[$index]['nom'] = $nouveauNom;
     $clients[$index]['ville'] = $data['ville'];
     $clients[$index]['contact'] = $data['contact'];
@@ -310,6 +312,7 @@ Route::post('/projets', function (Request $request) {
 
 Route::put('/projets/{id}', function (Request $request, string $id) {
     $data = $request->validate([
+        'date' => ['required', 'string'],
         'nom' => ['required', 'string', 'max:255'],
         'designation' => ['required', 'string', 'max:255'],
         'client' => ['required', 'string', 'max:255'],
@@ -330,6 +333,7 @@ Route::put('/projets/{id}', function (Request $request, string $id) {
     $budget = (float) $data['budget'];
     $montantPaye = (float) ($projets[$index]['montant_paye'] ?? 0);
 
+    $projets[$index]['date'] = $data['date'];
     $projets[$index]['nom'] = $data['nom'];
     $projets[$index]['designation'] = $data['designation'];
     $projets[$index]['client'] = $data['client'];
@@ -437,6 +441,7 @@ Route::post('/paiements', function (Request $request) {
 
 Route::put('/paiements/{id}', function (Request $request, string $id) {
     $data = $request->validate([
+        'date' => ['required', 'string'],
         'montant_paye' => ['required', 'numeric', 'min:0'],
         'type_reg' => ['required', 'string', 'max:255'],
         'bnq' => ['required', 'string', 'max:255'],
@@ -474,6 +479,7 @@ Route::put('/paiements/{id}', function (Request $request, string $id) {
         session(['projets' => $projets]);
     }
 
+    $paiements[$index]['date'] = $data['date'];
     $paiements[$index]['increment_paye'] = $nouvelIncrement;
     $paiements[$index]['type_reg'] = $data['type_reg'];
     $paiements[$index]['bnq'] = $data['bnq'];

@@ -221,7 +221,83 @@
             width: 18px;
             height: 18px;
             flex-shrink: 0;
-            opacity: 0.85;
+            opacity: 1;
+        }
+
+        .nav-icon {
+            width: 32px;
+            height: 32px;
+            border-radius: 9px;
+            display: grid;
+            place-items: center;
+            flex-shrink: 0;
+            border: 1px solid transparent;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.18);
+        }
+
+        .nav-icon svg {
+            width: 16px;
+            height: 16px;
+            opacity: 1;
+        }
+
+        .nav-icon.clients {
+            background: linear-gradient(145deg, rgba(126, 196, 255, 0.28), rgba(59, 158, 255, 0.12));
+            border-color: rgba(126, 196, 255, 0.35);
+            color: #9ad4ff;
+        }
+
+        .nav-icon.projets {
+            background: linear-gradient(145deg, rgba(155, 123, 255, 0.3), rgba(123, 92, 255, 0.12));
+            border-color: rgba(155, 123, 255, 0.35);
+            color: #c4b0ff;
+        }
+
+        .nav-icon.paiements {
+            background: linear-gradient(145deg, rgba(61, 207, 138, 0.28), rgba(47, 158, 95, 0.12));
+            border-color: rgba(61, 207, 138, 0.35);
+            color: #7ee8b0;
+        }
+
+        .nav-icon.charges {
+            background: linear-gradient(145deg, rgba(240, 180, 41, 0.28), rgba(200, 140, 20, 0.12));
+            border-color: rgba(240, 180, 41, 0.35);
+            color: #ffc857;
+        }
+
+        .nav-icon.suivie {
+            background: linear-gradient(145deg, rgba(77, 212, 234, 0.28), rgba(27, 184, 212, 0.12));
+            border-color: rgba(77, 212, 234, 0.35);
+            color: #7ee8f5;
+        }
+
+        .nav-icon.rapports {
+            background: linear-gradient(145deg, rgba(240, 113, 120, 0.28), rgba(200, 60, 80, 0.12));
+            border-color: rgba(240, 113, 120, 0.35);
+            color: #ff9aa0;
+        }
+
+        .nav-icon.config {
+            background: linear-gradient(145deg, rgba(90, 140, 220, 0.3), rgba(40, 90, 180, 0.14));
+            border-color: rgba(126, 196, 255, 0.32);
+            color: #b8d9ff;
+        }
+
+        .submenu-icon {
+            width: 24px;
+            height: 24px;
+            border-radius: 7px;
+            display: grid;
+            place-items: center;
+            flex-shrink: 0;
+            background: rgba(59, 158, 255, 0.12);
+            border: 1px solid rgba(126, 196, 255, 0.22);
+            color: var(--accent-soft);
+        }
+
+        .submenu-icon svg {
+            width: 13px;
+            height: 13px;
         }
 
         .nav-item:hover {
@@ -277,18 +353,22 @@
         .nav-group.open .submenu { display: flex; }
 
         .submenu a {
-            padding: 0.55rem 0.8rem;
+            display: flex;
+            align-items: center;
+            gap: 0.65rem;
+            padding: 0.55rem 0.75rem;
             border-radius: 8px;
             color: var(--muted);
             font-size: 0.86rem;
             font-weight: 500;
-            transition: background 0.2s ease, color 0.2s ease;
+            transition: background 0.2s ease, color 0.2s ease, transform 0.2s ease;
         }
 
         .submenu a:hover,
         .submenu a.active {
             background: rgba(59, 158, 255, 0.12);
             color: #fff;
+            transform: translateX(2px);
         }
 
         .side-foot {
@@ -826,6 +906,10 @@
             gap: 0.15rem;
         }
 
+        .navbar-logo {
+            display: none;
+        }
+
         .brand-glow {
             font-size: clamp(1.35rem, 2vw, 1.65rem);
             font-weight: 700;
@@ -841,6 +925,7 @@
         }
 
         .brand-tagline {
+            display: block;
             font-size: 0.72rem;
             font-weight: 500;
             letter-spacing: 0.06em;
@@ -880,15 +965,14 @@
         }
 
         .user-chip .avatar {
-            width: 28px;
-            height: 28px;
+            width: 32px;
+            height: 32px;
             border-radius: 50%;
-            display: grid;
-            place-items: center;
+            display: block;
+            object-fit: cover;
+            object-position: center top;
             background: linear-gradient(145deg, #1e6fd9, #4eb3ff);
-            font-size: 0.75rem;
-            font-weight: 700;
-            color: #fff;
+            border: 1px solid rgba(126, 196, 255, 0.35);
         }
 
         .btn-logout {
@@ -985,24 +1069,39 @@
         .cards {
             display: grid;
             grid-template-columns: repeat(5, minmax(0, 1fr));
-            gap: 1.1rem;
+            gap: 0.75rem;
             width: 100%;
+            position: sticky;
+            top: 4.55rem;
+            z-index: 18;
+            padding: 0.45rem 0 0.65rem;
+            margin-bottom: 0.15rem;
+            background:
+                linear-gradient(180deg, rgba(7, 17, 31, 0.97) 0%, rgba(7, 17, 31, 0.92) 70%, rgba(7, 17, 31, 0.75) 100%);
+            backdrop-filter: blur(10px);
+        }
+
+        html[data-theme="light"] .cards {
+            background:
+                linear-gradient(180deg, rgba(244, 248, 255, 0.98) 0%, rgba(244, 248, 255, 0.94) 70%, rgba(244, 248, 255, 0.8) 100%);
         }
 
         .card {
             position: relative;
             overflow: hidden;
-            padding: 1.35rem 1.25rem 1.2rem;
-            min-height: 148px;
-            border-radius: 16px;
+            padding: 0.7rem 0.85rem 0.65rem;
+            min-height: 86px;
+            height: 86px;
+            border-radius: 12px;
             background: linear-gradient(165deg, rgba(16, 32, 54, 0.92), rgba(10, 22, 40, 0.88));
             border: 1px solid rgba(110, 168, 255, 0.2);
-            box-shadow: 0 10px 28px rgba(0, 0, 0, 0.22);
-            transition: transform 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+            box-shadow: 0 6px 18px rgba(0, 0, 0, 0.18);
+            transition: border-color 0.2s ease, box-shadow 0.2s ease;
             animation: fadeUp 0.45s ease both;
             cursor: default;
             display: flex;
             flex-direction: column;
+            justify-content: space-between;
         }
 
         .card:nth-child(1) { animation-delay: 0.05s; }
@@ -1028,30 +1127,29 @@
         .card.solde::after { background: linear-gradient(90deg, var(--violet), transparent); }
 
         .card:hover {
-            transform: translateY(-2px);
             border-color: rgba(126, 196, 255, 0.28);
-            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.22), 0 0 16px rgba(59, 158, 255, 0.08);
+            box-shadow: 0 6px 18px rgba(0, 0, 0, 0.2), 0 0 12px rgba(59, 158, 255, 0.08);
         }
 
         .card-top {
             display: flex;
             align-items: center;
             justify-content: space-between;
-            gap: 0.65rem;
-            margin-bottom: 0.85rem;
+            gap: 0.5rem;
+            margin-bottom: 0.25rem;
         }
 
         .card-label {
-            font-size: 0.84rem;
+            font-size: 0.72rem;
             font-weight: 500;
             color: var(--muted);
-            line-height: 1.3;
+            line-height: 1.25;
         }
 
         .card-icon {
-            width: 40px;
-            height: 40px;
-            border-radius: 11px;
+            width: 30px;
+            height: 30px;
+            border-radius: 8px;
             display: grid;
             place-items: center;
             flex-shrink: 0;
@@ -1063,14 +1161,14 @@
         .card.revenu .card-icon { background: rgba(77, 212, 234, 0.12); color: var(--cyan); }
         .card.solde .card-icon { background: rgba(155, 123, 255, 0.12); color: var(--violet); }
 
-        .card-icon svg { width: 20px; height: 20px; }
+        .card-icon svg { width: 15px; height: 15px; }
 
         .card-value {
-            font-size: 2.1rem;
+            font-size: 1.45rem;
             font-weight: 700;
             letter-spacing: -0.03em;
             line-height: 1.1;
-            flex: 1;
+            flex: 0 0 auto;
         }
 
         .card.actif .card-value { color: #7ee8b0; }
@@ -1139,10 +1237,197 @@
         }
 
         .card-hint {
-            font-size: 0.75rem;
+            font-size: 0.65rem;
             color: rgba(210, 224, 245, 0.55);
             font-weight: 400;
-            margin-top: 0.35rem;
+            margin-top: 0.15rem;
+        }
+
+        /* —— Mode clair : surfaces & textes —— */
+        html[data-theme="light"] .sidebar {
+            background: linear-gradient(180deg, #eef4fc 0%, #e4eef9 100%);
+            box-shadow: 4px 0 24px rgba(30, 90, 180, 0.06);
+        }
+
+        html[data-theme="light"] .nav-item {
+            color: rgba(15, 35, 65, 0.78);
+        }
+
+        html[data-theme="light"] .nav-item:hover,
+        html[data-theme="light"] .nav-item.active,
+        html[data-theme="light"] .nav-parent.active {
+            background: rgba(30, 111, 217, 0.1);
+            color: #0a1628;
+        }
+
+        html[data-theme="light"] .submenu a {
+            color: rgba(20, 45, 80, 0.7);
+        }
+
+        html[data-theme="light"] .submenu a:hover,
+        html[data-theme="light"] .submenu a.active {
+            background: rgba(30, 111, 217, 0.1);
+            color: #0a1628;
+        }
+
+        html[data-theme="light"] .side-foot {
+            color: rgba(20, 40, 70, 0.55);
+        }
+
+        html[data-theme="light"] .navbar {
+            background: rgba(244, 248, 255, 0.88);
+        }
+
+        html[data-theme="light"] .brand-tagline {
+            color: rgba(20, 55, 110, 0.65);
+            text-shadow: none;
+        }
+
+        html[data-theme="light"] .brand-glow {
+            background: linear-gradient(100deg, #1e6fd9 0%, #0a1628 40%, #3b9eff 70%, #1e6fd9 100%);
+            -webkit-background-clip: text;
+            background-clip: text;
+            filter: none;
+        }
+
+        html[data-theme="light"] .submenu-icon {
+            background: rgba(30, 111, 217, 0.08);
+            border-color: rgba(30, 111, 217, 0.2);
+            color: #1e6fd9;
+        }
+
+        html[data-theme="light"] .user-chip {
+            background: rgba(30, 111, 217, 0.08);
+            border-color: rgba(30, 111, 217, 0.2);
+            color: #0a1628;
+        }
+
+        html[data-theme="light"] .btn-theme-toggle {
+            background: rgba(30, 111, 217, 0.08);
+            border-color: rgba(30, 111, 217, 0.2);
+            color: #0a1628;
+        }
+
+        html[data-theme="light"] .menu-toggle,
+        html[data-theme="light"] .sidebar-close {
+            background: rgba(30, 111, 217, 0.08);
+            border-color: rgba(30, 111, 217, 0.2);
+            color: #0a1628;
+        }
+
+        html[data-theme="light"] .card {
+            background: linear-gradient(165deg, #ffffff 0%, #f3f7fd 100%);
+            border-color: rgba(30, 90, 180, 0.14);
+            box-shadow: 0 8px 24px rgba(30, 90, 180, 0.08);
+        }
+
+        html[data-theme="light"] .card:hover {
+            border-color: rgba(30, 111, 217, 0.28);
+            box-shadow: 0 10px 28px rgba(30, 90, 180, 0.12);
+        }
+
+        html[data-theme="light"] .card.actif .card-value { color: #14965c; }
+        html[data-theme="light"] .card.attente .card-value { color: #b8860b; }
+        html[data-theme="light"] .card.annule .card-value { color: #c9434d; }
+        html[data-theme="light"] .card.revenu .card-value { color: #0f8fa8; }
+        html[data-theme="light"] .card.solde .card-value { color: #6b4fd6; }
+
+        html[data-theme="light"] .card-hint {
+            color: rgba(20, 40, 70, 0.5);
+        }
+
+        html[data-theme="light"] .balance-section {
+            background: linear-gradient(165deg, #ffffff 0%, #f3f7fd 100%);
+            border-color: rgba(30, 90, 180, 0.14);
+            box-shadow: 0 8px 24px rgba(30, 90, 180, 0.08);
+        }
+
+        html[data-theme="light"] .table-wrap {
+            background: #ffffff;
+            border-color: rgba(30, 90, 180, 0.14);
+            box-shadow: 0 6px 20px rgba(30, 90, 180, 0.07);
+        }
+
+        html[data-theme="light"] .data-table th {
+            background: #eaf1fb;
+            color: #1e6fd9;
+            border-bottom-color: rgba(30, 90, 180, 0.12);
+        }
+
+        html[data-theme="light"] .data-table td {
+            color: #15263f;
+            border-bottom-color: rgba(30, 90, 180, 0.1);
+        }
+
+        html[data-theme="light"] .data-table tbody tr:hover {
+            background: rgba(30, 111, 217, 0.05);
+        }
+
+        html[data-theme="light"] .data-table td.solde-cell {
+            color: #d12b3a;
+            text-shadow: none;
+        }
+
+        html[data-theme="light"] .search-bar {
+            background: #ffffff;
+            border-color: rgba(30, 90, 180, 0.14);
+        }
+
+        html[data-theme="light"] .search-field input,
+        html[data-theme="light"] .search-field select {
+            background: #f4f8ff;
+            border-color: rgba(30, 90, 180, 0.2);
+            color: #0a1628;
+        }
+
+        html[data-theme="light"] .action-btn {
+            background: rgba(30, 111, 217, 0.05);
+            border-color: rgba(30, 90, 180, 0.16);
+            color: #3a5578;
+        }
+
+        html[data-theme="light"] .btn-ghost {
+            background: #eef4fc;
+            border-color: rgba(30, 90, 180, 0.2);
+            color: #0a1628;
+        }
+
+        html[data-theme="light"] .modal {
+            background: linear-gradient(165deg, #ffffff, #eef4fc);
+            border-color: rgba(30, 90, 180, 0.18);
+            box-shadow: 0 24px 60px rgba(30, 90, 180, 0.18);
+        }
+
+        html[data-theme="light"] .modal-backdrop {
+            background: rgba(20, 40, 70, 0.35);
+        }
+
+        html[data-theme="light"] .modal-close {
+            background: rgba(30, 111, 217, 0.08);
+            color: #0a1628;
+        }
+
+        html[data-theme="light"] .modal-body input,
+        html[data-theme="light"] .modal-body select {
+            background: #f4f8ff;
+            border-color: rgba(30, 90, 180, 0.2);
+            color: #0a1628;
+        }
+
+        html[data-theme="light"] .modal-body input[readonly] {
+            background: #e8eef7;
+            color: rgba(15, 35, 65, 0.7);
+        }
+
+        html[data-theme="light"] .btn-logout {
+            background:
+                linear-gradient(135deg, rgba(240, 113, 120, 0.12), rgba(220, 60, 80, 0.06)),
+                #ffffff;
+            color: #c9434d;
+        }
+
+        html[data-theme="light"] .sidebar-backdrop {
+            background: rgba(20, 40, 70, 0.35);
         }
 
         @keyframes fadeUp {
@@ -1187,10 +1472,16 @@
 
             .menu-toggle { display: inline-flex; }
 
-            .cards { grid-template-columns: repeat(2, 1fr); }
+            .cards {
+                grid-template-columns: repeat(2, 1fr);
+                top: 4.2rem;
+            }
 
-            .card { min-height: 120px; }
-            .card-value { font-size: 1.65rem; }
+            .card {
+                min-height: 78px;
+                height: 78px;
+            }
+            .card-value { font-size: 1.3rem; }
 
             .navbar, .content { padding-left: 1.1rem; padding-right: 1.1rem; }
         }
@@ -1241,76 +1532,101 @@
                 <div class="nav-group" id="clientGroup">
                     <button type="button" class="nav-item nav-parent" id="clientToggle">
                         <span class="nav-left">
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+                            <span class="nav-icon clients" aria-hidden="true">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+                            </span>
                             Client
                         </span>
                         <svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>
                     </button>
                     <div class="submenu">
-                        <a href="#fiche-client" class="submenu-link" data-panel="fiche-client">1 — Fiche Client</a>
+                        <a href="#fiche-client" class="submenu-link" data-panel="fiche-client">
+                            <span class="submenu-icon" aria-hidden="true">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/><circle cx="10" cy="13" r="2"/><path d="M14 17a4 4 0 0 0-8 0"/></svg>
+                            </span>
+                            Fiche Client
+                        </a>
                     </div>
                 </div>
                 <div class="nav-group" id="projetGroup">
                     <button type="button" class="nav-item nav-parent" id="projetToggle">
                         <span class="nav-left">
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7h18"/><path d="M3 12h18"/><path d="M3 17h18"/><path d="M8 7v10"/><path d="M16 7v10"/></svg>
+                            <span class="nav-icon projets" aria-hidden="true">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7h18"/><path d="M3 12h18"/><path d="M3 17h18"/><path d="M8 7v10"/><path d="M16 7v10"/></svg>
+                            </span>
                             Projets
                         </span>
                         <svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>
                     </button>
                     <div class="submenu">
-                        <a href="#fiche-projet" class="submenu-link" data-panel="fiche-projet">1 — Fiche Projet</a>
+                        <a href="#fiche-projet" class="submenu-link" data-panel="fiche-projet">
+                            <span class="submenu-icon" aria-hidden="true">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+                            </span>
+                            Fiche Projet
+                        </a>
                     </div>
                 </div>
                 <div class="nav-group" id="paiementGroup">
                     <button type="button" class="nav-item nav-parent" id="paiementToggle">
                         <span class="nav-left">
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="5" width="20" height="14" rx="2"/><path d="M2 10h20"/></svg>
+                            <span class="nav-icon paiements" aria-hidden="true">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="5" width="20" height="14" rx="2"/><path d="M2 10h20"/></svg>
+                            </span>
                             Paiement
                         </span>
                         <svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>
                     </button>
                     <div class="submenu">
-                        <a href="#fiche-paiement" class="submenu-link" data-panel="fiche-paiement">1 — Fiche Paiement</a>
+                        <a href="#fiche-paiement" class="submenu-link" data-panel="fiche-paiement">
+                            <span class="submenu-icon" aria-hidden="true">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 1v22"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+                            </span>
+                            Fiche Paiement
+                        </a>
                     </div>
                 </div>
                 <a href="#charges" class="nav-item" data-panel="dashboard">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v20"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+                    <span class="nav-icon charges" aria-hidden="true">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 8v8"/><path d="M8 12h8"/></svg>
+                    </span>
                     Charges
                 </a>
                 <a href="#suivie" class="nav-item" data-panel="dashboard">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><path d="M7 14l4-4 3 3 5-6"/></svg>
+                    <span class="nav-icon suivie" aria-hidden="true">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><path d="M7 14l4-4 3 3 5-6"/></svg>
+                    </span>
                     Suivie Monétaire
                 </a>
                 <a href="#rapports" class="nav-item" data-panel="dashboard">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/><path d="M8 13h8"/><path d="M8 17h6"/></svg>
+                    <span class="nav-icon rapports" aria-hidden="true">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/><path d="M8 13h8"/><path d="M8 17h6"/></svg>
+                    </span>
                     Rapports
                 </a>
                 <div class="nav-group" id="configGroup">
                     <button type="button" class="nav-item nav-parent" id="configToggle">
                         <span class="nav-left">
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9c.3.6.9 1 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg>
+                            <span class="nav-icon config" aria-hidden="true">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9c.3.6.9 1 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg>
+                            </span>
                             Configuration
                         </span>
                         <svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>
                     </button>
                     <div class="submenu">
-                        <a href="#fiche-utilisateur" class="submenu-link" data-panel="fiche-utilisateur">Utilisateur</a>
+                        <a href="#fiche-utilisateur" class="submenu-link" data-panel="fiche-utilisateur">
+                            <span class="submenu-icon" aria-hidden="true">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                            </span>
+                            Utilisateur
+                        </a>
                     </div>
                 </div>
                 </div>
             </nav>
 
             <div class="sidebar-footer">
-                <button type="button" class="btn-theme-toggle" id="themeToggle" aria-label="Changer le thème">
-                    <span class="theme-icon-dark" aria-hidden="true">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
-                    </span>
-                    <span class="theme-icon-light" aria-hidden="true" style="display:none;">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>
-                    </span>
-                    <span id="themeToggleLabel">Mode Clair</span>
-                </button>
                 <form method="post" action="{{ route('logout') }}">
                     @csrf
                     <button type="submit" class="btn-logout btn-sidebar-logout" aria-label="Se déconnecter">
@@ -1353,8 +1669,8 @@
                         </span>
                     </button>
                     <div class="user-chip">
-                        <span class="avatar">{{ strtoupper(substr(session('login', 'U'), 0, 1)) }}</span>
-                        <span>{{ session('login', 'Utilisateur') }}</span>
+                        <img class="avatar" src="{{ asset('images/profile-zerragui.png') }}" alt="Zerragui Abdelilah" width="28" height="28">
+                        <span>Zerragui Abdelilah</span>
                     </div>
                 </div>
             </header>
@@ -1403,8 +1719,7 @@
                                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v20"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
                                 </div>
                             </div>
-                            <div class="card-value">{{ number_format($totalRevenu ?? 0, 0, ',', ' ') }}</div>
-                            <p class="card-hint">MAD</p>
+                            <div class="card-value">{{ number_format($totalRevenu ?? 0, 2, '.', ' ') }}</div>
                         </article>
 
                         <article class="card solde">
@@ -1414,8 +1729,7 @@
                                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="5" width="20" height="14" rx="2"/><path d="M2 10h20"/></svg>
                                 </div>
                             </div>
-                            <div class="card-value">{{ number_format($totalSolde ?? 0, 0, ',', ' ') }}</div>
-                            <p class="card-hint">MAD</p>
+                            <div class="card-value">{{ number_format($totalSolde ?? 0, 2, '.', ' ') }}</div>
                         </article>
                     </section>
 
@@ -1456,15 +1770,15 @@
                                             <td>{{ $projet['client'] ?? '' }}</td>
                                             <td>{{ $projet['nom'] ?? '' }}</td>
                                             <td>{{ $projet['designation'] ?? '' }}</td>
-                                            <td>{{ number_format((float) ($projet['budget'] ?? 0), 2, ',', ' ') }}</td>
+                                            <td>{{ number_format((float) ($projet['budget'] ?? 0), 2, '.', ' ') }}</td>
                                             <td>
                                                 <span class="statue-badge {{ $statueKey }}">
                                                     {{ $statueLabels[$statueKey] ?? strtoupper($statueKey) }}
                                                 </span>
                                             </td>
-                                            <td>{{ number_format((float) ($projet['montant_paye'] ?? 0), 2, ',', ' ') }}</td>
+                                            <td>{{ number_format((float) ($projet['montant_paye'] ?? 0), 2, '.', ' ') }}</td>
                                             <td>{{ $projet['tresorerie'] ?: '—' }}</td>
-                                            <td class="solde-cell">{{ number_format((float) ($projet['solde'] ?? 0), 2, ',', ' ') }}</td>
+                                            <td class="solde-cell">{{ number_format((float) ($projet['solde'] ?? 0), 2, '.', ' ') }}</td>
                                         </tr>
                                     @empty
                                         <tr class="empty-row">
@@ -1511,7 +1825,7 @@
                                         <td>{{ $client['ville'] }}</td>
                                         <td>{{ $client['activite'] }}</td>
                                         <td>{{ $client['contact'] }}</td>
-                                        <td class="solde-cell">{{ number_format($client['solde'], 2, ',', ' ') }}</td>
+                                        <td class="solde-cell">{{ number_format($client['solde'], 2, '.', ' ') }}</td>
                                         <td>
                                             <div class="actions">
                                                 <button type="button" class="action-btn voir" title="Voir" aria-label="Voir">
@@ -1581,9 +1895,9 @@
                                         <td>{{ $projet['nom'] }}</td>
                                         <td>{{ $projet['designation'] }}</td>
                                         <td>{{ $projet['client'] }}</td>
-                                        <td>{{ number_format($projet['budget'], 2, ',', ' ') }}</td>
-                                        <td>{{ number_format($projet['montant_paye'], 2, ',', ' ') }}</td>
-                                        <td class="solde-cell">{{ number_format($projet['solde'], 2, ',', ' ') }}</td>
+                                        <td>{{ number_format($projet['budget'], 2, '.', ' ') }}</td>
+                                        <td>{{ number_format($projet['montant_paye'], 2, '.', ' ') }}</td>
+                                        <td class="solde-cell">{{ number_format($projet['solde'], 2, '.', ' ') }}</td>
                                         <td>
                                             <form method="post" action="{{ url('/projets/'.$projet['id'].'/statut') }}" class="statue-form">
                                                 @csrf
@@ -1734,10 +2048,10 @@
                                         <td>{{ $paiement['date'] }}</td>
                                         <td>{{ $paiement['titre_projet'] }}</td>
                                         <td>{{ $paiement['client'] }}</td>
-                                        <td>{{ number_format($paiement['budget'], 2, ',', ' ') }}</td>
-                                        <td>{{ number_format($paiement['montant_paye'], 2, ',', ' ') }}</td>
+                                        <td>{{ number_format($paiement['budget'], 2, '.', ' ') }}</td>
+                                        <td>{{ number_format($paiement['montant_paye'], 2, '.', ' ') }}</td>
                                         <td>{{ $paiement['tresorerie'] }}</td>
-                                        <td class="solde-cell">{{ number_format($paiement['solde'], 2, ',', ' ') }}</td>
+                                        <td class="solde-cell">{{ number_format($paiement['solde'], 2, '.', ' ') }}</td>
                                         <td>
                                             <div class="actions">
                                                 <button type="button" class="action-btn voir" title="Voir" aria-label="Voir">
@@ -1860,7 +2174,7 @@
                 <div class="modal-body">
                     <div class="field">
                         <label for="paiement_date">Date</label>
-                        <input type="text" id="paiement_date" name="date" readonly>
+                        <input type="text" id="paiement_date" name="date" required placeholder="JJ/MM/AAAA">
                     </div>
                     <div class="field">
                         <label for="paiement_ref">Réf</label>
@@ -1933,7 +2247,7 @@
                 <div class="modal-body">
                     <div class="field">
                         <label for="projet_date">Date</label>
-                        <input type="text" id="projet_date" name="date" readonly>
+                        <input type="text" id="projet_date" name="date" required placeholder="JJ/MM/AAAA">
                     </div>
                     <div class="field">
                         <label for="projet_ref">Réf</label>
@@ -2007,7 +2321,7 @@
                 <div class="modal-body">
                     <div class="field">
                         <label for="client_date">Date</label>
-                        <input type="text" id="client_date" name="date" readonly>
+                        <input type="text" id="client_date" name="date" required placeholder="JJ/MM/AAAA">
                     </div>
                     <div class="field">
                         <label for="client_ref">Réf</label>
@@ -2136,7 +2450,7 @@
 
         function formatPdfValue(value) {
             if (typeof value === 'number') {
-                return value.toLocaleString('fr-FR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+                return Number(value).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ' ');
             }
 
             return value ?? '';
@@ -2234,9 +2548,6 @@
             document.querySelectorAll('.theme-icon-light, .theme-icon-light-nav').forEach((el) => {
                 el.style.display = isLight ? '' : 'none';
             });
-
-            const label = document.getElementById('themeToggleLabel');
-            if (label) label.textContent = isLight ? 'Mode Sombre' : 'Mode Clair';
         }
 
         function toggleTheme() {
@@ -2244,7 +2555,6 @@
             applyTheme(current === 'light' ? 'dark' : 'light');
         }
 
-        document.getElementById('themeToggle')?.addEventListener('click', toggleTheme);
         document.getElementById('themeToggleNav')?.addEventListener('click', toggleTheme);
         applyTheme(document.documentElement.getAttribute('data-theme') || 'dark');
 
@@ -2321,7 +2631,7 @@
             document.getElementById('client_nom').focus();
         }
 
-        const clientFieldIds = ['client_nom', 'client_ville', 'client_contact', 'client_activite'];
+        const clientFieldIds = ['client_date', 'client_nom', 'client_ville', 'client_contact', 'client_activite'];
 
         function setClientFormFields(mode) {
             clientFieldIds.forEach((id) => {
@@ -2535,7 +2845,7 @@
             const budget = parseFloat(document.getElementById('projet_budget')?.value) || 0;
             const avance = parseFloat(document.getElementById('projet_avance')?.value) || 0;
             const solde = budget - avance;
-            document.getElementById('projet_solde').value = solde.toLocaleString('fr-FR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+            document.getElementById('projet_solde').value = formatMontant(solde);
         }
 
         const projetForm = document.getElementById('projetForm');
@@ -2547,6 +2857,7 @@
         let projetFormMode = 'create';
 
         const projetFieldIds = [
+            'projet_date',
             'projet_nom',
             'projet_designation',
             'projet_client',
@@ -2711,7 +3022,11 @@
         }
 
         function formatMontant(n) {
-            return n.toLocaleString('fr-FR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+            const num = Number(n) || 0;
+            const fixed = num.toFixed(2);
+            const parts = fixed.split('.');
+            parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ' ');
+            return parts.join('.');
         }
 
         function applyPaiementClient() {
@@ -2764,6 +3079,7 @@
         let paiementEditIncrement = 0;
 
         const paiementFieldIds = [
+            'paiement_date',
             'paiement_client',
             'paiement_montant_paye',
             'paiement_type_reg',

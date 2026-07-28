@@ -42,12 +42,13 @@
             position: relative;
             min-height: 100vh;
             display: grid;
-            grid-template-columns: 1.15fr 0.85fr;
+            grid-template-columns: 1fr minmax(320px, 420px);
             gap: 2rem;
-            padding: 2.5rem 3.5rem;
+            align-items: center;
+            padding: 2.5rem 3.5rem 7.5rem;
             background:
-                linear-gradient(105deg, rgba(4, 12, 28, 0.92) 0%, rgba(6, 18, 38, 0.78) 48%, rgba(8, 22, 48, 0.55) 100%),
-                url('https://images.unsplash.com/photo-1497366216548-37526070297c?auto=format&fit=crop&w=1920&q=80') center / cover no-repeat;
+                linear-gradient(105deg, rgba(4, 12, 28, 0.28) 0%, rgba(6, 18, 38, 0.18) 40%, rgba(8, 22, 48, 0.22) 70%, rgba(4, 12, 28, 0.4) 100%),
+                url('{{ asset('images/login-bg.png') }}') center / cover no-repeat;
         }
 
         .page::before {
@@ -55,119 +56,101 @@
             position: absolute;
             inset: 0;
             background:
-                radial-gradient(ellipse 50% 40% at 15% 85%, rgba(40, 140, 255, 0.25), transparent 70%),
-                radial-gradient(ellipse 40% 35% at 80% 20%, rgba(30, 100, 220, 0.18), transparent 65%);
+                radial-gradient(ellipse 40% 35% at 55% 48%, rgba(4, 16, 36, 0.35), transparent 70%),
+                radial-gradient(ellipse 35% 30% at 88% 18%, rgba(30, 100, 220, 0.1), transparent 65%);
             pointer-events: none;
         }
 
         .page::after {
-            content: '';
-            position: absolute;
-            left: 0;
-            right: 45%;
-            bottom: 0;
-            height: 180px;
-            background:
-                radial-gradient(ellipse 80% 100% at 20% 100%, rgba(59, 158, 255, 0.35), transparent 70%),
-                linear-gradient(0deg, rgba(20, 90, 200, 0.15), transparent);
-            pointer-events: none;
-            filter: blur(2px);
+            display: none;
         }
 
-        .brand-side,
-        .login-side {
+        .slogan-center {
             position: relative;
             z-index: 1;
-        }
-
-        .brand-side {
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
-            padding: 0.5rem 1rem 0.5rem 0;
-            max-width: 640px;
-        }
-
-        .logo {
             display: flex;
             align-items: center;
-            gap: 0.85rem;
+            justify-content: center;
+            text-align: center;
+            padding: 1.5rem 2rem;
+            padding-left: clamp(4rem, 18vw, 12rem);
+            pointer-events: none;
         }
 
-        .logo-mark {
-            width: 48px;
-            height: 48px;
-            border-radius: 50%;
-            background: linear-gradient(145deg, #1e6fd9, #4eb3ff);
+        .slogan-block {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 1.15rem;
+            max-width: 42rem;
+        }
+
+        .slogan-line {
+            width: min(280px, 55vw);
+            height: 2px;
+            border-radius: 999px;
+            background: linear-gradient(90deg, transparent, rgba(126, 196, 255, 0.95), transparent);
+            box-shadow: 0 0 14px rgba(94, 176, 255, 0.55);
+        }
+
+        .slogan-words {
             display: grid;
-            place-items: center;
-            box-shadow: 0 0 24px rgba(59, 158, 255, 0.45);
-            flex-shrink: 0;
+            grid-template-columns: 1fr;
+            gap: 0.55rem;
+            width: 100%;
         }
 
-        .logo-mark svg {
-            width: 26px;
-            height: 26px;
-        }
-
-        .logo-text strong {
-            display: block;
-            font-size: 1.55rem;
+        .slogan-word {
+            margin: 0;
+            font-size: clamp(2.4rem, 5.6vw, 4.4rem);
             font-weight: 700;
-            letter-spacing: -0.02em;
-            line-height: 1.1;
-        }
-
-        .logo-text strong span {
-            color: var(--accent-soft);
-        }
-
-        .logo-text small {
-            display: block;
-            margin-top: 0.15rem;
-            font-size: 0.68rem;
-            font-weight: 500;
             letter-spacing: 0.14em;
-            text-transform: uppercase;
-            color: rgba(255, 255, 255, 0.85);
+            line-height: 1.05;
+            background: linear-gradient(100deg, #ffffff 0%, #9ad4ff 35%, #ffffff 55%, #5eb0ff 100%);
+            background-size: 220% auto;
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            filter: drop-shadow(0 4px 18px rgba(0, 0, 0, 0.35)) drop-shadow(0 0 22px rgba(59, 158, 255, 0.35));
+            animation: sloganShine 5s ease-in-out infinite;
         }
 
-        .hero {
-            margin-top: 3.5rem;
-        }
+        .slogan-word:nth-child(2) { animation-delay: 0.2s; }
+        .slogan-word:nth-child(3) { animation-delay: 0.4s; }
+        .slogan-word:nth-child(4) { animation-delay: 0.6s; }
 
-        .hero h1 {
-            font-size: clamp(2rem, 3.4vw, 2.85rem);
-            font-weight: 700;
-            line-height: 1.15;
-            letter-spacing: -0.03em;
-            margin-bottom: 1.1rem;
-        }
-
-        .hero h1 .hl {
+        .slogan-word span {
             color: var(--accent-soft);
+            -webkit-text-fill-color: var(--accent-soft);
+            background: none;
+            filter: drop-shadow(0 0 12px rgba(94, 176, 255, 0.7));
         }
 
-        .hero p {
-            max-width: 36rem;
-            font-size: 1.02rem;
-            font-weight: 300;
-            line-height: 1.65;
-            color: var(--text-muted);
+        @keyframes sloganShine {
+            0%, 100% { background-position: 0% center; }
+            50% { background-position: 100% center; }
         }
 
-        .features {
+        .features-bottom {
+            position: absolute;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            z-index: 2;
             display: grid;
             grid-template-columns: repeat(4, minmax(0, 1fr));
-            gap: 1.25rem;
-            margin-top: 2.75rem;
+            gap: 1rem;
+            padding: 1.1rem 3.5rem 1.4rem;
+            background: linear-gradient(0deg, rgba(4, 12, 28, 0.82), rgba(4, 12, 28, 0.45) 70%, transparent);
+            backdrop-filter: blur(4px);
         }
 
         .feature {
             display: flex;
             flex-direction: column;
-            align-items: flex-start;
-            gap: 0.7rem;
+            align-items: center;
+            text-align: center;
+            gap: 0.55rem;
         }
 
         .feature-icon {
@@ -177,6 +160,7 @@
             display: grid;
             place-items: center;
             color: #fff;
+            box-shadow: 0 6px 16px rgba(0, 0, 0, 0.25);
         }
 
         .feature-icon svg {
@@ -191,37 +175,19 @@
 
         .feature span {
             font-size: 0.78rem;
-            line-height: 1.35;
-            color: var(--text-muted);
-            font-weight: 400;
-        }
-
-        .security {
-            display: inline-flex;
-            align-items: center;
-            gap: 0.7rem;
-            margin-top: 2.5rem;
-            padding: 0.7rem 1rem;
-            border: 1px solid rgba(91, 160, 255, 0.35);
-            border-radius: 10px;
-            background: rgba(10, 30, 60, 0.45);
-            backdrop-filter: blur(8px);
-            font-size: 0.82rem;
-            color: var(--text-muted);
-        }
-
-        .security svg {
-            width: 18px;
-            height: 18px;
-            color: var(--accent-soft);
-            flex-shrink: 0;
+            line-height: 1.3;
+            color: rgba(255, 255, 255, 0.88);
+            font-weight: 500;
+            letter-spacing: 0.06em;
         }
 
         .login-side {
+            position: relative;
+            z-index: 1;
             display: flex;
-            align-items: stretch;
+            align-items: center;
             justify-content: flex-end;
-            min-height: calc(100vh - 5rem);
+            min-height: auto;
         }
 
         .login-frame {
@@ -255,27 +221,22 @@
             display: flex;
             flex-direction: column;
             justify-content: center;
-            padding: 2.75rem 2.4rem;
+            padding: 2.2rem 2.2rem 2.4rem;
             color: var(--label);
         }
 
         .login-panel header {
-            margin-bottom: 2rem;
+            margin-bottom: 1.25rem;
+            text-align: center;
             animation: rise 0.6s ease-out 0.15s both;
         }
 
-        .login-panel header h2 {
-            font-size: 1.65rem;
-            font-weight: 700;
-            letter-spacing: -0.02em;
-            color: #0d1b2e;
-            margin-bottom: 0.4rem;
-        }
-
-        .login-panel header p {
-            font-size: 0.92rem;
-            color: #5a6b80;
-            font-weight: 400;
+        .login-brand-logo {
+            width: min(260px, 88%);
+            height: auto;
+            display: block;
+            margin: 0 auto;
+            object-fit: contain;
         }
 
         .login-form {
@@ -408,122 +369,89 @@
         @media (max-width: 960px) {
             .page {
                 grid-template-columns: 1fr;
-                padding: 1.5rem;
-                gap: 1.5rem;
+                padding: 1.5rem 1.5rem 8.5rem;
+                gap: 1.25rem;
             }
 
-            .brand-side {
-                max-width: none;
-                padding: 0;
+            .slogan-center {
+                order: 1;
+                padding: 0.75rem 0.5rem 0;
+                padding-left: clamp(1.5rem, 12vw, 4rem);
             }
 
-            .hero {
-                margin-top: 2rem;
+            .slogan-word {
+                font-size: clamp(1.55rem, 7.5vw, 2.35rem);
+                letter-spacing: 0.1em;
             }
 
-            .features {
-                grid-template-columns: repeat(2, 1fr);
+            .slogan-block {
+                gap: 0.85rem;
+            }
+
+            .slogan-line {
+                width: min(200px, 50vw);
             }
 
             .login-side {
-                min-height: auto;
+                order: 2;
                 justify-content: stretch;
             }
 
             .login-frame {
                 width: 100%;
-                min-height: 520px;
+            }
+
+            .features-bottom {
+                grid-template-columns: repeat(4, minmax(0, 1fr));
+                padding: 0.9rem 1.25rem 1.1rem;
+                gap: 0.55rem;
+            }
+
+            .feature span {
+                font-size: 0.62rem;
             }
         }
 
         @media (max-width: 520px) {
-            .features {
-                grid-template-columns: 1fr 1fr;
-                gap: 1rem;
+            .features-bottom {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 0.85rem;
             }
 
             .login-panel {
-                padding: 2rem 1.4rem;
+                padding: 1.75rem 1.35rem 2rem;
+            }
+
+            .login-brand-logo {
+                width: min(180px, 82%);
             }
         }
     </style>
 </head>
 <body>
     <div class="page">
-        <section class="brand-side">
-            <div>
-                <div class="logo">
-                    <div class="logo-mark" aria-hidden="true">
-                        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                            <path d="M7 7h8.5a3.5 3.5 0 0 1 0 7H11" stroke="#fff" stroke-width="2.2" stroke-linecap="round"/>
-                            <path d="M7 12h6.5a3 3 0 0 1 0 6H7" stroke="#fff" stroke-width="2.2" stroke-linecap="round"/>
-                            <path d="M15 17l3 0 0-3" stroke="#b8e0ff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                        </svg>
-                    </div>
-                    <div class="logo-text">
-                        <strong>Evo<span>Pro</span></strong>
-                        <small>Système de Gestion</small>
-                    </div>
+        <div class="slogan-center">
+            <div class="slogan-block">
+                <div class="slogan-line" aria-hidden="true"></div>
+                <div class="slogan-words">
+                    <p class="slogan-word">Concevoir<span>.</span></p>
+                    <p class="slogan-word">Développer<span>.</span></p>
+                    <p class="slogan-word">Gérer<span>.</span></p>
+                    <p class="slogan-word">Évoluer<span>.</span></p>
                 </div>
-
-                <div class="hero">
-                    <h1>Gérez <span class="hl">aujourd’hui</span>,<br>Réussissez <span class="hl">demain.</span></h1>
-                    <p>
-                        EvoPro est une solution complète de gestion d’entreprise :
-                        suivez vos ventes, stocks, clients et finances depuis une seule plateforme moderne.
-                    </p>
-                </div>
-
-                <div class="features">
-                    <div class="feature">
-                        <div class="feature-icon purple" aria-hidden="true">
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                <path d="M4 19V5"/><path d="M4 19h16"/><path d="M8 16v-5"/><path d="M12 16V8"/><path d="M16 16v-3"/>
-                            </svg>
-                        </div>
-                        <span>Tableaux de bord<br>en temps réel</span>
-                    </div>
-                    <div class="feature">
-                        <div class="feature-icon blue" aria-hidden="true">
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/>
-                            </svg>
-                        </div>
-                        <span>Gestion des clients<br>et fournisseurs</span>
-                    </div>
-                    <div class="feature">
-                        <div class="feature-icon cyan" aria-hidden="true">
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><path d="M3.3 7 12 12l8.7-5"/><path d="M12 22V12"/>
-                            </svg>
-                        </div>
-                        <span>Gestion des stocks<br>et produits</span>
-                    </div>
-                    <div class="feature">
-                        <div class="feature-icon green" aria-hidden="true">
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/><path d="M8 13h8"/><path d="M8 17h6"/>
-                            </svg>
-                        </div>
-                        <span>Facturation<br>et paiements</span>
-                    </div>
-                </div>
+                <div class="slogan-line" aria-hidden="true"></div>
             </div>
-
-            <div class="security">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                    <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
-                </svg>
-                <span>Sécurisé • Fiable • Performant</span>
-            </div>
-        </section>
+        </div>
 
         <aside class="login-side">
             <div class="login-frame">
                 <div class="login-panel">
                     <header>
-                        <h2>Connexion</h2>
-                        <p>Accédez à votre espace EvoPro</p>
+                        <img
+                            class="login-brand-logo"
+                            src="{{ asset('images/logo-a2s-evopro.png') }}"
+                            alt="A2S-EvoPro"
+                        >
                     </header>
 
                     <form class="login-form" method="post" action="/connexion" autocomplete="on">
@@ -584,6 +512,41 @@
                 </div>
             </div>
         </aside>
+
+        <div class="features-bottom" aria-label="Piliers A2S-EvoPro">
+            <div class="feature">
+                <div class="feature-icon purple" aria-hidden="true">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z"/>
+                    </svg>
+                </div>
+                <span>Concevoir</span>
+            </div>
+            <div class="feature">
+                <div class="feature-icon blue" aria-hidden="true">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/>
+                    </svg>
+                </div>
+                <span>Développer</span>
+            </div>
+            <div class="feature">
+                <div class="feature-icon cyan" aria-hidden="true">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/>
+                    </svg>
+                </div>
+                <span>Gérer</span>
+            </div>
+            <div class="feature">
+                <div class="feature-icon green" aria-hidden="true">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M3 17l6-6 4 4 8-8"/><path d="M14 7h7v7"/>
+                    </svg>
+                </div>
+                <span>Évoluer</span>
+            </div>
+        </div>
     </div>
 </body>
 </html>
