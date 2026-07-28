@@ -1079,7 +1079,7 @@
         .card.revenu .card-value { color: #7ee8f5; }
         .card.solde .card-value { color: #c4b0ff; }
 
-        .chart-section {
+        .balance-section {
             margin-top: 1.5rem;
             padding: 1.35rem 1.25rem 1.1rem;
             border-radius: 16px;
@@ -1089,75 +1089,53 @@
             animation: fadeUp 0.5s ease 0.3s both;
         }
 
-        .chart-head {
-            display: flex;
-            align-items: flex-start;
-            justify-content: space-between;
-            gap: 1rem;
-            margin-bottom: 1rem;
-            flex-wrap: wrap;
+        html[data-theme="light"] .balance-section {
+            background: linear-gradient(165deg, rgba(255, 255, 255, 0.96), rgba(238, 244, 252, 0.92));
         }
 
-        .chart-head h2 {
+        .balance-head {
+            margin-bottom: 1rem;
+        }
+
+        .balance-head h2 {
             font-size: 0.95rem;
             font-weight: 600;
             letter-spacing: 0.02em;
         }
 
-        .chart-head p {
+        .balance-head p {
             font-size: 0.78rem;
             color: var(--muted);
             margin-top: 0.25rem;
         }
 
-        .chart-filters {
-            display: flex;
-            gap: 0.65rem;
-            flex-wrap: wrap;
-        }
-
-        .chart-filter {
-            display: flex;
-            flex-direction: column;
-            gap: 0.3rem;
-            min-width: 140px;
-        }
-
-        .chart-filter label {
-            font-size: 0.72rem;
-            color: var(--muted);
-            font-weight: 500;
-        }
-
-        .chart-filter select {
-            padding: 0.45rem 0.55rem;
-            border-radius: 8px;
-            border: 1px solid rgba(110, 168, 255, 0.25);
-            background: rgba(8, 18, 32, 0.85);
-            color: var(--text);
-            font-family: inherit;
-            font-size: 0.78rem;
-        }
-
-        .chart-wrap {
-            position: relative;
-            height: 320px;
-            width: 100%;
-        }
-
-        .chart-empty {
-            display: none;
+        .statue-badge {
+            display: inline-flex;
             align-items: center;
-            justify-content: center;
-            height: 320px;
-            color: var(--muted);
-            font-size: 0.85rem;
-            border: 1px dashed rgba(110, 168, 255, 0.2);
-            border-radius: 12px;
+            padding: 0.28rem 0.55rem;
+            border-radius: 999px;
+            font-size: 0.72rem;
+            font-weight: 600;
+            letter-spacing: 0.02em;
+            border: 1px solid transparent;
         }
 
-        .chart-empty.visible {
-            display: flex;
+        .statue-badge.actif {
+            color: #7ee8b0;
+            background: rgba(61, 207, 138, 0.14);
+            border-color: rgba(61, 207, 138, 0.35);
+        }
+
+        .statue-badge.attente {
+            color: #ffc857;
+            background: rgba(240, 180, 41, 0.14);
+            border-color: rgba(240, 180, 41, 0.35);
+        }
+
+        .statue-badge.annule {
+            color: #ff9aa0;
+            background: rgba(240, 113, 120, 0.14);
+            border-color: rgba(240, 113, 120, 0.35);
         }
 
         .card-hint {
@@ -1441,53 +1419,61 @@
                         </article>
                     </section>
 
-                    <section class="chart-section" aria-label="Diagramme projets">
-                        <div class="chart-head">
-                            <div>
-                                <h2>Projets par Mois / Année</h2>
-                                <p>Projets actifs, en attente et annulés chargés par période</p>
-                            </div>
-                            <div class="chart-filters">
-                                <div class="chart-filter">
-                                    <label for="chart_filter_annee">Année</label>
-                                    <select id="chart_filter_annee">
-                                        <option value="">TOUTES LES ANNÉES</option>
-                                        @php
-                                            $chartYears = collect($chartProjets ?? [])
-                                                ->pluck('annee')
-                                                ->filter()
-                                                ->unique()
-                                                ->sort()
-                                                ->values();
-                                        @endphp
-                                        @foreach ($chartYears as $year)
-                                            <option value="{{ $year }}">{{ $year }}</option>
-                                        @endforeach
-                                    </select>
-                                </div>
-                                <div class="chart-filter">
-                                    <label for="chart_filter_mois">Mois</label>
-                                    <select id="chart_filter_mois">
-                                        <option value="">TOUS LES MOIS</option>
-                                        @php
-                                            $chartMonths = collect($chartProjets ?? [])
-                                                ->pluck('mois')
-                                                ->filter()
-                                                ->unique()
-                                                ->sort()
-                                                ->values();
-                                        @endphp
-                                        @foreach ($chartMonths as $month)
-                                            <option value="{{ $month }}">{{ $month }}</option>
-                                        @endforeach
-                                    </select>
-                                </div>
-                            </div>
+                    <section class="balance-section" aria-label="Balance projets">
+                        <div class="balance-head">
+                            <h2>Balance Projets</h2>
+                            <p>Suivi budgétaire des projets : avance, trésorerie et solde</p>
                         </div>
-                        <div class="chart-wrap" id="projetsChartWrap">
-                            <canvas id="projetsChart" aria-label="Diagramme des projets"></canvas>
+                        <div class="table-wrap">
+                            <table class="data-table">
+                                <thead>
+                                    <tr>
+                                        <th>Date</th>
+                                        <th>Nom Client</th>
+                                        <th>Titre Projet</th>
+                                        <th>Désignation</th>
+                                        <th>Budget</th>
+                                        <th>Statue</th>
+                                        <th>Avance</th>
+                                        <th>Trésorerie</th>
+                                        <th>Solde</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @php
+                                        $statueLabels = [
+                                            'actif' => 'EN COURS',
+                                            'attente' => 'EN ATTENTE',
+                                            'annule' => 'ANNULÉ',
+                                        ];
+                                    @endphp
+                                    @forelse (($projets ?? []) as $projet)
+                                        @php
+                                            $statueKey = $projet['statut'] ?? 'attente';
+                                        @endphp
+                                        <tr>
+                                            <td>{{ $projet['date'] ?? '' }}</td>
+                                            <td>{{ $projet['client'] ?? '' }}</td>
+                                            <td>{{ $projet['nom'] ?? '' }}</td>
+                                            <td>{{ $projet['designation'] ?? '' }}</td>
+                                            <td>{{ number_format((float) ($projet['budget'] ?? 0), 2, ',', ' ') }}</td>
+                                            <td>
+                                                <span class="statue-badge {{ $statueKey }}">
+                                                    {{ $statueLabels[$statueKey] ?? strtoupper($statueKey) }}
+                                                </span>
+                                            </td>
+                                            <td>{{ number_format((float) ($projet['montant_paye'] ?? 0), 2, ',', ' ') }}</td>
+                                            <td>{{ $projet['tresorerie'] ?: '—' }}</td>
+                                            <td class="solde-cell">{{ number_format((float) ($projet['solde'] ?? 0), 2, ',', ' ') }}</td>
+                                        </tr>
+                                    @empty
+                                        <tr class="empty-row">
+                                            <td colspan="9" class="empty">Aucun projet enregistré.</td>
+                                        </tr>
+                                    @endforelse
+                                </tbody>
+                            </table>
                         </div>
-                        <div class="chart-empty" id="projetsChartEmpty">AUCUN PROJET POUR CETTE PÉRIODE</div>
                     </section>
                 </section>
 
@@ -2098,7 +2084,6 @@
         </div>
     </div>
 
-    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
     <script>
         const sidebar = document.getElementById('sidebar');
         const toggle = document.getElementById('menuToggle');
@@ -2134,7 +2119,6 @@
         const clientsData = @json($clients ?? []);
         const paiementsData = @json($paiements ?? []);
         const utilisateursData = @json($utilisateurs ?? []);
-        const chartProjetsData = @json($chartProjets ?? []);
 
         const userStatueLabels = {
             admin: 'Administrateur',
@@ -2969,164 +2953,6 @@
         document.getElementById('filter_paiement_client')?.addEventListener('change', filterPaiementsTable);
         document.getElementById('filter_paiement_budget')?.addEventListener('input', filterPaiementsTable);
         document.getElementById('filter_paiement_tresorerie')?.addEventListener('change', filterPaiementsTable);
-
-        let projetsChartInstance = null;
-
-        function sortMoisKey(moisKey) {
-            const parts = String(moisKey).split('/');
-            if (parts.length < 2) return moisKey;
-            return `${parts[1]}${parts[0].padStart(2, '0')}`;
-        }
-
-        function buildProjetsChartData(annee, mois) {
-            const filtered = chartProjetsData.filter((item) => {
-                const matchAnnee = !annee || item.annee === annee;
-                const matchMois = !mois || item.mois === mois;
-                return matchAnnee && matchMois;
-            });
-
-            const labels = [...new Set(filtered.map((item) => item.mois))]
-                .sort((a, b) => sortMoisKey(a).localeCompare(sortMoisKey(b)));
-
-            const countFor = (label, statut) =>
-                filtered.filter((item) => item.mois === label && item.statut === statut).length;
-
-            return {
-                labels,
-                datasets: [
-                    {
-                        label: 'EN COURS',
-                        data: labels.map((label) => countFor(label, 'actif')),
-                        backgroundColor: 'rgba(61, 207, 138, 0.75)',
-                        borderColor: 'rgba(61, 207, 138, 1)',
-                        borderWidth: 1,
-                        borderRadius: 6,
-                    },
-                    {
-                        label: 'EN ATTENTE',
-                        data: labels.map((label) => countFor(label, 'attente')),
-                        backgroundColor: 'rgba(240, 180, 41, 0.75)',
-                        borderColor: 'rgba(240, 180, 41, 1)',
-                        borderWidth: 1,
-                        borderRadius: 6,
-                    },
-                    {
-                        label: 'ANNULÉS',
-                        data: labels.map((label) => countFor(label, 'annule')),
-                        backgroundColor: 'rgba(240, 113, 120, 0.75)',
-                        borderColor: 'rgba(240, 113, 120, 1)',
-                        borderWidth: 1,
-                        borderRadius: 6,
-                    },
-                ],
-                hasData: filtered.length > 0,
-            };
-        }
-
-        function updateProjetsChart() {
-            const annee = document.getElementById('chart_filter_annee')?.value || '';
-            const mois = document.getElementById('chart_filter_mois')?.value || '';
-            const canvas = document.getElementById('projetsChart');
-            const wrap = document.getElementById('projetsChartWrap');
-            const empty = document.getElementById('projetsChartEmpty');
-
-            if (!canvas || typeof Chart === 'undefined') return;
-
-            const chartData = buildProjetsChartData(annee, mois);
-            const showEmpty = !chartData.hasData;
-
-            if (wrap) wrap.style.display = showEmpty ? 'none' : '';
-            if (empty) empty.classList.toggle('visible', showEmpty);
-
-            if (showEmpty) {
-                if (projetsChartInstance) {
-                    projetsChartInstance.destroy();
-                    projetsChartInstance = null;
-                }
-                return;
-            }
-
-            if (projetsChartInstance) {
-                projetsChartInstance.data.labels = chartData.labels;
-                projetsChartInstance.data.datasets = chartData.datasets;
-                projetsChartInstance.update();
-                return;
-            }
-
-            projetsChartInstance = new Chart(canvas, {
-                type: 'bar',
-                data: {
-                    labels: chartData.labels,
-                    datasets: chartData.datasets,
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: {
-                        legend: {
-                            labels: {
-                                color: '#b8c9e0',
-                                font: { family: 'Outfit, sans-serif', size: 11 },
-                            },
-                        },
-                        tooltip: {
-                            callbacks: {
-                                title: (items) => `PÉRIODE : ${items[0]?.label || ''}`,
-                            },
-                        },
-                    },
-                    scales: {
-                        x: {
-                            stacked: false,
-                            ticks: { color: '#8fa8c8', font: { size: 10 } },
-                            grid: { color: 'rgba(110, 168, 255, 0.08)' },
-                        },
-                        y: {
-                            beginAtZero: true,
-                            ticks: {
-                                color: '#8fa8c8',
-                                font: { size: 10 },
-                                stepSize: 1,
-                                precision: 0,
-                            },
-                            grid: { color: 'rgba(110, 168, 255, 0.08)' },
-                        },
-                    },
-                },
-            });
-        }
-
-        function syncChartMonthOptions() {
-            const annee = document.getElementById('chart_filter_annee')?.value || '';
-            const moisSelect = document.getElementById('chart_filter_mois');
-            if (!moisSelect) return;
-
-            const current = moisSelect.value;
-            const months = [...new Set(
-                chartProjetsData
-                    .filter((item) => !annee || item.annee === annee)
-                    .map((item) => item.mois)
-            )].sort((a, b) => sortMoisKey(a).localeCompare(sortMoisKey(b)));
-
-            moisSelect.innerHTML = '<option value="">TOUS LES MOIS</option>';
-            months.forEach((month) => {
-                const option = document.createElement('option');
-                option.value = month;
-                option.textContent = month;
-                moisSelect.appendChild(option);
-            });
-
-            if (current && months.includes(current)) {
-                moisSelect.value = current;
-            }
-        }
-
-        document.getElementById('chart_filter_annee')?.addEventListener('change', () => {
-            syncChartMonthOptions();
-            updateProjetsChart();
-        });
-        document.getElementById('chart_filter_mois')?.addEventListener('change', updateProjetsChart);
-        updateProjetsChart();
 
         @if (session('open_fiche_client'))
             showPanel('fiche-client');

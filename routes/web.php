@@ -42,6 +42,22 @@ Route::get('/dashboard', function () {
         })
         ->all();
 
+    $paiements = session('paiements', []);
+
+    $tresorerieParProjet = collect($paiements)
+        ->reverse()
+        ->filter(fn ($p) => ! empty($p['projet_id']))
+        ->groupBy('projet_id')
+        ->map(fn ($items) => $items->first()['tresorerie'] ?? '');
+
+    $projets = collect($projets)
+        ->map(function ($projet) use ($tresorerieParProjet) {
+            $projet['tresorerie'] = $tresorerieParProjet->get($projet['id'] ?? '', $projet['tresorerie'] ?? '');
+
+            return $projet;
+        })
+        ->all();
+
     $projetsCollection = collect($projets);
 
     $dashboardCounts = [
@@ -50,33 +66,14 @@ Route::get('/dashboard', function () {
         'annule' => $projetsCollection->where('statut', 'annule')->count(),
     ];
 
-    $chartProjets = $projetsCollection
-        ->map(function ($projet) {
-            $parts = explode('/', $projet['date'] ?? '');
-
-            if (count($parts) < 3) {
-                return null;
-            }
-
-            return [
-                'mois' => $parts[1].'/'.$parts[2],
-                'annee' => $parts[2],
-                'statut' => $projet['statut'],
-            ];
-        })
-        ->filter()
-        ->values()
-        ->all();
-
     return view('dashboard', [
         'clients' => $clients,
         'projets' => $projets,
-        'paiements' => session('paiements', []),
+        'paiements' => $paiements,
         'utilisateurs' => session('utilisateurs', []),
         'dashboardCounts' => $dashboardCounts,
         'totalRevenu' => $projetsCollection->sum(fn ($p) => (float) ($p['montant_paye'] ?? 0)),
         'totalSolde' => $projetsCollection->sum(fn ($p) => (float) ($p['solde'] ?? 0)),
-        'chartProjets' => $chartProjets,
     ]);
 })->name('dashboard');
 
