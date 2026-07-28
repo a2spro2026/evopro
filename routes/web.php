@@ -67,6 +67,13 @@ Route::get('/dashboard', function () {
         'execute' => $projetsCollection->where('statut', 'execute')->count(),
     ];
 
+    $paiementsCollection = collect($paiements);
+    $sumTresorerie = function (string $nom) use ($paiementsCollection): float {
+        return (float) $paiementsCollection
+            ->filter(fn ($p) => mb_strtolower(trim((string) ($p['tresorerie'] ?? ''))) === mb_strtolower($nom))
+            ->sum(fn ($p) => (float) ($p['increment_paye'] ?? $p['montant_paye'] ?? 0));
+    };
+
     return view('dashboard', [
         'clients' => $clients,
         'projets' => $projets,
@@ -74,8 +81,17 @@ Route::get('/dashboard', function () {
         'utilisateurs' => session('utilisateurs', []),
         'evolutions' => session('evolutions', []),
         'dashboardCounts' => $dashboardCounts,
-        'totalRevenu' => $projetsCollection->sum(fn ($p) => (float) ($p['montant_paye'] ?? 0)),
+        'revenuAyda' => $sumTresorerie('ayda'),
+        'revenuBrahim' => $sumTresorerie('brahim'),
         'totalSolde' => $projetsCollection->sum(fn ($p) => (float) ($p['solde'] ?? 0)),
+        'paiementTotalBudgets' => (float) $paiementsCollection
+            ->groupBy(fn ($p) => $p['projet_id'] ?? ('row-'.($p['id'] ?? '')))
+            ->sum(fn ($items) => (float) ($items->first()['budget'] ?? 0)),
+        'paiementTotalMontants' => (float) $paiementsCollection
+            ->sum(fn ($p) => (float) ($p['increment_paye'] ?? 0)),
+        'paiementTotalSoldes' => (float) $paiementsCollection
+            ->groupBy(fn ($p) => $p['projet_id'] ?? ('row-'.($p['id'] ?? '')))
+            ->sum(fn ($items) => (float) ($items->last()['solde'] ?? 0)),
     ]);
 })->name('dashboard');
 
@@ -472,7 +488,7 @@ Route::delete('/projets/{id}', function (string $id) {
 
 Route::post('/paiements', function (Request $request) {
     $data = $request->validate([
-        'date' => ['required', 'string'],
+        'date' => ['required', 'string', 'regex:/^\d{2}\/\d{2}\/\d{4}$/'],
         'ref' => ['required', 'string'],
         'projet_id' => ['required', 'string'],
         'client' => ['required', 'string', 'max:255'],
@@ -527,7 +543,7 @@ Route::post('/paiements', function (Request $request) {
 
 Route::put('/paiements/{id}', function (Request $request, string $id) {
     $data = $request->validate([
-        'date' => ['required', 'string'],
+        'date' => ['required', 'string', 'regex:/^\d{2}\/\d{2}\/\d{4}$/'],
         'montant_paye' => ['required', 'numeric', 'min:0'],
         'type_reg' => ['required', 'string', 'max:255'],
         'bnq' => ['required', 'string', 'max:255'],

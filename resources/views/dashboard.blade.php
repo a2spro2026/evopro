@@ -596,6 +596,15 @@
         }
 
         .data-table tbody tr:hover { background: rgba(59, 158, 255, 0.06); }
+        .data-table tbody tr.row-execute {
+            background: rgba(61, 207, 138, 0.18);
+        }
+        .data-table tbody tr.row-execute:hover {
+            background: rgba(61, 207, 138, 0.26);
+        }
+        .data-table tbody tr.row-execute td {
+            color: #c8f5dc;
+        }
         .data-table td { color: rgba(235, 242, 255, 0.9); }
         .data-table td.solde-cell {
             color: #ff6b78;
@@ -895,6 +904,35 @@
             box-shadow: 0 0 0 3px rgba(59, 158, 255, 0.15);
         }
 
+        .date-parts {
+            display: flex;
+            align-items: center;
+            gap: 0.35rem;
+        }
+
+        .date-parts input {
+            text-align: center;
+            font-variant-numeric: tabular-nums;
+            letter-spacing: 0.04em;
+        }
+
+        .date-parts .date-jj,
+        .date-parts .date-mm {
+            width: 3.2rem;
+            flex: 0 0 3.2rem;
+        }
+
+        .date-parts .date-aaaa {
+            width: 4.6rem;
+            flex: 0 0 4.6rem;
+        }
+
+        .date-parts .date-sep {
+            color: var(--muted);
+            font-weight: 700;
+            user-select: none;
+        }
+
         .modal-body input[readonly] {
             color: var(--muted);
             background: rgba(6, 14, 26, 0.45);
@@ -1131,6 +1169,8 @@
             z-index: 18;
             padding: 0.45rem 0 0.65rem;
             margin-bottom: 0.15rem;
+            pointer-events: none;
+            user-select: none;
             background:
                 linear-gradient(180deg, rgba(7, 17, 31, 0.97) 0%, rgba(7, 17, 31, 0.92) 70%, rgba(7, 17, 31, 0.75) 100%);
             backdrop-filter: blur(10px);
@@ -1154,6 +1194,8 @@
             transition: border-color 0.2s ease, box-shadow 0.2s ease;
             animation: fadeUp 0.45s ease both;
             cursor: default;
+            pointer-events: none;
+            user-select: none;
             display: flex;
             flex-direction: column;
             justify-content: space-between;
@@ -1181,6 +1223,7 @@
         .card.annule::after { background: linear-gradient(90deg, var(--rose), transparent); }
         .card.execute::after { background: linear-gradient(90deg, var(--green), transparent); }
         .card.revenu::after { background: linear-gradient(90deg, var(--cyan), transparent); }
+        .card.brahim::after { background: linear-gradient(90deg, var(--amber), transparent); }
         .card.solde::after { background: linear-gradient(90deg, var(--violet), transparent); }
 
         .card:hover {
@@ -1217,6 +1260,7 @@
         .card.annule .card-icon { background: rgba(240, 113, 120, 0.12); color: var(--rose); }
         .card.execute .card-icon { background: rgba(61, 207, 138, 0.12); color: var(--green); }
         .card.revenu .card-icon { background: rgba(77, 212, 234, 0.12); color: var(--cyan); }
+        .card.brahim .card-icon { background: rgba(240, 180, 41, 0.12); color: var(--amber); }
         .card.solde .card-icon { background: rgba(155, 123, 255, 0.12); color: var(--violet); }
 
         .card-icon svg { width: 15px; height: 15px; }
@@ -1234,7 +1278,153 @@
         .card.annule .card-value { color: #ff9aa0; }
         .card.execute .card-value { color: #7ee8b0; }
         .card.revenu .card-value { color: #7ee8f5; }
+        .card.brahim .card-value { color: #ffc857; }
         .card.solde .card-value { color: #c4b0ff; }
+
+        .paiement-cards {
+            display: grid;
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            gap: 0.85rem;
+            margin: 1rem 0 1.15rem;
+            position: sticky;
+            top: 4.55rem;
+            z-index: 17;
+            padding: 0.55rem 0 0.75rem;
+            pointer-events: none;
+            user-select: none;
+            background:
+                linear-gradient(180deg, rgba(7, 17, 31, 0.98) 0%, rgba(7, 17, 31, 0.94) 72%, rgba(7, 17, 31, 0.78) 100%);
+            backdrop-filter: blur(10px);
+        }
+
+        html[data-theme="light"] .paiement-cards {
+            background:
+                linear-gradient(180deg, rgba(244, 248, 255, 0.98) 0%, rgba(244, 248, 255, 0.95) 72%, rgba(244, 248, 255, 0.82) 100%);
+        }
+
+        .paiement-card {
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            min-height: 108px;
+            padding: 1rem 1.1rem 0.95rem;
+            border-radius: 14px;
+            border: 1px solid transparent;
+            box-shadow: 0 10px 28px rgba(0, 0, 0, 0.22);
+            animation: fadeUp 0.45s ease both;
+            pointer-events: none;
+            cursor: default;
+        }
+
+        .paiement-card:nth-child(1) { animation-delay: 0.05s; }
+        .paiement-card:nth-child(2) { animation-delay: 0.12s; }
+        .paiement-card:nth-child(3) { animation-delay: 0.18s; }
+
+        .paiement-card::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background:
+                radial-gradient(circle at 100% 0%, rgba(255, 255, 255, 0.14), transparent 42%),
+                radial-gradient(circle at 0% 100%, rgba(0, 0, 0, 0.18), transparent 50%);
+            pointer-events: none;
+        }
+
+        .paiement-card::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+        }
+
+        .paiement-card.budget {
+            background: linear-gradient(145deg, rgba(18, 48, 92, 0.95), rgba(12, 28, 54, 0.92));
+            border-color: rgba(126, 196, 255, 0.35);
+        }
+        .paiement-card.budget::after { background: linear-gradient(90deg, #5aa8ff, transparent); }
+
+        .paiement-card.paye {
+            background: linear-gradient(145deg, rgba(14, 58, 42, 0.95), rgba(10, 32, 28, 0.92));
+            border-color: rgba(61, 207, 138, 0.35);
+        }
+        .paiement-card.paye::after { background: linear-gradient(90deg, #3dcf8a, transparent); }
+
+        .paiement-card.soldes {
+            background: linear-gradient(145deg, rgba(62, 22, 40, 0.95), rgba(36, 14, 28, 0.92));
+            border-color: rgba(240, 113, 120, 0.35);
+        }
+        .paiement-card.soldes::after { background: linear-gradient(90deg, #ff6b78, transparent); }
+
+        .paiement-card:hover {
+            transform: none;
+            box-shadow: 0 10px 28px rgba(0, 0, 0, 0.22);
+        }
+
+        .paiement-card .card-top {
+            position: relative;
+            z-index: 1;
+        }
+
+        .paiement-card .card-label {
+            font-size: 0.78rem;
+            font-weight: 600;
+            letter-spacing: 0.02em;
+            text-transform: uppercase;
+            color: rgba(235, 242, 255, 0.78);
+        }
+
+        .paiement-card .card-icon {
+            width: 36px;
+            height: 36px;
+            border-radius: 10px;
+        }
+
+        .paiement-card.budget .card-icon {
+            background: rgba(90, 168, 255, 0.18);
+            color: #8ec5ff;
+        }
+        .paiement-card.paye .card-icon {
+            background: rgba(61, 207, 138, 0.18);
+            color: #7ee8b0;
+        }
+        .paiement-card.soldes .card-icon {
+            background: rgba(255, 107, 120, 0.18);
+            color: #ff9aa0;
+        }
+
+        .paiement-card .card-value {
+            position: relative;
+            z-index: 1;
+            font-size: 1.55rem;
+            font-weight: 800;
+            letter-spacing: -0.03em;
+        }
+
+        .paiement-card.budget .card-value { color: #9fd0ff; }
+        .paiement-card.paye .card-value { color: #7ee8b0; }
+        .paiement-card.soldes .card-value { color: #ff8a94; }
+
+        html[data-theme="light"] .paiement-card.budget {
+            background: linear-gradient(145deg, #eaf3ff, #d7e8ff);
+            border-color: rgba(30, 111, 217, 0.28);
+        }
+        html[data-theme="light"] .paiement-card.paye {
+            background: linear-gradient(145deg, #e8f8f0, #d4f0e2);
+            border-color: rgba(20, 150, 92, 0.28);
+        }
+        html[data-theme="light"] .paiement-card.soldes {
+            background: linear-gradient(145deg, #ffecee, #ffd8dc);
+            border-color: rgba(209, 43, 58, 0.25);
+        }
+
+        html[data-theme="light"] .paiement-card .card-label { color: #3a4f6a; }
+        html[data-theme="light"] .paiement-card.budget .card-value { color: #1565c0; }
+        html[data-theme="light"] .paiement-card.paye .card-value { color: #14965c; }
+        html[data-theme="light"] .paiement-card.soldes .card-value { color: #d12b3a; }
 
         .balance-section {
             margin-top: 1.5rem;
@@ -1396,6 +1586,7 @@
         html[data-theme="light"] .card.annule .card-value { color: #c9434d; }
         html[data-theme="light"] .card.execute .card-value { color: #14965c; }
         html[data-theme="light"] .card.revenu .card-value { color: #0f8fa8; }
+        html[data-theme="light"] .card.brahim .card-value { color: #b8860b; }
         html[data-theme="light"] .card.solde .card-value { color: #6b4fd6; }
 
         html[data-theme="light"] .card-hint {
@@ -1427,6 +1618,18 @@
 
         html[data-theme="light"] .data-table tbody tr:hover {
             background: rgba(30, 111, 217, 0.05);
+        }
+
+        html[data-theme="light"] .data-table tbody tr.row-execute {
+            background: rgba(20, 150, 92, 0.16);
+        }
+
+        html[data-theme="light"] .data-table tbody tr.row-execute:hover {
+            background: rgba(20, 150, 92, 0.24);
+        }
+
+        html[data-theme="light"] .data-table tbody tr.row-execute td {
+            color: #0f5132;
         }
 
         html[data-theme="light"] .data-table td.solde-cell {
@@ -1541,6 +1744,11 @@
 
             .cards {
                 grid-template-columns: repeat(2, 1fr);
+                top: 4.2rem;
+            }
+
+            .paiement-cards {
+                grid-template-columns: 1fr;
                 top: 4.2rem;
             }
 
@@ -1775,16 +1983,6 @@
                             <div class="card-value">{{ $dashboardCounts['attente'] ?? 0 }}</div>
                         </article>
 
-                        <article class="card annule">
-                            <div class="card-top">
-                                <span class="card-label">Projets Annulés</span>
-                                <div class="card-icon" aria-hidden="true">
-                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M15 9l-6 6"/><path d="M9 9l6 6"/></svg>
-                                </div>
-                            </div>
-                            <div class="card-value">{{ $dashboardCounts['annule'] ?? 0 }}</div>
-                        </article>
-
                         <article class="card execute">
                             <div class="card-top">
                                 <span class="card-label">Projets Exécutés</span>
@@ -1795,14 +1993,24 @@
                             <div class="card-value">{{ $dashboardCounts['execute'] ?? 0 }}</div>
                         </article>
 
-                        <article class="card revenu">
+                        <article class="card revenu ayda">
                             <div class="card-top">
-                                <span class="card-label">Total Revenu</span>
+                                <span class="card-label">Revenu Ayda</span>
                                 <div class="card-icon" aria-hidden="true">
                                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v20"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
                                 </div>
                             </div>
-                            <div class="card-value">{{ number_format($totalRevenu ?? 0, 2, '.', ' ') }}</div>
+                            <div class="card-value">{{ number_format($revenuAyda ?? 0, 2, '.', ' ') }}</div>
+                        </article>
+
+                        <article class="card revenu brahim">
+                            <div class="card-top">
+                                <span class="card-label">Revenue Brahim</span>
+                                <div class="card-icon" aria-hidden="true">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v20"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+                                </div>
+                            </div>
+                            <div class="card-value">{{ number_format($revenuBrahim ?? 0, 2, '.', ' ') }}</div>
                         </article>
 
                         <article class="card solde">
@@ -1952,6 +2160,57 @@
                         </button>
                     </div>
 
+                    <div class="search-bar" aria-label="Recherche projets" style="grid-template-columns: repeat(3, minmax(0, 1fr));">
+                        <div class="search-field">
+                            <label for="filter_projet_mois">Mois</label>
+                            <select id="filter_projet_mois">
+                                <option value="">TOUS LES MOIS</option>
+                                @php
+                                    $moisProjets = collect($projets ?? [])
+                                        ->map(function ($p) {
+                                            $parts = explode('/', $p['date'] ?? '');
+                                            return count($parts) >= 3 ? $parts[1].'/'.$parts[2] : null;
+                                        })
+                                        ->filter()
+                                        ->unique()
+                                        ->sort()
+                                        ->values();
+                                @endphp
+                                @foreach ($moisProjets as $mois)
+                                    <option value="{{ $mois }}">{{ $mois }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+                        <div class="search-field">
+                            <label for="filter_projet_client">Client</label>
+                            <select id="filter_projet_client">
+                                <option value="">TOUS LES CLIENTS</option>
+                                @php
+                                    $clientsProjetFilter = collect($clients ?? [])
+                                        ->pluck('nom')
+                                        ->merge(collect($projets ?? [])->pluck('client'))
+                                        ->filter()
+                                        ->unique()
+                                        ->sort()
+                                        ->values();
+                                @endphp
+                                @foreach ($clientsProjetFilter as $clientNom)
+                                    <option value="{{ mb_strtolower($clientNom) }}">{{ $clientNom }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+                        <div class="search-field">
+                            <label for="filter_projet_statue">Statue</label>
+                            <select id="filter_projet_statue">
+                                <option value="">TOUTES LES STATUES</option>
+                                <option value="actif">EN COURS</option>
+                                <option value="attente">EN ATTENTE</option>
+                                <option value="annule">ANNULÉ</option>
+                                <option value="execute">EXÉCUTÉ</option>
+                            </select>
+                        </div>
+                    </div>
+
                     <div class="table-wrap">
                         <table class="data-table">
                             <thead>
@@ -1972,8 +2231,16 @@
                                 @forelse (($projets ?? []) as $projet)
                                     @php
                                         $statueKey = $projet['statut'] ?? 'attente';
+                                        $dateParts = explode('/', $projet['date'] ?? '');
+                                        $moisKey = count($dateParts) >= 3 ? $dateParts[1].'/'.$dateParts[2] : '';
                                     @endphp
-                                    <tr data-id="{{ $projet['id'] }}">
+                                    <tr
+                                        data-id="{{ $projet['id'] }}"
+                                        data-mois="{{ $moisKey }}"
+                                        data-client="{{ mb_strtolower($projet['client'] ?? '') }}"
+                                        data-statue="{{ $statueKey }}"
+                                        @class(['row-execute' => $statueKey === 'execute'])
+                                    >
                                         <td>{{ $projet['date'] }}</td>
                                         <td>{{ $projet['ref'] }}</td>
                                         <td>{{ $projet['nom'] }}</td>
@@ -2025,6 +2292,9 @@
                                         <td colspan="10" class="empty">Aucun projet enregistré. Cliquez sur Nouveau Projet.</td>
                                     </tr>
                                 @endforelse
+                                <tr id="projetsNoResult" class="empty-row" style="display:none;">
+                                    <td colspan="10" class="empty">Aucun projet ne correspond à la recherche.</td>
+                                </tr>
                             </tbody>
                         </table>
                     </div>
@@ -2167,6 +2437,38 @@
                             Nouveau Paiement
                         </button>
                     </div>
+
+                    <section class="paiement-cards" aria-label="Totaux paiements">
+                        <article class="paiement-card budget">
+                            <div class="card-top">
+                                <span class="card-label">Total des Budgets</span>
+                                <div class="card-icon" aria-hidden="true">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/><path d="M12 12v4"/><path d="M10 14h4"/></svg>
+                                </div>
+                            </div>
+                            <div class="card-value">{{ number_format($paiementTotalBudgets ?? 0, 2, '.', ' ') }}</div>
+                        </article>
+
+                        <article class="paiement-card paye">
+                            <div class="card-top">
+                                <span class="card-label">Total Montant Payés</span>
+                                <div class="card-icon" aria-hidden="true">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v20"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+                                </div>
+                            </div>
+                            <div class="card-value">{{ number_format($paiementTotalMontants ?? 0, 2, '.', ' ') }}</div>
+                        </article>
+
+                        <article class="paiement-card soldes">
+                            <div class="card-top">
+                                <span class="card-label">Total Soldes</span>
+                                <div class="card-icon" aria-hidden="true">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><path d="M7 14l4-4 4 3 5-6"/></svg>
+                                </div>
+                            </div>
+                            <div class="card-value">{{ number_format($paiementTotalSoldes ?? 0, 2, '.', ' ') }}</div>
+                        </article>
+                    </section>
 
                     <div class="search-bar" aria-label="Recherche paiements">
                         <div class="search-field">
@@ -2385,8 +2687,15 @@
                 <input type="hidden" id="paiement_titre" name="titre_projet">
                 <div class="modal-body">
                     <div class="field">
-                        <label for="paiement_date">Date</label>
-                        <input type="text" id="paiement_date" name="date" required placeholder="JJ/MM/AAAA">
+                        <label for="paiement_date_jj">Date</label>
+                        <div class="date-parts" role="group" aria-label="Date JJ/MM/AAAA">
+                            <input type="text" id="paiement_date_jj" class="date-jj" inputmode="numeric" maxlength="2" pattern="\d{2}" placeholder="JJ" autocomplete="off" required>
+                            <span class="date-sep">/</span>
+                            <input type="text" id="paiement_date_mm" class="date-mm" inputmode="numeric" maxlength="2" pattern="\d{2}" placeholder="MM" autocomplete="off" required>
+                            <span class="date-sep">/</span>
+                            <input type="text" id="paiement_date_aaaa" class="date-aaaa" inputmode="numeric" maxlength="4" pattern="\d{4}" placeholder="AAAA" autocomplete="off" required>
+                        </div>
+                        <input type="hidden" id="paiement_date" name="date" required>
                     </div>
                     <div class="field">
                         <label for="paiement_ref">Réf</label>
@@ -3454,8 +3763,60 @@
         let paiementFormMode = 'create';
         let paiementEditIncrement = 0;
 
+        const paiementDateJj = document.getElementById('paiement_date_jj');
+        const paiementDateMm = document.getElementById('paiement_date_mm');
+        const paiementDateAaaa = document.getElementById('paiement_date_aaaa');
+        const paiementDateHidden = document.getElementById('paiement_date');
+
+        function syncPaiementDate() {
+            const jj = (paiementDateJj?.value || '').trim();
+            const mm = (paiementDateMm?.value || '').trim();
+            const aaaa = (paiementDateAaaa?.value || '').trim();
+            if (paiementDateHidden) {
+                paiementDateHidden.value = (jj.length === 2 && mm.length === 2 && aaaa.length === 4)
+                    ? `${jj}/${mm}/${aaaa}`
+                    : '';
+            }
+        }
+
+        function setPaiementDateParts(dateStr, { emptyDayMonth = false } = {}) {
+            const year = String(new Date().getFullYear());
+            if (emptyDayMonth) {
+                if (paiementDateJj) paiementDateJj.value = '';
+                if (paiementDateMm) paiementDateMm.value = '';
+                if (paiementDateAaaa) paiementDateAaaa.value = year;
+                syncPaiementDate();
+                return;
+            }
+
+            const parts = String(dateStr || '').split('/');
+            if (paiementDateJj) paiementDateJj.value = (parts[0] || '').replace(/\D/g, '').slice(0, 2);
+            if (paiementDateMm) paiementDateMm.value = (parts[1] || '').replace(/\D/g, '').slice(0, 2);
+            if (paiementDateAaaa) paiementDateAaaa.value = (parts[2] || '').replace(/\D/g, '').slice(0, 4);
+            syncPaiementDate();
+        }
+
+        function bindPaiementDatePart(input, maxLen, nextInput) {
+            if (!input) return;
+            input.addEventListener('input', () => {
+                input.value = input.value.replace(/\D/g, '').slice(0, maxLen);
+                syncPaiementDate();
+                if (input.value.length === maxLen && nextInput) {
+                    nextInput.focus();
+                    nextInput.select();
+                }
+            });
+            input.addEventListener('blur', syncPaiementDate);
+        }
+
+        bindPaiementDatePart(paiementDateJj, 2, paiementDateMm);
+        bindPaiementDatePart(paiementDateMm, 2, paiementDateAaaa);
+        bindPaiementDatePart(paiementDateAaaa, 4, null);
+
         const paiementFieldIds = [
-            'paiement_date',
+            'paiement_date_jj',
+            'paiement_date_mm',
+            'paiement_date_aaaa',
             'paiement_client',
             'paiement_montant_paye',
             'paiement_type_reg',
@@ -3483,7 +3844,7 @@
         }
 
         function fillPaiementForm(paiement) {
-            document.getElementById('paiement_date').value = paiement.date || '';
+            setPaiementDateParts(paiement.date || '');
             document.getElementById('paiement_ref').value = paiement.ref || '';
 
             const clientSelect = document.getElementById('paiement_client');
@@ -3525,7 +3886,7 @@
             paiementModalTitle.textContent = 'Nouveau Paiement';
             paiementSubmitBtn.style.display = '';
 
-            document.getElementById('paiement_date').value = todayFr();
+            setPaiementDateParts('', { emptyDayMonth: true });
             document.getElementById('paiement_ref').value = nextPaiementRef();
             document.getElementById('paiement_client').selectedIndex = 0;
             document.getElementById('paiement_titre_display').value = '';
@@ -3544,7 +3905,7 @@
 
             paiementModal.classList.add('open');
             paiementModal.setAttribute('aria-hidden', 'false');
-            document.getElementById('paiement_client').focus();
+            paiementDateJj?.focus();
         }
 
         function openPaiementView(paiement) {
@@ -3612,8 +3973,58 @@
             if (e.target === paiementModal) closePaiementModalFn();
         });
 
+        paiementForm?.addEventListener('submit', (e) => {
+            syncPaiementDate();
+            const jj = (paiementDateJj?.value || '').trim();
+            const mm = (paiementDateMm?.value || '').trim();
+            const aaaa = (paiementDateAaaa?.value || '').trim();
+            if (!/^\d{2}$/.test(jj) || !/^\d{2}$/.test(mm) || !/^\d{4}$/.test(aaaa)) {
+                e.preventDefault();
+                alert('Date invalide : JJ (2 chiffres) / MM (2 chiffres) / AAAA (4 chiffres).');
+                paiementDateJj?.focus();
+            }
+        });
+
         document.getElementById('paiement_client')?.addEventListener('change', applyPaiementClient);
         document.getElementById('paiement_montant_paye')?.addEventListener('input', updatePaiementSolde);
+
+        function filterProjetsTable() {
+            const mois = document.getElementById('filter_projet_mois')?.value || '';
+            const client = document.getElementById('filter_projet_client')?.value || '';
+            const statue = document.getElementById('filter_projet_statue')?.value || '';
+
+            const rows = document.querySelectorAll('#projetsTableBody tr[data-id]');
+            let visible = 0;
+
+            rows.forEach((row) => {
+                const rowMois = row.dataset.mois || '';
+                const rowClient = row.dataset.client || '';
+                const rowStatue = row.dataset.statue || '';
+
+                const matchMois = !mois || rowMois === mois;
+                const matchClient = !client || rowClient === client;
+                const matchStatue = !statue || rowStatue === statue;
+
+                const show = matchMois && matchClient && matchStatue;
+                row.style.display = show ? '' : 'none';
+                if (show) visible++;
+            });
+
+            const emptyRow = document.querySelector('#projetsTableBody tr.empty-row:not(#projetsNoResult)');
+            const noResultRow = document.getElementById('projetsNoResult');
+
+            if (noResultRow) {
+                noResultRow.style.display = rows.length > 0 && visible === 0 ? '' : 'none';
+            }
+
+            if (emptyRow) {
+                emptyRow.style.display = rows.length === 0 ? '' : 'none';
+            }
+        }
+
+        document.getElementById('filter_projet_mois')?.addEventListener('change', filterProjetsTable);
+        document.getElementById('filter_projet_client')?.addEventListener('change', filterProjetsTable);
+        document.getElementById('filter_projet_statue')?.addEventListener('change', filterProjetsTable);
 
         function filterPaiementsTable() {
             const mois = document.getElementById('filter_paiement_mois')?.value || '';
