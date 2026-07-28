@@ -714,6 +714,36 @@
             border: 1px solid rgba(61, 207, 138, 0.4);
         }
 
+        .pull-select {
+            appearance: none;
+            -webkit-appearance: none;
+            padding: 0.28rem 1.4rem 0.28rem 0.6rem;
+            border-radius: 999px;
+            font-size: 0.7rem;
+            font-weight: 700;
+            letter-spacing: 0.03em;
+            line-height: 1.2;
+            cursor: pointer;
+            font-family: inherit;
+            text-transform: uppercase;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='10' viewBox='0 0 24 24' fill='none' stroke='%23b8c9e0' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 0.45rem center;
+            background-size: 10px;
+        }
+
+        .pull-select.oui {
+            color: #7ee8b0;
+            background-color: rgba(61, 207, 138, 0.16);
+            border: 1px solid rgba(61, 207, 138, 0.4);
+        }
+
+        .pull-select.non {
+            color: #ff9aa0;
+            background-color: rgba(240, 113, 120, 0.16);
+            border: 1px solid rgba(240, 113, 120, 0.4);
+        }
+
         .data-table .empty { color: var(--muted); padding: 2rem; }
 
         .actions {
@@ -808,7 +838,8 @@
         }
 
         .modal-body input,
-        .modal-body select {
+        .modal-body select,
+        .modal-body textarea {
             height: 40px;
             padding: 0 0.75rem;
             border-radius: 10px;
@@ -822,6 +853,15 @@
             width: 100%;
             appearance: none;
             cursor: pointer;
+        }
+
+        .modal-body textarea {
+            height: auto;
+            min-height: 96px;
+            padding: 0.7rem 0.75rem;
+            resize: vertical;
+            line-height: 1.45;
+            cursor: text;
         }
 
         .modal-body select {
@@ -1434,7 +1474,8 @@
         }
 
         html[data-theme="light"] .modal-body input,
-        html[data-theme="light"] .modal-body select {
+        html[data-theme="light"] .modal-body select,
+        html[data-theme="light"] .modal-body textarea {
             background: #f4f8ff;
             border-color: rgba(30, 90, 180, 0.2);
             color: #0a1628;
@@ -1590,6 +1631,12 @@
                                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
                             </span>
                             Fiche Projet
+                        </a>
+                        <a href="#fiche-evolution" class="submenu-link" data-panel="fiche-evolution">
+                            <span class="submenu-icon" aria-hidden="true">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 17l6-6 4 4 8-8"/><path d="M14 7h7v7"/></svg>
+                            </span>
+                            Evolution Travaux
                         </a>
                     </div>
                 </div>
@@ -1978,6 +2025,133 @@
                                         <td colspan="10" class="empty">Aucun projet enregistré. Cliquez sur Nouveau Projet.</td>
                                     </tr>
                                 @endforelse
+                            </tbody>
+                        </table>
+                    </div>
+                </section>
+
+                <section class="panel" id="panel-fiche-evolution">
+                    <div class="section-toolbar">
+                        <div class="content-head" style="margin-bottom:0;">
+                            <h1>Evolution Travaux</h1>
+                        </div>
+                        <div class="toolbar-actions">
+                            <button type="button" class="btn-add" id="btnAddEvolution">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>
+                                Ajouter
+                            </button>
+                            <button type="button" class="btn-ghost" id="btnCloseEvolution">Fermer</button>
+                        </div>
+                    </div>
+
+                    <div class="search-bar" aria-label="Recherche évolutions" style="grid-template-columns: repeat(2, minmax(0, 1fr));">
+                        <div class="search-field">
+                            <label for="filter_evolution_mois">Mois</label>
+                            <select id="filter_evolution_mois">
+                                <option value="">TOUS LES MOIS</option>
+                                @php
+                                    $moisEvolutions = collect($evolutions ?? [])
+                                        ->map(function ($e) {
+                                            $parts = explode('/', $e['date'] ?? '');
+                                            return count($parts) >= 3 ? $parts[1].'/'.$parts[2] : null;
+                                        })
+                                        ->filter()
+                                        ->unique()
+                                        ->sort()
+                                        ->values();
+                                @endphp
+                                @foreach ($moisEvolutions as $mois)
+                                    <option value="{{ $mois }}">{{ $mois }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+                        <div class="search-field">
+                            <label for="filter_evolution_projet">Titre Projet</label>
+                            <select id="filter_evolution_projet">
+                                <option value="">TOUS LES PROJETS</option>
+                                @php
+                                    $projetsEvolutionFilter = collect($projets ?? [])
+                                        ->pluck('nom')
+                                        ->merge(collect($evolutions ?? [])->pluck('titre_projet'))
+                                        ->filter()
+                                        ->unique()
+                                        ->sort()
+                                        ->values();
+                                @endphp
+                                @foreach ($projetsEvolutionFilter as $titre)
+                                    <option value="{{ mb_strtolower($titre) }}">{{ $titre }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="table-wrap">
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>Date</th>
+                                    <th>Titre Projet</th>
+                                    <th>Description</th>
+                                    <th>Pull</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody id="evolutionsTableBody">
+                                @forelse (($evolutions ?? []) as $evolution)
+                                    @php
+                                        $pullKey = $evolution['pull'] ?? 'non';
+                                        $dateParts = explode('/', $evolution['date'] ?? '');
+                                        $moisKey = count($dateParts) >= 3 ? $dateParts[1].'/'.$dateParts[2] : '';
+                                    @endphp
+                                    <tr
+                                        data-id="{{ $evolution['id'] }}"
+                                        data-mois="{{ $moisKey }}"
+                                        data-projet="{{ mb_strtolower($evolution['titre_projet'] ?? '') }}"
+                                    >
+                                        <td>{{ $evolution['date'] }}</td>
+                                        <td>{{ $evolution['titre_projet'] }}</td>
+                                        <td style="white-space:normal;max-width:320px;text-align:left;">{{ $evolution['description'] }}</td>
+                                        <td>
+                                            <form method="post" action="{{ url('/evolutions/'.$evolution['id'].'/pull') }}" class="statue-form">
+                                                @csrf
+                                                @method('PATCH')
+                                                <select
+                                                    name="pull"
+                                                    class="pull-select {{ $pullKey }}"
+                                                    aria-label="Pull"
+                                                    onchange="this.form.submit()"
+                                                >
+                                                    <option value="oui" @selected($pullKey === 'oui')>OUI</option>
+                                                    <option value="non" @selected($pullKey === 'non')>NON</option>
+                                                </select>
+                                            </form>
+                                        </td>
+                                        <td>
+                                            <div class="actions">
+                                                <button type="button" class="action-btn voir" title="Voir" aria-label="Voir">
+                                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8S1 12 1 12z"/><circle cx="12" cy="12" r="3"/></svg>
+                                                </button>
+                                                <button type="button" class="action-btn modifier" title="Modifier" aria-label="Modifier">
+                                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4 12.5-12.5z"/></svg>
+                                                </button>
+                                                <form method="post" action="{{ url('/evolutions/'.$evolution['id']) }}" style="display:inline;" onsubmit="return confirm('Supprimer cette évolution ?');">
+                                                    @csrf
+                                                    @method('DELETE')
+                                                    <button type="submit" class="action-btn supprimer" title="Supprimer" aria-label="Supprimer">
+                                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18"/><path d="M8 6V4h8v2"/><path d="M19 6l-1 14H6L5 6"/></svg>
+                                                    </button>
+                                                </form>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                @empty
+                                    <tr class="empty-row">
+                                        <td colspan="5" class="empty">Aucune évolution enregistrée. Cliquez sur Ajouter.</td>
+                                    </tr>
+                                @endforelse
+                                <tr id="evolutionsNoResult" class="empty-row" style="display:none;">
+                                    <td colspan="5" class="empty">AUCUN RÉSULTAT POUR CETTE RECHERCHE.</td>
+                                </tr>
                             </tbody>
                         </table>
                     </div>
@@ -2437,6 +2611,43 @@
         </div>
     </div>
 
+    <div class="modal-backdrop" id="evolutionModal" aria-hidden="true">
+        <div class="modal" role="dialog" aria-modal="true" aria-labelledby="evolutionModalTitle">
+            <div class="modal-head">
+                <h2 id="evolutionModalTitle">Ajouter Evolution Travaux</h2>
+                <button type="button" class="modal-close" id="closeEvolutionModal" aria-label="Fermer">×</button>
+            </div>
+            <form method="post" action="{{ url('/evolutions') }}" id="evolutionForm">
+                @csrf
+                <input type="hidden" name="_method" id="evolution_http_method" value="POST" disabled>
+                <input type="hidden" name="pull" id="evolution_pull_hidden" value="non">
+                <div class="modal-body">
+                    <div class="field">
+                        <label for="evolution_date">Date</label>
+                        <input type="text" id="evolution_date" name="date" required placeholder="JJ/MM/AAAA">
+                    </div>
+                    <div class="field full">
+                        <label for="evolution_titre_projet">Titre Projet (liste)</label>
+                        <select id="evolution_titre_projet" name="titre_projet" required>
+                            <option value="" disabled selected>Sélectionner un projet</option>
+                            @foreach (($projets ?? []) as $projet)
+                                <option value="{{ $projet['nom'] }}">{{ $projet['nom'] }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+                    <div class="field full">
+                        <label for="evolution_description">Description</label>
+                        <textarea id="evolution_description" name="description" required placeholder="Description des travaux" rows="4"></textarea>
+                    </div>
+                </div>
+                <div class="modal-foot">
+                    <button type="button" class="btn-ghost" id="cancelEvolutionModal">Fermer</button>
+                    <button type="submit" class="btn-primary" id="evolutionSubmitBtn">Valider</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
     <script>
         const sidebar = document.getElementById('sidebar');
         const toggle = document.getElementById('menuToggle');
@@ -2455,11 +2666,14 @@
         const projetModal = document.getElementById('projetModal');
         const paiementModal = document.getElementById('paiementModal');
         const utilisateurModal = document.getElementById('utilisateurModal');
+        const evolutionModal = document.getElementById('evolutionModal');
         const btnAdd = document.getElementById('btnAddClient');
         const btnAddProjet = document.getElementById('btnAddProjet');
         const btnAddPaiement = document.getElementById('btnAddPaiement');
         const btnAddUtilisateur = document.getElementById('btnAddUtilisateur');
         const btnCloseUtilisateur = document.getElementById('btnCloseUtilisateur');
+        const btnAddEvolution = document.getElementById('btnAddEvolution');
+        const btnCloseEvolution = document.getElementById('btnCloseEvolution');
         const closeModal = document.getElementById('closeClientModal');
         const cancelModal = document.getElementById('cancelClientModal');
         const closeProjetModal = document.getElementById('closeProjetModal');
@@ -2468,10 +2682,13 @@
         const cancelPaiementModal = document.getElementById('cancelPaiementModal');
         const closeUtilisateurModal = document.getElementById('closeUtilisateurModal');
         const cancelUtilisateurModal = document.getElementById('cancelUtilisateurModal');
+        const closeEvolutionModal = document.getElementById('closeEvolutionModal');
+        const cancelEvolutionModal = document.getElementById('cancelEvolutionModal');
         const projetsData = @json($projets ?? []);
         const clientsData = @json($clients ?? []);
         const paiementsData = @json($paiements ?? []);
         const utilisateursData = @json($utilisateurs ?? []);
+        const evolutionsData = @json($evolutions ?? []);
 
         const userStatueLabels = {
             admin: 'Administrateur',
@@ -2612,6 +2829,10 @@
                 projetGroup.classList.add('open');
                 projetToggle.classList.add('active');
                 document.querySelector('[data-panel="fiche-projet"]')?.classList.add('active');
+            } else if (name === 'fiche-evolution') {
+                projetGroup.classList.add('open');
+                projetToggle.classList.add('active');
+                document.querySelector('[data-panel="fiche-evolution"]')?.classList.add('active');
             } else if (name === 'fiche-paiement') {
                 paiementGroup.classList.add('open');
                 paiementToggle.classList.add('active');
@@ -2860,6 +3081,103 @@
         cancelUtilisateurModal?.addEventListener('click', closeUtilisateurModalFn);
         utilisateurModal?.addEventListener('click', (e) => {
             if (e.target === utilisateurModal) closeUtilisateurModalFn();
+        });
+
+        const evolutionFieldIds = ['evolution_date', 'evolution_titre_projet', 'evolution_description'];
+
+        function setEvolutionFormFields(mode) {
+            evolutionFieldIds.forEach((id) => {
+                const field = document.getElementById(id);
+                if (field) field.disabled = mode === 'view';
+            });
+        }
+
+        function fillEvolutionForm(evolution) {
+            document.getElementById('evolution_date').value = evolution.date || '';
+            const titreSelect = document.getElementById('evolution_titre_projet');
+            titreSelect.value = evolution.titre_projet || '';
+            if (!titreSelect.value && evolution.titre_projet) {
+                const option = document.createElement('option');
+                option.value = evolution.titre_projet;
+                option.textContent = evolution.titre_projet;
+                option.selected = true;
+                titreSelect.appendChild(option);
+            }
+            document.getElementById('evolution_description').value = evolution.description || '';
+            document.getElementById('evolution_pull_hidden').value = evolution.pull || 'non';
+        }
+
+        function openEvolutionModal() {
+            const evolutionForm = document.getElementById('evolutionForm');
+            const evolutionModalTitle = document.getElementById('evolutionModalTitle');
+            const evolutionSubmitBtn = document.getElementById('evolutionSubmitBtn');
+            const evolutionHttpMethod = document.getElementById('evolution_http_method');
+
+            evolutionForm.action = '{{ url('/evolutions') }}';
+            evolutionHttpMethod.disabled = true;
+            evolutionHttpMethod.value = 'POST';
+            evolutionModalTitle.textContent = 'Ajouter Evolution Travaux';
+            evolutionSubmitBtn.style.display = '';
+
+            document.getElementById('evolution_date').value = todayFr();
+            document.getElementById('evolution_titre_projet').value = '';
+            document.getElementById('evolution_titre_projet').selectedIndex = 0;
+            document.getElementById('evolution_description').value = '';
+            document.getElementById('evolution_pull_hidden').value = 'non';
+
+            setEvolutionFormFields('create');
+            evolutionModal.classList.add('open');
+            evolutionModal.setAttribute('aria-hidden', 'false');
+            document.getElementById('evolution_titre_projet').focus();
+        }
+
+        function openEvolutionView(evolution) {
+            fillEvolutionForm(evolution);
+            document.getElementById('evolutionModalTitle').textContent = 'Voir Evolution Travaux';
+            document.getElementById('evolutionSubmitBtn').style.display = 'none';
+            setEvolutionFormFields('view');
+            evolutionModal.classList.add('open');
+            evolutionModal.setAttribute('aria-hidden', 'false');
+        }
+
+        function openEvolutionEdit(evolution) {
+            const evolutionForm = document.getElementById('evolutionForm');
+            const evolutionHttpMethod = document.getElementById('evolution_http_method');
+
+            evolutionForm.action = `{{ url('/evolutions') }}/${evolution.id}`;
+            evolutionHttpMethod.disabled = false;
+            evolutionHttpMethod.value = 'PUT';
+            fillEvolutionForm(evolution);
+            document.getElementById('evolutionModalTitle').textContent = 'Modifier Evolution Travaux';
+            document.getElementById('evolutionSubmitBtn').style.display = '';
+            setEvolutionFormFields('edit');
+            evolutionModal.classList.add('open');
+            evolutionModal.setAttribute('aria-hidden', 'false');
+            document.getElementById('evolution_description').focus();
+        }
+
+        function closeEvolutionModalFn() {
+            evolutionModal.classList.remove('open');
+            evolutionModal.setAttribute('aria-hidden', 'true');
+        }
+
+        document.getElementById('evolutionsTableBody')?.addEventListener('click', (e) => {
+            const row = e.target.closest('tr[data-id]');
+            if (!row) return;
+
+            const evolution = evolutionsData.find((item) => item.id === row.dataset.id);
+            if (!evolution) return;
+
+            if (e.target.closest('.action-btn.voir')) openEvolutionView(evolution);
+            if (e.target.closest('.action-btn.modifier')) openEvolutionEdit(evolution);
+        });
+
+        btnAddEvolution?.addEventListener('click', openEvolutionModal);
+        btnCloseEvolution?.addEventListener('click', () => showPanel('dashboard'));
+        closeEvolutionModal?.addEventListener('click', closeEvolutionModalFn);
+        cancelEvolutionModal?.addEventListener('click', closeEvolutionModalFn);
+        evolutionModal?.addEventListener('click', (e) => {
+            if (e.target === evolutionModal) closeEvolutionModalFn();
         });
 
         window.addEventListener('resize', () => {
@@ -3310,12 +3628,46 @@
         document.getElementById('filter_paiement_budget')?.addEventListener('input', filterPaiementsTable);
         document.getElementById('filter_paiement_tresorerie')?.addEventListener('change', filterPaiementsTable);
 
+        function filterEvolutionsTable() {
+            const mois = document.getElementById('filter_evolution_mois')?.value || '';
+            const projet = document.getElementById('filter_evolution_projet')?.value || '';
+
+            const rows = document.querySelectorAll('#evolutionsTableBody tr[data-id]');
+            let visible = 0;
+
+            rows.forEach((row) => {
+                const matchMois = !mois || row.dataset.mois === mois;
+                const matchProjet = !projet || row.dataset.projet === projet;
+                const show = matchMois && matchProjet;
+                row.style.display = show ? '' : 'none';
+                if (show) visible++;
+            });
+
+            const emptyRow = document.querySelector('#evolutionsTableBody tr.empty-row:not(#evolutionsNoResult)');
+            const noResultRow = document.getElementById('evolutionsNoResult');
+
+            if (noResultRow) {
+                noResultRow.style.display = rows.length > 0 && visible === 0 ? '' : 'none';
+            }
+
+            if (emptyRow) {
+                emptyRow.style.display = rows.length === 0 ? '' : 'none';
+            }
+        }
+
+        document.getElementById('filter_evolution_mois')?.addEventListener('change', filterEvolutionsTable);
+        document.getElementById('filter_evolution_projet')?.addEventListener('change', filterEvolutionsTable);
+
         @if (session('open_fiche_client'))
             showPanel('fiche-client');
         @endif
 
         @if (session('open_fiche_projet'))
             showPanel('fiche-projet');
+        @endif
+
+        @if (session('open_fiche_evolution'))
+            showPanel('fiche-evolution');
         @endif
 
         @if (session('open_fiche_paiement'))

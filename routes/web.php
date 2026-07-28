@@ -72,6 +72,7 @@ Route::get('/dashboard', function () {
         'projets' => $projets,
         'paiements' => $paiements,
         'utilisateurs' => session('utilisateurs', []),
+        'evolutions' => session('evolutions', []),
         'dashboardCounts' => $dashboardCounts,
         'totalRevenu' => $projetsCollection->sum(fn ($p) => (float) ($p['montant_paye'] ?? 0)),
         'totalSolde' => $projetsCollection->sum(fn ($p) => (float) ($p['solde'] ?? 0)),
@@ -310,6 +311,90 @@ Route::post('/projets', function (Request $request) {
         ->route('dashboard')
         ->with('open_fiche_projet', true);
 })->name('projets.store');
+
+Route::post('/evolutions', function (Request $request) {
+    $data = $request->validate([
+        'date' => ['required', 'string'],
+        'titre_projet' => ['required', 'string', 'max:255'],
+        'description' => ['required', 'string', 'max:2000'],
+        'pull' => ['required', 'string', 'in:oui,non'],
+    ]);
+
+    $evolutions = session('evolutions', []);
+    $evolutions[] = [
+        'id' => uniqid('evo_', true),
+        'date' => $data['date'],
+        'titre_projet' => $data['titre_projet'],
+        'description' => $data['description'],
+        'pull' => $data['pull'],
+    ];
+
+    session(['evolutions' => $evolutions]);
+
+    return redirect()
+        ->route('dashboard')
+        ->with('open_fiche_evolution', true);
+})->name('evolutions.store');
+
+Route::put('/evolutions/{id}', function (Request $request, string $id) {
+    $data = $request->validate([
+        'date' => ['required', 'string'],
+        'titre_projet' => ['required', 'string', 'max:255'],
+        'description' => ['required', 'string', 'max:2000'],
+        'pull' => ['required', 'string', 'in:oui,non'],
+    ]);
+
+    $evolutions = session('evolutions', []);
+    $index = collect($evolutions)->search(fn ($e) => ($e['id'] ?? '') === $id);
+
+    if ($index === false) {
+        return redirect()
+            ->route('dashboard')
+            ->with('open_fiche_evolution', true);
+    }
+
+    $evolutions[$index]['date'] = $data['date'];
+    $evolutions[$index]['titre_projet'] = $data['titre_projet'];
+    $evolutions[$index]['description'] = $data['description'];
+    $evolutions[$index]['pull'] = $data['pull'];
+
+    session(['evolutions' => $evolutions]);
+
+    return redirect()
+        ->route('dashboard')
+        ->with('open_fiche_evolution', true);
+})->name('evolutions.update');
+
+Route::patch('/evolutions/{id}/pull', function (Request $request, string $id) {
+    $data = $request->validate([
+        'pull' => ['required', 'string', 'in:oui,non'],
+    ]);
+
+    $evolutions = session('evolutions', []);
+    $index = collect($evolutions)->search(fn ($e) => ($e['id'] ?? '') === $id);
+
+    if ($index !== false) {
+        $evolutions[$index]['pull'] = $data['pull'];
+        session(['evolutions' => $evolutions]);
+    }
+
+    return redirect()
+        ->route('dashboard')
+        ->with('open_fiche_evolution', true);
+})->name('evolutions.pull');
+
+Route::delete('/evolutions/{id}', function (string $id) {
+    $evolutions = collect(session('evolutions', []))
+        ->reject(fn ($e) => ($e['id'] ?? '') === $id)
+        ->values()
+        ->all();
+
+    session(['evolutions' => $evolutions]);
+
+    return redirect()
+        ->route('dashboard')
+        ->with('open_fiche_evolution', true);
+})->name('evolutions.destroy');
 
 Route::put('/projets/{id}', function (Request $request, string $id) {
     $data = $request->validate([
