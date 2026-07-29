@@ -473,7 +473,15 @@
         .menu-toggle.is-open .icon-close { display: block; }
 
         .panel { display: none; }
-        .panel.active { display: block; animation: fadeUp 0.35s ease both; }
+        .panel.active {
+            display: block;
+            animation: fadeInPanel 0.35s ease both;
+        }
+
+        @keyframes fadeInPanel {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
 
         .section-toolbar {
             display: flex;
@@ -1281,25 +1289,33 @@
         .card.brahim .card-value { color: #ffc857; }
         .card.solde .card-value { color: #c4b0ff; }
 
+        .paiement-sticky-lock {
+            position: sticky;
+            top: 4.55rem;
+            z-index: 19;
+            margin: 0 0 1.15rem;
+            padding: 0.65rem 0 0.85rem;
+            pointer-events: none;
+            user-select: none;
+            touch-action: none;
+            background:
+                linear-gradient(180deg, rgba(7, 17, 31, 0.99) 0%, rgba(7, 17, 31, 0.97) 78%, rgba(7, 17, 31, 0.9) 100%);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+        }
+
+        html[data-theme="light"] .paiement-sticky-lock {
+            background:
+                linear-gradient(180deg, rgba(244, 248, 255, 0.99) 0%, rgba(244, 248, 255, 0.97) 78%, rgba(244, 248, 255, 0.9) 100%);
+        }
+
         .paiement-cards {
             display: grid;
             grid-template-columns: repeat(3, minmax(0, 1fr));
             gap: 0.85rem;
-            margin: 1rem 0 1.15rem;
-            position: sticky;
-            top: 4.55rem;
-            z-index: 17;
-            padding: 0.55rem 0 0.75rem;
+            margin: 0;
             pointer-events: none;
             user-select: none;
-            background:
-                linear-gradient(180deg, rgba(7, 17, 31, 0.98) 0%, rgba(7, 17, 31, 0.94) 72%, rgba(7, 17, 31, 0.78) 100%);
-            backdrop-filter: blur(10px);
-        }
-
-        html[data-theme="light"] .paiement-cards {
-            background:
-                linear-gradient(180deg, rgba(244, 248, 255, 0.98) 0%, rgba(244, 248, 255, 0.95) 72%, rgba(244, 248, 255, 0.82) 100%);
         }
 
         .paiement-card {
@@ -1313,14 +1329,10 @@
             border-radius: 14px;
             border: 1px solid transparent;
             box-shadow: 0 10px 28px rgba(0, 0, 0, 0.22);
-            animation: fadeUp 0.45s ease both;
             pointer-events: none;
             cursor: default;
+            user-select: none;
         }
-
-        .paiement-card:nth-child(1) { animation-delay: 0.05s; }
-        .paiement-card:nth-child(2) { animation-delay: 0.12s; }
-        .paiement-card:nth-child(3) { animation-delay: 0.18s; }
 
         .paiement-card::before {
             content: '';
@@ -1441,7 +1453,7 @@
         }
 
         .balance-head {
-            margin-bottom: 1rem;
+            margin-bottom: 0.85rem;
         }
 
         .balance-head h2 {
@@ -1454,6 +1466,35 @@
             font-size: 0.78rem;
             color: var(--muted);
             margin-top: 0.25rem;
+        }
+
+        .balance-section .search-bar {
+            margin: 0 0 1rem;
+            padding: 0.75rem 0 0.15rem;
+            border: none;
+            border-radius: 0;
+            background: transparent;
+            box-shadow: none;
+            border-top: 1px solid rgba(110, 168, 255, 0.12);
+            border-bottom: 1px solid rgba(110, 168, 255, 0.12);
+            padding-top: 0.9rem;
+            padding-bottom: 0.9rem;
+        }
+
+        html[data-theme="light"] .balance-section .search-bar {
+            background: transparent;
+            border-color: rgba(30, 90, 180, 0.12);
+        }
+
+        .balance-section .table-wrap {
+            margin: 0;
+            border: 1px solid rgba(110, 168, 255, 0.14);
+            background: rgba(6, 14, 26, 0.35);
+        }
+
+        html[data-theme="light"] .balance-section .table-wrap {
+            background: rgba(255, 255, 255, 0.55);
+            border-color: rgba(30, 90, 180, 0.12);
         }
 
         .statue-badge {
@@ -1744,12 +1785,18 @@
 
             .cards {
                 grid-template-columns: repeat(2, 1fr);
-                top: 4.2rem;
+                position: static;
+                top: auto;
             }
 
             .paiement-cards {
                 grid-template-columns: 1fr;
-                top: 4.2rem;
+            }
+
+            .paiement-sticky-lock {
+                position: static;
+                top: auto;
+                margin-bottom: 1rem;
             }
 
             .card {
@@ -1757,6 +1804,10 @@
                 height: 78px;
             }
             .card-value { font-size: 1.3rem; }
+
+            .table-wrap {
+                -webkit-overflow-scrolling: touch;
+            }
 
             .navbar, .content { padding-left: 1.1rem; padding-right: 1.1rem; }
         }
@@ -2029,6 +2080,46 @@
                             <h2>Balance Projets</h2>
                             <p>Suivi budgétaire des projets : avance, trésorerie et solde</p>
                         </div>
+
+                        <div class="search-bar balance-search" aria-label="Recherche balance projets" style="grid-template-columns: repeat(2, minmax(0, 1fr));">
+                            <div class="search-field">
+                                <label for="filter_balance_client">Client</label>
+                                <select id="filter_balance_client">
+                                    <option value="">TOUS LES CLIENTS</option>
+                                    @php
+                                        $clientsBalanceFilter = collect($clients ?? [])
+                                            ->pluck('nom')
+                                            ->merge(collect($projets ?? [])->pluck('client'))
+                                            ->filter()
+                                            ->unique()
+                                            ->sort()
+                                            ->values();
+                                    @endphp
+                                    @foreach ($clientsBalanceFilter as $clientNom)
+                                        <option value="{{ mb_strtolower($clientNom) }}">{{ $clientNom }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+                            <div class="search-field">
+                                <label for="filter_balance_tresorerie">Trésorerie</label>
+                                <select id="filter_balance_tresorerie">
+                                    <option value="">TOUTES LES TRÉSORERIES</option>
+                                    @php
+                                        $tresoreriesBalanceFilter = collect($projets ?? [])
+                                            ->pluck('tresorerie')
+                                            ->merge(collect($paiements ?? [])->pluck('tresorerie'))
+                                            ->filter()
+                                            ->unique()
+                                            ->sort()
+                                            ->values();
+                                    @endphp
+                                    @foreach ($tresoreriesBalanceFilter as $tresorerie)
+                                        <option value="{{ mb_strtolower($tresorerie) }}">{{ $tresorerie }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+                        </div>
+
                         <div class="table-wrap">
                             <table class="data-table">
                                 <thead>
@@ -2044,7 +2135,7 @@
                                         <th>Solde</th>
                                     </tr>
                                 </thead>
-                                <tbody>
+                                <tbody id="balanceProjetsTableBody">
                                     @php
                                         $statueLabels = [
                                             'actif' => 'EN COURS',
@@ -2056,8 +2147,13 @@
                                     @forelse (($projets ?? []) as $projet)
                                         @php
                                             $statueKey = $projet['statut'] ?? 'attente';
+                                            $tresorerieVal = $projet['tresorerie'] ?? '';
                                         @endphp
-                                        <tr>
+                                        <tr
+                                            data-id="{{ $projet['id'] ?? '' }}"
+                                            data-client="{{ mb_strtolower($projet['client'] ?? '') }}"
+                                            data-tresorerie="{{ mb_strtolower($tresorerieVal) }}"
+                                        >
                                             <td>{{ $projet['date'] ?? '' }}</td>
                                             <td>{{ $projet['client'] ?? '' }}</td>
                                             <td>{{ $projet['nom'] ?? '' }}</td>
@@ -2069,7 +2165,7 @@
                                                 </span>
                                             </td>
                                             <td>{{ number_format((float) ($projet['montant_paye'] ?? 0), 2, '.', ' ') }}</td>
-                                            <td>{{ $projet['tresorerie'] ?: '—' }}</td>
+                                            <td>{{ $tresorerieVal ?: '—' }}</td>
                                             <td class="solde-cell">{{ number_format((float) ($projet['solde'] ?? 0), 2, '.', ' ') }}</td>
                                         </tr>
                                     @empty
@@ -2077,6 +2173,9 @@
                                             <td colspan="9" class="empty">Aucun projet enregistré.</td>
                                         </tr>
                                     @endforelse
+                                    <tr id="balanceProjetsNoResult" class="empty-row" style="display:none;">
+                                        <td colspan="9" class="empty">Aucun projet ne correspond à la recherche.</td>
+                                    </tr>
                                 </tbody>
                             </table>
                         </div>
@@ -2438,6 +2537,7 @@
                         </button>
                     </div>
 
+                    <div class="paiement-sticky-lock" aria-hidden="false">
                     <section class="paiement-cards" aria-label="Totaux paiements">
                         <article class="paiement-card budget">
                             <div class="card-top">
@@ -2469,6 +2569,7 @@
                             <div class="card-value">{{ number_format($paiementTotalSoldes ?? 0, 2, '.', ' ') }}</div>
                         </article>
                     </section>
+                    </div>
 
                     <div class="search-bar" aria-label="Recherche paiements">
                         <div class="search-field">
@@ -3987,6 +4088,40 @@
 
         document.getElementById('paiement_client')?.addEventListener('change', applyPaiementClient);
         document.getElementById('paiement_montant_paye')?.addEventListener('input', updatePaiementSolde);
+
+        function filterBalanceProjetsTable() {
+            const client = document.getElementById('filter_balance_client')?.value || '';
+            const tresorerie = document.getElementById('filter_balance_tresorerie')?.value || '';
+
+            const rows = document.querySelectorAll('#balanceProjetsTableBody tr[data-id]');
+            let visible = 0;
+
+            rows.forEach((row) => {
+                const rowClient = row.dataset.client || '';
+                const rowTresorerie = row.dataset.tresorerie || '';
+
+                const matchClient = !client || rowClient === client;
+                const matchTresorerie = !tresorerie || rowTresorerie === tresorerie;
+
+                const show = matchClient && matchTresorerie;
+                row.style.display = show ? '' : 'none';
+                if (show) visible++;
+            });
+
+            const emptyRow = document.querySelector('#balanceProjetsTableBody tr.empty-row:not(#balanceProjetsNoResult)');
+            const noResultRow = document.getElementById('balanceProjetsNoResult');
+
+            if (noResultRow) {
+                noResultRow.style.display = rows.length > 0 && visible === 0 ? '' : 'none';
+            }
+
+            if (emptyRow) {
+                emptyRow.style.display = rows.length === 0 ? '' : 'none';
+            }
+        }
+
+        document.getElementById('filter_balance_client')?.addEventListener('change', filterBalanceProjetsTable);
+        document.getElementById('filter_balance_tresorerie')?.addEventListener('change', filterBalanceProjetsTable);
 
         function filterProjetsTable() {
             const mois = document.getElementById('filter_projet_mois')?.value || '';

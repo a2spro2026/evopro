@@ -1,5 +1,6 @@
 <?php
 
+use App\Support\AppStore;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -8,8 +9,10 @@ Route::get('/', function () {
 });
 
 Route::get('/dashboard', function () {
-    $clients = session('clients', []);
-    $projets = session('projets', []);
+    AppStore::hydrateFromSessionIfEmpty();
+
+    $clients = AppStore::get('clients');
+    $projets = AppStore::get('projets');
 
     $resolveStatut = function (array $projet): string {
         $statut = $projet['statut'] ?? '';
@@ -42,7 +45,7 @@ Route::get('/dashboard', function () {
         })
         ->all();
 
-    $paiements = session('paiements', []);
+    $paiements = AppStore::get('paiements');
 
     $tresorerieParProjet = collect($paiements)
         ->reverse()
@@ -78,8 +81,8 @@ Route::get('/dashboard', function () {
         'clients' => $clients,
         'projets' => $projets,
         'paiements' => $paiements,
-        'utilisateurs' => session('utilisateurs', []),
-        'evolutions' => session('evolutions', []),
+        'utilisateurs' => AppStore::get('utilisateurs'),
+        'evolutions' => AppStore::get('evolutions'),
         'dashboardCounts' => $dashboardCounts,
         'revenuAyda' => $sumTresorerie('ayda'),
         'revenuBrahim' => $sumTresorerie('brahim'),
@@ -128,7 +131,7 @@ Route::post('/clients', function (Request $request) {
         'activite' => ['required', 'string', 'max:255'],
     ]);
 
-    $clients = session('clients', []);
+    $clients = AppStore::get('clients');
     $clients[] = [
         'id' => uniqid('cli_', true),
         'date' => $data['date'],
@@ -140,7 +143,7 @@ Route::post('/clients', function (Request $request) {
         'solde' => 0,
     ];
 
-    session(['clients' => $clients]);
+    AppStore::put('clients', $clients);
 
     return redirect()
         ->route('dashboard')
@@ -156,7 +159,7 @@ Route::put('/clients/{id}', function (Request $request, string $id) {
         'activite' => ['required', 'string', 'max:255'],
     ]);
 
-    $clients = session('clients', []);
+    $clients = AppStore::get('clients');
     $index = collect($clients)->search(fn ($client) => ($client['id'] ?? '') === $id);
 
     if ($index === false) {
@@ -175,7 +178,7 @@ Route::put('/clients/{id}', function (Request $request, string $id) {
     $clients[$index]['activite'] = $data['activite'];
 
     if ($ancienNom !== $nouveauNom) {
-        $projets = collect(session('projets', []))
+        $projets = collect(AppStore::get('projets'))
             ->map(function ($projet) use ($ancienNom, $nouveauNom) {
                 if (($projet['client'] ?? '') === $ancienNom) {
                     $projet['client'] = $nouveauNom;
@@ -185,7 +188,7 @@ Route::put('/clients/{id}', function (Request $request, string $id) {
             })
             ->all();
 
-        $paiements = collect(session('paiements', []))
+        $paiements = collect(AppStore::get('paiements'))
             ->map(function ($paiement) use ($ancienNom, $nouveauNom) {
                 if (($paiement['client'] ?? '') === $ancienNom) {
                     $paiement['client'] = $nouveauNom;
@@ -195,10 +198,10 @@ Route::put('/clients/{id}', function (Request $request, string $id) {
             })
             ->all();
 
-        session(['projets' => $projets, 'paiements' => $paiements]);
+        AppStore::putMany(['projets' => $projets, 'paiements' => $paiements]);
     }
 
-    session(['clients' => $clients]);
+    AppStore::put('clients', $clients);
 
     return redirect()
         ->route('dashboard')
@@ -206,12 +209,12 @@ Route::put('/clients/{id}', function (Request $request, string $id) {
 })->name('clients.update');
 
 Route::delete('/clients/{id}', function (string $id) {
-    $clients = collect(session('clients', []))
+    $clients = collect(AppStore::get('clients'))
         ->reject(fn ($client) => ($client['id'] ?? '') === $id)
         ->values()
         ->all();
 
-    session(['clients' => $clients]);
+    AppStore::put('clients', $clients);
 
     return redirect()
         ->route('dashboard')
@@ -227,7 +230,7 @@ Route::post('/utilisateurs', function (Request $request) {
         'password' => ['required', 'string', 'max:255'],
     ]);
 
-    $utilisateurs = session('utilisateurs', []);
+    $utilisateurs = AppStore::get('utilisateurs');
     $utilisateurs[] = [
         'id' => uniqid('usr_', true),
         'date' => $data['date'],
@@ -237,7 +240,7 @@ Route::post('/utilisateurs', function (Request $request) {
         'password' => $data['password'],
     ];
 
-    session(['utilisateurs' => $utilisateurs]);
+    AppStore::put('utilisateurs', $utilisateurs);
 
     return redirect()
         ->route('dashboard')
@@ -252,7 +255,7 @@ Route::put('/utilisateurs/{id}', function (Request $request, string $id) {
         'password' => ['nullable', 'string', 'max:255'],
     ]);
 
-    $utilisateurs = session('utilisateurs', []);
+    $utilisateurs = AppStore::get('utilisateurs');
     $index = collect($utilisateurs)->search(fn ($u) => ($u['id'] ?? '') === $id);
 
     if ($index === false) {
@@ -269,7 +272,7 @@ Route::put('/utilisateurs/{id}', function (Request $request, string $id) {
         $utilisateurs[$index]['password'] = $data['password'];
     }
 
-    session(['utilisateurs' => $utilisateurs]);
+    AppStore::put('utilisateurs', $utilisateurs);
 
     return redirect()
         ->route('dashboard')
@@ -277,12 +280,12 @@ Route::put('/utilisateurs/{id}', function (Request $request, string $id) {
 })->name('utilisateurs.update');
 
 Route::delete('/utilisateurs/{id}', function (string $id) {
-    $utilisateurs = collect(session('utilisateurs', []))
+    $utilisateurs = collect(AppStore::get('utilisateurs'))
         ->reject(fn ($u) => ($u['id'] ?? '') === $id)
         ->values()
         ->all();
 
-    session(['utilisateurs' => $utilisateurs]);
+    AppStore::put('utilisateurs', $utilisateurs);
 
     return redirect()
         ->route('dashboard')
@@ -306,7 +309,7 @@ Route::post('/projets', function (Request $request) {
     $avance = (float) ($data['avance'] ?? 0);
     $solde = $budget - $avance;
 
-    $projets = session('projets', []);
+    $projets = AppStore::get('projets');
     $projets[] = [
         'id' => uniqid('prj_', true),
         'date' => $data['date'],
@@ -321,7 +324,7 @@ Route::post('/projets', function (Request $request) {
         'statut' => $data['statut'],
     ];
 
-    session(['projets' => $projets]);
+    AppStore::put('projets', $projets);
 
     return redirect()
         ->route('dashboard')
@@ -336,7 +339,7 @@ Route::post('/evolutions', function (Request $request) {
         'pull' => ['required', 'string', 'in:oui,non'],
     ]);
 
-    $evolutions = session('evolutions', []);
+    $evolutions = AppStore::get('evolutions');
     $evolutions[] = [
         'id' => uniqid('evo_', true),
         'date' => $data['date'],
@@ -345,7 +348,7 @@ Route::post('/evolutions', function (Request $request) {
         'pull' => $data['pull'],
     ];
 
-    session(['evolutions' => $evolutions]);
+    AppStore::put('evolutions', $evolutions);
 
     return redirect()
         ->route('dashboard')
@@ -360,7 +363,7 @@ Route::put('/evolutions/{id}', function (Request $request, string $id) {
         'pull' => ['required', 'string', 'in:oui,non'],
     ]);
 
-    $evolutions = session('evolutions', []);
+    $evolutions = AppStore::get('evolutions');
     $index = collect($evolutions)->search(fn ($e) => ($e['id'] ?? '') === $id);
 
     if ($index === false) {
@@ -374,7 +377,7 @@ Route::put('/evolutions/{id}', function (Request $request, string $id) {
     $evolutions[$index]['description'] = $data['description'];
     $evolutions[$index]['pull'] = $data['pull'];
 
-    session(['evolutions' => $evolutions]);
+    AppStore::put('evolutions', $evolutions);
 
     return redirect()
         ->route('dashboard')
@@ -386,12 +389,12 @@ Route::patch('/evolutions/{id}/pull', function (Request $request, string $id) {
         'pull' => ['required', 'string', 'in:oui,non'],
     ]);
 
-    $evolutions = session('evolutions', []);
+    $evolutions = AppStore::get('evolutions');
     $index = collect($evolutions)->search(fn ($e) => ($e['id'] ?? '') === $id);
 
     if ($index !== false) {
         $evolutions[$index]['pull'] = $data['pull'];
-        session(['evolutions' => $evolutions]);
+        AppStore::put('evolutions', $evolutions);
     }
 
     return redirect()
@@ -400,12 +403,12 @@ Route::patch('/evolutions/{id}/pull', function (Request $request, string $id) {
 })->name('evolutions.pull');
 
 Route::delete('/evolutions/{id}', function (string $id) {
-    $evolutions = collect(session('evolutions', []))
+    $evolutions = collect(AppStore::get('evolutions'))
         ->reject(fn ($e) => ($e['id'] ?? '') === $id)
         ->values()
         ->all();
 
-    session(['evolutions' => $evolutions]);
+    AppStore::put('evolutions', $evolutions);
 
     return redirect()
         ->route('dashboard')
@@ -423,7 +426,7 @@ Route::put('/projets/{id}', function (Request $request, string $id) {
         'statut' => ['required', 'string', 'in:actif,attente,annule,execute'],
     ]);
 
-    $projets = session('projets', []);
+    $projets = AppStore::get('projets');
     $index = collect($projets)->search(fn ($projet) => ($projet['id'] ?? '') === $id);
 
     if ($index === false) {
@@ -444,7 +447,7 @@ Route::put('/projets/{id}', function (Request $request, string $id) {
     $projets[$index]['statut'] = $data['statut'];
     $projets[$index]['solde'] = $budget - $montantPaye;
 
-    session(['projets' => $projets]);
+    AppStore::put('projets', $projets);
 
     return redirect()
         ->route('dashboard')
@@ -456,7 +459,7 @@ Route::patch('/projets/{id}/statut', function (Request $request, string $id) {
         'statut' => ['required', 'string', 'in:actif,attente,annule,execute'],
     ]);
 
-    $projets = session('projets', []);
+    $projets = AppStore::get('projets');
     $index = collect($projets)->search(fn ($projet) => ($projet['id'] ?? '') === $id);
 
     if ($index === false) {
@@ -466,7 +469,7 @@ Route::patch('/projets/{id}/statut', function (Request $request, string $id) {
     }
 
     $projets[$index]['statut'] = $data['statut'];
-    session(['projets' => $projets]);
+    AppStore::put('projets', $projets);
 
     return redirect()
         ->route('dashboard')
@@ -474,12 +477,12 @@ Route::patch('/projets/{id}/statut', function (Request $request, string $id) {
 })->name('projets.statut');
 
 Route::delete('/projets/{id}', function (string $id) {
-    $projets = collect(session('projets', []))
+    $projets = collect(AppStore::get('projets'))
         ->reject(fn ($projet) => ($projet['id'] ?? '') === $id)
         ->values()
         ->all();
 
-    session(['projets' => $projets]);
+    AppStore::put('projets', $projets);
 
     return redirect()
         ->route('dashboard')
@@ -500,7 +503,7 @@ Route::post('/paiements', function (Request $request) {
         'tresorerie' => ['required', 'string', 'max:255'],
     ]);
 
-    $projets = session('projets', []);
+    $projets = AppStore::get('projets');
     $projetIndex = collect($projets)->search(fn ($p) => ($p['id'] ?? '') === $data['projet_id']);
 
     if ($projetIndex === false) {
@@ -517,7 +520,7 @@ Route::post('/paiements', function (Request $request) {
     $projets[$projetIndex]['montant_paye'] = $nouveauPaye;
     $projets[$projetIndex]['solde'] = $solde;
 
-    $paiements = session('paiements', []);
+    $paiements = AppStore::get('paiements');
     $paiements[] = [
         'id' => uniqid('pay_', true),
         'date' => $data['date'],
@@ -534,7 +537,7 @@ Route::post('/paiements', function (Request $request) {
         'solde' => $solde,
     ];
 
-    session(['projets' => $projets, 'paiements' => $paiements]);
+    AppStore::putMany(['projets' => $projets, 'paiements' => $paiements]);
 
     return redirect()
         ->route('dashboard')
@@ -550,7 +553,7 @@ Route::put('/paiements/{id}', function (Request $request, string $id) {
         'tresorerie' => ['required', 'string', 'max:255'],
     ]);
 
-    $paiements = session('paiements', []);
+    $paiements = AppStore::get('paiements');
     $index = collect($paiements)->search(fn ($paiement) => ($paiement['id'] ?? '') === $id);
 
     if ($index === false) {
@@ -564,7 +567,7 @@ Route::put('/paiements/{id}', function (Request $request, string $id) {
     $nouvelIncrement = (float) $data['montant_paye'];
     $projetId = $paiement['projet_id'] ?? '';
 
-    $projets = session('projets', []);
+    $projets = AppStore::get('projets');
     $projetIndex = collect($projets)->search(fn ($p) => ($p['id'] ?? '') === $projetId);
 
     if ($projetIndex !== false) {
@@ -578,7 +581,7 @@ Route::put('/paiements/{id}', function (Request $request, string $id) {
 
         $paiements[$index]['montant_paye'] = $nouveauPaye;
         $paiements[$index]['solde'] = $solde;
-        session(['projets' => $projets]);
+        AppStore::put('projets', $projets);
     }
 
     $paiements[$index]['date'] = $data['date'];
@@ -587,7 +590,7 @@ Route::put('/paiements/{id}', function (Request $request, string $id) {
     $paiements[$index]['bnq'] = $data['bnq'];
     $paiements[$index]['tresorerie'] = $data['tresorerie'];
 
-    session(['paiements' => $paiements]);
+    AppStore::put('paiements', $paiements);
 
     return redirect()
         ->route('dashboard')
@@ -595,11 +598,11 @@ Route::put('/paiements/{id}', function (Request $request, string $id) {
 })->name('paiements.update');
 
 Route::delete('/paiements/{id}', function (string $id) {
-    $paiements = session('paiements', []);
+    $paiements = AppStore::get('paiements');
     $paiement = collect($paiements)->firstWhere('id', $id);
 
     if ($paiement) {
-        $projets = session('projets', []);
+        $projets = AppStore::get('projets');
         $projetIndex = collect($projets)->search(fn ($p) => ($p['id'] ?? '') === ($paiement['projet_id'] ?? ''));
 
         if ($projetIndex !== false) {
@@ -608,7 +611,7 @@ Route::delete('/paiements/{id}', function (string $id) {
             $nouveauPaye = max(0, (float) ($projets[$projetIndex]['montant_paye'] ?? 0) - $increment);
             $projets[$projetIndex]['montant_paye'] = $nouveauPaye;
             $projets[$projetIndex]['solde'] = $budget - $nouveauPaye;
-            session(['projets' => $projets]);
+            AppStore::put('projets', $projets);
         }
     }
 
@@ -617,7 +620,7 @@ Route::delete('/paiements/{id}', function (string $id) {
         ->values()
         ->all();
 
-    session(['paiements' => $paiements]);
+    AppStore::put('paiements', $paiements);
 
     return redirect()
         ->route('dashboard')
