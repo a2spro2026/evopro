@@ -1173,7 +1173,7 @@
             gap: 0.75rem;
             width: 100%;
             position: sticky;
-            top: 4.55rem;
+            top: 3.85rem;
             z-index: 18;
             padding: 0.45rem 0 0.65rem;
             margin-bottom: 0.15rem;
@@ -1289,9 +1289,93 @@
         .card.brahim .card-value { color: #ffc857; }
         .card.solde .card-value { color: #c4b0ff; }
 
+        /* Bloc figé (toolbar / cartes / recherche) + en-têtes tableau — toutes fiches */
+        .panel-freeze {
+            position: sticky;
+            top: 3.85rem;
+            z-index: 19;
+            margin: -0.35rem 0 0.75rem;
+            padding: 0.35rem 0 0.7rem;
+            background:
+                linear-gradient(180deg, rgba(7, 17, 31, 0.995) 0%, rgba(7, 17, 31, 0.98) 85%, rgba(7, 17, 31, 0.92) 100%);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+        }
+
+        html[data-theme="light"] .panel-freeze {
+            background:
+                linear-gradient(180deg, rgba(244, 248, 255, 0.995) 0%, rgba(244, 248, 255, 0.98) 85%, rgba(244, 248, 255, 0.92) 100%);
+        }
+
+        .panel-freeze .section-toolbar {
+            margin-bottom: 0.55rem;
+            pointer-events: auto;
+        }
+
+        .panel-freeze .search-bar {
+            margin-bottom: 0;
+            pointer-events: auto;
+            user-select: auto;
+        }
+
+        .panel-freeze .paiement-cards {
+            margin-bottom: 0.65rem;
+            pointer-events: none;
+            user-select: none;
+        }
+
+        .panel-freeze .paiement-card {
+            min-height: 92px;
+            padding: 0.8rem 0.95rem 0.75rem;
+        }
+
+        .panel-freeze .paiement-card .card-value {
+            font-size: 1.4rem;
+        }
+
+        .table-wrap.table-freeze-body {
+            max-height: calc(100vh - 14.5rem);
+            overflow: auto;
+            -webkit-overflow-scrolling: touch;
+        }
+
+        .table-wrap.table-freeze-body .data-table thead th {
+            position: sticky;
+            top: 0;
+            z-index: 6;
+            background: rgba(14, 30, 54, 0.98);
+            box-shadow: 0 1px 0 rgba(110, 168, 255, 0.18);
+        }
+
+        html[data-theme="light"] .table-wrap.table-freeze-body .data-table thead th {
+            background: rgba(248, 251, 255, 0.98);
+            box-shadow: 0 1px 0 rgba(30, 90, 180, 0.14);
+        }
+
+        .balance-section .panel-freeze {
+            position: sticky;
+            top: 3.85rem;
+            z-index: 16;
+            margin: 0 0 0.75rem;
+            padding: 0 0 0.55rem;
+            background:
+                linear-gradient(180deg, rgba(16, 32, 54, 0.98) 0%, rgba(12, 26, 46, 0.96) 100%);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+        }
+
+        html[data-theme="light"] .balance-section .panel-freeze {
+            background:
+                linear-gradient(180deg, rgba(255, 255, 255, 0.98) 0%, rgba(243, 247, 253, 0.96) 100%);
+        }
+
+        .balance-section .table-wrap.table-freeze-body {
+            max-height: min(52vh, 420px);
+        }
+
         .paiement-sticky-lock {
             position: sticky;
-            top: 4.55rem;
+            top: 3.85rem;
             z-index: 19;
             margin: 0 0 1.15rem;
             padding: 0.65rem 0 0.85rem;
@@ -1785,17 +1869,29 @@
 
             .cards {
                 grid-template-columns: repeat(2, 1fr);
-                position: static;
-                top: auto;
+                position: sticky;
+                top: 3.6rem;
             }
 
             .paiement-cards {
                 grid-template-columns: 1fr;
             }
 
+            .panel-freeze {
+                top: 3.6rem;
+            }
+
+            .table-wrap.table-freeze-body {
+                max-height: calc(100vh - 16rem);
+            }
+
+            #panel-fiche-paiement .table-wrap.table-freeze-body {
+                max-height: calc(100vh - 22rem);
+            }
+
             .paiement-sticky-lock {
-                position: static;
-                top: auto;
+                position: sticky;
+                top: 3.6rem;
                 margin-bottom: 1rem;
             }
 
@@ -2076,51 +2172,53 @@
                     </section>
 
                     <section class="balance-section" aria-label="Balance projets">
-                        <div class="balance-head">
-                            <h2>Balance Projets</h2>
-                            <p>Suivi budgétaire des projets : avance, trésorerie et solde</p>
+                        <div class="panel-freeze">
+                            <div class="balance-head">
+                                <h2>Balance Projets</h2>
+                                <p>Suivi budgétaire des projets : avance, trésorerie et solde</p>
+                            </div>
+
+                            <div class="search-bar balance-search" aria-label="Recherche balance projets" style="grid-template-columns: repeat(2, minmax(0, 1fr));">
+                                <div class="search-field">
+                                    <label for="filter_balance_client">Client</label>
+                                    <select id="filter_balance_client">
+                                        <option value="">TOUS LES CLIENTS</option>
+                                        @php
+                                            $clientsBalanceFilter = collect($clients ?? [])
+                                                ->pluck('nom')
+                                                ->merge(collect($projets ?? [])->pluck('client'))
+                                                ->filter()
+                                                ->unique()
+                                                ->sort()
+                                                ->values();
+                                        @endphp
+                                        @foreach ($clientsBalanceFilter as $clientNom)
+                                            <option value="{{ mb_strtolower($clientNom) }}">{{ $clientNom }}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                                <div class="search-field">
+                                    <label for="filter_balance_tresorerie">Trésorerie</label>
+                                    <select id="filter_balance_tresorerie">
+                                        <option value="">TOUTES LES TRÉSORERIES</option>
+                                        @php
+                                            $tresoreriesBalanceFilter = collect($projets ?? [])
+                                                ->pluck('tresorerie')
+                                                ->merge(collect($paiements ?? [])->pluck('tresorerie'))
+                                                ->filter()
+                                                ->unique()
+                                                ->sort()
+                                                ->values();
+                                        @endphp
+                                        @foreach ($tresoreriesBalanceFilter as $tresorerie)
+                                            <option value="{{ mb_strtolower($tresorerie) }}">{{ $tresorerie }}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                            </div>
                         </div>
 
-                        <div class="search-bar balance-search" aria-label="Recherche balance projets" style="grid-template-columns: repeat(2, minmax(0, 1fr));">
-                            <div class="search-field">
-                                <label for="filter_balance_client">Client</label>
-                                <select id="filter_balance_client">
-                                    <option value="">TOUS LES CLIENTS</option>
-                                    @php
-                                        $clientsBalanceFilter = collect($clients ?? [])
-                                            ->pluck('nom')
-                                            ->merge(collect($projets ?? [])->pluck('client'))
-                                            ->filter()
-                                            ->unique()
-                                            ->sort()
-                                            ->values();
-                                    @endphp
-                                    @foreach ($clientsBalanceFilter as $clientNom)
-                                        <option value="{{ mb_strtolower($clientNom) }}">{{ $clientNom }}</option>
-                                    @endforeach
-                                </select>
-                            </div>
-                            <div class="search-field">
-                                <label for="filter_balance_tresorerie">Trésorerie</label>
-                                <select id="filter_balance_tresorerie">
-                                    <option value="">TOUTES LES TRÉSORERIES</option>
-                                    @php
-                                        $tresoreriesBalanceFilter = collect($projets ?? [])
-                                            ->pluck('tresorerie')
-                                            ->merge(collect($paiements ?? [])->pluck('tresorerie'))
-                                            ->filter()
-                                            ->unique()
-                                            ->sort()
-                                            ->values();
-                                    @endphp
-                                    @foreach ($tresoreriesBalanceFilter as $tresorerie)
-                                        <option value="{{ mb_strtolower($tresorerie) }}">{{ $tresorerie }}</option>
-                                    @endforeach
-                                </select>
-                            </div>
-                        </div>
-
-                        <div class="table-wrap">
+                        <div class="table-wrap table-freeze-body">
                             <table class="data-table">
                                 <thead>
                                     <tr>
@@ -2183,17 +2281,19 @@
                 </section>
 
                 <section class="panel" id="panel-fiche-client">
-                    <div class="section-toolbar">
-                        <div class="content-head" style="margin-bottom:0;">
-                            <h1>Fiche Client</h1>
+                    <div class="panel-freeze">
+                        <div class="section-toolbar">
+                            <div class="content-head" style="margin-bottom:0;">
+                                <h1>Fiche Client</h1>
+                            </div>
+                            <button type="button" class="btn-add" id="btnAddClient">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>
+                                Ajouter
+                            </button>
                         </div>
-                        <button type="button" class="btn-add" id="btnAddClient">
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>
-                            Ajouter
-                        </button>
                     </div>
 
-                    <div class="table-wrap">
+                    <div class="table-wrap table-freeze-body">
                         <table class="data-table">
                             <thead>
                                 <tr>
@@ -2249,17 +2349,18 @@
                 </section>
 
                 <section class="panel" id="panel-fiche-projet">
-                    <div class="section-toolbar">
-                        <div class="content-head" style="margin-bottom:0;">
-                            <h1>Fiche Projet</h1>
+                    <div class="panel-freeze">
+                        <div class="section-toolbar">
+                            <div class="content-head" style="margin-bottom:0;">
+                                <h1>Fiche Projet</h1>
+                            </div>
+                            <button type="button" class="btn-add" id="btnAddProjet">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>
+                                Nouveau Projet
+                            </button>
                         </div>
-                        <button type="button" class="btn-add" id="btnAddProjet">
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>
-                            Nouveau Projet
-                        </button>
-                    </div>
 
-                    <div class="search-bar" aria-label="Recherche projets" style="grid-template-columns: repeat(3, minmax(0, 1fr));">
+                        <div class="search-bar" aria-label="Recherche projets" style="grid-template-columns: repeat(3, minmax(0, 1fr));">
                         <div class="search-field">
                             <label for="filter_projet_mois">Mois</label>
                             <select id="filter_projet_mois">
@@ -2309,8 +2410,9 @@
                             </select>
                         </div>
                     </div>
+                    </div>
 
-                    <div class="table-wrap">
+                    <div class="table-wrap table-freeze-body">
                         <table class="data-table">
                             <thead>
                                 <tr>
@@ -2400,20 +2502,21 @@
                 </section>
 
                 <section class="panel" id="panel-fiche-evolution">
-                    <div class="section-toolbar">
-                        <div class="content-head" style="margin-bottom:0;">
-                            <h1>Evolution Travaux</h1>
+                    <div class="panel-freeze">
+                        <div class="section-toolbar">
+                            <div class="content-head" style="margin-bottom:0;">
+                                <h1>Evolution Travaux</h1>
+                            </div>
+                            <div class="toolbar-actions">
+                                <button type="button" class="btn-add" id="btnAddEvolution">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>
+                                    Ajouter
+                                </button>
+                                <button type="button" class="btn-ghost" id="btnCloseEvolution">Fermer</button>
+                            </div>
                         </div>
-                        <div class="toolbar-actions">
-                            <button type="button" class="btn-add" id="btnAddEvolution">
-                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>
-                                Ajouter
-                            </button>
-                            <button type="button" class="btn-ghost" id="btnCloseEvolution">Fermer</button>
-                        </div>
-                    </div>
 
-                    <div class="search-bar" aria-label="Recherche évolutions" style="grid-template-columns: repeat(2, minmax(0, 1fr));">
+                        <div class="search-bar" aria-label="Recherche évolutions" style="grid-template-columns: repeat(2, minmax(0, 1fr));">
                         <div class="search-field">
                             <label for="filter_evolution_mois">Mois</label>
                             <select id="filter_evolution_mois">
@@ -2453,8 +2556,9 @@
                             </select>
                         </div>
                     </div>
+                    </div>
 
-                    <div class="table-wrap">
+                    <div class="table-wrap table-freeze-body">
                         <table class="data-table">
                             <thead>
                                 <tr>
@@ -2527,113 +2631,113 @@
                 </section>
 
                 <section class="panel" id="panel-fiche-paiement">
-                    <div class="section-toolbar">
-                        <div class="content-head" style="margin-bottom:0;">
-                            <h1>Fiche Paiement</h1>
+                    <div class="panel-freeze">
+                        <div class="section-toolbar">
+                            <div class="content-head" style="margin-bottom:0;">
+                                <h1>Fiche Paiement</h1>
+                            </div>
+                            <button type="button" class="btn-add" id="btnAddPaiement">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>
+                                Nouveau Paiement
+                            </button>
                         </div>
-                        <button type="button" class="btn-add" id="btnAddPaiement">
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>
-                            Nouveau Paiement
-                        </button>
+
+                        <section class="paiement-cards" aria-label="Totaux paiements">
+                            <article class="paiement-card budget">
+                                <div class="card-top">
+                                    <span class="card-label">Total des Budgets</span>
+                                    <div class="card-icon" aria-hidden="true">
+                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/><path d="M12 12v4"/><path d="M10 14h4"/></svg>
+                                    </div>
+                                </div>
+                                <div class="card-value">{{ number_format($paiementTotalBudgets ?? 0, 2, '.', ' ') }}</div>
+                            </article>
+
+                            <article class="paiement-card paye">
+                                <div class="card-top">
+                                    <span class="card-label">Total Montant Payés</span>
+                                    <div class="card-icon" aria-hidden="true">
+                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v20"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+                                    </div>
+                                </div>
+                                <div class="card-value">{{ number_format($paiementTotalMontants ?? 0, 2, '.', ' ') }}</div>
+                            </article>
+
+                            <article class="paiement-card soldes">
+                                <div class="card-top">
+                                    <span class="card-label">Total Soldes</span>
+                                    <div class="card-icon" aria-hidden="true">
+                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><path d="M7 14l4-4 4 3 5-6"/></svg>
+                                    </div>
+                                </div>
+                                <div class="card-value">{{ number_format($paiementTotalSoldes ?? 0, 2, '.', ' ') }}</div>
+                            </article>
+                        </section>
+
+                        <div class="search-bar" aria-label="Recherche paiements">
+                            <div class="search-field">
+                                <label for="filter_paiement_mois">Mois</label>
+                                <select id="filter_paiement_mois">
+                                    <option value="">TOUS LES MOIS</option>
+                                    @php
+                                        $moisPaiements = collect($paiements ?? [])
+                                            ->map(function ($p) {
+                                                $parts = explode('/', $p['date'] ?? '');
+                                                return count($parts) >= 3 ? $parts[1].'/'.$parts[2] : null;
+                                            })
+                                            ->filter()
+                                            ->unique()
+                                            ->sort()
+                                            ->values();
+                                    @endphp
+                                    @foreach ($moisPaiements as $mois)
+                                        <option value="{{ $mois }}">{{ $mois }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+                            <div class="search-field">
+                                <label for="filter_paiement_client">Nom Client</label>
+                                <select id="filter_paiement_client">
+                                    <option value="">TOUS LES CLIENTS</option>
+                                    @php
+                                        $clientsFilter = collect($clients ?? [])
+                                            ->pluck('nom')
+                                            ->merge(collect($paiements ?? [])->pluck('client'))
+                                            ->filter()
+                                            ->unique()
+                                            ->sort()
+                                            ->values();
+                                    @endphp
+                                    @foreach ($clientsFilter as $clientNom)
+                                        <option value="{{ mb_strtolower($clientNom) }}">{{ $clientNom }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+                            <div class="search-field">
+                                <label for="filter_paiement_budget">Budget</label>
+                                <input type="text" id="filter_paiement_budget" placeholder="Rechercher un budget">
+                            </div>
+                            <div class="search-field">
+                                <label for="filter_paiement_tresorerie">Trésorerie</label>
+                                <select id="filter_paiement_tresorerie">
+                                    <option value="">TOUTES LES TRÉSORERIES</option>
+                                    @php
+                                        $tresoreriesFilter = collect($paiements ?? [])
+                                            ->pluck('tresorerie')
+                                            ->filter()
+                                            ->unique()
+                                            ->sort()
+                                            ->values();
+                                    @endphp
+                                    @foreach ($tresoreriesFilter as $tresorerie)
+                                        <option value="{{ mb_strtolower($tresorerie) }}">{{ $tresorerie }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+                        </div>
                     </div>
 
-                    <div class="paiement-sticky-lock" aria-hidden="false">
-                    <section class="paiement-cards" aria-label="Totaux paiements">
-                        <article class="paiement-card budget">
-                            <div class="card-top">
-                                <span class="card-label">Total des Budgets</span>
-                                <div class="card-icon" aria-hidden="true">
-                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/><path d="M12 12v4"/><path d="M10 14h4"/></svg>
-                                </div>
-                            </div>
-                            <div class="card-value">{{ number_format($paiementTotalBudgets ?? 0, 2, '.', ' ') }}</div>
-                        </article>
-
-                        <article class="paiement-card paye">
-                            <div class="card-top">
-                                <span class="card-label">Total Montant Payés</span>
-                                <div class="card-icon" aria-hidden="true">
-                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v20"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
-                                </div>
-                            </div>
-                            <div class="card-value">{{ number_format($paiementTotalMontants ?? 0, 2, '.', ' ') }}</div>
-                        </article>
-
-                        <article class="paiement-card soldes">
-                            <div class="card-top">
-                                <span class="card-label">Total Soldes</span>
-                                <div class="card-icon" aria-hidden="true">
-                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><path d="M7 14l4-4 4 3 5-6"/></svg>
-                                </div>
-                            </div>
-                            <div class="card-value">{{ number_format($paiementTotalSoldes ?? 0, 2, '.', ' ') }}</div>
-                        </article>
-                    </section>
-                    </div>
-
-                    <div class="search-bar" aria-label="Recherche paiements">
-                        <div class="search-field">
-                            <label for="filter_paiement_mois">Mois</label>
-                            <select id="filter_paiement_mois">
-                                <option value="">TOUS LES MOIS</option>
-                                @php
-                                    $moisPaiements = collect($paiements ?? [])
-                                        ->map(function ($p) {
-                                            $parts = explode('/', $p['date'] ?? '');
-                                            return count($parts) >= 3 ? $parts[1].'/'.$parts[2] : null;
-                                        })
-                                        ->filter()
-                                        ->unique()
-                                        ->sort()
-                                        ->values();
-                                @endphp
-                                @foreach ($moisPaiements as $mois)
-                                    <option value="{{ $mois }}">{{ $mois }}</option>
-                                @endforeach
-                            </select>
-                        </div>
-                        <div class="search-field">
-                            <label for="filter_paiement_client">Nom Client</label>
-                            <select id="filter_paiement_client">
-                                <option value="">TOUS LES CLIENTS</option>
-                                @php
-                                    $clientsFilter = collect($clients ?? [])
-                                        ->pluck('nom')
-                                        ->merge(collect($paiements ?? [])->pluck('client'))
-                                        ->filter()
-                                        ->unique()
-                                        ->sort()
-                                        ->values();
-                                @endphp
-                                @foreach ($clientsFilter as $clientNom)
-                                    <option value="{{ mb_strtolower($clientNom) }}">{{ $clientNom }}</option>
-                                @endforeach
-                            </select>
-                        </div>
-                        <div class="search-field">
-                            <label for="filter_paiement_budget">Budget</label>
-                            <input type="text" id="filter_paiement_budget" placeholder="Rechercher un budget">
-                        </div>
-                        <div class="search-field">
-                            <label for="filter_paiement_tresorerie">Trésorerie</label>
-                            <select id="filter_paiement_tresorerie">
-                                <option value="">TOUTES LES TRÉSORERIES</option>
-                                @php
-                                    $tresoreriesFilter = collect($paiements ?? [])
-                                        ->pluck('tresorerie')
-                                        ->filter()
-                                        ->unique()
-                                        ->sort()
-                                        ->values();
-                                @endphp
-                                @foreach ($tresoreriesFilter as $tresorerie)
-                                    <option value="{{ mb_strtolower($tresorerie) }}">{{ $tresorerie }}</option>
-                                @endforeach
-                            </select>
-                        </div>
-                    </div>
-
-                    <div class="table-wrap">
+                    <div class="table-wrap table-freeze-body">
                         <table class="data-table">
                             <thead>
                                 <tr>
@@ -2702,20 +2806,22 @@
                 </section>
 
                 <section class="panel" id="panel-fiche-utilisateur">
-                    <div class="section-toolbar">
-                        <div class="content-head" style="margin-bottom:0;">
-                            <h1>Utilisateur</h1>
-                        </div>
-                        <div class="toolbar-actions">
-                            <button type="button" class="btn-add" id="btnAddUtilisateur">
-                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>
-                                Ajouter
-                            </button>
-                            <button type="button" class="btn-ghost" id="btnCloseUtilisateur">Fermer</button>
+                    <div class="panel-freeze">
+                        <div class="section-toolbar">
+                            <div class="content-head" style="margin-bottom:0;">
+                                <h1>Utilisateur</h1>
+                            </div>
+                            <div class="toolbar-actions">
+                                <button type="button" class="btn-add" id="btnAddUtilisateur">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>
+                                    Ajouter
+                                </button>
+                                <button type="button" class="btn-ghost" id="btnCloseUtilisateur">Fermer</button>
+                            </div>
                         </div>
                     </div>
 
-                    <div class="table-wrap">
+                    <div class="table-wrap table-freeze-body">
                         <table class="data-table">
                             <thead>
                                 <tr>
