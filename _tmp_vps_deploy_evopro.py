@@ -38,8 +38,9 @@ EXCLUDE_FILES = {
     ".env.production",
     "_tmp_vps_deploy_evopro.py",
     "deploy-evopro.bat",
+    "evopro_data.json",
 }
-EXCLUDE_PREFIXES = ("_tmp_vps_",)
+EXCLUDE_PREFIXES = ("_tmp_vps_", "_tmp_")
 
 
 def should_exclude(path: Path, root: Path) -> bool:
@@ -51,6 +52,9 @@ def should_exclude(path: Path, root: Path) -> bool:
     if path.name in EXCLUDE_FILES:
         return True
     if any(path.name.startswith(p) for p in EXCLUDE_PREFIXES):
+        return True
+    # Never ship local app data over production data.
+    if rel_posix == "storage/app/evopro_data.json" or rel_posix.endswith("/evopro_data.json"):
         return True
     return False
 
@@ -147,6 +151,11 @@ def main() -> None:
         has_env = "HAS_ENV" in probe
 
         run(client, f"cp {APP}/.env /tmp/evopro_env_backup 2>/dev/null || true", check=False)
+        run(
+            client,
+            f"cp {APP}/storage/app/evopro_data.json /tmp/evopro_data_backup 2>/dev/null || true",
+            check=False,
+        )
         run(client, f"cd {APP} && tar -xzf {remote_tar}")
         run(client, f"rm -f {remote_tar}")
 
@@ -154,6 +163,14 @@ def main() -> None:
             run(client, f"cp /tmp/evopro_env_backup {APP}/.env", check=False)
         else:
             write_production_env(client)
+
+        run(
+            client,
+            f"mkdir -p {APP}/storage/app && "
+            f"test -f /tmp/evopro_data_backup && "
+            f"cp /tmp/evopro_data_backup {APP}/storage/app/evopro_data.json || true",
+            check=False,
+        )
 
         run(
             client,

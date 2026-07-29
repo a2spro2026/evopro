@@ -79,20 +79,18 @@ class AppStore
     }
 
     /**
-     * Import session-backed data once if the shared store is still empty.
+     * Import session-backed data for any empty store keys.
      */
     public static function hydrateFromSessionIfEmpty(): void
     {
         $data = self::all();
-        $isEmpty = collect(self::KEYS)->every(fn ($key) => empty($data[$key]));
-
-        if (! $isEmpty) {
-            return;
-        }
-
         $imported = false;
 
         foreach (self::KEYS as $key) {
+            if (! empty($data[$key])) {
+                continue;
+            }
+
             $fromSession = session($key, []);
             if (is_array($fromSession) && $fromSession !== []) {
                 $data[$key] = array_values($fromSession);
