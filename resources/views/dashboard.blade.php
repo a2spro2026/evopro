@@ -2869,8 +2869,15 @@
                 <input type="hidden" name="_method" id="projet_http_method" value="POST" disabled>
                 <div class="modal-body">
                     <div class="field">
-                        <label for="projet_date">Date</label>
-                        <input type="text" id="projet_date" name="date" required placeholder="JJ/MM/AAAA">
+                        <label for="projet_date_jj">Date</label>
+                        <div class="date-parts" role="group" aria-label="Date JJ/MM/AAAA">
+                            <input type="text" id="projet_date_jj" class="date-jj" inputmode="numeric" maxlength="2" pattern="\d{2}" placeholder="JJ" autocomplete="off" required>
+                            <span class="date-sep">/</span>
+                            <input type="text" id="projet_date_mm" class="date-mm" inputmode="numeric" maxlength="2" pattern="\d{2}" placeholder="MM" autocomplete="off" required>
+                            <span class="date-sep">/</span>
+                            <input type="text" id="projet_date_aaaa" class="date-aaaa" inputmode="numeric" maxlength="4" pattern="\d{4}" placeholder="AAAA" autocomplete="off" required>
+                        </div>
+                        <input type="hidden" id="projet_date" name="date" required>
                     </div>
                     <div class="field">
                         <label for="projet_ref">Réf</label>
@@ -2944,8 +2951,15 @@
                 <input type="hidden" name="_method" id="client_http_method" value="POST" disabled>
                 <div class="modal-body">
                     <div class="field">
-                        <label for="client_date">Date</label>
-                        <input type="text" id="client_date" name="date" required placeholder="JJ/MM/AAAA">
+                        <label for="client_date_jj">Date</label>
+                        <div class="date-parts" role="group" aria-label="Date JJ/MM/AAAA">
+                            <input type="text" id="client_date_jj" class="date-jj" inputmode="numeric" maxlength="2" pattern="\d{2}" placeholder="JJ" autocomplete="off" required>
+                            <span class="date-sep">/</span>
+                            <input type="text" id="client_date_mm" class="date-mm" inputmode="numeric" maxlength="2" pattern="\d{2}" placeholder="MM" autocomplete="off" required>
+                            <span class="date-sep">/</span>
+                            <input type="text" id="client_date_aaaa" class="date-aaaa" inputmode="numeric" maxlength="4" pattern="\d{4}" placeholder="AAAA" autocomplete="off" required>
+                        </div>
+                        <input type="hidden" id="client_date" name="date" required>
                     </div>
                     <div class="field">
                         <label for="client_ref">Réf</label>
@@ -3271,6 +3285,81 @@
             return d.toLocaleDateString('fr-FR');
         }
 
+        function setupDateParts(prefix) {
+            const jj = document.getElementById(`${prefix}_date_jj`);
+            const mm = document.getElementById(`${prefix}_date_mm`);
+            const aaaa = document.getElementById(`${prefix}_date_aaaa`);
+            const hidden = document.getElementById(`${prefix}_date`);
+
+            function sync() {
+                const day = (jj?.value || '').trim();
+                const month = (mm?.value || '').trim();
+                const year = (aaaa?.value || '').trim();
+                if (hidden) {
+                    hidden.value = (day.length === 2 && month.length === 2 && year.length === 4)
+                        ? `${day}/${month}/${year}`
+                        : '';
+                }
+            }
+
+            function setParts(dateStr, { emptyDayMonth = false } = {}) {
+                const year = String(new Date().getFullYear());
+                if (emptyDayMonth) {
+                    if (jj) jj.value = '';
+                    if (mm) mm.value = '';
+                    if (aaaa) aaaa.value = year;
+                    sync();
+                    return;
+                }
+
+                const parts = String(dateStr || '').split('/');
+                if (jj) jj.value = (parts[0] || '').replace(/\D/g, '').slice(0, 2);
+                if (mm) mm.value = (parts[1] || '').replace(/\D/g, '').slice(0, 2);
+                if (aaaa) aaaa.value = (parts[2] || '').replace(/\D/g, '').slice(0, 4);
+                sync();
+            }
+
+            function bindPart(input, maxLen, nextInput) {
+                if (!input) return;
+                input.addEventListener('input', () => {
+                    input.value = input.value.replace(/\D/g, '').slice(0, maxLen);
+                    sync();
+                    if (input.value.length === maxLen && nextInput) {
+                        nextInput.focus();
+                        nextInput.select();
+                    }
+                });
+                input.addEventListener('blur', sync);
+            }
+
+            bindPart(jj, 2, mm);
+            bindPart(mm, 2, aaaa);
+            bindPart(aaaa, 4, null);
+
+            return { sync, setParts, jj, mm, aaaa, fieldIds: [`${prefix}_date_jj`, `${prefix}_date_mm`, `${prefix}_date_aaaa`] };
+        }
+
+        function validateDatePartsSubmit(form, dateApi, label) {
+            form?.addEventListener('submit', (e) => {
+                dateApi.sync();
+                const day = (dateApi.jj?.value || '').trim();
+                const month = (dateApi.mm?.value || '').trim();
+                const year = (dateApi.aaaa?.value || '').trim();
+                if (!/^\d{2}$/.test(day) || !/^\d{2}$/.test(month) || !/^\d{4}$/.test(year)) {
+                    e.preventDefault();
+                    alert(`${label} invalide : JJ (2 chiffres) / MM (2 chiffres) / AAAA (4 chiffres).`);
+                    dateApi.jj?.focus();
+                }
+            });
+        }
+
+        const clientDateApi = setupDateParts('client');
+        const projetDateApi = setupDateParts('projet');
+        const paiementDateApi = setupDateParts('paiement');
+        validateDatePartsSubmit(document.getElementById('clientForm'), clientDateApi, 'Date');
+        validateDatePartsSubmit(document.getElementById('projetForm'), projetDateApi, 'Date');
+        validateDatePartsSubmit(document.getElementById('paiementForm'), paiementDateApi, 'Date');
+
         function nextRef() {
             const rows = document.querySelectorAll('#clientsTableBody tr[data-id]');
             const n = rows.length + 1;
@@ -3289,7 +3378,7 @@
             clientModalTitle.textContent = 'Ajouter un client';
             clientSubmitBtn.style.display = '';
 
-            document.getElementById('client_date').value = todayFr();
+            clientDateApi.setParts('', { emptyDayMonth: true });
             document.getElementById('client_ref').value = nextRef();
             document.getElementById('client_nom').value = '';
             document.getElementById('client_ville').value = '';
@@ -3300,10 +3389,10 @@
 
             modal.classList.add('open');
             modal.setAttribute('aria-hidden', 'false');
-            document.getElementById('client_nom').focus();
+            clientDateApi.jj?.focus();
         }
 
-        const clientFieldIds = ['client_date', 'client_nom', 'client_ville', 'client_contact', 'client_activite'];
+        const clientFieldIds = [...clientDateApi.fieldIds, 'client_nom', 'client_ville', 'client_contact', 'client_activite'];
 
         function setClientFormFields(mode) {
             clientFieldIds.forEach((id) => {
@@ -3313,7 +3402,7 @@
         }
 
         function fillClientForm(client) {
-            document.getElementById('client_date').value = client.date || '';
+            clientDateApi.setParts(client.date || '');
             document.getElementById('client_ref').value = client.ref || '';
             document.getElementById('client_nom').value = client.nom || '';
             document.getElementById('client_ville').value = client.ville || '';
@@ -3626,7 +3715,7 @@
         let projetFormMode = 'create';
 
         const projetFieldIds = [
-            'projet_date',
+            ...projetDateApi.fieldIds,
             'projet_nom',
             'projet_designation',
             'projet_client',
@@ -3656,7 +3745,7 @@
         }
 
         function fillProjetForm(projet) {
-            document.getElementById('projet_date').value = projet.date || '';
+            projetDateApi.setParts(projet.date || '');
             document.getElementById('projet_ref').value = projet.ref || '';
             document.getElementById('projet_nom').value = projet.nom || '';
             document.getElementById('projet_designation').value = projet.designation || '';
@@ -3686,7 +3775,7 @@
             projetAvanceLabel.textContent = 'Avance';
             projetAvanceInput.name = 'avance';
 
-            document.getElementById('projet_date').value = todayFr();
+            projetDateApi.setParts('', { emptyDayMonth: true });
             document.getElementById('projet_ref').value = nextProjetRef();
             document.getElementById('projet_nom').value = '';
             document.getElementById('projet_designation').value = '';
@@ -3702,7 +3791,7 @@
 
             projetModal.classList.add('open');
             projetModal.setAttribute('aria-hidden', 'false');
-            document.getElementById('projet_nom').focus();
+            projetDateApi.jj?.focus();
         }
 
         function openProjetView(projet) {
@@ -3864,60 +3953,8 @@
         let paiementFormMode = 'create';
         let paiementEditIncrement = 0;
 
-        const paiementDateJj = document.getElementById('paiement_date_jj');
-        const paiementDateMm = document.getElementById('paiement_date_mm');
-        const paiementDateAaaa = document.getElementById('paiement_date_aaaa');
-        const paiementDateHidden = document.getElementById('paiement_date');
-
-        function syncPaiementDate() {
-            const jj = (paiementDateJj?.value || '').trim();
-            const mm = (paiementDateMm?.value || '').trim();
-            const aaaa = (paiementDateAaaa?.value || '').trim();
-            if (paiementDateHidden) {
-                paiementDateHidden.value = (jj.length === 2 && mm.length === 2 && aaaa.length === 4)
-                    ? `${jj}/${mm}/${aaaa}`
-                    : '';
-            }
-        }
-
-        function setPaiementDateParts(dateStr, { emptyDayMonth = false } = {}) {
-            const year = String(new Date().getFullYear());
-            if (emptyDayMonth) {
-                if (paiementDateJj) paiementDateJj.value = '';
-                if (paiementDateMm) paiementDateMm.value = '';
-                if (paiementDateAaaa) paiementDateAaaa.value = year;
-                syncPaiementDate();
-                return;
-            }
-
-            const parts = String(dateStr || '').split('/');
-            if (paiementDateJj) paiementDateJj.value = (parts[0] || '').replace(/\D/g, '').slice(0, 2);
-            if (paiementDateMm) paiementDateMm.value = (parts[1] || '').replace(/\D/g, '').slice(0, 2);
-            if (paiementDateAaaa) paiementDateAaaa.value = (parts[2] || '').replace(/\D/g, '').slice(0, 4);
-            syncPaiementDate();
-        }
-
-        function bindPaiementDatePart(input, maxLen, nextInput) {
-            if (!input) return;
-            input.addEventListener('input', () => {
-                input.value = input.value.replace(/\D/g, '').slice(0, maxLen);
-                syncPaiementDate();
-                if (input.value.length === maxLen && nextInput) {
-                    nextInput.focus();
-                    nextInput.select();
-                }
-            });
-            input.addEventListener('blur', syncPaiementDate);
-        }
-
-        bindPaiementDatePart(paiementDateJj, 2, paiementDateMm);
-        bindPaiementDatePart(paiementDateMm, 2, paiementDateAaaa);
-        bindPaiementDatePart(paiementDateAaaa, 4, null);
-
         const paiementFieldIds = [
-            'paiement_date_jj',
-            'paiement_date_mm',
-            'paiement_date_aaaa',
+            ...paiementDateApi.fieldIds,
             'paiement_client',
             'paiement_montant_paye',
             'paiement_type_reg',
@@ -3945,7 +3982,7 @@
         }
 
         function fillPaiementForm(paiement) {
-            setPaiementDateParts(paiement.date || '');
+            paiementDateApi.setParts(paiement.date || '');
             document.getElementById('paiement_ref').value = paiement.ref || '';
 
             const clientSelect = document.getElementById('paiement_client');
@@ -3987,7 +4024,7 @@
             paiementModalTitle.textContent = 'Nouveau Paiement';
             paiementSubmitBtn.style.display = '';
 
-            setPaiementDateParts('', { emptyDayMonth: true });
+            paiementDateApi.setParts('', { emptyDayMonth: true });
             document.getElementById('paiement_ref').value = nextPaiementRef();
             document.getElementById('paiement_client').selectedIndex = 0;
             document.getElementById('paiement_titre_display').value = '';
@@ -4006,7 +4043,7 @@
 
             paiementModal.classList.add('open');
             paiementModal.setAttribute('aria-hidden', 'false');
-            paiementDateJj?.focus();
+            paiementDateApi.jj?.focus();
         }
 
         function openPaiementView(paiement) {
@@ -4072,18 +4109,6 @@
         cancelPaiementModal?.addEventListener('click', closePaiementModalFn);
         paiementModal?.addEventListener('click', (e) => {
             if (e.target === paiementModal) closePaiementModalFn();
-        });
-
-        paiementForm?.addEventListener('submit', (e) => {
-            syncPaiementDate();
-            const jj = (paiementDateJj?.value || '').trim();
-            const mm = (paiementDateMm?.value || '').trim();
-            const aaaa = (paiementDateAaaa?.value || '').trim();
-            if (!/^\d{2}$/.test(jj) || !/^\d{2}$/.test(mm) || !/^\d{4}$/.test(aaaa)) {
-                e.preventDefault();
-                alert('Date invalide : JJ (2 chiffres) / MM (2 chiffres) / AAAA (4 chiffres).');
-                paiementDateJj?.focus();
-            }
         });
 
         document.getElementById('paiement_client')?.addEventListener('change', applyPaiementClient);

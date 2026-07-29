@@ -4,11 +4,28 @@ use App\Support\AppStore;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
+$requireAuth = function () {
+    if (! session()->has('auth_user')) {
+        return redirect('/')
+            ->withErrors(['login' => 'Veuillez vous connecter avec un utilisateur enregistré.']);
+    }
+
+    return null;
+};
+
 Route::get('/', function () {
+    if (session()->has('auth_user')) {
+        return redirect()->route('dashboard');
+    }
+
     return view('welcome');
 });
 
-Route::get('/dashboard', function () {
+Route::get('/dashboard', function () use ($requireAuth) {
+    if ($redirect = $requireAuth()) {
+        return $redirect;
+    }
+
     AppStore::hydrateFromSessionIfEmpty();
 
     $clients = AppStore::get('clients');
@@ -99,31 +116,73 @@ Route::get('/dashboard', function () {
 })->name('dashboard');
 
 $handleConnexion = function (Request $request) {
-    $request->validate([
-        'statue' => ['required', 'string'],
+    $data = $request->validate([
+        'statue' => ['required', 'string', 'in:admin,manager,comptable,vendeur,stock'],
         'login' => ['required', 'string'],
         'password' => ['required', 'string'],
     ]);
 
-    return redirect()
-        ->route('dashboard')
-        ->with('login', $request->input('login'))
-        ->with('statue', $request->input('statue'));
+    $statue = $data['statue'];
+    $login = trim($data['login']);
+    $password = $data['password'];
+    $utilisateurs = AppStore::get('utilisateurs');
+
+    // Premier accès : crée le premier utilisateur avec les identifiants saisis.
+    if ($utilisateurs === []) {
+        $utilisateurs[] = [
+            'id' => uniqid('usr_', true),
+            'date' => now()->format('d/m/Y'),
+            'nom_complet' => $login,
+            'statue' => $statue,
+            'login' => $login,
+            'password' => $password,
+        ];
+        AppStore::put('utilisateurs', $utilisateurs);
+    }
+
+    $user = collect($utilisateurs)->first(function ($u) use ($statue, $login, $password) {
+        return ($u['statue'] ?? '') === $statue
+            && mb_strtolower(trim((string) ($u['login'] ?? ''))) === mb_strtolower($login)
+            && (string) ($u['password'] ?? '') === (string) $password;
+    });
+
+    if (! $user) {
+        return back()
+            ->withErrors(['login' => 'Statue, login ou mot de passe incorrect.'])
+            ->withInput($request->only('statue', 'login'));
+    }
+
+    $request->session()->regenerate();
+    session([
+        'auth_user' => [
+            'id' => $user['id'] ?? '',
+            'login' => $user['login'] ?? $login,
+            'statue' => $user['statue'] ?? $statue,
+            'nom_complet' => $user['nom_complet'] ?? '',
+        ],
+        'login' => $user['login'] ?? $login,
+        'statue' => $user['statue'] ?? $statue,
+    ]);
+
+    return redirect()->route('dashboard');
 };
 
 Route::post('/connexion', $handleConnexion)->name('connexion');
 Route::post('/', $handleConnexion);
 
 Route::post('/deconnexion', function () {
-    session()->forget(['login', 'statue']);
-    session()->regenerate();
+    session()->forget(['login', 'statue', 'auth_user']);
+    session()->invalidate();
+    session()->regenerateToken();
 
     return redirect('/');
 })->name('logout');
 
+Route::middleware('auth.user')->group(function () {
+
 Route::post('/clients', function (Request $request) {
     $data = $request->validate([
-        'date' => ['required', 'string'],
+        'date' => ['required', 'string', 'regex:/^\d{2}\/\d{2}\/\d{4}$/'],
         'ref' => ['required', 'string'],
         'nom' => ['required', 'string', 'max:255'],
         'ville' => ['required', 'string', 'max:255'],
@@ -152,7 +211,7 @@ Route::post('/clients', function (Request $request) {
 
 Route::put('/clients/{id}', function (Request $request, string $id) {
     $data = $request->validate([
-        'date' => ['required', 'string'],
+        'date' => ['required', 'string', 'regex:/^\d{2}\/\d{2}\/\d{4}$/'],
         'nom' => ['required', 'string', 'max:255'],
         'ville' => ['required', 'string', 'max:255'],
         'contact' => ['required', 'string', 'max:255'],
@@ -294,7 +353,7 @@ Route::delete('/utilisateurs/{id}', function (string $id) {
 
 Route::post('/projets', function (Request $request) {
     $data = $request->validate([
-        'date' => ['required', 'string'],
+        'date' => ['required', 'string', 'regex:/^\d{2}\/\d{2}\/\d{4}$/'],
         'ref' => ['required', 'string'],
         'nom' => ['required', 'string', 'max:255'],
         'designation' => ['required', 'string', 'max:255'],
@@ -417,7 +476,7 @@ Route::delete('/evolutions/{id}', function (string $id) {
 
 Route::put('/projets/{id}', function (Request $request, string $id) {
     $data = $request->validate([
-        'date' => ['required', 'string'],
+        'date' => ['required', 'string', 'regex:/^\d{2}\/\d{2}\/\d{4}$/'],
         'nom' => ['required', 'string', 'max:255'],
         'designation' => ['required', 'string', 'max:255'],
         'client' => ['required', 'string', 'max:255'],
@@ -626,3 +685,5 @@ Route::delete('/paiements/{id}', function (string $id) {
         ->route('dashboard')
         ->with('open_fiche_paiement', true);
 })->name('paiements.destroy');
+
+});
