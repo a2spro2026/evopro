@@ -94,12 +94,99 @@ Route::get('/dashboard', function () use ($requireAuth) {
             ->sum(fn ($p) => (float) ($p['increment_paye'] ?? $p['montant_paye'] ?? 0));
     };
 
+    $menuSections = [
+        [
+            'key' => 'dashboard',
+            'label' => 'Tableau de Bord',
+            'items' => [
+                ['key' => 'dashboard', 'label' => 'Tableau de Bord'],
+            ],
+        ],
+        [
+            'key' => 'client',
+            'label' => 'Client',
+            'items' => [
+                ['key' => 'fiche-client', 'label' => 'Fiche Client'],
+                ['key' => 'fiche-relance', 'label' => 'Relance'],
+            ],
+        ],
+        [
+            'key' => 'projet',
+            'label' => 'Projets',
+            'items' => [
+                ['key' => 'fiche-projet', 'label' => 'Fiche Projet'],
+                ['key' => 'fiche-evolution', 'label' => 'Evolution Travaux'],
+            ],
+        ],
+        [
+            'key' => 'paiement',
+            'label' => 'Paiement',
+            'items' => [
+                ['key' => 'fiche-paiement', 'label' => 'Fiche Paiement'],
+            ],
+        ],
+        [
+            'key' => 'charges',
+            'label' => 'Charges',
+            'items' => [
+                ['key' => 'charges', 'label' => 'Charges'],
+            ],
+        ],
+        [
+            'key' => 'suivie',
+            'label' => 'Suivie Monétaire',
+            'items' => [
+                ['key' => 'suivie', 'label' => 'Suivie Monétaire'],
+            ],
+        ],
+        [
+            'key' => 'rapports',
+            'label' => 'Rapports',
+            'items' => [
+                ['key' => 'rapports', 'label' => 'Rapports'],
+            ],
+        ],
+        [
+            'key' => 'configuration',
+            'label' => 'Configuration',
+            'items' => [
+                ['key' => 'fiche-utilisateur', 'label' => 'Utilisateur'],
+                ['key' => 'fiche-autorisation', 'label' => 'Autorisation'],
+            ],
+        ],
+    ];
+
+    $allPermissionKeys = collect($menuSections)
+        ->flatMap(fn ($section) => collect($section['items'])->pluck('key'))
+        ->unique()
+        ->values()
+        ->all();
+
+    $authUser = session('auth_user', []);
+    $authUserId = (string) ($authUser['id'] ?? '');
+    $authUserStatue = (string) ($authUser['statue'] ?? '');
+    $autorisationUser = collect(AppStore::get('autorisations'))
+        ->first(fn ($a) => (string) ($a['utilisateur_id'] ?? '') === $authUserId);
+
+    if ($authUserStatue === 'admin' || ! $autorisationUser) {
+        $userPermissions = $allPermissionKeys;
+    } else {
+        $userPermissions = array_values(array_intersect(
+            $allPermissionKeys,
+            array_map('strval', $autorisationUser['permissions'] ?? [])
+        ));
+    }
+
     return view('dashboard', [
         'clients' => $clients,
         'projets' => $projets,
         'paiements' => $paiements,
         'utilisateurs' => AppStore::get('utilisateurs'),
         'evolutions' => AppStore::get('evolutions'),
+        'relances' => AppStore::get('relances'),
+        'autorisations' => AppStore::get('autorisations'),
+        'menuSections' => $menuSections,
+        'userPermissions' => $userPermissions,
         'dashboardCounts' => $dashboardCounts,
         'revenuAyda' => $sumTresorerie('ayda'),
         'revenuBrahim' => $sumTresorerie('brahim'),
@@ -280,6 +367,92 @@ Route::delete('/clients/{id}', function (string $id) {
         ->with('open_fiche_client', true);
 })->name('clients.destroy');
 
+Route::post('/relances', function (Request $request) {
+    $data = $request->validate([
+        'date' => ['required', 'string'],
+        'ref' => ['required', 'string'],
+        'nom_complet' => ['required', 'string', 'max:255'],
+        'ville' => ['required', 'string', 'max:255'],
+        'titre_projet' => ['required', 'string', 'max:255'],
+        'description' => ['required', 'string', 'max:2000'],
+        'budget' => ['required', 'numeric', 'min:0'],
+        'statue' => ['required', 'string', 'in:confirme,a_voir'],
+        'a_rappeler' => ['required', 'string', 'in:oui,non'],
+        'date_rappel' => ['required', 'string', 'regex:/^\d{2}\/\d{2}\/\d{4}$/'],
+    ]);
+
+    $relances = AppStore::get('relances');
+    $relances[] = [
+        'id' => uniqid('rel_', true),
+        'date' => $data['date'],
+        'ref' => $data['ref'],
+        'nom_complet' => $data['nom_complet'],
+        'ville' => $data['ville'],
+        'titre_projet' => $data['titre_projet'],
+        'description' => $data['description'],
+        'budget' => (float) $data['budget'],
+        'statue' => $data['statue'],
+        'a_rappeler' => $data['a_rappeler'],
+        'date_rappel' => $data['date_rappel'],
+    ];
+
+    AppStore::put('relances', $relances);
+
+    return redirect()
+        ->route('dashboard')
+        ->with('open_fiche_relance', true);
+})->name('relances.store');
+
+Route::put('/relances/{id}', function (Request $request, string $id) {
+    $data = $request->validate([
+        'nom_complet' => ['required', 'string', 'max:255'],
+        'ville' => ['required', 'string', 'max:255'],
+        'titre_projet' => ['required', 'string', 'max:255'],
+        'description' => ['required', 'string', 'max:2000'],
+        'budget' => ['required', 'numeric', 'min:0'],
+        'statue' => ['required', 'string', 'in:confirme,a_voir'],
+        'a_rappeler' => ['required', 'string', 'in:oui,non'],
+        'date_rappel' => ['required', 'string', 'regex:/^\d{2}\/\d{2}\/\d{4}$/'],
+    ]);
+
+    $relances = AppStore::get('relances');
+    $index = collect($relances)->search(fn ($r) => ($r['id'] ?? '') === $id);
+
+    if ($index === false) {
+        return redirect()
+            ->route('dashboard')
+            ->with('open_fiche_relance', true);
+    }
+
+    $relances[$index]['nom_complet'] = $data['nom_complet'];
+    $relances[$index]['ville'] = $data['ville'];
+    $relances[$index]['titre_projet'] = $data['titre_projet'];
+    $relances[$index]['description'] = $data['description'];
+    $relances[$index]['budget'] = (float) $data['budget'];
+    $relances[$index]['statue'] = $data['statue'];
+    $relances[$index]['a_rappeler'] = $data['a_rappeler'];
+    $relances[$index]['date_rappel'] = $data['date_rappel'];
+
+    AppStore::put('relances', $relances);
+
+    return redirect()
+        ->route('dashboard')
+        ->with('open_fiche_relance', true);
+})->name('relances.update');
+
+Route::delete('/relances/{id}', function (string $id) {
+    $relances = collect(AppStore::get('relances'))
+        ->reject(fn ($r) => ($r['id'] ?? '') === $id)
+        ->values()
+        ->all();
+
+    AppStore::put('relances', $relances);
+
+    return redirect()
+        ->route('dashboard')
+        ->with('open_fiche_relance', true);
+})->name('relances.destroy');
+
 Route::post('/utilisateurs', function (Request $request) {
     $data = $request->validate([
         'date' => ['required', 'string'],
@@ -346,10 +519,132 @@ Route::delete('/utilisateurs/{id}', function (string $id) {
 
     AppStore::put('utilisateurs', $utilisateurs);
 
+    $autorisations = collect(AppStore::get('autorisations'))
+        ->reject(fn ($a) => (string) ($a['utilisateur_id'] ?? '') === (string) $id)
+        ->values()
+        ->all();
+    AppStore::put('autorisations', $autorisations);
+
     return redirect()
         ->route('dashboard')
         ->with('open_fiche_utilisateur', true);
 })->name('utilisateurs.destroy');
+
+Route::post('/autorisations', function (Request $request) {
+    $menuSections = [
+        'dashboard', 'fiche-client', 'fiche-relance', 'fiche-projet', 'fiche-evolution',
+        'fiche-paiement', 'charges', 'suivie', 'rapports', 'fiche-utilisateur', 'fiche-autorisation',
+    ];
+
+    $data = $request->validate([
+        'utilisateur_id' => ['required', 'string'],
+        'permissions' => ['nullable', 'array'],
+        'permissions.*' => ['string', 'in:'.implode(',', $menuSections)],
+    ]);
+
+    $utilisateur = collect(AppStore::get('utilisateurs'))
+        ->first(fn ($u) => (string) ($u['id'] ?? '') === (string) $data['utilisateur_id']);
+
+    if (! $utilisateur) {
+        return redirect()
+            ->route('dashboard')
+            ->with('open_fiche_autorisation', true)
+            ->withErrors(['utilisateur_id' => 'Utilisateur introuvable.']);
+    }
+
+    $permissions = array_values(array_unique($data['permissions'] ?? []));
+    $autorisations = AppStore::get('autorisations');
+    $index = collect($autorisations)->search(
+        fn ($a) => (string) ($a['utilisateur_id'] ?? '') === (string) $data['utilisateur_id']
+    );
+
+    $row = [
+        'id' => $index === false
+            ? uniqid('aut_', true)
+            : ($autorisations[$index]['id'] ?? uniqid('aut_', true)),
+        'utilisateur_id' => $data['utilisateur_id'],
+        'utilisateur_nom' => $utilisateur['nom_complet'] ?? '',
+        'utilisateur_login' => $utilisateur['login'] ?? '',
+        'permissions' => $permissions,
+    ];
+
+    if ($index === false) {
+        $autorisations[] = $row;
+    } else {
+        $autorisations[$index] = $row;
+    }
+
+    AppStore::put('autorisations', $autorisations);
+
+    return redirect()
+        ->route('dashboard')
+        ->with('open_fiche_autorisation', true);
+})->name('autorisations.store');
+
+Route::put('/autorisations/{id}', function (Request $request, string $id) {
+    $menuSections = [
+        'dashboard', 'fiche-client', 'fiche-relance', 'fiche-projet', 'fiche-evolution',
+        'fiche-paiement', 'charges', 'suivie', 'rapports', 'fiche-utilisateur', 'fiche-autorisation',
+    ];
+
+    $data = $request->validate([
+        'utilisateur_id' => ['required', 'string'],
+        'permissions' => ['nullable', 'array'],
+        'permissions.*' => ['string', 'in:'.implode(',', $menuSections)],
+    ]);
+
+    $utilisateur = collect(AppStore::get('utilisateurs'))
+        ->first(fn ($u) => (string) ($u['id'] ?? '') === (string) $data['utilisateur_id']);
+
+    if (! $utilisateur) {
+        return redirect()
+            ->route('dashboard')
+            ->with('open_fiche_autorisation', true);
+    }
+
+    $autorisations = AppStore::get('autorisations');
+    $index = collect($autorisations)->search(fn ($a) => ($a['id'] ?? '') === $id);
+
+    if ($index === false) {
+        return redirect()
+            ->route('dashboard')
+            ->with('open_fiche_autorisation', true);
+    }
+
+    // Si on change d'utilisateur, éviter les doublons.
+    $other = collect($autorisations)->search(
+        fn ($a, $i) => $i !== $index && (string) ($a['utilisateur_id'] ?? '') === (string) $data['utilisateur_id']
+    );
+    if ($other !== false) {
+        unset($autorisations[$other]);
+        $autorisations = array_values($autorisations);
+        $index = collect($autorisations)->search(fn ($a) => ($a['id'] ?? '') === $id);
+    }
+
+    $autorisations[$index]['utilisateur_id'] = $data['utilisateur_id'];
+    $autorisations[$index]['utilisateur_nom'] = $utilisateur['nom_complet'] ?? '';
+    $autorisations[$index]['utilisateur_login'] = $utilisateur['login'] ?? '';
+    $autorisations[$index]['permissions'] = array_values(array_unique($data['permissions'] ?? []));
+
+    AppStore::put('autorisations', $autorisations);
+
+    return redirect()
+        ->route('dashboard')
+        ->with('open_fiche_autorisation', true);
+})->name('autorisations.update');
+
+Route::delete('/autorisations/{id}', function (string $id) {
+    $autorisations = collect(AppStore::get('autorisations'))
+        ->reject(fn ($a) => ($a['id'] ?? '') === $id)
+        ->values()
+        ->all();
+
+    AppStore::put('autorisations', $autorisations);
+
+    return redirect()
+        ->route('dashboard')
+        ->with('open_fiche_autorisation', true);
+})->name('autorisations.destroy');
 
 Route::post('/projets', function (Request $request) {
     $data = $request->validate([

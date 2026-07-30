@@ -888,6 +888,59 @@
             padding-right: 2.25rem;
         }
 
+        .auth-sections {
+            display: flex;
+            flex-direction: column;
+            gap: 0.85rem;
+            grid-column: 1 / -1;
+        }
+
+        .auth-section {
+            border: 1px solid rgba(110, 168, 255, 0.18);
+            border-radius: 12px;
+            padding: 0.75rem 0.9rem;
+            background: rgba(6, 14, 26, 0.45);
+        }
+
+        .auth-section-title {
+            font-size: 0.82rem;
+            font-weight: 700;
+            color: var(--accent-soft);
+            margin-bottom: 0.55rem;
+            text-transform: uppercase;
+        }
+
+        .auth-checks {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.45rem 1.1rem;
+        }
+
+        .auth-check {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.45rem;
+            font-size: 0.86rem;
+            color: var(--text);
+            cursor: pointer;
+            text-transform: uppercase;
+            user-select: none;
+        }
+
+        .auth-check input[type="checkbox"] {
+            width: 16px;
+            height: 16px;
+            margin: 0;
+            accent-color: #3d8bfd;
+            cursor: pointer;
+            appearance: auto;
+            flex-shrink: 0;
+        }
+
+        .nav-hidden {
+            display: none !important;
+        }
+
         .client-select-field select {
             height: 44px;
             border-color: rgba(126, 196, 255, 0.35);
@@ -1935,7 +1988,10 @@
             </div>
 
             <nav class="nav-list" aria-label="Navigation principale">
-                <a href="#dashboard" class="dashboard-nav-btn active" data-panel="dashboard" id="dashboardNavBtn">
+                @php
+                    $can = fn (string $key): bool => in_array($key, $userPermissions ?? [], true);
+                @endphp
+                <a href="#dashboard" class="dashboard-nav-btn active{{ $can('dashboard') ? '' : ' nav-hidden' }}" data-panel="dashboard" data-auth="dashboard" id="dashboardNavBtn">
                     <span class="dashboard-nav-icon" aria-hidden="true">
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                             <rect x="3" y="3" width="7" height="7" rx="1"/>
@@ -1951,7 +2007,7 @@
                 </a>
 
                 <div class="nav-sections">
-                <div class="nav-group" id="clientGroup">
+                <div class="nav-group{{ ($can('fiche-client') || $can('fiche-relance')) ? '' : ' nav-hidden' }}" id="clientGroup">
                     <button type="button" class="nav-item nav-parent" id="clientToggle">
                         <span class="nav-left">
                             <span class="nav-icon clients" aria-hidden="true">
@@ -1962,15 +2018,21 @@
                         <svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>
                     </button>
                     <div class="submenu">
-                        <a href="#fiche-client" class="submenu-link" data-panel="fiche-client">
+                        <a href="#fiche-client" class="submenu-link{{ $can('fiche-client') ? '' : ' nav-hidden' }}" data-panel="fiche-client" data-auth="fiche-client">
                             <span class="submenu-icon" aria-hidden="true">
                                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/><circle cx="10" cy="13" r="2"/><path d="M14 17a4 4 0 0 0-8 0"/></svg>
                             </span>
                             Fiche Client
                         </a>
+                        <a href="#fiche-relance" class="submenu-link{{ $can('fiche-relance') ? '' : ' nav-hidden' }}" data-panel="fiche-relance" data-auth="fiche-relance">
+                            <span class="submenu-icon" aria-hidden="true">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/><path d="M8 9h8"/><path d="M8 13h5"/></svg>
+                            </span>
+                            Relance
+                        </a>
                     </div>
                 </div>
-                <div class="nav-group" id="projetGroup">
+                <div class="nav-group{{ ($can('fiche-projet') || $can('fiche-evolution')) ? '' : ' nav-hidden' }}" id="projetGroup">
                     <button type="button" class="nav-item nav-parent" id="projetToggle">
                         <span class="nav-left">
                             <span class="nav-icon projets" aria-hidden="true">
@@ -1981,13 +2043,13 @@
                         <svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>
                     </button>
                     <div class="submenu">
-                        <a href="#fiche-projet" class="submenu-link" data-panel="fiche-projet">
+                        <a href="#fiche-projet" class="submenu-link{{ $can('fiche-projet') ? '' : ' nav-hidden' }}" data-panel="fiche-projet" data-auth="fiche-projet">
                             <span class="submenu-icon" aria-hidden="true">
                                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
                             </span>
                             Fiche Projet
                         </a>
-                        <a href="#fiche-evolution" class="submenu-link" data-panel="fiche-evolution">
+                        <a href="#fiche-evolution" class="submenu-link{{ $can('fiche-evolution') ? '' : ' nav-hidden' }}" data-panel="fiche-evolution" data-auth="fiche-evolution">
                             <span class="submenu-icon" aria-hidden="true">
                                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 17l6-6 4 4 8-8"/><path d="M14 7h7v7"/></svg>
                             </span>
@@ -1995,7 +2057,7 @@
                         </a>
                     </div>
                 </div>
-                <div class="nav-group" id="paiementGroup">
+                <div class="nav-group{{ $can('fiche-paiement') ? '' : ' nav-hidden' }}" id="paiementGroup">
                     <button type="button" class="nav-item nav-parent" id="paiementToggle">
                         <span class="nav-left">
                             <span class="nav-icon paiements" aria-hidden="true">
@@ -2006,7 +2068,7 @@
                         <svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>
                     </button>
                     <div class="submenu">
-                        <a href="#fiche-paiement" class="submenu-link" data-panel="fiche-paiement">
+                        <a href="#fiche-paiement" class="submenu-link{{ $can('fiche-paiement') ? '' : ' nav-hidden' }}" data-panel="fiche-paiement" data-auth="fiche-paiement">
                             <span class="submenu-icon" aria-hidden="true">
                                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 1v22"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
                             </span>
@@ -2014,25 +2076,25 @@
                         </a>
                     </div>
                 </div>
-                <a href="#charges" class="nav-item" data-panel="dashboard">
+                <a href="#charges" class="nav-item{{ $can('charges') ? '' : ' nav-hidden' }}" data-panel="dashboard" data-auth="charges">
                     <span class="nav-icon charges" aria-hidden="true">
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 8v8"/><path d="M8 12h8"/></svg>
                     </span>
                     Charges
                 </a>
-                <a href="#suivie" class="nav-item" data-panel="dashboard">
+                <a href="#suivie" class="nav-item{{ $can('suivie') ? '' : ' nav-hidden' }}" data-panel="dashboard" data-auth="suivie">
                     <span class="nav-icon suivie" aria-hidden="true">
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><path d="M7 14l4-4 3 3 5-6"/></svg>
                     </span>
                     Suivie Monétaire
                 </a>
-                <a href="#rapports" class="nav-item" data-panel="dashboard">
+                <a href="#rapports" class="nav-item{{ $can('rapports') ? '' : ' nav-hidden' }}" data-panel="dashboard" data-auth="rapports">
                     <span class="nav-icon rapports" aria-hidden="true">
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/><path d="M8 13h8"/><path d="M8 17h6"/></svg>
                     </span>
                     Rapports
                 </a>
-                <div class="nav-group" id="configGroup">
+                <div class="nav-group{{ ($can('fiche-utilisateur') || $can('fiche-autorisation')) ? '' : ' nav-hidden' }}" id="configGroup">
                     <button type="button" class="nav-item nav-parent" id="configToggle">
                         <span class="nav-left">
                             <span class="nav-icon config" aria-hidden="true">
@@ -2043,11 +2105,17 @@
                         <svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>
                     </button>
                     <div class="submenu">
-                        <a href="#fiche-utilisateur" class="submenu-link" data-panel="fiche-utilisateur">
+                        <a href="#fiche-utilisateur" class="submenu-link{{ $can('fiche-utilisateur') ? '' : ' nav-hidden' }}" data-panel="fiche-utilisateur" data-auth="fiche-utilisateur">
                             <span class="submenu-icon" aria-hidden="true">
                                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
                             </span>
                             Utilisateur
+                        </a>
+                        <a href="#fiche-autorisation" class="submenu-link{{ $can('fiche-autorisation') ? '' : ' nav-hidden' }}" data-panel="fiche-autorisation" data-auth="fiche-autorisation">
+                            <span class="submenu-icon" aria-hidden="true">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+                            </span>
+                            Autorisation
                         </a>
                     </div>
                 </div>
@@ -2341,6 +2409,81 @@
                                 @empty
                                     <tr class="empty-row">
                                         <td colspan="8" class="empty">Aucun client enregistré. Cliquez sur Ajouter.</td>
+                                    </tr>
+                                @endforelse
+                            </tbody>
+                        </table>
+                    </div>
+                </section>
+
+                <section class="panel" id="panel-fiche-relance">
+                    <div class="panel-freeze">
+                        <div class="section-toolbar">
+                            <div class="content-head" style="margin-bottom:0;">
+                                <h1>Relance</h1>
+                            </div>
+                            <button type="button" class="btn-add" id="btnAddRelance">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>
+                                Ajouter Relance
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="table-wrap table-freeze-body">
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>Date</th>
+                                    <th>ID</th>
+                                    <th>Nom Complet</th>
+                                    <th>Titre Projet</th>
+                                    <th>Description</th>
+                                    <th>Budget</th>
+                                    <th>Statue</th>
+                                    <th>A Rappeler</th>
+                                    <th>Date</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody id="relancesTableBody">
+                                @forelse (($relances ?? []) as $relance)
+                                    @php
+                                        $statueRelance = $relance['statue'] ?? '';
+                                        $rappelerRelance = $relance['a_rappeler'] ?? '';
+                                        $statueRelanceLabel = $statueRelance === 'confirme' ? 'Confirmé' : ($statueRelance === 'a_voir' ? 'A voir' : $statueRelance);
+                                        $rappelerRelanceLabel = $rappelerRelance === 'oui' ? 'Oui' : ($rappelerRelance === 'non' ? 'Non' : $rappelerRelance);
+                                    @endphp
+                                    <tr data-id="{{ $relance['id'] }}">
+                                        <td>{{ $relance['date'] ?? '' }}</td>
+                                        <td>{{ $relance['ref'] ?? '' }}</td>
+                                        <td>{{ $relance['nom_complet'] ?? '' }}</td>
+                                        <td>{{ $relance['titre_projet'] ?? '' }}</td>
+                                        <td style="white-space:normal;max-width:260px;text-align:left;">{{ $relance['description'] ?? '' }}</td>
+                                        <td>{{ number_format((float) ($relance['budget'] ?? 0), 2, '.', ' ') }}</td>
+                                        <td>{{ $statueRelanceLabel }}</td>
+                                        <td>{{ $rappelerRelanceLabel }}</td>
+                                        <td>{{ $relance['date_rappel'] ?? '' }}</td>
+                                        <td>
+                                            <div class="actions">
+                                                <button type="button" class="action-btn voir" title="Voir" aria-label="Voir">
+                                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8S1 12 1 12z"/><circle cx="12" cy="12" r="3"/></svg>
+                                                </button>
+                                                <button type="button" class="action-btn modifier" title="Modifier" aria-label="Modifier">
+                                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4 12.5-12.5z"/></svg>
+                                                </button>
+                                                <form method="post" action="{{ url('/relances/'.$relance['id']) }}" style="display:inline;" onsubmit="return confirm('Supprimer cette relance ?');">
+                                                    @csrf
+                                                    @method('DELETE')
+                                                    <button type="submit" class="action-btn supprimer" title="Supprimer" aria-label="Supprimer">
+                                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18"/><path d="M8 6V4h8v2"/><path d="M19 6l-1 14H6L5 6"/></svg>
+                                                    </button>
+                                                </form>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                @empty
+                                    <tr class="empty-row">
+                                        <td colspan="10" class="empty">Aucune relance enregistrée. Cliquez sur Ajouter Relance.</td>
                                     </tr>
                                 @endforelse
                             </tbody>
@@ -2877,7 +3020,136 @@
                         </table>
                     </div>
                 </section>
+
+                <section class="panel" id="panel-fiche-autorisation">
+                    <div class="panel-freeze">
+                        <div class="section-toolbar">
+                            <div class="content-head" style="margin-bottom:0;">
+                                <h1>Autorisation</h1>
+                            </div>
+                            <div class="toolbar-actions">
+                                <button type="button" class="btn-add" id="btnAddAutorisation">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>
+                                    Ajouter
+                                </button>
+                                <button type="button" class="btn-ghost" id="btnCloseAutorisation">Fermer</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="table-wrap table-freeze-body">
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>Utilisateur</th>
+                                    <th>Sections</th>
+                                    <th>Autorisations</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody id="autorisationsTableBody">
+                                @php
+                                    $permissionLabels = collect($menuSections ?? [])
+                                        ->flatMap(fn ($section) => collect($section['items'])->mapWithKeys(
+                                            fn ($item) => [$item['key'] => $item['label']]
+                                        ))
+                                        ->all();
+                                    $sectionByPermission = [];
+                                    foreach (($menuSections ?? []) as $section) {
+                                        foreach ($section['items'] as $item) {
+                                            $sectionByPermission[$item['key']] = $section['label'];
+                                        }
+                                    }
+                                @endphp
+                                @forelse (($autorisations ?? []) as $autorisation)
+                                    @php
+                                        $perms = $autorisation['permissions'] ?? [];
+                                        $sectionsLabels = collect($perms)
+                                            ->map(fn ($p) => $sectionByPermission[$p] ?? null)
+                                            ->filter()
+                                            ->unique()
+                                            ->values()
+                                            ->implode(', ');
+                                        $authLabels = collect($perms)
+                                            ->map(fn ($p) => $permissionLabels[$p] ?? $p)
+                                            ->filter()
+                                            ->implode(', ');
+                                    @endphp
+                                    <tr data-id="{{ $autorisation['id'] }}">
+                                        <td>{{ $autorisation['utilisateur_nom'] ?? '' }}{{ !empty($autorisation['utilisateur_login']) ? ' ('.$autorisation['utilisateur_login'].')' : '' }}</td>
+                                        <td style="white-space:normal;max-width:220px;text-align:left;">{{ $sectionsLabels !== '' ? $sectionsLabels : '—' }}</td>
+                                        <td style="white-space:normal;max-width:320px;text-align:left;">{{ $authLabels !== '' ? $authLabels : 'Aucune' }}</td>
+                                        <td>
+                                            <div class="actions">
+                                                <button type="button" class="action-btn voir" title="Voir" aria-label="Voir">
+                                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8S1 12 1 12z"/><circle cx="12" cy="12" r="3"/></svg>
+                                                </button>
+                                                <button type="button" class="action-btn modifier" title="Modifier" aria-label="Modifier">
+                                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4 12.5-12.5z"/></svg>
+                                                </button>
+                                                <form method="post" action="{{ url('/autorisations/'.$autorisation['id']) }}" style="display:inline;" onsubmit="return confirm('Supprimer cette autorisation ?');">
+                                                    @csrf
+                                                    @method('DELETE')
+                                                    <button type="submit" class="action-btn supprimer" title="Supprimer" aria-label="Supprimer">
+                                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18"/><path d="M8 6V4h8v2"/><path d="M19 6l-1 14H6L5 6"/></svg>
+                                                    </button>
+                                                </form>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                @empty
+                                    <tr class="empty-row">
+                                        <td colspan="4" class="empty">Aucune autorisation enregistrée. Cliquez sur Ajouter.</td>
+                                    </tr>
+                                @endforelse
+                            </tbody>
+                        </table>
+                    </div>
+                </section>
             </main>
+        </div>
+    </div>
+
+    <div class="modal-backdrop" id="autorisationModal" aria-hidden="true">
+        <div class="modal" role="dialog" aria-modal="true" aria-labelledby="autorisationModalTitle" style="max-width:720px;">
+            <div class="modal-head">
+                <h2 id="autorisationModalTitle">Ajouter Autorisation</h2>
+                <button type="button" class="modal-close" id="closeAutorisationModal" aria-label="Fermer">×</button>
+            </div>
+            <form method="post" action="{{ url('/autorisations') }}" id="autorisationForm">
+                @csrf
+                <input type="hidden" name="_method" id="autorisation_http_method" value="POST" disabled>
+                <div class="modal-body">
+                    <div class="field full">
+                        <label for="autorisation_utilisateur_id">Utilisateur</label>
+                        <select id="autorisation_utilisateur_id" name="utilisateur_id" required>
+                            <option value="" disabled selected>Sélectionner un utilisateur</option>
+                            @foreach (($utilisateurs ?? []) as $utilisateur)
+                                <option value="{{ $utilisateur['id'] }}">{{ $utilisateur['nom_complet'] }} ({{ $utilisateur['login'] }})</option>
+                            @endforeach
+                        </select>
+                    </div>
+                    <div class="auth-sections" id="autorisationSections">
+                        @foreach (($menuSections ?? []) as $section)
+                            <div class="auth-section" data-section="{{ $section['key'] }}">
+                                <div class="auth-section-title">{{ $section['label'] }}</div>
+                                <div class="auth-checks">
+                                    @foreach ($section['items'] as $item)
+                                        <label class="auth-check">
+                                            <input type="checkbox" name="permissions[]" value="{{ $item['key'] }}" class="auth-permission" data-section="{{ $section['key'] }}">
+                                            <span>{{ $item['label'] }}</span>
+                                        </label>
+                                    @endforeach
+                                </div>
+                            </div>
+                        @endforeach
+                    </div>
+                </div>
+                <div class="modal-foot">
+                    <button type="button" class="btn-ghost" id="cancelAutorisationModal">Fermer</button>
+                    <button type="submit" class="btn-primary" id="autorisationSubmitBtn">Valider</button>
+                </div>
+            </form>
         </div>
     </div>
 
@@ -3142,6 +3414,80 @@
         </div>
     </div>
 
+    <div class="modal-backdrop" id="relanceModal" aria-hidden="true">
+        <div class="modal" role="dialog" aria-modal="true" aria-labelledby="relanceModalTitle">
+            <div class="modal-head">
+                <h2 id="relanceModalTitle">Ajouter Relance</h2>
+                <button type="button" class="modal-close" id="closeRelanceModal" aria-label="Fermer">×</button>
+            </div>
+            <form method="post" action="{{ url('/relances') }}" id="relanceForm">
+                @csrf
+                <input type="hidden" name="_method" id="relance_http_method" value="POST" disabled>
+                <div class="modal-body">
+                    <div class="field">
+                        <label for="relance_date">Date</label>
+                        <input type="text" id="relance_date" name="date" readonly>
+                    </div>
+                    <div class="field">
+                        <label for="relance_ref">ID</label>
+                        <input type="text" id="relance_ref" name="ref" readonly>
+                    </div>
+                    <div class="field full">
+                        <label for="relance_nom_complet">Nom Complet</label>
+                        <input type="text" id="relance_nom_complet" name="nom_complet" required placeholder="Nom complet">
+                    </div>
+                    <div class="field">
+                        <label for="relance_ville">Ville</label>
+                        <input type="text" id="relance_ville" name="ville" required placeholder="Ville">
+                    </div>
+                    <div class="field">
+                        <label for="relance_titre_projet">Titre Projet</label>
+                        <input type="text" id="relance_titre_projet" name="titre_projet" required placeholder="Titre du projet">
+                    </div>
+                    <div class="field full">
+                        <label for="relance_description">Description</label>
+                        <textarea id="relance_description" name="description" required placeholder="Description" rows="3"></textarea>
+                    </div>
+                    <div class="field">
+                        <label for="relance_budget">Budget</label>
+                        <input type="number" id="relance_budget" name="budget" required min="0" step="0.01" placeholder="0.00">
+                    </div>
+                    <div class="field">
+                        <label for="relance_statue">Statue</label>
+                        <select id="relance_statue" name="statue" required>
+                            <option value="" disabled selected>Sélectionner</option>
+                            <option value="confirme">Confirmé</option>
+                            <option value="a_voir">A voir</option>
+                        </select>
+                    </div>
+                    <div class="field">
+                        <label for="relance_a_rappeler">A Rappeler</label>
+                        <select id="relance_a_rappeler" name="a_rappeler" required>
+                            <option value="" disabled selected>Sélectionner</option>
+                            <option value="oui">Oui</option>
+                            <option value="non">Non</option>
+                        </select>
+                    </div>
+                    <div class="field">
+                        <label for="relance_rappel_date_jj">Date</label>
+                        <div class="date-parts" role="group" aria-label="Date JJ/MM/AAAA">
+                            <input type="text" id="relance_rappel_date_jj" class="date-jj" inputmode="numeric" maxlength="2" pattern="\d{2}" placeholder="JJ" autocomplete="off" required>
+                            <span class="date-sep">/</span>
+                            <input type="text" id="relance_rappel_date_mm" class="date-mm" inputmode="numeric" maxlength="2" pattern="\d{2}" placeholder="MM" autocomplete="off" required>
+                            <span class="date-sep">/</span>
+                            <input type="text" id="relance_rappel_date_aaaa" class="date-aaaa" inputmode="numeric" maxlength="4" pattern="\d{4}" placeholder="AAAA" autocomplete="off" required>
+                        </div>
+                        <input type="hidden" id="relance_rappel_date" name="date_rappel" required>
+                    </div>
+                </div>
+                <div class="modal-foot">
+                    <button type="button" class="btn-ghost" id="cancelRelanceModal">Fermer</button>
+                    <button type="submit" class="btn-primary" id="relanceSubmitBtn">Valider</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
     <div class="modal-backdrop" id="evolutionModal" aria-hidden="true">
         <div class="modal" role="dialog" aria-modal="true" aria-labelledby="evolutionModalTitle">
             <div class="modal-head">
@@ -3198,6 +3544,8 @@
         const paiementModal = document.getElementById('paiementModal');
         const utilisateurModal = document.getElementById('utilisateurModal');
         const evolutionModal = document.getElementById('evolutionModal');
+        const relanceModal = document.getElementById('relanceModal');
+        const autorisationModal = document.getElementById('autorisationModal');
         const btnAdd = document.getElementById('btnAddClient');
         const btnAddProjet = document.getElementById('btnAddProjet');
         const btnAddPaiement = document.getElementById('btnAddPaiement');
@@ -3205,6 +3553,9 @@
         const btnCloseUtilisateur = document.getElementById('btnCloseUtilisateur');
         const btnAddEvolution = document.getElementById('btnAddEvolution');
         const btnCloseEvolution = document.getElementById('btnCloseEvolution');
+        const btnAddRelance = document.getElementById('btnAddRelance');
+        const btnAddAutorisation = document.getElementById('btnAddAutorisation');
+        const btnCloseAutorisation = document.getElementById('btnCloseAutorisation');
         const closeModal = document.getElementById('closeClientModal');
         const cancelModal = document.getElementById('cancelClientModal');
         const closeProjetModal = document.getElementById('closeProjetModal');
@@ -3215,11 +3566,18 @@
         const cancelUtilisateurModal = document.getElementById('cancelUtilisateurModal');
         const closeEvolutionModal = document.getElementById('closeEvolutionModal');
         const cancelEvolutionModal = document.getElementById('cancelEvolutionModal');
+        const closeRelanceModal = document.getElementById('closeRelanceModal');
+        const cancelRelanceModal = document.getElementById('cancelRelanceModal');
+        const closeAutorisationModal = document.getElementById('closeAutorisationModal');
+        const cancelAutorisationModal = document.getElementById('cancelAutorisationModal');
         const projetsData = @json($projets ?? []);
         const clientsData = @json($clients ?? []);
         const paiementsData = @json($paiements ?? []);
         const utilisateursData = @json($utilisateurs ?? []);
         const evolutionsData = @json($evolutions ?? []);
+        const relancesData = @json($relances ?? []);
+        const autorisationsData = @json($autorisations ?? []);
+        const menuSectionsData = @json($menuSections ?? []);
 
         const userStatueLabels = {
             admin: 'Administrateur',
@@ -3227,6 +3585,11 @@
             comptable: 'Comptable',
             vendeur: 'Vendeur',
             stock: 'Responsable stock',
+        };
+
+        const relanceStatueLabels = {
+            confirme: 'Confirmé',
+            a_voir: 'A voir',
         };
 
         const statueLabels = {
@@ -3356,6 +3719,10 @@
                 clientGroup.classList.add('open');
                 clientToggle.classList.add('active');
                 document.querySelector('[data-panel="fiche-client"]')?.classList.add('active');
+            } else if (name === 'fiche-relance') {
+                clientGroup.classList.add('open');
+                clientToggle.classList.add('active');
+                document.querySelector('[data-panel="fiche-relance"]')?.classList.add('active');
             } else if (name === 'fiche-projet') {
                 projetGroup.classList.add('open');
                 projetToggle.classList.add('active');
@@ -3372,6 +3739,10 @@
                 configGroup.classList.add('open');
                 configToggle.classList.add('active');
                 document.querySelector('[data-panel="fiche-utilisateur"]')?.classList.add('active');
+            } else if (name === 'fiche-autorisation') {
+                configGroup.classList.add('open');
+                configToggle.classList.add('active');
+                document.querySelector('[data-panel="fiche-autorisation"]')?.classList.add('active');
             } else if (name === 'dashboard') {
                 document.querySelector(`.nav-item[data-panel="dashboard"]`)?.classList.add('active');
             }
@@ -3462,9 +3833,11 @@
         const clientDateApi = setupDateParts('client');
         const projetDateApi = setupDateParts('projet');
         const paiementDateApi = setupDateParts('paiement');
+        const relanceRappelDateApi = setupDateParts('relance_rappel');
         validateDatePartsSubmit(document.getElementById('clientForm'), clientDateApi, 'Date');
         validateDatePartsSubmit(document.getElementById('projetForm'), projetDateApi, 'Date');
         validateDatePartsSubmit(document.getElementById('paiementForm'), paiementDateApi, 'Date');
+        validateDatePartsSubmit(document.getElementById('relanceForm'), relanceRappelDateApi, 'Date');
 
         function nextRef() {
             const rows = document.querySelectorAll('#clientsTableBody tr[data-id]');
@@ -4364,6 +4737,212 @@
         document.getElementById('filter_evolution_mois')?.addEventListener('change', filterEvolutionsTable);
         document.getElementById('filter_evolution_projet')?.addEventListener('change', filterEvolutionsTable);
 
+        const relanceFieldIds = [
+            ...relanceRappelDateApi.fieldIds,
+            'relance_nom_complet',
+            'relance_ville',
+            'relance_titre_projet',
+            'relance_description',
+            'relance_budget',
+            'relance_statue',
+            'relance_a_rappeler',
+        ];
+
+        function setRelanceFormFields(mode) {
+            relanceFieldIds.forEach((id) => {
+                const field = document.getElementById(id);
+                if (field) field.disabled = mode === 'view';
+            });
+        }
+
+        function nextRelanceRef() {
+            const rows = document.querySelectorAll('#relancesTableBody tr[data-id]');
+            const n = rows.length + 1;
+            return 'REL-' + String(n).padStart(4, '0');
+        }
+
+        function fillRelanceForm(relance) {
+            document.getElementById('relance_date').value = relance.date || '';
+            document.getElementById('relance_ref').value = relance.ref || '';
+            document.getElementById('relance_nom_complet').value = relance.nom_complet || '';
+            document.getElementById('relance_ville').value = relance.ville || '';
+            document.getElementById('relance_titre_projet').value = relance.titre_projet || '';
+            document.getElementById('relance_description').value = relance.description || '';
+            document.getElementById('relance_budget').value = relance.budget ?? '';
+            document.getElementById('relance_statue').value = relance.statue || '';
+            document.getElementById('relance_a_rappeler').value = relance.a_rappeler || '';
+            relanceRappelDateApi.setParts(relance.date_rappel || '');
+        }
+
+        function openRelanceModal() {
+            const relanceForm = document.getElementById('relanceForm');
+            const relanceModalTitle = document.getElementById('relanceModalTitle');
+            const relanceSubmitBtn = document.getElementById('relanceSubmitBtn');
+            const relanceHttpMethod = document.getElementById('relance_http_method');
+
+            relanceForm.action = '{{ url('/relances') }}';
+            relanceHttpMethod.disabled = true;
+            relanceHttpMethod.value = 'POST';
+            relanceModalTitle.textContent = 'Ajouter Relance';
+            relanceSubmitBtn.style.display = '';
+
+            document.getElementById('relance_date').value = todayFr();
+            document.getElementById('relance_ref').value = nextRelanceRef();
+            document.getElementById('relance_nom_complet').value = '';
+            document.getElementById('relance_ville').value = '';
+            document.getElementById('relance_titre_projet').value = '';
+            document.getElementById('relance_description').value = '';
+            document.getElementById('relance_budget').value = '';
+            document.getElementById('relance_statue').selectedIndex = 0;
+            document.getElementById('relance_a_rappeler').selectedIndex = 0;
+            relanceRappelDateApi.setParts('', { emptyDayMonth: true });
+            setRelanceFormFields('create');
+
+            relanceModal.classList.add('open');
+            relanceModal.setAttribute('aria-hidden', 'false');
+            document.getElementById('relance_nom_complet').focus();
+        }
+
+        function openRelanceView(relance) {
+            fillRelanceForm(relance);
+            document.getElementById('relanceModalTitle').textContent = 'Voir Relance';
+            document.getElementById('relanceSubmitBtn').style.display = 'none';
+            setRelanceFormFields('view');
+
+            relanceModal.classList.add('open');
+            relanceModal.setAttribute('aria-hidden', 'false');
+        }
+
+        function openRelanceEdit(relance) {
+            const relanceForm = document.getElementById('relanceForm');
+            const relanceHttpMethod = document.getElementById('relance_http_method');
+
+            relanceForm.action = `{{ url('/relances') }}/${relance.id}`;
+            relanceHttpMethod.disabled = false;
+            relanceHttpMethod.value = 'PUT';
+            fillRelanceForm(relance);
+            document.getElementById('relanceModalTitle').textContent = 'Modifier Relance';
+            document.getElementById('relanceSubmitBtn').style.display = '';
+            setRelanceFormFields('edit');
+
+            relanceModal.classList.add('open');
+            relanceModal.setAttribute('aria-hidden', 'false');
+            document.getElementById('relance_nom_complet').focus();
+        }
+
+        function closeRelanceModalFn() {
+            relanceModal.classList.remove('open');
+            relanceModal.setAttribute('aria-hidden', 'true');
+        }
+
+        document.getElementById('relancesTableBody')?.addEventListener('click', (e) => {
+            const row = e.target.closest('tr[data-id]');
+            if (!row) return;
+
+            const relance = relancesData.find((item) => item.id === row.dataset.id);
+            if (!relance) return;
+
+            if (e.target.closest('.action-btn.voir')) openRelanceView(relance);
+            if (e.target.closest('.action-btn.modifier')) openRelanceEdit(relance);
+        });
+
+        btnAddRelance?.addEventListener('click', openRelanceModal);
+        closeRelanceModal?.addEventListener('click', closeRelanceModalFn);
+        cancelRelanceModal?.addEventListener('click', closeRelanceModalFn);
+        relanceModal?.addEventListener('click', (e) => {
+            if (e.target === relanceModal) closeRelanceModalFn();
+        });
+
+        function setAutorisationFormFields(mode) {
+            const userSelect = document.getElementById('autorisation_utilisateur_id');
+            if (userSelect) userSelect.disabled = mode === 'view';
+            document.querySelectorAll('#autorisationSections .auth-permission').forEach((cb) => {
+                cb.disabled = mode === 'view';
+            });
+        }
+
+        function clearAutorisationChecks() {
+            document.querySelectorAll('#autorisationSections .auth-permission').forEach((cb) => {
+                cb.checked = false;
+            });
+        }
+
+        function fillAutorisationForm(autorisation) {
+            document.getElementById('autorisation_utilisateur_id').value = autorisation.utilisateur_id || '';
+            const perms = new Set(autorisation.permissions || []);
+            document.querySelectorAll('#autorisationSections .auth-permission').forEach((cb) => {
+                cb.checked = perms.has(cb.value);
+            });
+        }
+
+        function openAutorisationModal() {
+            const form = document.getElementById('autorisationForm');
+            const method = document.getElementById('autorisation_http_method');
+
+            form.action = '{{ url('/autorisations') }}';
+            method.disabled = true;
+            method.value = 'POST';
+            document.getElementById('autorisationModalTitle').textContent = 'Ajouter Autorisation';
+            document.getElementById('autorisationSubmitBtn').style.display = '';
+            document.getElementById('autorisation_utilisateur_id').selectedIndex = 0;
+            clearAutorisationChecks();
+            setAutorisationFormFields('create');
+
+            autorisationModal.classList.add('open');
+            autorisationModal.setAttribute('aria-hidden', 'false');
+            document.getElementById('autorisation_utilisateur_id').focus();
+        }
+
+        function openAutorisationView(autorisation) {
+            fillAutorisationForm(autorisation);
+            document.getElementById('autorisationModalTitle').textContent = 'Voir Autorisation';
+            document.getElementById('autorisationSubmitBtn').style.display = 'none';
+            setAutorisationFormFields('view');
+
+            autorisationModal.classList.add('open');
+            autorisationModal.setAttribute('aria-hidden', 'false');
+        }
+
+        function openAutorisationEdit(autorisation) {
+            const form = document.getElementById('autorisationForm');
+            const method = document.getElementById('autorisation_http_method');
+
+            form.action = `{{ url('/autorisations') }}/${autorisation.id}`;
+            method.disabled = false;
+            method.value = 'PUT';
+            fillAutorisationForm(autorisation);
+            document.getElementById('autorisationModalTitle').textContent = 'Modifier Autorisation';
+            document.getElementById('autorisationSubmitBtn').style.display = '';
+            setAutorisationFormFields('edit');
+
+            autorisationModal.classList.add('open');
+            autorisationModal.setAttribute('aria-hidden', 'false');
+        }
+
+        function closeAutorisationModalFn() {
+            autorisationModal.classList.remove('open');
+            autorisationModal.setAttribute('aria-hidden', 'true');
+        }
+
+        document.getElementById('autorisationsTableBody')?.addEventListener('click', (e) => {
+            const row = e.target.closest('tr[data-id]');
+            if (!row) return;
+
+            const autorisation = autorisationsData.find((item) => item.id === row.dataset.id);
+            if (!autorisation) return;
+
+            if (e.target.closest('.action-btn.voir')) openAutorisationView(autorisation);
+            if (e.target.closest('.action-btn.modifier')) openAutorisationEdit(autorisation);
+        });
+
+        btnAddAutorisation?.addEventListener('click', openAutorisationModal);
+        btnCloseAutorisation?.addEventListener('click', () => showPanel('dashboard'));
+        closeAutorisationModal?.addEventListener('click', closeAutorisationModalFn);
+        cancelAutorisationModal?.addEventListener('click', closeAutorisationModalFn);
+        autorisationModal?.addEventListener('click', (e) => {
+            if (e.target === autorisationModal) closeAutorisationModalFn();
+        });
+
         @if (session('open_fiche_client'))
             showPanel('fiche-client');
         @endif
@@ -4382,6 +4961,14 @@
 
         @if (session('open_fiche_utilisateur'))
             showPanel('fiche-utilisateur');
+        @endif
+
+        @if (session('open_fiche_relance'))
+            showPanel('fiche-relance');
+        @endif
+
+        @if (session('open_fiche_autorisation'))
+            showPanel('fiche-autorisation');
         @endif
     </script>
 </body>

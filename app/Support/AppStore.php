@@ -6,7 +6,7 @@ use Illuminate\Support\Facades\File;
 
 class AppStore
 {
-    private const KEYS = ['clients', 'projets', 'paiements', 'utilisateurs', 'evolutions'];
+    private const KEYS = ['clients', 'projets', 'paiements', 'utilisateurs', 'evolutions', 'relances', 'autorisations'];
 
     public static function path(): string
     {
@@ -111,6 +111,8 @@ class AppStore
             'paiements' => [],
             'utilisateurs' => [],
             'evolutions' => [],
+            'relances' => [],
+            'autorisations' => [],
         ];
     }
 
