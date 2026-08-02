@@ -376,7 +376,7 @@ Route::post('/relances', function (Request $request) {
         'titre_projet' => ['required', 'string', 'max:255'],
         'description' => ['required', 'string', 'max:2000'],
         'budget' => ['required', 'numeric', 'min:0'],
-        'statue' => ['required', 'string', 'in:confirme,a_voir'],
+        'statue' => ['required', 'string', 'in:confirme,a_voir,inj'],
         'a_rappeler' => ['required', 'string', 'in:oui,non'],
         'date_rappel' => ['required', 'string', 'regex:/^\d{2}\/\d{2}\/\d{4}$/'],
     ]);
@@ -437,7 +437,7 @@ Route::put('/relances/{id}', function (Request $request, string $id) {
         'titre_projet' => ['required', 'string', 'max:255'],
         'description' => ['required', 'string', 'max:2000'],
         'budget' => ['required', 'numeric', 'min:0'],
-        'statue' => ['required', 'string', 'in:confirme,a_voir'],
+        'statue' => ['required', 'string', 'in:confirme,a_voir,inj'],
         'a_rappeler' => ['required', 'string', 'in:oui,non'],
         'date_rappel' => ['required', 'string', 'regex:/^\d{2}\/\d{2}\/\d{4}$/'],
     ]);
@@ -492,6 +492,55 @@ Route::put('/relances/{id}', function (Request $request, string $id) {
         ->route('dashboard')
         ->with('open_fiche_relance', true);
 })->name('relances.update');
+
+Route::patch('/relances/{id}/statue', function (Request $request, string $id) {
+    $data = $request->validate([
+        'statue' => ['required', 'string', 'in:confirme,a_voir,inj'],
+    ]);
+
+    $relances = AppStore::get('relances');
+    $index = collect($relances)->search(fn ($r) => ($r['id'] ?? '') === $id);
+
+    if ($index === false) {
+        return redirect()
+            ->route('dashboard')
+            ->with('open_fiche_relance', true);
+    }
+
+    $relances[$index]['statue'] = $data['statue'];
+
+    if ($data['statue'] === 'confirme' && empty($relances[$index]['client_id'])) {
+        $clients = AppStore::get('clients');
+        $nom = trim((string) ($relances[$index]['nom_complet'] ?? ''));
+        $existing = collect($clients)->first(
+            fn ($c) => mb_strtolower(trim((string) ($c['nom'] ?? ''))) === mb_strtolower($nom)
+        );
+
+        if ($existing) {
+            $relances[$index]['client_id'] = $existing['id'] ?? null;
+        } else {
+            $clientId = uniqid('cli_', true);
+            $clients[] = [
+                'id' => $clientId,
+                'date' => $relances[$index]['date'] ?? now()->format('d/m/Y'),
+                'ref' => 'CLI-'.str_pad((string) (count($clients) + 1), 4, '0', STR_PAD_LEFT),
+                'nom' => $nom,
+                'ville' => $relances[$index]['ville'] ?? '',
+                'contact' => '—',
+                'activite' => $relances[$index]['titre_projet'] ?? '',
+                'solde' => 0,
+            ];
+            AppStore::put('clients', $clients);
+            $relances[$index]['client_id'] = $clientId;
+        }
+    }
+
+    AppStore::put('relances', $relances);
+
+    return redirect()
+        ->route('dashboard')
+        ->with('open_fiche_relance', true);
+})->name('relances.statue');
 
 Route::delete('/relances/{id}', function (string $id) {
     $relances = collect(AppStore::get('relances'))

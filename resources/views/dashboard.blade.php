@@ -642,6 +642,15 @@
         .data-table tbody tr.row-relance-confirme td {
             color: rgba(190, 200, 215, 0.72);
         }
+        .data-table tbody tr.row-relance-inj {
+            background: rgba(220, 60, 70, 0.28);
+        }
+        .data-table tbody tr.row-relance-inj:hover {
+            background: rgba(220, 60, 70, 0.38);
+        }
+        .data-table tbody tr.row-relance-inj td {
+            color: #ffb4b8;
+        }
         .data-table td { color: rgba(235, 242, 255, 0.9); }
         .data-table td.solde-cell {
             color: #ff6b78;
@@ -758,6 +767,24 @@
             color: #7ee8b0;
             background-color: rgba(61, 207, 138, 0.16);
             border: 1px solid rgba(61, 207, 138, 0.4);
+        }
+
+        .statue-select.a_voir {
+            color: #ffc857;
+            background-color: rgba(240, 180, 41, 0.16);
+            border: 1px solid rgba(240, 180, 41, 0.4);
+        }
+
+        .statue-select.confirme {
+            color: #b8c4d4;
+            background-color: rgba(120, 130, 150, 0.22);
+            border: 1px solid rgba(140, 150, 165, 0.45);
+        }
+
+        .statue-select.inj {
+            color: #ff9aa0;
+            background-color: rgba(220, 60, 70, 0.18);
+            border: 1px solid rgba(220, 60, 70, 0.45);
         }
 
         .pull-select {
@@ -1864,6 +1891,18 @@
             color: #6b7280;
         }
 
+        html[data-theme="light"] .data-table tbody tr.row-relance-inj {
+            background: rgba(220, 53, 69, 0.22);
+        }
+
+        html[data-theme="light"] .data-table tbody tr.row-relance-inj:hover {
+            background: rgba(220, 53, 69, 0.32);
+        }
+
+        html[data-theme="light"] .data-table tbody tr.row-relance-inj td {
+            color: #842029;
+        }
+
         html[data-theme="light"] .data-table td.solde-cell {
             color: #d12b3a;
             text-shadow: none;
@@ -2537,8 +2576,9 @@
                                 <label for="filter_relance_statue">Statue</label>
                                 <select id="filter_relance_statue">
                                     <option value="">TOUTES LES STATUES</option>
-                                    <option value="a_voir">A voir</option>
-                                    <option value="confirme">Confirmé</option>
+                                    <option value="a_voir">A VOIR</option>
+                                    <option value="confirme">CONFIRME</option>
+                                    <option value="inj">INJ</option>
                                 </select>
                             </div>
                         </div>
@@ -2565,7 +2605,6 @@
                                     @php
                                         $statueRelance = $relance['statue'] ?? '';
                                         $rappelerRelance = $relance['a_rappeler'] ?? '';
-                                        $statueRelanceLabel = $statueRelance === 'confirme' ? 'Confirmé' : ($statueRelance === 'a_voir' ? 'A voir' : $statueRelance);
                                         $rappelerRelanceLabel = $rappelerRelance === 'oui' ? 'Oui' : ($rappelerRelance === 'non' ? 'Non' : $rappelerRelance);
                                         $partsRelance = explode('/', $relance['date'] ?? '');
                                         $moisRelance = count($partsRelance) >= 3 ? $partsRelance[1].'/'.$partsRelance[2] : '';
@@ -2577,6 +2616,7 @@
                                         @class([
                                             'row-relance-a-voir' => $statueRelance === 'a_voir',
                                             'row-relance-confirme' => $statueRelance === 'confirme',
+                                            'row-relance-inj' => $statueRelance === 'inj',
                                         ])
                                     >
                                         <td>{{ $relance['date'] ?? '' }}</td>
@@ -2585,7 +2625,22 @@
                                         <td>{{ $relance['titre_projet'] ?? '' }}</td>
                                         <td class="cell-wrap">{{ $relance['description'] ?? '' }}</td>
                                         <td>{{ number_format((float) ($relance['budget'] ?? 0), 2, '.', ' ') }}</td>
-                                        <td>{{ $statueRelanceLabel }}</td>
+                                        <td>
+                                            <form method="post" action="{{ url('/relances/'.$relance['id'].'/statue') }}" class="statue-form">
+                                                @csrf
+                                                @method('PATCH')
+                                                <select
+                                                    name="statue"
+                                                    class="statue-select {{ $statueRelance }}"
+                                                    aria-label="Choisir la statue de la relance"
+                                                    onchange="this.form.submit()"
+                                                >
+                                                    <option value="a_voir" @selected($statueRelance === 'a_voir')>A VOIR</option>
+                                                    <option value="confirme" @selected($statueRelance === 'confirme')>CONFIRME</option>
+                                                    <option value="inj" @selected($statueRelance === 'inj')>INJ</option>
+                                                </select>
+                                            </form>
+                                        </td>
                                         <td>{{ $rappelerRelanceLabel }}</td>
                                         <td>{{ $relance['date_rappel'] ?? '' }}</td>
                                         <td>
@@ -3625,8 +3680,9 @@
                         <label for="relance_statue">Statue</label>
                         <select id="relance_statue" name="statue" required>
                             <option value="" disabled selected>Sélectionner</option>
-                            <option value="confirme">Confirmé</option>
-                            <option value="a_voir">A voir</option>
+                            <option value="a_voir">A VOIR</option>
+                            <option value="confirme">CONFIRME</option>
+                            <option value="inj">INJ</option>
                         </select>
                     </div>
                     <div class="field">
@@ -3757,8 +3813,9 @@
         };
 
         const relanceStatueLabels = {
-            confirme: 'Confirmé',
-            a_voir: 'A voir',
+            a_voir: 'A VOIR',
+            confirme: 'CONFIRME',
+            inj: 'INJ',
         };
 
         const statueLabels = {
