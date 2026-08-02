@@ -588,7 +588,7 @@
         .data-table th,
         .data-table td {
             padding: 0.75rem 0.85rem;
-            text-align: center;
+            text-align: center !important;
             vertical-align: middle;
             border-bottom: 1px solid rgba(110, 168, 255, 0.1);
             font-size: 0.84rem;
@@ -601,6 +601,16 @@
             font-size: 0.75rem;
             letter-spacing: 0.04em;
             background: rgba(20, 40, 70, 0.55);
+            text-align: center !important;
+        }
+
+        .data-table td.cell-wrap {
+            white-space: normal;
+            max-width: 280px;
+        }
+
+        .data-table .empty {
+            text-align: center !important;
         }
 
         .data-table tbody tr:hover { background: rgba(59, 158, 255, 0.06); }
@@ -612,6 +622,25 @@
         }
         .data-table tbody tr.row-execute td {
             color: #c8f5dc;
+        }
+        .data-table tbody tr.row-relance-a-voir {
+            background: rgba(240, 180, 41, 0.24);
+        }
+        .data-table tbody tr.row-relance-a-voir:hover {
+            background: rgba(240, 180, 41, 0.34);
+        }
+        .data-table tbody tr.row-relance-a-voir td {
+            color: #ffe7a8;
+        }
+        .data-table tbody tr.row-relance-confirme {
+            background: rgba(120, 130, 150, 0.28);
+            opacity: 0.7;
+        }
+        .data-table tbody tr.row-relance-confirme:hover {
+            background: rgba(120, 130, 150, 0.36);
+        }
+        .data-table tbody tr.row-relance-confirme td {
+            color: rgba(190, 200, 215, 0.72);
         }
         .data-table td { color: rgba(235, 242, 255, 0.9); }
         .data-table td.solde-cell {
@@ -1810,6 +1839,31 @@
             color: #0f5132;
         }
 
+        html[data-theme="light"] .data-table tbody tr.row-relance-a-voir {
+            background: rgba(240, 180, 41, 0.28);
+        }
+
+        html[data-theme="light"] .data-table tbody tr.row-relance-a-voir:hover {
+            background: rgba(240, 180, 41, 0.38);
+        }
+
+        html[data-theme="light"] .data-table tbody tr.row-relance-a-voir td {
+            color: #7a5a00;
+        }
+
+        html[data-theme="light"] .data-table tbody tr.row-relance-confirme {
+            background: rgba(140, 148, 160, 0.28);
+            opacity: 0.72;
+        }
+
+        html[data-theme="light"] .data-table tbody tr.row-relance-confirme:hover {
+            background: rgba(140, 148, 160, 0.36);
+        }
+
+        html[data-theme="light"] .data-table tbody tr.row-relance-confirme td {
+            color: #6b7280;
+        }
+
         html[data-theme="light"] .data-table td.solde-cell {
             color: #d12b3a;
             text-shadow: none;
@@ -2359,6 +2413,29 @@
                                 Ajouter
                             </button>
                         </div>
+
+                        <div class="search-bar" aria-label="Recherche clients" style="grid-template-columns: repeat(1, minmax(0, 1fr)); max-width: 280px;">
+                            <div class="search-field">
+                                <label for="filter_client_mois">Mois</label>
+                                <select id="filter_client_mois">
+                                    <option value="">TOUS LES MOIS</option>
+                                    @php
+                                        $moisClients = collect($clients ?? [])
+                                            ->map(function ($c) {
+                                                $parts = explode('/', $c['date'] ?? '');
+                                                return count($parts) >= 3 ? $parts[1].'/'.$parts[2] : null;
+                                            })
+                                            ->filter()
+                                            ->unique()
+                                            ->sort()
+                                            ->values();
+                                    @endphp
+                                    @foreach ($moisClients as $mois)
+                                        <option value="{{ $mois }}">{{ $mois }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+                        </div>
                     </div>
 
                     <div class="table-wrap table-freeze-body">
@@ -2377,7 +2454,11 @@
                             </thead>
                             <tbody id="clientsTableBody">
                                 @forelse (($clients ?? []) as $client)
-                                    <tr data-id="{{ $client['id'] }}">
+                                    @php
+                                        $partsClient = explode('/', $client['date'] ?? '');
+                                        $moisClient = count($partsClient) >= 3 ? $partsClient[1].'/'.$partsClient[2] : '';
+                                    @endphp
+                                    <tr data-id="{{ $client['id'] }}" data-mois="{{ $moisClient }}">
                                         <td>{{ $client['date'] }}</td>
                                         <td>{{ $client['ref'] }}</td>
                                         <td>{{ $client['nom'] }}</td>
@@ -2411,6 +2492,9 @@
                                         <td colspan="8" class="empty">Aucun client enregistré. Cliquez sur Ajouter.</td>
                                     </tr>
                                 @endforelse
+                                <tr id="clientsNoResult" class="empty-row" style="display:none;">
+                                    <td colspan="8" class="empty">Aucun résultat pour cette recherche.</td>
+                                </tr>
                             </tbody>
                         </table>
                     </div>
@@ -2426,6 +2510,37 @@
                                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>
                                 Ajouter Relance
                             </button>
+                        </div>
+
+                        <div class="search-bar" aria-label="Recherche relances" style="grid-template-columns: repeat(2, minmax(0, 1fr));">
+                            <div class="search-field">
+                                <label for="filter_relance_mois">Mois</label>
+                                <select id="filter_relance_mois">
+                                    <option value="">TOUS LES MOIS</option>
+                                    @php
+                                        $moisRelances = collect($relances ?? [])
+                                            ->map(function ($r) {
+                                                $parts = explode('/', $r['date'] ?? '');
+                                                return count($parts) >= 3 ? $parts[1].'/'.$parts[2] : null;
+                                            })
+                                            ->filter()
+                                            ->unique()
+                                            ->sort()
+                                            ->values();
+                                    @endphp
+                                    @foreach ($moisRelances as $mois)
+                                        <option value="{{ $mois }}">{{ $mois }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+                            <div class="search-field">
+                                <label for="filter_relance_statue">Statue</label>
+                                <select id="filter_relance_statue">
+                                    <option value="">TOUTES LES STATUES</option>
+                                    <option value="a_voir">A voir</option>
+                                    <option value="confirme">Confirmé</option>
+                                </select>
+                            </div>
                         </div>
                     </div>
 
@@ -2452,13 +2567,23 @@
                                         $rappelerRelance = $relance['a_rappeler'] ?? '';
                                         $statueRelanceLabel = $statueRelance === 'confirme' ? 'Confirmé' : ($statueRelance === 'a_voir' ? 'A voir' : $statueRelance);
                                         $rappelerRelanceLabel = $rappelerRelance === 'oui' ? 'Oui' : ($rappelerRelance === 'non' ? 'Non' : $rappelerRelance);
+                                        $partsRelance = explode('/', $relance['date'] ?? '');
+                                        $moisRelance = count($partsRelance) >= 3 ? $partsRelance[1].'/'.$partsRelance[2] : '';
                                     @endphp
-                                    <tr data-id="{{ $relance['id'] }}">
+                                    <tr
+                                        data-id="{{ $relance['id'] }}"
+                                        data-mois="{{ $moisRelance }}"
+                                        data-statue="{{ $statueRelance }}"
+                                        @class([
+                                            'row-relance-a-voir' => $statueRelance === 'a_voir',
+                                            'row-relance-confirme' => $statueRelance === 'confirme',
+                                        ])
+                                    >
                                         <td>{{ $relance['date'] ?? '' }}</td>
                                         <td>{{ $relance['ref'] ?? '' }}</td>
                                         <td>{{ $relance['nom_complet'] ?? '' }}</td>
                                         <td>{{ $relance['titre_projet'] ?? '' }}</td>
-                                        <td style="white-space:normal;max-width:260px;text-align:left;">{{ $relance['description'] ?? '' }}</td>
+                                        <td class="cell-wrap">{{ $relance['description'] ?? '' }}</td>
                                         <td>{{ number_format((float) ($relance['budget'] ?? 0), 2, '.', ' ') }}</td>
                                         <td>{{ $statueRelanceLabel }}</td>
                                         <td>{{ $rappelerRelanceLabel }}</td>
@@ -2486,6 +2611,9 @@
                                         <td colspan="10" class="empty">Aucune relance enregistrée. Cliquez sur Ajouter Relance.</td>
                                     </tr>
                                 @endforelse
+                                <tr id="relancesNoResult" class="empty-row" style="display:none;">
+                                    <td colspan="10" class="empty">Aucun résultat pour cette recherche.</td>
+                                </tr>
                             </tbody>
                         </table>
                     </div>
@@ -2726,7 +2854,7 @@
                                     >
                                         <td>{{ $evolution['date'] }}</td>
                                         <td>{{ $evolution['titre_projet'] }}</td>
-                                        <td style="white-space:normal;max-width:320px;text-align:left;">{{ $evolution['description'] }}</td>
+                                        <td class="cell-wrap">{{ $evolution['description'] }}</td>
                                         <td>
                                             <form method="post" action="{{ url('/evolutions/'.$evolution['id'].'/pull') }}" class="statue-form">
                                                 @csrf
@@ -2962,6 +3090,40 @@
                                 <button type="button" class="btn-ghost" id="btnCloseUtilisateur">Fermer</button>
                             </div>
                         </div>
+
+                        <div class="search-bar" aria-label="Recherche utilisateurs" style="grid-template-columns: repeat(2, minmax(0, 1fr));">
+                            <div class="search-field">
+                                <label for="filter_utilisateur_mois">Mois</label>
+                                <select id="filter_utilisateur_mois">
+                                    <option value="">TOUS LES MOIS</option>
+                                    @php
+                                        $moisUtilisateurs = collect($utilisateurs ?? [])
+                                            ->map(function ($u) {
+                                                $parts = explode('/', $u['date'] ?? '');
+                                                return count($parts) >= 3 ? $parts[1].'/'.$parts[2] : null;
+                                            })
+                                            ->filter()
+                                            ->unique()
+                                            ->sort()
+                                            ->values();
+                                    @endphp
+                                    @foreach ($moisUtilisateurs as $mois)
+                                        <option value="{{ $mois }}">{{ $mois }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+                            <div class="search-field">
+                                <label for="filter_utilisateur_statue">Statue</label>
+                                <select id="filter_utilisateur_statue">
+                                    <option value="">TOUTES LES STATUES</option>
+                                    <option value="admin">Administrateur</option>
+                                    <option value="manager">Manager</option>
+                                    <option value="comptable">Comptable</option>
+                                    <option value="vendeur">Vendeur</option>
+                                    <option value="stock">Responsable stock</option>
+                                </select>
+                            </div>
+                        </div>
                     </div>
 
                     <div class="table-wrap table-freeze-body">
@@ -2987,7 +3149,11 @@
                                     ];
                                 @endphp
                                 @forelse (($utilisateurs ?? []) as $utilisateur)
-                                    <tr data-id="{{ $utilisateur['id'] }}">
+                                    @php
+                                        $partsUser = explode('/', $utilisateur['date'] ?? '');
+                                        $moisUser = count($partsUser) >= 3 ? $partsUser[1].'/'.$partsUser[2] : '';
+                                    @endphp
+                                    <tr data-id="{{ $utilisateur['id'] }}" data-mois="{{ $moisUser }}" data-statue="{{ $utilisateur['statue'] ?? '' }}">
                                         <td>{{ $utilisateur['date'] }}</td>
                                         <td>{{ $utilisateur['nom_complet'] }}</td>
                                         <td>{{ $userStatueLabels[$utilisateur['statue']] ?? strtoupper($utilisateur['statue']) }}</td>
@@ -3016,6 +3182,9 @@
                                         <td colspan="6" class="empty">Aucun utilisateur enregistré. Cliquez sur Ajouter.</td>
                                     </tr>
                                 @endforelse
+                                <tr id="utilisateursNoResult" class="empty-row" style="display:none;">
+                                    <td colspan="6" class="empty">Aucun résultat pour cette recherche.</td>
+                                </tr>
                             </tbody>
                         </table>
                     </div>
@@ -3077,8 +3246,8 @@
                                     @endphp
                                     <tr data-id="{{ $autorisation['id'] }}">
                                         <td>{{ $autorisation['utilisateur_nom'] ?? '' }}{{ !empty($autorisation['utilisateur_login']) ? ' ('.$autorisation['utilisateur_login'].')' : '' }}</td>
-                                        <td style="white-space:normal;max-width:220px;text-align:left;">{{ $sectionsLabels !== '' ? $sectionsLabels : '—' }}</td>
-                                        <td style="white-space:normal;max-width:320px;text-align:left;">{{ $authLabels !== '' ? $authLabels : 'Aucune' }}</td>
+                                        <td class="cell-wrap">{{ $sectionsLabels !== '' ? $sectionsLabels : '—' }}</td>
+                                        <td class="cell-wrap">{{ $authLabels !== '' ? $authLabels : 'Aucune' }}</td>
                                         <td>
                                             <div class="actions">
                                                 <button type="button" class="action-btn voir" title="Voir" aria-label="Voir">
@@ -4736,6 +4905,62 @@
 
         document.getElementById('filter_evolution_mois')?.addEventListener('change', filterEvolutionsTable);
         document.getElementById('filter_evolution_projet')?.addEventListener('change', filterEvolutionsTable);
+
+        function filterTableByMoisStatue(tbodySelector, moisId, statueId, noResultId) {
+            const mois = document.getElementById(moisId)?.value || '';
+            const statue = document.getElementById(statueId)?.value || '';
+            const rows = document.querySelectorAll(`${tbodySelector} tr[data-id]`);
+            let visible = 0;
+
+            rows.forEach((row) => {
+                const matchMois = !mois || (row.dataset.mois || '') === mois;
+                const matchStatue = !statue || (row.dataset.statue || '') === statue;
+                const show = matchMois && matchStatue;
+                row.style.display = show ? '' : 'none';
+                if (show) visible++;
+            });
+
+            const emptyRow = document.querySelector(`${tbodySelector} tr.empty-row:not(#${noResultId})`);
+            const noResultRow = document.getElementById(noResultId);
+
+            if (noResultRow) {
+                noResultRow.style.display = rows.length > 0 && visible === 0 ? '' : 'none';
+            }
+            if (emptyRow) {
+                emptyRow.style.display = rows.length === 0 ? '' : 'none';
+            }
+        }
+
+        function filterClientsTable() {
+            const mois = document.getElementById('filter_client_mois')?.value || '';
+            const rows = document.querySelectorAll('#clientsTableBody tr[data-id]');
+            let visible = 0;
+
+            rows.forEach((row) => {
+                const show = !mois || (row.dataset.mois || '') === mois;
+                row.style.display = show ? '' : 'none';
+                if (show) visible++;
+            });
+
+            const emptyRow = document.querySelector('#clientsTableBody tr.empty-row:not(#clientsNoResult)');
+            const noResultRow = document.getElementById('clientsNoResult');
+            if (noResultRow) noResultRow.style.display = rows.length > 0 && visible === 0 ? '' : 'none';
+            if (emptyRow) emptyRow.style.display = rows.length === 0 ? '' : 'none';
+        }
+
+        function filterRelancesTable() {
+            filterTableByMoisStatue('#relancesTableBody', 'filter_relance_mois', 'filter_relance_statue', 'relancesNoResult');
+        }
+
+        function filterUtilisateursTable() {
+            filterTableByMoisStatue('#utilisateursTableBody', 'filter_utilisateur_mois', 'filter_utilisateur_statue', 'utilisateursNoResult');
+        }
+
+        document.getElementById('filter_client_mois')?.addEventListener('change', filterClientsTable);
+        document.getElementById('filter_relance_mois')?.addEventListener('change', filterRelancesTable);
+        document.getElementById('filter_relance_statue')?.addEventListener('change', filterRelancesTable);
+        document.getElementById('filter_utilisateur_mois')?.addEventListener('change', filterUtilisateursTable);
+        document.getElementById('filter_utilisateur_statue')?.addEventListener('change', filterUtilisateursTable);
 
         const relanceFieldIds = [
             ...relanceRappelDateApi.fieldIds,

@@ -381,6 +381,32 @@ Route::post('/relances', function (Request $request) {
         'date_rappel' => ['required', 'string', 'regex:/^\d{2}\/\d{2}\/\d{4}$/'],
     ]);
 
+    $clientId = null;
+    if ($data['statue'] === 'confirme') {
+        $clients = AppStore::get('clients');
+        $nom = trim($data['nom_complet']);
+        $existing = collect($clients)->first(
+            fn ($c) => mb_strtolower(trim((string) ($c['nom'] ?? ''))) === mb_strtolower($nom)
+        );
+
+        if ($existing) {
+            $clientId = $existing['id'] ?? null;
+        } else {
+            $clientId = uniqid('cli_', true);
+            $clients[] = [
+                'id' => $clientId,
+                'date' => $data['date'],
+                'ref' => 'CLI-'.str_pad((string) (count($clients) + 1), 4, '0', STR_PAD_LEFT),
+                'nom' => $nom,
+                'ville' => $data['ville'],
+                'contact' => '—',
+                'activite' => $data['titre_projet'],
+                'solde' => 0,
+            ];
+            AppStore::put('clients', $clients);
+        }
+    }
+
     $relances = AppStore::get('relances');
     $relances[] = [
         'id' => uniqid('rel_', true),
@@ -394,6 +420,7 @@ Route::post('/relances', function (Request $request) {
         'statue' => $data['statue'],
         'a_rappeler' => $data['a_rappeler'],
         'date_rappel' => $data['date_rappel'],
+        'client_id' => $clientId,
     ];
 
     AppStore::put('relances', $relances);
@@ -432,6 +459,32 @@ Route::put('/relances/{id}', function (Request $request, string $id) {
     $relances[$index]['statue'] = $data['statue'];
     $relances[$index]['a_rappeler'] = $data['a_rappeler'];
     $relances[$index]['date_rappel'] = $data['date_rappel'];
+
+    if ($data['statue'] === 'confirme' && empty($relances[$index]['client_id'])) {
+        $clients = AppStore::get('clients');
+        $nom = trim($data['nom_complet']);
+        $existing = collect($clients)->first(
+            fn ($c) => mb_strtolower(trim((string) ($c['nom'] ?? ''))) === mb_strtolower($nom)
+        );
+
+        if ($existing) {
+            $relances[$index]['client_id'] = $existing['id'] ?? null;
+        } else {
+            $clientId = uniqid('cli_', true);
+            $clients[] = [
+                'id' => $clientId,
+                'date' => $relances[$index]['date'] ?? now()->format('d/m/Y'),
+                'ref' => 'CLI-'.str_pad((string) (count($clients) + 1), 4, '0', STR_PAD_LEFT),
+                'nom' => $nom,
+                'ville' => $data['ville'],
+                'contact' => '—',
+                'activite' => $data['titre_projet'],
+                'solde' => 0,
+            ];
+            AppStore::put('clients', $clients);
+            $relances[$index]['client_id'] = $clientId;
+        }
+    }
 
     AppStore::put('relances', $relances);
 
