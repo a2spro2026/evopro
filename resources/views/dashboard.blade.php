@@ -2332,48 +2332,41 @@
                         </article>
                     </section>
 
-                    <section class="balance-section" aria-label="Balance projets">
+                    <section class="balance-section" aria-label="Tableau des relances">
                         <div class="panel-freeze">
                             <div class="balance-head">
-                                <h2>Balance Projets</h2>
-                                <p>Suivi budgétaire des projets : avance, trésorerie et solde</p>
+                                <h2>Relances</h2>
+                                <p>Suivi des relances clients : statue, rappel et budget</p>
                             </div>
 
-                            <div class="search-bar balance-search" aria-label="Recherche balance projets" style="grid-template-columns: repeat(2, minmax(0, 1fr));">
+                            <div class="search-bar balance-search" aria-label="Recherche relances" style="grid-template-columns: repeat(2, minmax(0, 1fr));">
                                 <div class="search-field">
-                                    <label for="filter_balance_client">Client</label>
-                                    <select id="filter_balance_client">
-                                        <option value="">TOUS LES CLIENTS</option>
+                                    <label for="filter_dashboard_relance_mois">Mois</label>
+                                    <select id="filter_dashboard_relance_mois">
+                                        <option value="">TOUS LES MOIS</option>
                                         @php
-                                            $clientsBalanceFilter = collect($clients ?? [])
-                                                ->pluck('nom')
-                                                ->merge(collect($projets ?? [])->pluck('client'))
+                                            $moisDashboardRelances = collect($relances ?? [])
+                                                ->map(function ($r) {
+                                                    $parts = explode('/', $r['date'] ?? '');
+                                                    return count($parts) >= 3 ? $parts[1].'/'.$parts[2] : null;
+                                                })
                                                 ->filter()
                                                 ->unique()
                                                 ->sort()
                                                 ->values();
                                         @endphp
-                                        @foreach ($clientsBalanceFilter as $clientNom)
-                                            <option value="{{ mb_strtolower($clientNom) }}">{{ $clientNom }}</option>
+                                        @foreach ($moisDashboardRelances as $mois)
+                                            <option value="{{ $mois }}">{{ $mois }}</option>
                                         @endforeach
                                     </select>
                                 </div>
                                 <div class="search-field">
-                                    <label for="filter_balance_tresorerie">Trésorerie</label>
-                                    <select id="filter_balance_tresorerie">
-                                        <option value="">TOUTES LES TRÉSORERIES</option>
-                                        @php
-                                            $tresoreriesBalanceFilter = collect($projets ?? [])
-                                                ->pluck('tresorerie')
-                                                ->merge(collect($paiements ?? [])->pluck('tresorerie'))
-                                                ->filter()
-                                                ->unique()
-                                                ->sort()
-                                                ->values();
-                                        @endphp
-                                        @foreach ($tresoreriesBalanceFilter as $tresorerie)
-                                            <option value="{{ mb_strtolower($tresorerie) }}">{{ $tresorerie }}</option>
-                                        @endforeach
+                                    <label for="filter_dashboard_relance_statue">Statue</label>
+                                    <select id="filter_dashboard_relance_statue">
+                                        <option value="">TOUTES LES STATUES</option>
+                                        <option value="a_voir">A VOIR</option>
+                                        <option value="confirme">CONFIRME</option>
+                                        <option value="inj">INJ</option>
                                     </select>
                                 </div>
                             </div>
@@ -2384,56 +2377,70 @@
                                 <thead>
                                     <tr>
                                         <th>Date</th>
-                                        <th>Nom Client</th>
+                                        <th>ID</th>
+                                        <th>Nom Complet</th>
+                                        <th>Téléphone</th>
                                         <th>Titre Projet</th>
-                                        <th>Désignation</th>
+                                        <th>Description</th>
                                         <th>Budget</th>
                                         <th>Statue</th>
-                                        <th>Avance</th>
-                                        <th>Trésorerie</th>
-                                        <th>Solde</th>
+                                        <th>A Rappeler</th>
+                                        <th>Date</th>
                                     </tr>
                                 </thead>
-                                <tbody id="balanceProjetsTableBody">
-                                    @php
-                                        $statueLabels = [
-                                            'actif' => 'EN COURS',
-                                            'attente' => 'EN ATTENTE',
-                                            'annule' => 'ANNULÉ',
-                                            'execute' => 'EXÉCUTÉ',
-                                        ];
-                                    @endphp
-                                    @forelse (($projets ?? []) as $projet)
+                                <tbody id="dashboardRelancesTableBody">
+                                    @forelse (($relances ?? []) as $relance)
                                         @php
-                                            $statueKey = $projet['statut'] ?? 'attente';
-                                            $tresorerieVal = $projet['tresorerie'] ?? '';
+                                            $statueRelanceDash = $relance['statue'] ?? '';
+                                            $rappelerRelanceDash = $relance['a_rappeler'] ?? '';
+                                            $rappelerRelanceDashLabel = $rappelerRelanceDash === 'oui' ? 'Oui' : ($rappelerRelanceDash === 'non' ? 'Non' : $rappelerRelanceDash);
+                                            $partsRelanceDash = explode('/', $relance['date'] ?? '');
+                                            $moisRelanceDash = count($partsRelanceDash) >= 3 ? $partsRelanceDash[1].'/'.$partsRelanceDash[2] : '';
                                         @endphp
                                         <tr
-                                            data-id="{{ $projet['id'] ?? '' }}"
-                                            data-client="{{ mb_strtolower($projet['client'] ?? '') }}"
-                                            data-tresorerie="{{ mb_strtolower($tresorerieVal) }}"
+                                            data-id="{{ $relance['id'] ?? '' }}"
+                                            data-mois="{{ $moisRelanceDash }}"
+                                            data-statue="{{ $statueRelanceDash }}"
+                                            @class([
+                                                'row-relance-a-voir' => $statueRelanceDash === 'a_voir',
+                                                'row-relance-confirme' => $statueRelanceDash === 'confirme',
+                                                'row-relance-inj' => $statueRelanceDash === 'inj',
+                                            ])
                                         >
-                                            <td>{{ $projet['date'] ?? '' }}</td>
-                                            <td>{{ $projet['client'] ?? '' }}</td>
-                                            <td>{{ $projet['nom'] ?? '' }}</td>
-                                            <td>{{ $projet['designation'] ?? '' }}</td>
-                                            <td>{{ number_format((float) ($projet['budget'] ?? 0), 2, '.', ' ') }}</td>
+                                            <td>{{ $relance['date'] ?? '' }}</td>
+                                            <td>{{ $relance['ref'] ?? '' }}</td>
+                                            <td>{{ $relance['nom_complet'] ?? '' }}</td>
+                                            <td>{{ $relance['telephone'] ?? '' }}</td>
+                                            <td>{{ $relance['titre_projet'] ?? '' }}</td>
+                                            <td class="cell-wrap">{{ $relance['description'] ?? '' }}</td>
+                                            <td>{{ number_format((float) ($relance['budget'] ?? 0), 2, '.', ' ') }}</td>
                                             <td>
-                                                <span class="statue-badge {{ $statueKey }}">
-                                                    {{ $statueLabels[$statueKey] ?? strtoupper($statueKey) }}
-                                                </span>
+                                                <form method="post" action="{{ url('/relances/'.$relance['id'].'/statue') }}" class="statue-form">
+                                                    @csrf
+                                                    @method('PATCH')
+                                                    <input type="hidden" name="from_dashboard" value="1">
+                                                    <select
+                                                        name="statue"
+                                                        class="statue-select {{ $statueRelanceDash }}"
+                                                        aria-label="Choisir la statue de la relance"
+                                                        onchange="this.form.submit()"
+                                                    >
+                                                        <option value="a_voir" @selected($statueRelanceDash === 'a_voir')>A VOIR</option>
+                                                        <option value="confirme" @selected($statueRelanceDash === 'confirme')>CONFIRME</option>
+                                                        <option value="inj" @selected($statueRelanceDash === 'inj')>INJ</option>
+                                                    </select>
+                                                </form>
                                             </td>
-                                            <td>{{ number_format((float) ($projet['montant_paye'] ?? 0), 2, '.', ' ') }}</td>
-                                            <td>{{ $tresorerieVal ?: '—' }}</td>
-                                            <td class="solde-cell">{{ number_format((float) ($projet['solde'] ?? 0), 2, '.', ' ') }}</td>
+                                            <td>{{ $rappelerRelanceDashLabel }}</td>
+                                            <td>{{ $relance['date_rappel'] ?? '' }}</td>
                                         </tr>
                                     @empty
                                         <tr class="empty-row">
-                                            <td colspan="9" class="empty">Aucun projet enregistré.</td>
+                                            <td colspan="10" class="empty">Aucune relance enregistrée.</td>
                                         </tr>
                                     @endforelse
-                                    <tr id="balanceProjetsNoResult" class="empty-row" style="display:none;">
-                                        <td colspan="9" class="empty">Aucun projet ne correspond à la recherche.</td>
+                                    <tr id="dashboardRelancesNoResult" class="empty-row" style="display:none;">
+                                        <td colspan="10" class="empty">Aucun résultat pour cette recherche.</td>
                                     </tr>
                                 </tbody>
                             </table>
@@ -2591,6 +2598,7 @@
                                     <th>Date</th>
                                     <th>ID</th>
                                     <th>Nom Complet</th>
+                                    <th>Téléphone</th>
                                     <th>Titre Projet</th>
                                     <th>Description</th>
                                     <th>Budget</th>
@@ -2622,6 +2630,7 @@
                                         <td>{{ $relance['date'] ?? '' }}</td>
                                         <td>{{ $relance['ref'] ?? '' }}</td>
                                         <td>{{ $relance['nom_complet'] ?? '' }}</td>
+                                        <td>{{ $relance['telephone'] ?? '' }}</td>
                                         <td>{{ $relance['titre_projet'] ?? '' }}</td>
                                         <td class="cell-wrap">{{ $relance['description'] ?? '' }}</td>
                                         <td>{{ number_format((float) ($relance['budget'] ?? 0), 2, '.', ' ') }}</td>
@@ -2663,11 +2672,11 @@
                                     </tr>
                                 @empty
                                     <tr class="empty-row">
-                                        <td colspan="10" class="empty">Aucune relance enregistrée. Cliquez sur Ajouter Relance.</td>
+                                        <td colspan="11" class="empty">Aucune relance enregistrée. Cliquez sur Ajouter Relance.</td>
                                     </tr>
                                 @endforelse
                                 <tr id="relancesNoResult" class="empty-row" style="display:none;">
-                                    <td colspan="10" class="empty">Aucun résultat pour cette recherche.</td>
+                                    <td colspan="11" class="empty">Aucun résultat pour cette recherche.</td>
                                 </tr>
                             </tbody>
                         </table>
@@ -3659,6 +3668,10 @@
                     <div class="field full">
                         <label for="relance_nom_complet">Nom Complet</label>
                         <input type="text" id="relance_nom_complet" name="nom_complet" required placeholder="Nom complet">
+                    </div>
+                    <div class="field">
+                        <label for="relance_telephone">Téléphone</label>
+                        <input type="text" id="relance_telephone" name="telephone" required placeholder="Téléphone" inputmode="tel">
                     </div>
                     <div class="field">
                         <label for="relance_ville">Ville</label>
@@ -4819,39 +4832,17 @@
         document.getElementById('paiement_client')?.addEventListener('change', applyPaiementClient);
         document.getElementById('paiement_montant_paye')?.addEventListener('input', updatePaiementSolde);
 
-        function filterBalanceProjetsTable() {
-            const client = document.getElementById('filter_balance_client')?.value || '';
-            const tresorerie = document.getElementById('filter_balance_tresorerie')?.value || '';
-
-            const rows = document.querySelectorAll('#balanceProjetsTableBody tr[data-id]');
-            let visible = 0;
-
-            rows.forEach((row) => {
-                const rowClient = row.dataset.client || '';
-                const rowTresorerie = row.dataset.tresorerie || '';
-
-                const matchClient = !client || rowClient === client;
-                const matchTresorerie = !tresorerie || rowTresorerie === tresorerie;
-
-                const show = matchClient && matchTresorerie;
-                row.style.display = show ? '' : 'none';
-                if (show) visible++;
-            });
-
-            const emptyRow = document.querySelector('#balanceProjetsTableBody tr.empty-row:not(#balanceProjetsNoResult)');
-            const noResultRow = document.getElementById('balanceProjetsNoResult');
-
-            if (noResultRow) {
-                noResultRow.style.display = rows.length > 0 && visible === 0 ? '' : 'none';
-            }
-
-            if (emptyRow) {
-                emptyRow.style.display = rows.length === 0 ? '' : 'none';
-            }
+        function filterDashboardRelancesTable() {
+            filterTableByMoisStatue(
+                '#dashboardRelancesTableBody',
+                'filter_dashboard_relance_mois',
+                'filter_dashboard_relance_statue',
+                'dashboardRelancesNoResult'
+            );
         }
 
-        document.getElementById('filter_balance_client')?.addEventListener('change', filterBalanceProjetsTable);
-        document.getElementById('filter_balance_tresorerie')?.addEventListener('change', filterBalanceProjetsTable);
+        document.getElementById('filter_dashboard_relance_mois')?.addEventListener('change', filterDashboardRelancesTable);
+        document.getElementById('filter_dashboard_relance_statue')?.addEventListener('change', filterDashboardRelancesTable);
 
         function filterProjetsTable() {
             const mois = document.getElementById('filter_projet_mois')?.value || '';
@@ -5022,6 +5013,7 @@
         const relanceFieldIds = [
             ...relanceRappelDateApi.fieldIds,
             'relance_nom_complet',
+            'relance_telephone',
             'relance_ville',
             'relance_titre_projet',
             'relance_description',
@@ -5047,6 +5039,7 @@
             document.getElementById('relance_date').value = relance.date || '';
             document.getElementById('relance_ref').value = relance.ref || '';
             document.getElementById('relance_nom_complet').value = relance.nom_complet || '';
+            document.getElementById('relance_telephone').value = relance.telephone || '';
             document.getElementById('relance_ville').value = relance.ville || '';
             document.getElementById('relance_titre_projet').value = relance.titre_projet || '';
             document.getElementById('relance_description').value = relance.description || '';
@@ -5071,6 +5064,7 @@
             document.getElementById('relance_date').value = todayFr();
             document.getElementById('relance_ref').value = nextRelanceRef();
             document.getElementById('relance_nom_complet').value = '';
+            document.getElementById('relance_telephone').value = '';
             document.getElementById('relance_ville').value = '';
             document.getElementById('relance_titre_projet').value = '';
             document.getElementById('relance_description').value = '';

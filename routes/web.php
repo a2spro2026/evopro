@@ -372,6 +372,7 @@ Route::post('/relances', function (Request $request) {
         'date' => ['required', 'string'],
         'ref' => ['required', 'string'],
         'nom_complet' => ['required', 'string', 'max:255'],
+        'telephone' => ['required', 'string', 'max:255'],
         'ville' => ['required', 'string', 'max:255'],
         'titre_projet' => ['required', 'string', 'max:255'],
         'description' => ['required', 'string', 'max:2000'],
@@ -399,7 +400,7 @@ Route::post('/relances', function (Request $request) {
                 'ref' => 'CLI-'.str_pad((string) (count($clients) + 1), 4, '0', STR_PAD_LEFT),
                 'nom' => $nom,
                 'ville' => $data['ville'],
-                'contact' => '—',
+                'contact' => $data['telephone'],
                 'activite' => $data['titre_projet'],
                 'solde' => 0,
             ];
@@ -413,6 +414,7 @@ Route::post('/relances', function (Request $request) {
         'date' => $data['date'],
         'ref' => $data['ref'],
         'nom_complet' => $data['nom_complet'],
+        'telephone' => $data['telephone'],
         'ville' => $data['ville'],
         'titre_projet' => $data['titre_projet'],
         'description' => $data['description'],
@@ -433,6 +435,7 @@ Route::post('/relances', function (Request $request) {
 Route::put('/relances/{id}', function (Request $request, string $id) {
     $data = $request->validate([
         'nom_complet' => ['required', 'string', 'max:255'],
+        'telephone' => ['required', 'string', 'max:255'],
         'ville' => ['required', 'string', 'max:255'],
         'titre_projet' => ['required', 'string', 'max:255'],
         'description' => ['required', 'string', 'max:2000'],
@@ -452,6 +455,7 @@ Route::put('/relances/{id}', function (Request $request, string $id) {
     }
 
     $relances[$index]['nom_complet'] = $data['nom_complet'];
+    $relances[$index]['telephone'] = $data['telephone'];
     $relances[$index]['ville'] = $data['ville'];
     $relances[$index]['titre_projet'] = $data['titre_projet'];
     $relances[$index]['description'] = $data['description'];
@@ -477,7 +481,7 @@ Route::put('/relances/{id}', function (Request $request, string $id) {
                 'ref' => 'CLI-'.str_pad((string) (count($clients) + 1), 4, '0', STR_PAD_LEFT),
                 'nom' => $nom,
                 'ville' => $data['ville'],
-                'contact' => '—',
+                'contact' => $data['telephone'],
                 'activite' => $data['titre_projet'],
                 'solde' => 0,
             ];
@@ -526,7 +530,7 @@ Route::patch('/relances/{id}/statue', function (Request $request, string $id) {
                 'ref' => 'CLI-'.str_pad((string) (count($clients) + 1), 4, '0', STR_PAD_LEFT),
                 'nom' => $nom,
                 'ville' => $relances[$index]['ville'] ?? '',
-                'contact' => '—',
+                'contact' => $relances[$index]['telephone'] ?? '—',
                 'activite' => $relances[$index]['titre_projet'] ?? '',
                 'solde' => 0,
             ];
@@ -536,6 +540,10 @@ Route::patch('/relances/{id}/statue', function (Request $request, string $id) {
     }
 
     AppStore::put('relances', $relances);
+
+    if ($request->boolean('from_dashboard')) {
+        return redirect()->route('dashboard');
+    }
 
     return redirect()
         ->route('dashboard')
