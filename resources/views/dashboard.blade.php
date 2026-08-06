@@ -1720,13 +1720,13 @@
             display: none !important;
         }
 
-        #panel-dashboard.cards-hidden {
+        #panel-dashboard.active.cards-hidden {
             display: flex;
             flex-direction: column;
             min-height: calc(100vh - 5.5rem);
         }
 
-        #panel-dashboard.cards-hidden .balance-section {
+        #panel-dashboard.active.cards-hidden .balance-section {
             margin-top: 0;
             margin-bottom: 0;
             flex: 1 1 auto;
@@ -1736,7 +1736,7 @@
             overflow: hidden;
         }
 
-        #panel-dashboard.cards-hidden .balance-section .panel-freeze {
+        #panel-dashboard.active.cards-hidden .balance-section .panel-freeze {
             flex: 0 0 auto;
             position: relative;
             top: auto;
@@ -1745,7 +1745,7 @@
             padding: 0 0 0.35rem;
         }
 
-        #panel-dashboard.cards-hidden .balance-section .table-wrap.table-freeze-body {
+        #panel-dashboard.active.cards-hidden .balance-section .table-wrap.table-freeze-body {
             flex: 1 1 auto;
             max-height: none;
             height: auto;
