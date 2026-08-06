@@ -585,6 +585,41 @@
             min-width: 1100px;
         }
 
+        table.data-table.data-table-relances {
+            min-width: 1720px;
+            width: max(100%, 1720px);
+            table-layout: auto;
+        }
+
+        table.data-table.data-table-relances th,
+        table.data-table.data-table-relances td {
+            padding: 0.7rem 0.7rem;
+            white-space: nowrap;
+            overflow: visible;
+        }
+
+        table.data-table.data-table-relances td.cell-wrap {
+            white-space: normal;
+            min-width: 180px;
+            max-width: 260px;
+        }
+
+        table.data-table.data-table-relances th:nth-child(1),
+        table.data-table.data-table-relances td:nth-child(1),
+        table.data-table.data-table-relances th:nth-child(11),
+        table.data-table.data-table-relances td:nth-child(11) {
+            min-width: 7.5rem;
+        }
+
+        table.data-table.data-table-relances th:nth-child(4),
+        table.data-table.data-table-relances td:nth-child(4),
+        table.data-table.data-table-relances th:nth-child(8),
+        table.data-table.data-table-relances td:nth-child(8),
+        table.data-table.data-table-relances th:nth-child(10),
+        table.data-table.data-table-relances td:nth-child(10) {
+            min-width: 6.5rem;
+        }
+
         .data-table th,
         .data-table td {
             padding: 0.75rem 0.85rem;
@@ -1476,7 +1511,11 @@
         }
 
         .balance-section .table-wrap.table-freeze-body {
-            max-height: min(52vh, 420px);
+            max-height: min(68vh, 640px);
+        }
+
+        #panel-fiche-relance .table-wrap.table-freeze-body {
+            max-height: min(72vh, 680px);
         }
 
         .paiement-sticky-lock {
@@ -2447,7 +2486,7 @@
                         </div>
 
                         <div class="table-wrap table-freeze-body">
-                            <table class="data-table">
+                            <table class="data-table data-table-relances">
                                 <thead>
                                     <tr>
                                         <th>Date</th>
@@ -2680,7 +2719,7 @@
                     </div>
 
                     <div class="table-wrap table-freeze-body">
-                        <table class="data-table">
+                        <table class="data-table data-table-relances">
                             <thead>
                                 <tr>
                                     <th>Date</th>
