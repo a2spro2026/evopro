@@ -597,6 +597,14 @@ Route::patch('/relances/{id}/envoye', function (Request $request, string $id) {
     $relances[$index]['envoye'] = $data['envoye'];
     AppStore::put('relances', $relances);
 
+    if ($request->expectsJson() || $request->ajax()) {
+        return response()->json([
+            'ok' => true,
+            'id' => $id,
+            'envoye' => $data['envoye'],
+        ]);
+    }
+
     if ($request->boolean('from_dashboard')) {
         return redirect()->route('dashboard');
     }

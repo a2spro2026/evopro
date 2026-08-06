@@ -3,10 +3,18 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>EvoPro — Tableau de bord</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script>
+        try {
+            if (localStorage.getItem('evopro_dashboard_cards_hidden') === '1') {
+                document.documentElement.classList.add('cards-hidden-boot');
+            }
+        } catch (e) {}
+    </script>
     <style>
         :root {
             --bg: #07111f;
@@ -887,8 +895,76 @@
             border: 1px solid rgba(240, 180, 41, 0.4);
         }
 
-        .envoye-form {
-            display: inline-block;
+        .envoye-switch {
+            display: inline-flex;
+            align-items: stretch;
+            width: 100%;
+            max-width: 11.5rem;
+            padding: 2px;
+            border-radius: 999px;
+            background: rgba(8, 18, 34, 0.55);
+            border: 1px solid rgba(110, 168, 255, 0.22);
+            box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.04);
+            gap: 2px;
+        }
+
+        .envoye-switch .envoye-opt {
+            flex: 1 1 0;
+            appearance: none;
+            border: none;
+            cursor: pointer;
+            font-family: inherit;
+            font-size: 0.62rem;
+            font-weight: 700;
+            letter-spacing: 0.04em;
+            text-transform: uppercase;
+            line-height: 1;
+            padding: 0.42rem 0.35rem;
+            border-radius: 999px;
+            color: rgba(210, 224, 245, 0.55);
+            background: transparent;
+            transition: background 0.18s ease, color 0.18s ease, box-shadow 0.18s ease, transform 0.18s ease;
+        }
+
+        .envoye-switch .envoye-opt:hover:not(.is-active) {
+            color: rgba(235, 242, 255, 0.88);
+            background: rgba(59, 158, 255, 0.08);
+        }
+
+        .envoye-switch .envoye-opt.is-active[data-value="lien"] {
+            color: #d9efff;
+            background: linear-gradient(135deg, rgba(59, 158, 255, 0.42), rgba(30, 111, 217, 0.55));
+            box-shadow: 0 4px 12px rgba(59, 158, 255, 0.28);
+        }
+
+        .envoye-switch .envoye-opt.is-active[data-value="conception"] {
+            color: #fff1c9;
+            background: linear-gradient(135deg, rgba(240, 180, 41, 0.42), rgba(210, 140, 20, 0.55));
+            box-shadow: 0 4px 12px rgba(240, 180, 41, 0.25);
+        }
+
+        .envoye-switch.is-saving {
+            opacity: 0.72;
+            pointer-events: none;
+        }
+
+        html[data-theme="light"] .envoye-switch {
+            background: rgba(255, 255, 255, 0.9);
+            border-color: rgba(30, 111, 217, 0.2);
+        }
+
+        html[data-theme="light"] .envoye-switch .envoye-opt {
+            color: rgba(20, 40, 70, 0.48);
+        }
+
+        html[data-theme="light"] .envoye-switch .envoye-opt:hover:not(.is-active) {
+            color: rgba(10, 22, 40, 0.85);
+            background: rgba(30, 111, 217, 0.08);
+        }
+
+        html.cards-hidden-boot #panel-dashboard .cards,
+        html.cards-hidden-boot #panel-dashboard .balance-section .search-bar {
+            display: none !important;
         }
 
         .pull-select {
@@ -2619,23 +2695,16 @@
                                             <td class="cell-wrap">{{ $relance['description'] ?? '' }}</td>
                                             <td>{{ number_format((float) ($relance['budget'] ?? 0), 2, '.', ' ') }}</td>
                                             <td>
-                                                <form method="post" action="{{ url('/relances/'.$relance['id'].'/envoye') }}" class="envoye-form">
-                                                    @csrf
-                                                    @method('PATCH')
-                                                    <input type="hidden" name="from_dashboard" value="1">
-                                                    <select
-                                                        name="envoye"
-                                                        class="statue-select envoye-select {{ $envoyeRelanceDash }}"
-                                                        aria-label="Choisir Envoyé"
-                                                        onchange="this.form.submit()"
-                                                    >
-                                                        @if ($envoyeRelanceDash !== 'lien' && $envoyeRelanceDash !== 'conception')
-                                                            <option value="" disabled selected>Sélectionner</option>
-                                                        @endif
-                                                        <option value="lien" @selected($envoyeRelanceDash === 'lien')>Lien</option>
-                                                        <option value="conception" @selected($envoyeRelanceDash === 'conception')>Conception</option>
-                                                    </select>
-                                                </form>
+                                                <div
+                                                    class="envoye-switch"
+                                                    data-id="{{ $relance['id'] ?? '' }}"
+                                                    data-value="{{ $envoyeRelanceDash }}"
+                                                    role="group"
+                                                    aria-label="Envoyé"
+                                                >
+                                                    <button type="button" class="envoye-opt{{ $envoyeRelanceDash === 'lien' ? ' is-active' : '' }}" data-value="lien">Lien</button>
+                                                    <button type="button" class="envoye-opt{{ $envoyeRelanceDash === 'conception' ? ' is-active' : '' }}" data-value="conception">Conception</button>
+                                                </div>
                                             </td>
                                             <td>
                                                 <form method="post" action="{{ url('/relances/'.$relance['id'].'/statue') }}" class="statue-form">
@@ -2901,22 +2970,16 @@
                                         <td class="cell-wrap">{{ $relance['description'] ?? '' }}</td>
                                         <td>{{ number_format((float) ($relance['budget'] ?? 0), 2, '.', ' ') }}</td>
                                         <td>
-                                            <form method="post" action="{{ url('/relances/'.$relance['id'].'/envoye') }}" class="envoye-form">
-                                                @csrf
-                                                @method('PATCH')
-                                                <select
-                                                    name="envoye"
-                                                    class="statue-select envoye-select {{ $envoyeRelance }}"
-                                                    aria-label="Choisir Envoyé"
-                                                    onchange="this.form.submit()"
-                                                >
-                                                    @if ($envoyeRelance !== 'lien' && $envoyeRelance !== 'conception')
-                                                        <option value="" disabled selected>Sélectionner</option>
-                                                    @endif
-                                                    <option value="lien" @selected($envoyeRelance === 'lien')>Lien</option>
-                                                    <option value="conception" @selected($envoyeRelance === 'conception')>Conception</option>
-                                                </select>
-                                            </form>
+                                            <div
+                                                class="envoye-switch"
+                                                data-id="{{ $relance['id'] }}"
+                                                data-value="{{ $envoyeRelance }}"
+                                                role="group"
+                                                aria-label="Envoyé"
+                                            >
+                                                <button type="button" class="envoye-opt{{ $envoyeRelance === 'lien' ? ' is-active' : '' }}" data-value="lien">Lien</button>
+                                                <button type="button" class="envoye-opt{{ $envoyeRelance === 'conception' ? ' is-active' : '' }}" data-value="conception">Conception</button>
+                                            </div>
                                         </td>
                                         <td>
                                             <form method="post" action="{{ url('/relances/'.$relance['id'].'/statue') }}" class="statue-form">
@@ -4851,7 +4914,7 @@
         }
 
         document.getElementById('projetsTableBody')?.addEventListener('click', (e) => {
-            if (e.target.closest('.statue-form') || e.target.closest('.rappel-date-form') || e.target.closest('.envoye-form')) return;
+            if (e.target.closest('.statue-form') || e.target.closest('.rappel-date-form') || e.target.closest('.envoye-switch')) return;
 
             const row = e.target.closest('tr[data-id]');
             if (!row) return;
@@ -5228,11 +5291,59 @@
             });
         });
 
+        const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '';
+
+        document.querySelectorAll('.envoye-switch').forEach((group) => {
+            group.addEventListener('click', async (e) => {
+                const btn = e.target.closest('.envoye-opt');
+                if (!btn || group.classList.contains('is-saving')) return;
+
+                const value = btn.dataset.value;
+                const id = group.dataset.id;
+                if (!value || !id || group.dataset.value === value) return;
+
+                const previous = group.dataset.value || '';
+                group.classList.add('is-saving');
+                group.dataset.value = value;
+                group.querySelectorAll('.envoye-opt').forEach((opt) => {
+                    opt.classList.toggle('is-active', opt.dataset.value === value);
+                });
+
+                try {
+                    const response = await fetch(`{{ url('/relances') }}/${encodeURIComponent(id)}/envoye`, {
+                        method: 'PATCH',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Accept': 'application/json',
+                            'X-CSRF-TOKEN': csrfToken,
+                            'X-Requested-With': 'XMLHttpRequest',
+                        },
+                        body: JSON.stringify({ envoye: value }),
+                    });
+
+                    if (!response.ok) throw new Error('save_failed');
+
+                    const item = (typeof relancesData !== 'undefined')
+                        ? relancesData.find((r) => r.id === id)
+                        : null;
+                    if (item) item.envoye = value;
+                } catch (err) {
+                    group.dataset.value = previous;
+                    group.querySelectorAll('.envoye-opt').forEach((opt) => {
+                        opt.classList.toggle('is-active', opt.dataset.value === previous);
+                    });
+                } finally {
+                    group.classList.remove('is-saving');
+                }
+            });
+        });
+
         const btnToggleDashboardCards = document.getElementById('btnToggleDashboardCards');
         const panelDashboard = document.getElementById('panel-dashboard');
 
         function applyDashboardCardsVisibility(hidden) {
             panelDashboard?.classList.toggle('cards-hidden', hidden);
+            document.documentElement.classList.toggle('cards-hidden-boot', hidden);
             if (btnToggleDashboardCards) {
                 btnToggleDashboardCards.textContent = hidden ? 'Afficher' : 'Masquer';
                 btnToggleDashboardCards.setAttribute('aria-pressed', hidden ? 'true' : 'false');
@@ -5544,7 +5655,7 @@
         }
 
         document.getElementById('relancesTableBody')?.addEventListener('click', (e) => {
-            if (e.target.closest('.rappel-date-form') || e.target.closest('.statue-form') || e.target.closest('.envoye-form')) return;
+            if (e.target.closest('.rappel-date-form') || e.target.closest('.statue-form') || e.target.closest('.envoye-switch')) return;
             const row = e.target.closest('tr[data-id]');
             if (!row) return;
 
