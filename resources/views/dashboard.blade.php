@@ -875,6 +875,22 @@
             border: 1px solid rgba(220, 60, 70, 0.45);
         }
 
+        .statue-select.lien {
+            color: #7ec4ff;
+            background-color: rgba(59, 158, 255, 0.16);
+            border: 1px solid rgba(126, 196, 255, 0.4);
+        }
+
+        .statue-select.conception {
+            color: #ffc857;
+            background-color: rgba(240, 180, 41, 0.16);
+            border: 1px solid rgba(240, 180, 41, 0.4);
+        }
+
+        .envoye-form {
+            display: inline-block;
+        }
+
         .pull-select {
             appearance: none;
             -webkit-appearance: none;
@@ -2579,7 +2595,6 @@
                                         @php
                                             $statueRelanceDash = $relance['statue'] ?? '';
                                             $envoyeRelanceDash = $relance['envoye'] ?? '';
-                                            $envoyeRelanceDashLabel = $envoyeRelanceDash === 'lien' ? 'Lien' : ($envoyeRelanceDash === 'conception' ? 'Conception' : $envoyeRelanceDash);
                                             $rappelerRelanceDash = $relance['a_rappeler'] ?? '';
                                             $rappelerRelanceDashLabel = $rappelerRelanceDash === 'oui' ? 'Oui' : ($rappelerRelanceDash === 'non' ? 'Non' : $rappelerRelanceDash);
                                             $partsRelanceDash = explode('/', $relance['date'] ?? '');
@@ -2603,7 +2618,25 @@
                                             <td>{{ $relance['titre_projet'] ?? '' }}</td>
                                             <td class="cell-wrap">{{ $relance['description'] ?? '' }}</td>
                                             <td>{{ number_format((float) ($relance['budget'] ?? 0), 2, '.', ' ') }}</td>
-                                            <td>{{ $envoyeRelanceDashLabel }}</td>
+                                            <td>
+                                                <form method="post" action="{{ url('/relances/'.$relance['id'].'/envoye') }}" class="envoye-form">
+                                                    @csrf
+                                                    @method('PATCH')
+                                                    <input type="hidden" name="from_dashboard" value="1">
+                                                    <select
+                                                        name="envoye"
+                                                        class="statue-select envoye-select {{ $envoyeRelanceDash }}"
+                                                        aria-label="Choisir Envoyé"
+                                                        onchange="this.form.submit()"
+                                                    >
+                                                        @if ($envoyeRelanceDash !== 'lien' && $envoyeRelanceDash !== 'conception')
+                                                            <option value="" disabled selected>Sélectionner</option>
+                                                        @endif
+                                                        <option value="lien" @selected($envoyeRelanceDash === 'lien')>Lien</option>
+                                                        <option value="conception" @selected($envoyeRelanceDash === 'conception')>Conception</option>
+                                                    </select>
+                                                </form>
+                                            </td>
                                             <td>
                                                 <form method="post" action="{{ url('/relances/'.$relance['id'].'/statue') }}" class="statue-form">
                                                     @csrf
@@ -2844,7 +2877,6 @@
                                     @php
                                         $statueRelance = $relance['statue'] ?? '';
                                         $envoyeRelance = $relance['envoye'] ?? '';
-                                        $envoyeRelanceLabel = $envoyeRelance === 'lien' ? 'Lien' : ($envoyeRelance === 'conception' ? 'Conception' : $envoyeRelance);
                                         $rappelerRelance = $relance['a_rappeler'] ?? '';
                                         $rappelerRelanceLabel = $rappelerRelance === 'oui' ? 'Oui' : ($rappelerRelance === 'non' ? 'Non' : $rappelerRelance);
                                         $partsRelance = explode('/', $relance['date'] ?? '');
@@ -2868,7 +2900,24 @@
                                         <td>{{ $relance['titre_projet'] ?? '' }}</td>
                                         <td class="cell-wrap">{{ $relance['description'] ?? '' }}</td>
                                         <td>{{ number_format((float) ($relance['budget'] ?? 0), 2, '.', ' ') }}</td>
-                                        <td>{{ $envoyeRelanceLabel }}</td>
+                                        <td>
+                                            <form method="post" action="{{ url('/relances/'.$relance['id'].'/envoye') }}" class="envoye-form">
+                                                @csrf
+                                                @method('PATCH')
+                                                <select
+                                                    name="envoye"
+                                                    class="statue-select envoye-select {{ $envoyeRelance }}"
+                                                    aria-label="Choisir Envoyé"
+                                                    onchange="this.form.submit()"
+                                                >
+                                                    @if ($envoyeRelance !== 'lien' && $envoyeRelance !== 'conception')
+                                                        <option value="" disabled selected>Sélectionner</option>
+                                                    @endif
+                                                    <option value="lien" @selected($envoyeRelance === 'lien')>Lien</option>
+                                                    <option value="conception" @selected($envoyeRelance === 'conception')>Conception</option>
+                                                </select>
+                                            </form>
+                                        </td>
                                         <td>
                                             <form method="post" action="{{ url('/relances/'.$relance['id'].'/statue') }}" class="statue-form">
                                                 @csrf
@@ -4802,7 +4851,7 @@
         }
 
         document.getElementById('projetsTableBody')?.addEventListener('click', (e) => {
-            if (e.target.closest('.statue-form') || e.target.closest('.rappel-date-form')) return;
+            if (e.target.closest('.statue-form') || e.target.closest('.rappel-date-form') || e.target.closest('.envoye-form')) return;
 
             const row = e.target.closest('tr[data-id]');
             if (!row) return;
@@ -5495,7 +5544,7 @@
         }
 
         document.getElementById('relancesTableBody')?.addEventListener('click', (e) => {
-            if (e.target.closest('.rappel-date-form') || e.target.closest('.statue-form')) return;
+            if (e.target.closest('.rappel-date-form') || e.target.closest('.statue-form') || e.target.closest('.envoye-form')) return;
             const row = e.target.closest('tr[data-id]');
             if (!row) return;
 
