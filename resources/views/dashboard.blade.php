@@ -2703,7 +2703,7 @@
                                                     aria-label="Envoyé"
                                                 >
                                                     <button type="button" class="envoye-opt{{ $envoyeRelanceDash === 'lien' ? ' is-active' : '' }}" data-value="lien">Lien</button>
-                                                    <button type="button" class="envoye-opt{{ $envoyeRelanceDash === 'conception' ? ' is-active' : '' }}" data-value="conception">Conception</button>
+                                                    <button type="button" class="envoye-opt{{ $envoyeRelanceDash === 'conception' ? ' is-active' : '' }}" data-value="conception">Concep</button>
                                                 </div>
                                             </td>
                                             <td>
@@ -2978,7 +2978,7 @@
                                                 aria-label="Envoyé"
                                             >
                                                 <button type="button" class="envoye-opt{{ $envoyeRelance === 'lien' ? ' is-active' : '' }}" data-value="lien">Lien</button>
-                                                <button type="button" class="envoye-opt{{ $envoyeRelance === 'conception' ? ' is-active' : '' }}" data-value="conception">Conception</button>
+                                                <button type="button" class="envoye-opt{{ $envoyeRelance === 'conception' ? ' is-active' : '' }}" data-value="conception">Concep</button>
                                             </div>
                                         </td>
                                         <td>
@@ -4057,7 +4057,7 @@
                         <select id="relance_envoye" name="envoye" required>
                             <option value="" disabled selected>Sélectionner</option>
                             <option value="lien">Lien</option>
-                            <option value="conception">Conception</option>
+                            <option value="conception">Concep</option>
                         </select>
                     </div>
                     <div class="field">
