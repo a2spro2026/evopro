@@ -585,39 +585,59 @@
             min-width: 1100px;
         }
 
+        /* Relances: tout visible dans la largeur, rien coupé hors écran */
         table.data-table.data-table-relances {
-            min-width: 1720px;
-            width: max(100%, 1720px);
-            table-layout: auto;
+            min-width: 0;
+            width: 100%;
+            table-layout: fixed;
         }
 
         table.data-table.data-table-relances th,
         table.data-table.data-table-relances td {
-            padding: 0.7rem 0.7rem;
-            white-space: nowrap;
+            padding: 0.45rem 0.35rem;
+            font-size: 0.72rem;
+            white-space: normal;
             overflow: visible;
+            overflow-wrap: anywhere;
+            word-break: break-word;
+            line-height: 1.25;
+            vertical-align: middle;
+        }
+
+        table.data-table.data-table-relances th {
+            font-size: 0.68rem;
+            letter-spacing: 0.02em;
+            white-space: normal;
         }
 
         table.data-table.data-table-relances td.cell-wrap {
             white-space: normal;
-            min-width: 180px;
-            max-width: 260px;
+            min-width: 0;
+            max-width: none;
         }
 
-        table.data-table.data-table-relances th:nth-child(1),
-        table.data-table.data-table-relances td:nth-child(1),
-        table.data-table.data-table-relances th:nth-child(11),
-        table.data-table.data-table-relances td:nth-child(11) {
-            min-width: 7.5rem;
+        table.data-table.data-table-relances .statue-select {
+            max-width: 100%;
+            font-size: 0.62rem;
+            padding: 0.22rem 1.1rem 0.22rem 0.35rem;
+            white-space: nowrap;
         }
 
-        table.data-table.data-table-relances th:nth-child(4),
-        table.data-table.data-table-relances td:nth-child(4),
-        table.data-table.data-table-relances th:nth-child(8),
-        table.data-table.data-table-relances td:nth-child(8),
-        table.data-table.data-table-relances th:nth-child(10),
-        table.data-table.data-table-relances td:nth-child(10) {
-            min-width: 6.5rem;
+        table.data-table.data-table-relances .actions {
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 0.25rem;
+        }
+
+        #panel-dashboard .balance-section .table-wrap.table-freeze-body,
+        #panel-fiche-relance .table-wrap.table-freeze-body {
+            max-height: none;
+            overflow: visible;
+        }
+
+        #panel-dashboard .balance-section .table-wrap,
+        #panel-fiche-relance .table-wrap {
+            overflow: visible;
         }
 
         .data-table th,
@@ -1511,11 +1531,11 @@
         }
 
         .balance-section .table-wrap.table-freeze-body {
-            max-height: min(68vh, 640px);
+            max-height: none;
         }
 
         #panel-fiche-relance .table-wrap.table-freeze-body {
-            max-height: min(72vh, 680px);
+            max-height: none;
         }
 
         .paiement-sticky-lock {
@@ -1772,7 +1792,7 @@
             display: flex;
             flex-direction: column;
             min-height: 0;
-            overflow: hidden;
+            overflow: visible;
         }
 
         #panel-dashboard.active.cards-hidden .balance-section .panel-freeze {
@@ -1789,7 +1809,7 @@
             max-height: none;
             height: auto;
             min-height: 0;
-            overflow: auto;
+            overflow: visible;
         }
 
         html[data-theme="light"] .btn-toggle-cards {
@@ -2137,6 +2157,12 @@
 
             .table-wrap.table-freeze-body {
                 max-height: calc(100vh - 16rem);
+            }
+
+            #panel-dashboard .balance-section .table-wrap.table-freeze-body,
+            #panel-fiche-relance .table-wrap.table-freeze-body {
+                max-height: none;
+                overflow: visible;
             }
 
             #panel-fiche-paiement .table-wrap.table-freeze-body {
@@ -2487,6 +2513,19 @@
 
                         <div class="table-wrap table-freeze-body">
                             <table class="data-table data-table-relances">
+                                <colgroup>
+                                    <col style="width:7.5%">
+                                    <col style="width:6%">
+                                    <col style="width:11%">
+                                    <col style="width:8%">
+                                    <col style="width:10%">
+                                    <col style="width:14%">
+                                    <col style="width:7%">
+                                    <col style="width:7%">
+                                    <col style="width:9%">
+                                    <col style="width:7%">
+                                    <col style="width:8.5%">
+                                </colgroup>
                                 <thead>
                                     <tr>
                                         <th>Date</th>
@@ -2499,7 +2538,7 @@
                                         <th>Envoyé</th>
                                         <th>Statue</th>
                                         <th>A Rappeler</th>
-                                        <th>Date</th>
+                                        <th>Date rappel</th>
                                     </tr>
                                 </thead>
                                 <tbody id="dashboardRelancesTableBody">
@@ -2720,6 +2759,20 @@
 
                     <div class="table-wrap table-freeze-body">
                         <table class="data-table data-table-relances">
+                            <colgroup>
+                                <col style="width:7%">
+                                <col style="width:5.5%">
+                                <col style="width:10%">
+                                <col style="width:7.5%">
+                                <col style="width:9%">
+                                <col style="width:12%">
+                                <col style="width:6.5%">
+                                <col style="width:6.5%">
+                                <col style="width:8%">
+                                <col style="width:6.5%">
+                                <col style="width:8%">
+                                <col style="width:7.5%">
+                            </colgroup>
                             <thead>
                                 <tr>
                                     <th>Date</th>
@@ -2732,7 +2785,7 @@
                                     <th>Envoyé</th>
                                     <th>Statue</th>
                                     <th>A Rappeler</th>
-                                    <th>Date</th>
+                                    <th>Date rappel</th>
                                     <th>Action</th>
                                 </tr>
                             </thead>
