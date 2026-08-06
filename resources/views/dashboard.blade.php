@@ -1729,13 +1729,35 @@
             display: flex;
             flex-direction: column;
             min-height: 0;
+            overflow: hidden;
+        }
+
+        #panel-dashboard.cards-hidden .balance-section .panel-freeze {
+            flex: 0 0 auto;
+            position: relative;
+            top: auto;
+            z-index: 2;
+            margin: 0 0 0.55rem;
+            padding: 0 0 0.35rem;
+        }
+
+        #panel-dashboard.cards-hidden .balance-section .balance-toolbar,
+        #panel-dashboard.cards-hidden .balance-section .search-bar {
+            display: flex;
+            visibility: visible;
+            opacity: 1;
+        }
+
+        #panel-dashboard.cards-hidden .balance-section .search-bar {
+            display: grid;
         }
 
         #panel-dashboard.cards-hidden .balance-section .table-wrap.table-freeze-body {
             flex: 1 1 auto;
             max-height: none;
-            height: calc(100vh - 11rem);
-            min-height: 420px;
+            height: auto;
+            min-height: 0;
+            overflow: auto;
         }
 
         html[data-theme="light"] .btn-toggle-cards {
