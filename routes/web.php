@@ -377,6 +377,7 @@ Route::post('/relances', function (Request $request) {
         'titre_projet' => ['required', 'string', 'max:255'],
         'description' => ['required', 'string', 'max:2000'],
         'budget' => ['required', 'numeric', 'min:0'],
+        'envoye' => ['required', 'string', 'in:lien,conception'],
         'statue' => ['required', 'string', 'in:confirme,a_voir,inj'],
         'a_rappeler' => ['required', 'string', 'in:oui,non'],
         'date_rappel' => ['required', 'string', 'regex:/^\d{2}\/\d{2}\/\d{4}$/'],
@@ -419,6 +420,7 @@ Route::post('/relances', function (Request $request) {
         'titre_projet' => $data['titre_projet'],
         'description' => $data['description'],
         'budget' => (float) $data['budget'],
+        'envoye' => $data['envoye'],
         'statue' => $data['statue'],
         'a_rappeler' => $data['a_rappeler'],
         'date_rappel' => $data['date_rappel'],
@@ -440,6 +442,7 @@ Route::put('/relances/{id}', function (Request $request, string $id) {
         'titre_projet' => ['required', 'string', 'max:255'],
         'description' => ['required', 'string', 'max:2000'],
         'budget' => ['required', 'numeric', 'min:0'],
+        'envoye' => ['required', 'string', 'in:lien,conception'],
         'statue' => ['required', 'string', 'in:confirme,a_voir,inj'],
         'a_rappeler' => ['required', 'string', 'in:oui,non'],
         'date_rappel' => ['required', 'string', 'regex:/^\d{2}\/\d{2}\/\d{4}$/'],
@@ -460,6 +463,7 @@ Route::put('/relances/{id}', function (Request $request, string $id) {
     $relances[$index]['titre_projet'] = $data['titre_projet'];
     $relances[$index]['description'] = $data['description'];
     $relances[$index]['budget'] = (float) $data['budget'];
+    $relances[$index]['envoye'] = $data['envoye'];
     $relances[$index]['statue'] = $data['statue'];
     $relances[$index]['a_rappeler'] = $data['a_rappeler'];
     $relances[$index]['date_rappel'] = $data['date_rappel'];

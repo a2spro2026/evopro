@@ -2457,6 +2457,7 @@
                                         <th>Titre Projet</th>
                                         <th>Description</th>
                                         <th>Budget</th>
+                                        <th>Envoyé</th>
                                         <th>Statue</th>
                                         <th>A Rappeler</th>
                                         <th>Date</th>
@@ -2466,6 +2467,8 @@
                                     @forelse (($relances ?? []) as $relance)
                                         @php
                                             $statueRelanceDash = $relance['statue'] ?? '';
+                                            $envoyeRelanceDash = $relance['envoye'] ?? '';
+                                            $envoyeRelanceDashLabel = $envoyeRelanceDash === 'lien' ? 'Lien' : ($envoyeRelanceDash === 'conception' ? 'Conception' : $envoyeRelanceDash);
                                             $rappelerRelanceDash = $relance['a_rappeler'] ?? '';
                                             $rappelerRelanceDashLabel = $rappelerRelanceDash === 'oui' ? 'Oui' : ($rappelerRelanceDash === 'non' ? 'Non' : $rappelerRelanceDash);
                                             $partsRelanceDash = explode('/', $relance['date'] ?? '');
@@ -2489,6 +2492,7 @@
                                             <td>{{ $relance['titre_projet'] ?? '' }}</td>
                                             <td class="cell-wrap">{{ $relance['description'] ?? '' }}</td>
                                             <td>{{ number_format((float) ($relance['budget'] ?? 0), 2, '.', ' ') }}</td>
+                                            <td>{{ $envoyeRelanceDashLabel }}</td>
                                             <td>
                                                 <form method="post" action="{{ url('/relances/'.$relance['id'].'/statue') }}" class="statue-form">
                                                     @csrf
@@ -2511,11 +2515,11 @@
                                         </tr>
                                     @empty
                                         <tr class="empty-row">
-                                            <td colspan="10" class="empty">Aucune relance enregistrée.</td>
+                                            <td colspan="11" class="empty">Aucune relance enregistrée.</td>
                                         </tr>
                                     @endforelse
                                     <tr id="dashboardRelancesNoResult" class="empty-row" style="display:none;">
-                                        <td colspan="10" class="empty">Aucun résultat pour cette recherche.</td>
+                                        <td colspan="11" class="empty">Aucun résultat pour cette recherche.</td>
                                     </tr>
                                 </tbody>
                             </table>
@@ -2630,7 +2634,7 @@
                             </div>
                             <button type="button" class="btn-add" id="btnAddRelance">
                                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>
-                                Ajouter Relance
+                                Nouveau Prospect
                             </button>
                         </div>
 
@@ -2686,6 +2690,7 @@
                                     <th>Titre Projet</th>
                                     <th>Description</th>
                                     <th>Budget</th>
+                                    <th>Envoyé</th>
                                     <th>Statue</th>
                                     <th>A Rappeler</th>
                                     <th>Date</th>
@@ -2696,6 +2701,8 @@
                                 @forelse (($relances ?? []) as $relance)
                                     @php
                                         $statueRelance = $relance['statue'] ?? '';
+                                        $envoyeRelance = $relance['envoye'] ?? '';
+                                        $envoyeRelanceLabel = $envoyeRelance === 'lien' ? 'Lien' : ($envoyeRelance === 'conception' ? 'Conception' : $envoyeRelance);
                                         $rappelerRelance = $relance['a_rappeler'] ?? '';
                                         $rappelerRelanceLabel = $rappelerRelance === 'oui' ? 'Oui' : ($rappelerRelance === 'non' ? 'Non' : $rappelerRelance);
                                         $partsRelance = explode('/', $relance['date'] ?? '');
@@ -2719,6 +2726,7 @@
                                         <td>{{ $relance['titre_projet'] ?? '' }}</td>
                                         <td class="cell-wrap">{{ $relance['description'] ?? '' }}</td>
                                         <td>{{ number_format((float) ($relance['budget'] ?? 0), 2, '.', ' ') }}</td>
+                                        <td>{{ $envoyeRelanceLabel }}</td>
                                         <td>
                                             <form method="post" action="{{ url('/relances/'.$relance['id'].'/statue') }}" class="statue-form">
                                                 @csrf
@@ -2757,11 +2765,11 @@
                                     </tr>
                                 @empty
                                     <tr class="empty-row">
-                                        <td colspan="11" class="empty">Aucune relance enregistrée. Cliquez sur Ajouter Relance.</td>
+                                        <td colspan="12" class="empty">Aucune relance enregistrée. Cliquez sur Nouveau Prospect.</td>
                                     </tr>
                                 @endforelse
                                 <tr id="relancesNoResult" class="empty-row" style="display:none;">
-                                    <td colspan="11" class="empty">Aucun résultat pour cette recherche.</td>
+                                    <td colspan="12" class="empty">Aucun résultat pour cette recherche.</td>
                                 </tr>
                             </tbody>
                         </table>
@@ -3735,7 +3743,7 @@
     <div class="modal-backdrop" id="relanceModal" aria-hidden="true">
         <div class="modal" role="dialog" aria-modal="true" aria-labelledby="relanceModalTitle">
             <div class="modal-head">
-                <h2 id="relanceModalTitle">Ajouter Relance</h2>
+                <h2 id="relanceModalTitle">Nouveau Prospect</h2>
                 <button type="button" class="modal-close" id="closeRelanceModal" aria-label="Fermer">×</button>
             </div>
             <form method="post" action="{{ url('/relances') }}" id="relanceForm">
@@ -3773,6 +3781,14 @@
                     <div class="field">
                         <label for="relance_budget">Budget</label>
                         <input type="number" id="relance_budget" name="budget" required min="0" step="0.01" placeholder="0.00">
+                    </div>
+                    <div class="field">
+                        <label for="relance_envoye">Envoyé</label>
+                        <select id="relance_envoye" name="envoye" required>
+                            <option value="" disabled selected>Sélectionner</option>
+                            <option value="lien">Lien</option>
+                            <option value="conception">Conception</option>
+                        </select>
                     </div>
                     <div class="field">
                         <label for="relance_statue">Statue</label>
@@ -5197,6 +5213,7 @@
             'relance_titre_projet',
             'relance_description',
             'relance_budget',
+            'relance_envoye',
             'relance_statue',
             'relance_a_rappeler',
         ];
@@ -5223,6 +5240,7 @@
             document.getElementById('relance_titre_projet').value = relance.titre_projet || '';
             document.getElementById('relance_description').value = relance.description || '';
             document.getElementById('relance_budget').value = relance.budget ?? '';
+            document.getElementById('relance_envoye').value = relance.envoye || '';
             document.getElementById('relance_statue').value = relance.statue || '';
             document.getElementById('relance_a_rappeler').value = relance.a_rappeler || '';
             relanceRappelDateApi.setParts(relance.date_rappel || '');
@@ -5237,7 +5255,7 @@
             relanceForm.action = '{{ url('/relances') }}';
             relanceHttpMethod.disabled = true;
             relanceHttpMethod.value = 'POST';
-            relanceModalTitle.textContent = 'Ajouter Relance';
+            relanceModalTitle.textContent = 'Nouveau Prospect';
             relanceSubmitBtn.style.display = '';
 
             document.getElementById('relance_date').value = todayFr();
@@ -5248,6 +5266,7 @@
             document.getElementById('relance_titre_projet').value = '';
             document.getElementById('relance_description').value = '';
             document.getElementById('relance_budget').value = '';
+            document.getElementById('relance_envoye').selectedIndex = 0;
             document.getElementById('relance_statue').selectedIndex = 0;
             document.getElementById('relance_a_rappeler').selectedIndex = 0;
             relanceRappelDateApi.setParts('', { emptyDayMonth: true });
