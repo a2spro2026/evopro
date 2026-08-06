@@ -1657,12 +1657,35 @@
         .balance-head {
             margin-bottom: 0;
             flex: 0 0 auto;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
         }
 
         .balance-head h2 {
             font-size: 0.95rem;
             font-weight: 600;
             letter-spacing: 0.02em;
+        }
+
+        .btn-toggle-cards {
+            height: 34px;
+            padding: 0 0.85rem;
+            border-radius: 10px;
+            border: 1px solid rgba(110, 168, 255, 0.28);
+            background: rgba(59, 158, 255, 0.12);
+            color: var(--accent-soft);
+            font-family: inherit;
+            font-size: 0.75rem;
+            font-weight: 700;
+            letter-spacing: 0.04em;
+            text-transform: uppercase;
+            cursor: pointer;
+            white-space: nowrap;
+        }
+
+        .btn-toggle-cards:hover {
+            background: rgba(59, 158, 255, 0.2);
         }
 
         .balance-section .search-bar {
@@ -1672,8 +1695,8 @@
             border-radius: 0;
             background: transparent;
             box-shadow: none;
-            flex: 1 1 320px;
-            max-width: 520px;
+            flex: 1 1 420px;
+            max-width: 760px;
         }
 
         html[data-theme="light"] .balance-section .search-bar {
@@ -1690,6 +1713,37 @@
         html[data-theme="light"] .balance-section .table-wrap {
             background: rgba(255, 255, 255, 0.55);
             border-color: rgba(30, 90, 180, 0.12);
+        }
+
+        #panel-dashboard.cards-hidden .cards {
+            display: none !important;
+        }
+
+        #panel-dashboard.cards-hidden {
+            display: flex;
+            flex-direction: column;
+            min-height: calc(100vh - 5.5rem);
+        }
+
+        #panel-dashboard.cards-hidden .balance-section {
+            margin-top: 0.75rem;
+            flex: 1 1 auto;
+            display: flex;
+            flex-direction: column;
+            min-height: 0;
+        }
+
+        #panel-dashboard.cards-hidden .balance-section .table-wrap.table-freeze-body {
+            flex: 1 1 auto;
+            max-height: none;
+            height: calc(100vh - 11rem);
+            min-height: 420px;
+        }
+
+        html[data-theme="light"] .btn-toggle-cards {
+            background: rgba(30, 111, 217, 0.08);
+            border-color: rgba(30, 111, 217, 0.22);
+            color: #1e6fd9;
         }
 
         .statue-badge {
@@ -2339,8 +2393,9 @@
                             <div class="balance-toolbar">
                                 <div class="balance-head">
                                     <h2>Relances</h2>
+                                    <button type="button" class="btn-toggle-cards" id="btnToggleDashboardCards" aria-pressed="false">Masquer</button>
                                 </div>
-                                <div class="search-bar balance-search" aria-label="Recherche relances" style="grid-template-columns: repeat(2, minmax(0, 1fr));">
+                                <div class="search-bar balance-search" aria-label="Recherche relances" style="grid-template-columns: repeat(4, minmax(0, 1fr));">
                                     <div class="search-field">
                                         <label for="filter_dashboard_relance_mois">Mois</label>
                                         <select id="filter_dashboard_relance_mois">
@@ -2369,6 +2424,14 @@
                                             <option value="confirme">CONFIRME</option>
                                             <option value="inj">INJ</option>
                                         </select>
+                                    </div>
+                                    <div class="search-field">
+                                        <label for="filter_dashboard_relance_de">De</label>
+                                        <input type="text" id="filter_dashboard_relance_de" placeholder="JJ/MM/AAAA" maxlength="10" autocomplete="off">
+                                    </div>
+                                    <div class="search-field">
+                                        <label for="filter_dashboard_relance_a">A</label>
+                                        <input type="text" id="filter_dashboard_relance_a" placeholder="JJ/MM/AAAA" maxlength="10" autocomplete="off">
                                     </div>
                                 </div>
                             </div>
@@ -2403,6 +2466,7 @@
                                             data-id="{{ $relance['id'] ?? '' }}"
                                             data-mois="{{ $moisRelanceDash }}"
                                             data-statue="{{ $statueRelanceDash }}"
+                                            data-date="{{ $relance['date'] ?? '' }}"
                                             @class([
                                                 'row-relance-a-voir' => $statueRelanceDash === 'a_voir',
                                                 'row-relance-confirme' => $statueRelanceDash === 'confirme',
@@ -2560,7 +2624,7 @@
                             </button>
                         </div>
 
-                        <div class="search-bar" aria-label="Recherche relances" style="grid-template-columns: repeat(2, minmax(0, 1fr));">
+                        <div class="search-bar" aria-label="Recherche relances" style="grid-template-columns: repeat(4, minmax(0, 1fr));">
                             <div class="search-field">
                                 <label for="filter_relance_mois">Mois</label>
                                 <select id="filter_relance_mois">
@@ -2589,6 +2653,14 @@
                                     <option value="confirme">CONFIRME</option>
                                     <option value="inj">INJ</option>
                                 </select>
+                            </div>
+                            <div class="search-field">
+                                <label for="filter_relance_de">De</label>
+                                <input type="text" id="filter_relance_de" placeholder="JJ/MM/AAAA" maxlength="10" autocomplete="off">
+                            </div>
+                            <div class="search-field">
+                                <label for="filter_relance_a">A</label>
+                                <input type="text" id="filter_relance_a" placeholder="JJ/MM/AAAA" maxlength="10" autocomplete="off">
                             </div>
                         </div>
                     </div>
@@ -2623,6 +2695,7 @@
                                         data-id="{{ $relance['id'] }}"
                                         data-mois="{{ $moisRelance }}"
                                         data-statue="{{ $statueRelance }}"
+                                        data-date="{{ $relance['date'] ?? '' }}"
                                         @class([
                                             'row-relance-a-voir' => $statueRelance === 'a_voir',
                                             'row-relance-confirme' => $statueRelance === 'confirme',
@@ -4834,17 +4907,91 @@
         document.getElementById('paiement_client')?.addEventListener('change', applyPaiementClient);
         document.getElementById('paiement_montant_paye')?.addEventListener('input', updatePaiementSolde);
 
+        function parseDateFrToKey(value) {
+            const raw = String(value || '').trim();
+            const match = raw.match(/^(\d{2})\/(\d{2})\/(\d{4})$/);
+            if (!match) return null;
+            return Number(`${match[3]}${match[2]}${match[1]}`);
+        }
+
+        function filterRelancesRows(tbodySelector, options, noResultId) {
+            const mois = document.getElementById(options.moisId)?.value || '';
+            const statue = document.getElementById(options.statueId)?.value || '';
+            const deKey = parseDateFrToKey(document.getElementById(options.deId)?.value || '');
+            const aKey = parseDateFrToKey(document.getElementById(options.aId)?.value || '');
+            const rows = document.querySelectorAll(`${tbodySelector} tr[data-id]`);
+            let visible = 0;
+
+            rows.forEach((row) => {
+                const rowMois = row.dataset.mois || '';
+                const rowStatue = row.dataset.statue || '';
+                const rowDateKey = parseDateFrToKey(row.dataset.date || '');
+                const matchMois = !mois || rowMois === mois;
+                const matchStatue = !statue || rowStatue === statue;
+                const matchDe = !deKey || (rowDateKey !== null && rowDateKey >= deKey);
+                const matchA = !aKey || (rowDateKey !== null && rowDateKey <= aKey);
+                const show = matchMois && matchStatue && matchDe && matchA;
+                row.style.display = show ? '' : 'none';
+                if (show) visible++;
+            });
+
+            const emptyRow = document.querySelector(`${tbodySelector} tr.empty-row:not(#${noResultId})`);
+            const noResultRow = document.getElementById(noResultId);
+            if (noResultRow) noResultRow.style.display = rows.length > 0 && visible === 0 ? '' : 'none';
+            if (emptyRow) emptyRow.style.display = rows.length === 0 ? '' : 'none';
+        }
+
         function filterDashboardRelancesTable() {
-            filterTableByMoisStatue(
-                '#dashboardRelancesTableBody',
-                'filter_dashboard_relance_mois',
-                'filter_dashboard_relance_statue',
-                'dashboardRelancesNoResult'
-            );
+            filterRelancesRows('#dashboardRelancesTableBody', {
+                moisId: 'filter_dashboard_relance_mois',
+                statueId: 'filter_dashboard_relance_statue',
+                deId: 'filter_dashboard_relance_de',
+                aId: 'filter_dashboard_relance_a',
+            }, 'dashboardRelancesNoResult');
+        }
+
+        function bindDateMask(inputId) {
+            const input = document.getElementById(inputId);
+            if (!input) return;
+            input.addEventListener('input', () => {
+                let v = input.value.replace(/\D/g, '').slice(0, 8);
+                if (v.length >= 5) v = `${v.slice(0, 2)}/${v.slice(2, 4)}/${v.slice(4)}`;
+                else if (v.length >= 3) v = `${v.slice(0, 2)}/${v.slice(2)}`;
+                input.value = v;
+                filterDashboardRelancesTable();
+            });
+            input.addEventListener('change', filterDashboardRelancesTable);
         }
 
         document.getElementById('filter_dashboard_relance_mois')?.addEventListener('change', filterDashboardRelancesTable);
         document.getElementById('filter_dashboard_relance_statue')?.addEventListener('change', filterDashboardRelancesTable);
+        bindDateMask('filter_dashboard_relance_de');
+        bindDateMask('filter_dashboard_relance_a');
+
+        const btnToggleDashboardCards = document.getElementById('btnToggleDashboardCards');
+        const panelDashboard = document.getElementById('panel-dashboard');
+
+        function applyDashboardCardsVisibility(hidden) {
+            panelDashboard?.classList.toggle('cards-hidden', hidden);
+            if (btnToggleDashboardCards) {
+                btnToggleDashboardCards.textContent = hidden ? 'Afficher' : 'Masquer';
+                btnToggleDashboardCards.setAttribute('aria-pressed', hidden ? 'true' : 'false');
+            }
+            try {
+                localStorage.setItem('evopro_dashboard_cards_hidden', hidden ? '1' : '0');
+            } catch (e) {}
+        }
+
+        btnToggleDashboardCards?.addEventListener('click', () => {
+            const hidden = !panelDashboard?.classList.contains('cards-hidden');
+            applyDashboardCardsVisibility(hidden);
+        });
+
+        try {
+            if (localStorage.getItem('evopro_dashboard_cards_hidden') === '1') {
+                applyDashboardCardsVisibility(true);
+            }
+        } catch (e) {}
 
         function filterProjetsTable() {
             const mois = document.getElementById('filter_projet_mois')?.value || '';
@@ -4999,16 +5146,36 @@
         }
 
         function filterRelancesTable() {
-            filterTableByMoisStatue('#relancesTableBody', 'filter_relance_mois', 'filter_relance_statue', 'relancesNoResult');
+            filterRelancesRows('#relancesTableBody', {
+                moisId: 'filter_relance_mois',
+                statueId: 'filter_relance_statue',
+                deId: 'filter_relance_de',
+                aId: 'filter_relance_a',
+            }, 'relancesNoResult');
         }
 
         function filterUtilisateursTable() {
             filterTableByMoisStatue('#utilisateursTableBody', 'filter_utilisateur_mois', 'filter_utilisateur_statue', 'utilisateursNoResult');
         }
 
+        function bindRelancePanelDateMask(inputId) {
+            const input = document.getElementById(inputId);
+            if (!input) return;
+            input.addEventListener('input', () => {
+                let v = input.value.replace(/\D/g, '').slice(0, 8);
+                if (v.length >= 5) v = `${v.slice(0, 2)}/${v.slice(2, 4)}/${v.slice(4)}`;
+                else if (v.length >= 3) v = `${v.slice(0, 2)}/${v.slice(2)}`;
+                input.value = v;
+                filterRelancesTable();
+            });
+            input.addEventListener('change', filterRelancesTable);
+        }
+
         document.getElementById('filter_client_mois')?.addEventListener('change', filterClientsTable);
         document.getElementById('filter_relance_mois')?.addEventListener('change', filterRelancesTable);
         document.getElementById('filter_relance_statue')?.addEventListener('change', filterRelancesTable);
+        bindRelancePanelDateMask('filter_relance_de');
+        bindRelancePanelDateMask('filter_relance_a');
         document.getElementById('filter_utilisateur_mois')?.addEventListener('change', filterUtilisateursTable);
         document.getElementById('filter_utilisateur_statue')?.addEventListener('change', filterUtilisateursTable);
 
