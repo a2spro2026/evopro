@@ -1281,21 +1281,18 @@
             grid-template-columns: repeat(6, minmax(0, 1fr));
             gap: 0.75rem;
             width: 100%;
-            position: sticky;
-            top: 3.85rem;
-            z-index: 18;
-            padding: 0.35rem 0 0.35rem;
-            margin-bottom: 0;
+            position: relative;
+            z-index: 1;
+            padding: 0;
+            margin: 0;
             pointer-events: none;
             user-select: none;
-            background:
-                linear-gradient(180deg, rgba(7, 17, 31, 0.97) 0%, rgba(7, 17, 31, 0.92) 70%, rgba(7, 17, 31, 0.75) 100%);
-            backdrop-filter: blur(10px);
+            background: transparent;
+            backdrop-filter: none;
         }
 
         html[data-theme="light"] .cards {
-            background:
-                linear-gradient(180deg, rgba(244, 248, 255, 0.98) 0%, rgba(244, 248, 255, 0.94) 70%, rgba(244, 248, 255, 0.8) 100%);
+            background: transparent;
         }
 
         .card {
@@ -1632,8 +1629,8 @@
         html[data-theme="light"] .paiement-card.soldes .card-value { color: #d12b3a; }
 
         .balance-section {
-            margin-top: 0.45rem;
-            margin-bottom: 0;
+            margin-top: 0;
+            margin-bottom: 0.75rem;
             padding: 0.85rem 1.15rem 1rem;
             border-radius: 16px;
             background: linear-gradient(165deg, rgba(16, 32, 54, 0.92), rgba(10, 22, 40, 0.88));
@@ -1726,7 +1723,8 @@
         }
 
         #panel-dashboard.cards-hidden .balance-section {
-            margin-top: 0.35rem;
+            margin-top: 0;
+            margin-bottom: 0;
             flex: 1 1 auto;
             display: flex;
             flex-direction: column;
@@ -2322,72 +2320,6 @@
 
             <main class="content">
                 <section class="panel active" id="panel-dashboard">
-                    <div class="content-head">
-                        <h1>Tableau de bord</h1>
-                    </div>
-
-                    <section class="cards" aria-label="Statistiques">
-                        <article class="card actif">
-                            <div class="card-top">
-                                <span class="card-label">Projets Actif</span>
-                                <div class="card-icon" aria-hidden="true">
-                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><path d="M22 4 12 14.01l-3-3"/></svg>
-                                </div>
-                            </div>
-                            <div class="card-value">{{ $dashboardCounts['actif'] ?? 0 }}</div>
-                        </article>
-
-                        <article class="card attente">
-                            <div class="card-top">
-                                <span class="card-label">Projets en Attente</span>
-                                <div class="card-icon" aria-hidden="true">
-                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
-                                </div>
-                            </div>
-                            <div class="card-value">{{ $dashboardCounts['attente'] ?? 0 }}</div>
-                        </article>
-
-                        <article class="card execute">
-                            <div class="card-top">
-                                <span class="card-label">Projets Exécutés</span>
-                                <div class="card-icon" aria-hidden="true">
-                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><path d="M22 4 12 14.01l-3-3"/></svg>
-                                </div>
-                            </div>
-                            <div class="card-value">{{ $dashboardCounts['execute'] ?? 0 }}</div>
-                        </article>
-
-                        <article class="card revenu ayda">
-                            <div class="card-top">
-                                <span class="card-label">Revenu Ayda</span>
-                                <div class="card-icon" aria-hidden="true">
-                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v20"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
-                                </div>
-                            </div>
-                            <div class="card-value">{{ number_format($revenuAyda ?? 0, 2, '.', ' ') }}</div>
-                        </article>
-
-                        <article class="card revenu brahim">
-                            <div class="card-top">
-                                <span class="card-label">Revenue Brahim</span>
-                                <div class="card-icon" aria-hidden="true">
-                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v20"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
-                                </div>
-                            </div>
-                            <div class="card-value">{{ number_format($revenuBrahim ?? 0, 2, '.', ' ') }}</div>
-                        </article>
-
-                        <article class="card solde">
-                            <div class="card-top">
-                                <span class="card-label">Total Solde</span>
-                                <div class="card-icon" aria-hidden="true">
-                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="5" width="20" height="14" rx="2"/><path d="M2 10h20"/></svg>
-                                </div>
-                            </div>
-                            <div class="card-value">{{ number_format($totalSolde ?? 0, 2, '.', ' ') }}</div>
-                        </article>
-                    </section>
-
                     <section class="balance-section" aria-label="Tableau des relances">
                         <div class="panel-freeze">
                             <div class="balance-toolbar">
@@ -2512,6 +2444,69 @@
                             </table>
                         </div>
                     </section>
+
+                    <section class="cards" aria-label="Statistiques">
+                        <article class="card actif">
+                            <div class="card-top">
+                                <span class="card-label">Projets Actif</span>
+                                <div class="card-icon" aria-hidden="true">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><path d="M22 4 12 14.01l-3-3"/></svg>
+                                </div>
+                            </div>
+                            <div class="card-value">{{ $dashboardCounts['actif'] ?? 0 }}</div>
+                        </article>
+
+                        <article class="card attente">
+                            <div class="card-top">
+                                <span class="card-label">Projets en Attente</span>
+                                <div class="card-icon" aria-hidden="true">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
+                                </div>
+                            </div>
+                            <div class="card-value">{{ $dashboardCounts['attente'] ?? 0 }}</div>
+                        </article>
+
+                        <article class="card execute">
+                            <div class="card-top">
+                                <span class="card-label">Projets Exécutés</span>
+                                <div class="card-icon" aria-hidden="true">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><path d="M22 4 12 14.01l-3-3"/></svg>
+                                </div>
+                            </div>
+                            <div class="card-value">{{ $dashboardCounts['execute'] ?? 0 }}</div>
+                        </article>
+
+                        <article class="card revenu ayda">
+                            <div class="card-top">
+                                <span class="card-label">Revenu Ayda</span>
+                                <div class="card-icon" aria-hidden="true">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v20"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+                                </div>
+                            </div>
+                            <div class="card-value">{{ number_format($revenuAyda ?? 0, 2, '.', ' ') }}</div>
+                        </article>
+
+                        <article class="card revenu brahim">
+                            <div class="card-top">
+                                <span class="card-label">Revenue Brahim</span>
+                                <div class="card-icon" aria-hidden="true">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v20"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+                                </div>
+                            </div>
+                            <div class="card-value">{{ number_format($revenuBrahim ?? 0, 2, '.', ' ') }}</div>
+                        </article>
+
+                        <article class="card solde">
+                            <div class="card-top">
+                                <span class="card-label">Total Solde</span>
+                                <div class="card-icon" aria-hidden="true">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="5" width="20" height="14" rx="2"/><path d="M2 10h20"/></svg>
+                                </div>
+                            </div>
+                            <div class="card-value">{{ number_format($totalSolde ?? 0, 2, '.', ' ') }}</div>
+                        </article>
+                    </section>
+
                 </section>
 
                 <section class="panel" id="panel-fiche-client">
