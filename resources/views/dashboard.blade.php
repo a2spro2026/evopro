@@ -1716,6 +1716,10 @@
             display: none !important;
         }
 
+        #panel-dashboard.cards-hidden .balance-section .search-bar {
+            display: none !important;
+        }
+
         #panel-dashboard.cards-hidden {
             display: flex;
             flex-direction: column;
@@ -1739,17 +1743,6 @@
             z-index: 2;
             margin: 0 0 0.55rem;
             padding: 0 0 0.35rem;
-        }
-
-        #panel-dashboard.cards-hidden .balance-section .balance-toolbar,
-        #panel-dashboard.cards-hidden .balance-section .search-bar {
-            display: flex;
-            visibility: visible;
-            opacity: 1;
-        }
-
-        #panel-dashboard.cards-hidden .balance-section .search-bar {
-            display: grid;
         }
 
         #panel-dashboard.cards-hidden .balance-section .table-wrap.table-freeze-body {
