@@ -1284,8 +1284,8 @@
             position: sticky;
             top: 3.85rem;
             z-index: 18;
-            padding: 0.45rem 0 0.65rem;
-            margin-bottom: 0.15rem;
+            padding: 0.35rem 0 0.35rem;
+            margin-bottom: 0;
             pointer-events: none;
             user-select: none;
             background:
@@ -1632,9 +1632,9 @@
         html[data-theme="light"] .paiement-card.soldes .card-value { color: #d12b3a; }
 
         .balance-section {
-            margin-top: 1.5rem;
+            margin-top: 0.45rem;
             margin-bottom: 0;
-            padding: 1.1rem 1.25rem 1.1rem;
+            padding: 0.85rem 1.15rem 1rem;
             border-radius: 16px;
             background: linear-gradient(165deg, rgba(16, 32, 54, 0.92), rgba(10, 22, 40, 0.88));
             border: 1px solid rgba(110, 168, 255, 0.2);
@@ -1726,7 +1726,7 @@
         }
 
         #panel-dashboard.cards-hidden .balance-section {
-            margin-top: 0.75rem;
+            margin-top: 0.35rem;
             flex: 1 1 auto;
             display: flex;
             flex-direction: column;
