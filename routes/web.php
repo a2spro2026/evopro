@@ -554,6 +554,32 @@ Route::patch('/relances/{id}/statue', function (Request $request, string $id) {
         ->with('open_fiche_relance', true);
 })->name('relances.statue');
 
+Route::patch('/relances/{id}/date-rappel', function (Request $request, string $id) {
+    $data = $request->validate([
+        'date_rappel' => ['required', 'string', 'regex:/^\d{2}\/\d{2}\/\d{4}$/'],
+    ]);
+
+    $relances = AppStore::get('relances');
+    $index = collect($relances)->search(fn ($r) => ($r['id'] ?? '') === $id);
+
+    if ($index === false) {
+        return redirect()
+            ->route('dashboard')
+            ->with('open_fiche_relance', true);
+    }
+
+    $relances[$index]['date_rappel'] = $data['date_rappel'];
+    AppStore::put('relances', $relances);
+
+    if ($request->boolean('from_dashboard')) {
+        return redirect()->route('dashboard');
+    }
+
+    return redirect()
+        ->route('dashboard')
+        ->with('open_fiche_relance', true);
+})->name('relances.date-rappel');
+
 Route::delete('/relances/{id}', function (string $id) {
     $relances = collect(AppStore::get('relances'))
         ->reject(fn ($r) => ($r['id'] ?? '') === $id)

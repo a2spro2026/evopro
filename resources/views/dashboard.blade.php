@@ -775,6 +775,39 @@
             display: inline-block;
         }
 
+        .rappel-date-form {
+            display: inline-flex;
+            width: 100%;
+            justify-content: center;
+        }
+
+        .rappel-date-input {
+            width: 100%;
+            max-width: 7.2rem;
+            height: 30px;
+            padding: 0.2rem 0.35rem;
+            border-radius: 8px;
+            border: 1px solid rgba(110, 168, 255, 0.28);
+            background: rgba(8, 18, 34, 0.65);
+            color: inherit;
+            font-family: inherit;
+            font-size: 0.72rem;
+            text-align: center;
+            letter-spacing: 0.02em;
+        }
+
+        .rappel-date-input:focus {
+            outline: none;
+            border-color: rgba(94, 176, 255, 0.7);
+            box-shadow: 0 0 0 2px rgba(59, 158, 255, 0.18);
+        }
+
+        html[data-theme="light"] .rappel-date-input {
+            background: rgba(255, 255, 255, 0.92);
+            border-color: rgba(30, 111, 217, 0.28);
+            color: #0a1628;
+        }
+
         .statue-select {
             appearance: none;
             -webkit-appearance: none;
@@ -2589,7 +2622,24 @@
                                                 </form>
                                             </td>
                                             <td>{{ $rappelerRelanceDashLabel }}</td>
-                                            <td>{{ $relance['date_rappel'] ?? '' }}</td>
+                                            <td>
+                                                <form method="post" action="{{ url('/relances/'.$relance['id'].'/date-rappel') }}" class="rappel-date-form">
+                                                    @csrf
+                                                    @method('PATCH')
+                                                    <input type="hidden" name="from_dashboard" value="1">
+                                                    <input
+                                                        type="text"
+                                                        name="date_rappel"
+                                                        class="rappel-date-input"
+                                                        value="{{ $relance['date_rappel'] ?? '' }}"
+                                                        placeholder="JJ/MM/AAAA"
+                                                        maxlength="10"
+                                                        inputmode="numeric"
+                                                        autocomplete="off"
+                                                        aria-label="Modifier la date de rappel"
+                                                    >
+                                                </form>
+                                            </td>
                                         </tr>
                                     @empty
                                         <tr class="empty-row">
@@ -2836,7 +2886,23 @@
                                             </form>
                                         </td>
                                         <td>{{ $rappelerRelanceLabel }}</td>
-                                        <td>{{ $relance['date_rappel'] ?? '' }}</td>
+                                        <td>
+                                            <form method="post" action="{{ url('/relances/'.$relance['id'].'/date-rappel') }}" class="rappel-date-form">
+                                                @csrf
+                                                @method('PATCH')
+                                                <input
+                                                    type="text"
+                                                    name="date_rappel"
+                                                    class="rappel-date-input"
+                                                    value="{{ $relance['date_rappel'] ?? '' }}"
+                                                    placeholder="JJ/MM/AAAA"
+                                                    maxlength="10"
+                                                    inputmode="numeric"
+                                                    autocomplete="off"
+                                                    aria-label="Modifier la date de rappel"
+                                                >
+                                            </form>
+                                        </td>
                                         <td>
                                             <div class="actions">
                                                 <button type="button" class="action-btn voir" title="Voir" aria-label="Voir">
@@ -4736,7 +4802,7 @@
         }
 
         document.getElementById('projetsTableBody')?.addEventListener('click', (e) => {
-            if (e.target.closest('.statue-form')) return;
+            if (e.target.closest('.statue-form') || e.target.closest('.rappel-date-form')) return;
 
             const row = e.target.closest('tr[data-id]');
             if (!row) return;
@@ -5086,6 +5152,33 @@
         bindDateMask('filter_dashboard_relance_de');
         bindDateMask('filter_dashboard_relance_a');
 
+        document.querySelectorAll('.rappel-date-input').forEach((input) => {
+            const initial = input.value;
+            input.dataset.initial = initial;
+
+            input.addEventListener('input', () => {
+                let v = input.value.replace(/\D/g, '').slice(0, 8);
+                if (v.length >= 5) v = `${v.slice(0, 2)}/${v.slice(2, 4)}/${v.slice(4)}`;
+                else if (v.length >= 3) v = `${v.slice(0, 2)}/${v.slice(2)}`;
+                input.value = v;
+            });
+
+            const trySubmit = () => {
+                const value = (input.value || '').trim();
+                if (!/^\d{2}\/\d{2}\/\d{4}$/.test(value)) return;
+                if (value === (input.dataset.initial || '')) return;
+                input.form?.submit();
+            };
+
+            input.addEventListener('change', trySubmit);
+            input.addEventListener('keydown', (e) => {
+                if (e.key === 'Enter') {
+                    e.preventDefault();
+                    trySubmit();
+                }
+            });
+        });
+
         const btnToggleDashboardCards = document.getElementById('btnToggleDashboardCards');
         const panelDashboard = document.getElementById('panel-dashboard');
 
@@ -5402,6 +5495,7 @@
         }
 
         document.getElementById('relancesTableBody')?.addEventListener('click', (e) => {
+            if (e.target.closest('.rappel-date-form') || e.target.closest('.statue-form')) return;
             const row = e.target.closest('tr[data-id]');
             if (!row) return;
 
