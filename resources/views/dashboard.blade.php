@@ -2068,12 +2068,53 @@
             display: flex;
             align-items: center;
             gap: 0.75rem;
+            flex-wrap: wrap;
         }
 
         .balance-head h2 {
             font-size: 0.95rem;
             font-weight: 600;
             letter-spacing: 0.02em;
+        }
+
+        .balance-head-numero {
+            display: flex;
+            align-items: center;
+            gap: 0.45rem;
+            margin-left: 0.15rem;
+        }
+
+        .balance-head-numero label {
+            font-size: 0.7rem;
+            font-weight: 650;
+            color: var(--accent-soft);
+            letter-spacing: 0.04em;
+            white-space: nowrap;
+        }
+
+        .balance-head-numero input {
+            width: 9.5rem;
+            height: 34px;
+            padding: 0 0.7rem;
+            border-radius: 10px;
+            border: 1px solid rgba(110, 168, 255, 0.28);
+            background: rgba(6, 14, 26, 0.75);
+            color: var(--text);
+            font-family: inherit;
+            font-size: 0.82rem;
+            box-sizing: border-box;
+        }
+
+        .balance-head-numero input:focus {
+            outline: none;
+            border-color: rgba(94, 176, 255, 0.65);
+            box-shadow: 0 0 0 2px rgba(59, 158, 255, 0.14);
+        }
+
+        html[data-theme="light"] .balance-head-numero input {
+            background: rgba(255, 255, 255, 0.95);
+            border-color: rgba(30, 111, 217, 0.22);
+            color: #12233d;
         }
 
         .btn-toggle-cards {
@@ -2820,12 +2861,12 @@
                                 <div class="balance-head">
                                     <h2>Relances</h2>
                                     <button type="button" class="btn-toggle-cards" id="btnToggleDashboardCards" aria-pressed="false">Masquer</button>
-                                </div>
-                                <div class="search-bar balance-search" aria-label="Recherche relances" style="grid-template-columns: repeat(5, minmax(0, 1fr));">
-                                    <div class="search-field">
+                                    <div class="balance-head-numero">
                                         <label for="filter_dashboard_relance_numero">Numéro</label>
                                         <input type="text" id="filter_dashboard_relance_numero" placeholder="Ex. 06…" maxlength="20" autocomplete="off" inputmode="tel">
                                     </div>
+                                </div>
+                                <div class="search-bar balance-search" aria-label="Recherche relances" style="grid-template-columns: repeat(4, minmax(0, 1fr));">
                                     <div class="search-field">
                                         <label for="filter_dashboard_relance_mois">Mois</label>
                                         <select id="filter_dashboard_relance_mois">
