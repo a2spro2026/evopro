@@ -177,13 +177,28 @@ Route::get('/dashboard', function () use ($requireAuth) {
         ));
     }
 
+    $relances = AppStore::get('relances');
+    $relancesCleaned = false;
+    foreach ($relances as &$relanceRow) {
+        foreach (['nom_complet', 'ville', 'titre_projet', 'description'] as $placeholderField) {
+            if (trim((string) ($relanceRow[$placeholderField] ?? '')) === 'À compléter') {
+                $relanceRow[$placeholderField] = '';
+                $relancesCleaned = true;
+            }
+        }
+    }
+    unset($relanceRow);
+    if ($relancesCleaned) {
+        AppStore::put('relances', $relances);
+    }
+
     return view('dashboard', [
         'clients' => $clients,
         'projets' => $projets,
         'paiements' => $paiements,
         'utilisateurs' => AppStore::get('utilisateurs'),
         'evolutions' => AppStore::get('evolutions'),
-        'relances' => AppStore::get('relances'),
+        'relances' => $relances,
         'autorisations' => AppStore::get('autorisations'),
         'menuSections' => $menuSections,
         'userPermissions' => $userPermissions,
@@ -466,11 +481,11 @@ Route::post('/relances/import', function (Request $request) {
             'id' => uniqid('rel_', true),
             'date' => $today,
             'ref' => 'REL-'.str_pad((string) $n, 4, '0', STR_PAD_LEFT),
-            'nom_complet' => 'À compléter',
+            'nom_complet' => '',
             'telephone' => $phone,
-            'ville' => 'À compléter',
-            'titre_projet' => 'À compléter',
-            'description' => 'À compléter',
+            'ville' => '',
+            'titre_projet' => '',
+            'description' => '',
             'budget' => 0.0,
             'envoye' => 'lien',
             'statue' => 'a_voir',
@@ -700,11 +715,16 @@ Route::patch('/relances/{id}/inline', function (Request $request, string $id) {
         if (! in_array($value, ['oui', 'non'], true)) {
             return response()->json(['ok' => false, 'message' => 'Valeur invalide'], 422);
         }
-    } else {
+    } elseif ($field === 'telephone') {
         $value = trim((string) ($value ?? ''));
         if ($value === '') {
             return response()->json(['ok' => false, 'message' => 'Champ requis'], 422);
         }
+        if (mb_strlen($value) > 255) {
+            return response()->json(['ok' => false, 'message' => 'Trop long'], 422);
+        }
+    } else {
+        $value = trim((string) ($value ?? ''));
         if (mb_strlen($value) > ($field === 'description' ? 2000 : 255)) {
             return response()->json(['ok' => false, 'message' => 'Trop long'], 422);
         }
