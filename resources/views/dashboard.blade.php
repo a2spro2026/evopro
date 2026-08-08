@@ -2641,8 +2641,8 @@
                                 <colgroup>
                                     <col style="width:7.5%">
                                     <col style="width:6%">
-                                    <col style="width:11%">
                                     <col style="width:8%">
+                                    <col style="width:11%">
                                     <col style="width:10%">
                                     <col style="width:14%">
                                     <col style="width:7%">
@@ -2655,15 +2655,15 @@
                                     <tr>
                                         <th>Date</th>
                                         <th>ID</th>
-                                        <th>Nom Complet</th>
                                         <th>Téléphone</th>
+                                        <th>Nom Complet</th>
                                         <th>Titre Projet</th>
                                         <th>Description</th>
                                         <th>Budget</th>
                                         <th>Envoyé</th>
                                         <th>Statue</th>
                                         <th>A Rappeler</th>
-                                        <th>Date rappel</th>
+                                        <th>Date Rappel</th>
                                     </tr>
                                 </thead>
                                 <tbody id="dashboardRelancesTableBody">
@@ -2689,8 +2689,8 @@
                                         >
                                             <td>{{ $relance['date'] ?? '' }}</td>
                                             <td>{{ $relance['ref'] ?? '' }}</td>
-                                            <td>{{ $relance['nom_complet'] ?? '' }}</td>
                                             <td>{{ $relance['telephone'] ?? '' }}</td>
+                                            <td>{{ $relance['nom_complet'] ?? '' }}</td>
                                             <td>{{ $relance['titre_projet'] ?? '' }}</td>
                                             <td class="cell-wrap">{{ $relance['description'] ?? '' }}</td>
                                             <td>{{ number_format((float) ($relance['budget'] ?? 0), 2, '.', ' ') }}</td>
@@ -2914,8 +2914,8 @@
                             <colgroup>
                                 <col style="width:7%">
                                 <col style="width:5.5%">
-                                <col style="width:10%">
                                 <col style="width:7.5%">
+                                <col style="width:10%">
                                 <col style="width:9%">
                                 <col style="width:12%">
                                 <col style="width:6.5%">
@@ -2929,15 +2929,15 @@
                                 <tr>
                                     <th>Date</th>
                                     <th>ID</th>
-                                    <th>Nom Complet</th>
                                     <th>Téléphone</th>
+                                    <th>Nom Complet</th>
                                     <th>Titre Projet</th>
                                     <th>Description</th>
                                     <th>Budget</th>
                                     <th>Envoyé</th>
                                     <th>Statue</th>
                                     <th>A Rappeler</th>
-                                    <th>Date rappel</th>
+                                    <th>Date Rappel</th>
                                     <th>Action</th>
                                 </tr>
                             </thead>
@@ -2964,8 +2964,8 @@
                                     >
                                         <td>{{ $relance['date'] ?? '' }}</td>
                                         <td>{{ $relance['ref'] ?? '' }}</td>
-                                        <td>{{ $relance['nom_complet'] ?? '' }}</td>
                                         <td>{{ $relance['telephone'] ?? '' }}</td>
+                                        <td>{{ $relance['nom_complet'] ?? '' }}</td>
                                         <td>{{ $relance['titre_projet'] ?? '' }}</td>
                                         <td class="cell-wrap">{{ $relance['description'] ?? '' }}</td>
                                         <td>{{ number_format((float) ($relance['budget'] ?? 0), 2, '.', ' ') }}</td>
