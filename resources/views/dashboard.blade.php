@@ -2821,7 +2821,11 @@
                                     <h2>Relances</h2>
                                     <button type="button" class="btn-toggle-cards" id="btnToggleDashboardCards" aria-pressed="false">Masquer</button>
                                 </div>
-                                <div class="search-bar balance-search" aria-label="Recherche relances" style="grid-template-columns: repeat(4, minmax(0, 1fr));">
+                                <div class="search-bar balance-search" aria-label="Recherche relances" style="grid-template-columns: repeat(5, minmax(0, 1fr));">
+                                    <div class="search-field">
+                                        <label for="filter_dashboard_relance_numero">Numéro</label>
+                                        <input type="text" id="filter_dashboard_relance_numero" placeholder="Ex. 06…" maxlength="20" autocomplete="off" inputmode="tel">
+                                    </div>
                                     <div class="search-field">
                                         <label for="filter_dashboard_relance_mois">Mois</label>
                                         <select id="filter_dashboard_relance_mois">
@@ -2910,6 +2914,7 @@
                                             data-statue="{{ $statueRelanceDash }}"
                                             data-date="{{ $relance['date'] ?? '' }}"
                                             data-import="{{ !empty($relance['from_import']) ? '1' : '0' }}"
+                                            data-telephone="{{ preg_replace('/\D+/', '', (string) ($relance['telephone'] ?? '')) }}"
                                             @class([
                                                 'row-relance-a-voir' => $statueRelanceDash === 'a_voir',
                                                 'row-relance-confirme' => $statueRelanceDash === 'confirme',
@@ -3154,7 +3159,11 @@
                             </button>
                         </div>
 
-                        <div class="search-bar" aria-label="Recherche relances" style="grid-template-columns: repeat(4, minmax(0, 1fr));">
+                        <div class="search-bar" aria-label="Recherche relances" style="grid-template-columns: repeat(5, minmax(0, 1fr));">
+                            <div class="search-field">
+                                <label for="filter_relance_numero">Numéro</label>
+                                <input type="text" id="filter_relance_numero" placeholder="Ex. 06…" maxlength="20" autocomplete="off" inputmode="tel">
+                            </div>
                             <div class="search-field">
                                 <label for="filter_relance_mois">Mois</label>
                                 <select id="filter_relance_mois">
@@ -3244,6 +3253,7 @@
                                         data-statue="{{ $statueRelance }}"
                                         data-date="{{ $relance['date'] ?? '' }}"
                                         data-import="{{ !empty($relance['from_import']) ? '1' : '0' }}"
+                                        data-telephone="{{ preg_replace('/\D+/', '', (string) ($relance['telephone'] ?? '')) }}"
                                         @class([
                                             'row-relance-a-voir' => $statueRelance === 'a_voir',
                                             'row-relance-confirme' => $statueRelance === 'confirme',
@@ -5617,6 +5627,7 @@
             const statue = document.getElementById(options.statueId)?.value || '';
             const deKey = parseDateFrToKey(document.getElementById(options.deId)?.value || '');
             const aKey = parseDateFrToKey(document.getElementById(options.aId)?.value || '');
+            const numeroQuery = (document.getElementById(options.numeroId)?.value || '').replace(/\D+/g, '');
             const importOnly = statue === 'nv_tab';
             const rows = document.querySelectorAll(`${tbodySelector} tr[data-id]`);
             let visible = 0;
@@ -5626,12 +5637,14 @@
                 const rowStatue = row.dataset.statue || '';
                 const rowDateKey = parseDateFrToKey(row.dataset.date || '');
                 const rowImport = row.dataset.import === '1';
+                const rowPhone = row.dataset.telephone || '';
                 const matchMois = !mois || rowMois === mois;
                 const matchStatue = !statue || importOnly || rowStatue === statue;
                 const matchDe = !deKey || (rowDateKey !== null && rowDateKey >= deKey);
                 const matchA = !aKey || (rowDateKey !== null && rowDateKey <= aKey);
                 const matchImport = !importOnly || rowImport;
-                const show = matchMois && matchStatue && matchDe && matchA && matchImport;
+                const matchNumero = !numeroQuery || rowPhone.includes(numeroQuery);
+                const show = matchMois && matchStatue && matchDe && matchA && matchImport && matchNumero;
                 row.style.display = show ? '' : 'none';
                 if (show) visible++;
             });
@@ -5648,6 +5661,7 @@
                 statueId: 'filter_dashboard_relance_statue',
                 deId: 'filter_dashboard_relance_de',
                 aId: 'filter_dashboard_relance_a',
+                numeroId: 'filter_dashboard_relance_numero',
             }, 'dashboardRelancesNoResult');
             persistRelanceFilters();
         }
@@ -5667,6 +5681,7 @@
 
         document.getElementById('filter_dashboard_relance_mois')?.addEventListener('change', filterDashboardRelancesTable);
         document.getElementById('filter_dashboard_relance_statue')?.addEventListener('change', filterDashboardRelancesTable);
+        document.getElementById('filter_dashboard_relance_numero')?.addEventListener('input', filterDashboardRelancesTable);
         bindDateMask('filter_dashboard_relance_de');
         bindDateMask('filter_dashboard_relance_a');
 
@@ -5871,6 +5886,15 @@
                         ? relancesData.find((r) => r.id === id)
                         : null;
                     if (item) item[field] = saved;
+
+                    if (field === 'telephone') {
+                        const digits = String(saved).replace(/\D+/g, '');
+                        document.querySelectorAll(`tr[data-id="${CSS.escape(id)}"]`).forEach((row) => {
+                            row.dataset.telephone = digits;
+                        });
+                        filterRelancesTable();
+                        filterDashboardRelancesTable();
+                    }
 
                     document.querySelectorAll(`.relance-inline-input[data-id="${CSS.escape(id)}"][data-field="${field}"]`).forEach((twin) => {
                         if (twin === el) return;
@@ -6082,6 +6106,7 @@
                 statueId: 'filter_relance_statue',
                 deId: 'filter_relance_de',
                 aId: 'filter_relance_a',
+                numeroId: 'filter_relance_numero',
             }, 'relancesNoResult');
             persistRelanceFilters();
         }
@@ -6089,10 +6114,12 @@
         function persistRelanceFilters() {
             try {
                 const payload = {
+                    numero: document.getElementById('filter_relance_numero')?.value || '',
                     mois: document.getElementById('filter_relance_mois')?.value || '',
                     statue: document.getElementById('filter_relance_statue')?.value || '',
                     de: document.getElementById('filter_relance_de')?.value || '',
                     a: document.getElementById('filter_relance_a')?.value || '',
+                    dashNumero: document.getElementById('filter_dashboard_relance_numero')?.value || '',
                     dashMois: document.getElementById('filter_dashboard_relance_mois')?.value || '',
                     dashStatue: document.getElementById('filter_dashboard_relance_statue')?.value || '',
                     dashDe: document.getElementById('filter_dashboard_relance_de')?.value || '',
@@ -6111,10 +6138,12 @@
                     const el = document.getElementById(id);
                     if (el && typeof val === 'string') el.value = val;
                 };
+                setVal('filter_relance_numero', payload.numero);
                 setVal('filter_relance_mois', payload.mois);
                 setVal('filter_relance_statue', payload.statue);
                 setVal('filter_relance_de', payload.de);
                 setVal('filter_relance_a', payload.a);
+                setVal('filter_dashboard_relance_numero', payload.dashNumero);
                 setVal('filter_dashboard_relance_mois', payload.dashMois);
                 setVal('filter_dashboard_relance_statue', payload.dashStatue);
                 setVal('filter_dashboard_relance_de', payload.dashDe);
@@ -6142,6 +6171,7 @@
         document.getElementById('filter_client_mois')?.addEventListener('change', filterClientsTable);
         document.getElementById('filter_relance_mois')?.addEventListener('change', filterRelancesTable);
         document.getElementById('filter_relance_statue')?.addEventListener('change', filterRelancesTable);
+        document.getElementById('filter_relance_numero')?.addEventListener('input', filterRelancesTable);
         bindRelancePanelDateMask('filter_relance_de');
         bindRelancePanelDateMask('filter_relance_a');
         document.getElementById('filter_utilisateur_mois')?.addEventListener('change', filterUtilisateursTable);
