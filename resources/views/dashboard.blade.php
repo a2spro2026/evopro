@@ -990,6 +990,18 @@
             box-shadow: 0 4px 12px rgba(240, 180, 41, 0.25);
         }
 
+        .rappeler-switch .envoye-opt.is-active[data-value="oui"] {
+            color: #d8ffe8;
+            background: linear-gradient(135deg, rgba(46, 180, 110, 0.45), rgba(28, 140, 85, 0.58));
+            box-shadow: 0 4px 12px rgba(46, 180, 110, 0.28);
+        }
+
+        .rappeler-switch .envoye-opt.is-active[data-value="non"] {
+            color: #ffd6da;
+            background: linear-gradient(135deg, rgba(230, 90, 105, 0.42), rgba(190, 55, 70, 0.55));
+            box-shadow: 0 4px 12px rgba(230, 90, 105, 0.25);
+        }
+
         .envoye-switch.is-saving {
             opacity: 0.72;
             pointer-events: none;
@@ -2986,15 +2998,17 @@
                                                 </form>
                                             </td>
                                             <td>
-                                                <select
-                                                    class="relance-inline-input relance-inline-select"
-                                                    data-field="a_rappeler"
+                                                <div
+                                                    class="envoye-switch rappeler-switch"
                                                     data-id="{{ $relance['id'] ?? '' }}"
+                                                    data-value="{{ $rappelerRelanceDash }}"
+                                                    data-endpoint="a-rappeler"
+                                                    role="group"
                                                     aria-label="A Rappeler"
                                                 >
-                                                    <option value="oui" @selected($rappelerRelanceDash === 'oui')>Oui</option>
-                                                    <option value="non" @selected($rappelerRelanceDash === 'non')>Non</option>
-                                                </select>
+                                                    <button type="button" class="envoye-opt{{ $rappelerRelanceDash === 'oui' ? ' is-active' : '' }}" data-value="oui">Oui</button>
+                                                    <button type="button" class="envoye-opt{{ $rappelerRelanceDash === 'non' ? ' is-active' : '' }}" data-value="non">Non</button>
+                                                </div>
                                             </td>
                                             <td>
                                                 <form method="post" action="{{ url('/relances/'.$relance['id'].'/date-rappel') }}" class="rappel-date-form">
@@ -3317,15 +3331,17 @@
                                             </form>
                                         </td>
                                         <td>
-                                            <select
-                                                class="relance-inline-input relance-inline-select"
-                                                data-field="a_rappeler"
+                                            <div
+                                                class="envoye-switch rappeler-switch"
                                                 data-id="{{ $relance['id'] }}"
+                                                data-value="{{ $rappelerRelance }}"
+                                                data-endpoint="a-rappeler"
+                                                role="group"
                                                 aria-label="A Rappeler"
                                             >
-                                                <option value="oui" @selected($rappelerRelance === 'oui')>Oui</option>
-                                                <option value="non" @selected($rappelerRelance === 'non')>Non</option>
-                                            </select>
+                                                <button type="button" class="envoye-opt{{ $rappelerRelance === 'oui' ? ' is-active' : '' }}" data-value="oui">Oui</button>
+                                                <button type="button" class="envoye-opt{{ $rappelerRelance === 'non' ? ' is-active' : '' }}" data-value="non">Non</button>
+                                            </div>
                                         </td>
                                         <td>
                                             <form method="post" action="{{ url('/relances/'.$relance['id'].'/date-rappel') }}" class="rappel-date-form">
@@ -5764,6 +5780,8 @@
                 const id = group.dataset.id;
                 if (!value || !id || group.dataset.value === value) return;
 
+                const endpoint = group.dataset.endpoint === 'a-rappeler' ? 'a-rappeler' : 'envoye';
+                const fieldKey = endpoint === 'a-rappeler' ? 'a_rappeler' : 'envoye';
                 const previous = group.dataset.value || '';
                 group.classList.add('is-saving');
                 group.dataset.value = value;
@@ -5772,7 +5790,7 @@
                 });
 
                 try {
-                    const response = await fetch(`{{ url('/relances') }}/${encodeURIComponent(id)}/envoye`, {
+                    const response = await fetch(`{{ url('/relances') }}/${encodeURIComponent(id)}/${endpoint}`, {
                         method: 'PATCH',
                         headers: {
                             'Content-Type': 'application/json',
@@ -5780,7 +5798,7 @@
                             'X-CSRF-TOKEN': csrfToken,
                             'X-Requested-With': 'XMLHttpRequest',
                         },
-                        body: JSON.stringify({ envoye: value }),
+                        body: JSON.stringify({ [fieldKey]: value }),
                     });
 
                     if (!response.ok) throw new Error('save_failed');
@@ -5788,7 +5806,17 @@
                     const item = (typeof relancesData !== 'undefined')
                         ? relancesData.find((r) => r.id === id)
                         : null;
-                    if (item) item.envoye = value;
+                    if (item) item[fieldKey] = value;
+
+                    document.querySelectorAll(`.envoye-switch[data-id="${CSS.escape(id)}"]`).forEach((twin) => {
+                        if (twin === group) return;
+                        const twinEndpoint = twin.dataset.endpoint === 'a-rappeler' ? 'a-rappeler' : 'envoye';
+                        if (twinEndpoint !== endpoint) return;
+                        twin.dataset.value = value;
+                        twin.querySelectorAll('.envoye-opt').forEach((opt) => {
+                            opt.classList.toggle('is-active', opt.dataset.value === value);
+                        });
+                    });
                 } catch (err) {
                     group.dataset.value = previous;
                     group.querySelectorAll('.envoye-opt').forEach((opt) => {

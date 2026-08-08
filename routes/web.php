@@ -713,6 +713,40 @@ Route::patch('/relances/{id}/envoye', function (Request $request, string $id) {
         ->with('open_fiche_relance', true);
 })->name('relances.envoye');
 
+Route::patch('/relances/{id}/a-rappeler', function (Request $request, string $id) {
+    $data = $request->validate([
+        'a_rappeler' => ['required', 'string', 'in:oui,non'],
+    ]);
+
+    $relances = AppStore::get('relances');
+    $index = collect($relances)->search(fn ($r) => ($r['id'] ?? '') === $id);
+
+    if ($index === false) {
+        return redirect()
+            ->route('dashboard')
+            ->with('open_fiche_relance', true);
+    }
+
+    $relances[$index]['a_rappeler'] = $data['a_rappeler'];
+    AppStore::put('relances', $relances);
+
+    if ($request->expectsJson() || $request->ajax()) {
+        return response()->json([
+            'ok' => true,
+            'id' => $id,
+            'a_rappeler' => $data['a_rappeler'],
+        ]);
+    }
+
+    if ($request->boolean('from_dashboard')) {
+        return redirect()->route('dashboard');
+    }
+
+    return redirect()
+        ->route('dashboard')
+        ->with('open_fiche_relance', true);
+})->name('relances.a-rappeler');
+
 Route::patch('/relances/{id}/inline', function (Request $request, string $id) {
     $data = $request->validate([
         'field' => ['required', 'string', 'in:telephone,nom_complet,titre_projet,description,budget,a_rappeler,ville'],
