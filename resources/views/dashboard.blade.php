@@ -579,6 +579,53 @@
         .btn-add:hover { transform: translateY(-1px); filter: brightness(1.05); }
         .btn-add svg { width: 16px; height: 16px; }
 
+        .relance-inline-input {
+            width: 100%;
+            min-width: 0;
+            height: 32px;
+            padding: 0 0.45rem;
+            border-radius: 8px;
+            border: 1px solid rgba(110, 168, 255, 0.22);
+            background: rgba(6, 14, 26, 0.55);
+            color: var(--text);
+            font-family: inherit;
+            font-size: 0.78rem;
+            box-sizing: border-box;
+        }
+
+        .relance-inline-input:focus {
+            outline: none;
+            border-color: rgba(94, 176, 255, 0.65);
+            box-shadow: 0 0 0 2px rgba(59, 158, 255, 0.14);
+        }
+
+        .relance-inline-input.is-saving {
+            opacity: 0.7;
+        }
+
+        .relance-inline-textarea {
+            height: auto;
+            min-height: 52px;
+            padding: 0.4rem 0.45rem;
+            resize: vertical;
+            line-height: 1.35;
+        }
+
+        .relance-inline-budget {
+            font-variant-numeric: tabular-nums;
+            text-align: right;
+        }
+
+        .relance-inline-select {
+            cursor: pointer;
+        }
+
+        html[data-theme="light"] .relance-inline-input {
+            background: rgba(255, 255, 255, 0.9);
+            border-color: rgba(30, 111, 217, 0.2);
+            color: #12233d;
+        }
+
         .table-wrap {
             overflow: auto;
             border-radius: 14px;
@@ -2790,6 +2837,7 @@
                                             <option value="a_voir">A VOIR</option>
                                             <option value="confirme">CONFIRME</option>
                                             <option value="inj">INJ</option>
+                                            <option value="nv_tab">Nv Tab</option>
                                         </select>
                                     </div>
                                     <div class="search-field">
@@ -2849,6 +2897,7 @@
                                             data-mois="{{ $moisRelanceDash }}"
                                             data-statue="{{ $statueRelanceDash }}"
                                             data-date="{{ $relance['date'] ?? '' }}"
+                                            data-import="{{ !empty($relance['from_import']) ? '1' : '0' }}"
                                             @class([
                                                 'row-relance-a-voir' => $statueRelanceDash === 'a_voir',
                                                 'row-relance-confirme' => $statueRelanceDash === 'confirme',
@@ -2857,11 +2906,56 @@
                                         >
                                             <td>{{ $relance['date'] ?? '' }}</td>
                                             <td>{{ $relance['ref'] ?? '' }}</td>
-                                            <td>{{ $relance['telephone'] ?? '' }}</td>
-                                            <td>{{ $relance['nom_complet'] ?? '' }}</td>
-                                            <td>{{ $relance['titre_projet'] ?? '' }}</td>
-                                            <td class="cell-wrap">{{ $relance['description'] ?? '' }}</td>
-                                            <td>{{ number_format((float) ($relance['budget'] ?? 0), 2, '.', ' ') }}</td>
+                                            <td>
+                                                <input
+                                                    type="text"
+                                                    class="relance-inline-input"
+                                                    data-field="telephone"
+                                                    data-id="{{ $relance['id'] ?? '' }}"
+                                                    value="{{ $relance['telephone'] ?? '' }}"
+                                                    aria-label="Téléphone"
+                                                >
+                                            </td>
+                                            <td>
+                                                <input
+                                                    type="text"
+                                                    class="relance-inline-input"
+                                                    data-field="nom_complet"
+                                                    data-id="{{ $relance['id'] ?? '' }}"
+                                                    value="{{ $relance['nom_complet'] ?? '' }}"
+                                                    aria-label="Nom Complet"
+                                                >
+                                            </td>
+                                            <td>
+                                                <input
+                                                    type="text"
+                                                    class="relance-inline-input"
+                                                    data-field="titre_projet"
+                                                    data-id="{{ $relance['id'] ?? '' }}"
+                                                    value="{{ $relance['titre_projet'] ?? '' }}"
+                                                    aria-label="Titre Projet"
+                                                >
+                                            </td>
+                                            <td class="cell-wrap">
+                                                <textarea
+                                                    class="relance-inline-input relance-inline-textarea"
+                                                    data-field="description"
+                                                    data-id="{{ $relance['id'] ?? '' }}"
+                                                    rows="2"
+                                                    aria-label="Description"
+                                                >{{ $relance['description'] ?? '' }}</textarea>
+                                            </td>
+                                            <td>
+                                                <input
+                                                    type="text"
+                                                    class="relance-inline-input relance-inline-budget"
+                                                    data-field="budget"
+                                                    data-id="{{ $relance['id'] ?? '' }}"
+                                                    value="{{ number_format((float) ($relance['budget'] ?? 0), 2, '.', '') }}"
+                                                    inputmode="decimal"
+                                                    aria-label="Budget"
+                                                >
+                                            </td>
                                             <td>
                                                 <div
                                                     class="envoye-switch"
@@ -2891,7 +2985,17 @@
                                                     </select>
                                                 </form>
                                             </td>
-                                            <td>{{ $rappelerRelanceDashLabel }}</td>
+                                            <td>
+                                                <select
+                                                    class="relance-inline-input relance-inline-select"
+                                                    data-field="a_rappeler"
+                                                    data-id="{{ $relance['id'] ?? '' }}"
+                                                    aria-label="A Rappeler"
+                                                >
+                                                    <option value="oui" @selected($rappelerRelanceDash === 'oui')>Oui</option>
+                                                    <option value="non" @selected($rappelerRelanceDash === 'non')>Non</option>
+                                                </select>
+                                            </td>
                                             <td>
                                                 <form method="post" action="{{ url('/relances/'.$relance['id'].'/date-rappel') }}" class="rappel-date-form">
                                                     @csrf
@@ -3064,6 +3168,7 @@
                                     <option value="a_voir">A VOIR</option>
                                     <option value="confirme">CONFIRME</option>
                                     <option value="inj">INJ</option>
+                                    <option value="nv_tab">Nv Tab</option>
                                 </select>
                             </div>
                             <div class="search-field">
@@ -3124,6 +3229,7 @@
                                         data-mois="{{ $moisRelance }}"
                                         data-statue="{{ $statueRelance }}"
                                         data-date="{{ $relance['date'] ?? '' }}"
+                                        data-import="{{ !empty($relance['from_import']) ? '1' : '0' }}"
                                         @class([
                                             'row-relance-a-voir' => $statueRelance === 'a_voir',
                                             'row-relance-confirme' => $statueRelance === 'confirme',
@@ -3132,11 +3238,56 @@
                                     >
                                         <td>{{ $relance['date'] ?? '' }}</td>
                                         <td>{{ $relance['ref'] ?? '' }}</td>
-                                        <td>{{ $relance['telephone'] ?? '' }}</td>
-                                        <td>{{ $relance['nom_complet'] ?? '' }}</td>
-                                        <td>{{ $relance['titre_projet'] ?? '' }}</td>
-                                        <td class="cell-wrap">{{ $relance['description'] ?? '' }}</td>
-                                        <td>{{ number_format((float) ($relance['budget'] ?? 0), 2, '.', ' ') }}</td>
+                                        <td>
+                                            <input
+                                                type="text"
+                                                class="relance-inline-input"
+                                                data-field="telephone"
+                                                data-id="{{ $relance['id'] }}"
+                                                value="{{ $relance['telephone'] ?? '' }}"
+                                                aria-label="Téléphone"
+                                            >
+                                        </td>
+                                        <td>
+                                            <input
+                                                type="text"
+                                                class="relance-inline-input"
+                                                data-field="nom_complet"
+                                                data-id="{{ $relance['id'] }}"
+                                                value="{{ $relance['nom_complet'] ?? '' }}"
+                                                aria-label="Nom Complet"
+                                            >
+                                        </td>
+                                        <td>
+                                            <input
+                                                type="text"
+                                                class="relance-inline-input"
+                                                data-field="titre_projet"
+                                                data-id="{{ $relance['id'] }}"
+                                                value="{{ $relance['titre_projet'] ?? '' }}"
+                                                aria-label="Titre Projet"
+                                            >
+                                        </td>
+                                        <td class="cell-wrap">
+                                            <textarea
+                                                class="relance-inline-input relance-inline-textarea"
+                                                data-field="description"
+                                                data-id="{{ $relance['id'] }}"
+                                                rows="2"
+                                                aria-label="Description"
+                                            >{{ $relance['description'] ?? '' }}</textarea>
+                                        </td>
+                                        <td>
+                                            <input
+                                                type="text"
+                                                class="relance-inline-input relance-inline-budget"
+                                                data-field="budget"
+                                                data-id="{{ $relance['id'] }}"
+                                                value="{{ number_format((float) ($relance['budget'] ?? 0), 2, '.', '') }}"
+                                                inputmode="decimal"
+                                                aria-label="Budget"
+                                            >
+                                        </td>
                                         <td>
                                             <div
                                                 class="envoye-switch"
@@ -3165,7 +3316,17 @@
                                                 </select>
                                             </form>
                                         </td>
-                                        <td>{{ $rappelerRelanceLabel }}</td>
+                                        <td>
+                                            <select
+                                                class="relance-inline-input relance-inline-select"
+                                                data-field="a_rappeler"
+                                                data-id="{{ $relance['id'] }}"
+                                                aria-label="A Rappeler"
+                                            >
+                                                <option value="oui" @selected($rappelerRelance === 'oui')>Oui</option>
+                                                <option value="non" @selected($rappelerRelance === 'non')>Non</option>
+                                            </select>
+                                        </td>
                                         <td>
                                             <form method="post" action="{{ url('/relances/'.$relance['id'].'/date-rappel') }}" class="rappel-date-form">
                                                 @csrf
@@ -5124,7 +5285,7 @@
         }
 
         document.getElementById('projetsTableBody')?.addEventListener('click', (e) => {
-            if (e.target.closest('.statue-form') || e.target.closest('.rappel-date-form') || e.target.closest('.envoye-switch')) return;
+            if (e.target.closest('.statue-form') || e.target.closest('.rappel-date-form') || e.target.closest('.envoye-switch') || e.target.closest('.relance-inline-input')) return;
 
             const row = e.target.closest('tr[data-id]');
             if (!row) return;
@@ -5425,6 +5586,7 @@
             const statue = document.getElementById(options.statueId)?.value || '';
             const deKey = parseDateFrToKey(document.getElementById(options.deId)?.value || '');
             const aKey = parseDateFrToKey(document.getElementById(options.aId)?.value || '');
+            const importOnly = statue === 'nv_tab';
             const rows = document.querySelectorAll(`${tbodySelector} tr[data-id]`);
             let visible = 0;
 
@@ -5432,11 +5594,13 @@
                 const rowMois = row.dataset.mois || '';
                 const rowStatue = row.dataset.statue || '';
                 const rowDateKey = parseDateFrToKey(row.dataset.date || '');
+                const rowImport = row.dataset.import === '1';
                 const matchMois = !mois || rowMois === mois;
-                const matchStatue = !statue || rowStatue === statue;
+                const matchStatue = !statue || importOnly || rowStatue === statue;
                 const matchDe = !deKey || (rowDateKey !== null && rowDateKey >= deKey);
                 const matchA = !aKey || (rowDateKey !== null && rowDateKey <= aKey);
-                const show = matchMois && matchStatue && matchDe && matchA;
+                const matchImport = !importOnly || rowImport;
+                const show = matchMois && matchStatue && matchDe && matchA && matchImport;
                 row.style.display = show ? '' : 'none';
                 if (show) visible++;
             });
@@ -5544,6 +5708,76 @@
                     });
                 } finally {
                     group.classList.remove('is-saving');
+                }
+            });
+        });
+
+        document.querySelectorAll('.relance-inline-input').forEach((el) => {
+            const initial = el.tagName === 'SELECT' ? el.value : (el.value || '').trim();
+            el.dataset.initial = initial;
+
+            const saveInline = async () => {
+                const id = el.dataset.id;
+                const field = el.dataset.field;
+                if (!id || !field || el.classList.contains('is-saving')) return;
+
+                let value = el.tagName === 'SELECT' ? el.value : (el.value || '').trim();
+                if (field === 'budget') {
+                    value = value.replace(',', '.').replace(/\s+/g, '');
+                }
+                if (value === (el.dataset.initial || '')) return;
+
+                el.classList.add('is-saving');
+                try {
+                    const response = await fetch(`{{ url('/relances') }}/${encodeURIComponent(id)}/inline`, {
+                        method: 'PATCH',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Accept': 'application/json',
+                            'X-CSRF-TOKEN': csrfToken,
+                            'X-Requested-With': 'XMLHttpRequest',
+                        },
+                        body: JSON.stringify({ field, value }),
+                    });
+                    const data = await response.json().catch(() => ({}));
+                    if (!response.ok) throw new Error(data.message || 'save_failed');
+
+                    const saved = data.value ?? value;
+                    if (field === 'budget') {
+                        el.value = Number(saved).toFixed(2);
+                        el.dataset.initial = el.value;
+                    } else {
+                        if (el.tagName !== 'SELECT') el.value = saved;
+                        el.dataset.initial = String(saved);
+                    }
+
+                    const item = (typeof relancesData !== 'undefined')
+                        ? relancesData.find((r) => r.id === id)
+                        : null;
+                    if (item) item[field] = saved;
+
+                    document.querySelectorAll(`.relance-inline-input[data-id="${CSS.escape(id)}"][data-field="${field}"]`).forEach((twin) => {
+                        if (twin === el) return;
+                        if (field === 'budget') twin.value = Number(saved).toFixed(2);
+                        else twin.value = String(saved);
+                        twin.dataset.initial = twin.tagName === 'SELECT' ? twin.value : (twin.value || '').trim();
+                    });
+                } catch (err) {
+                    if (el.tagName === 'SELECT') el.value = el.dataset.initial || '';
+                    else el.value = el.dataset.initial || '';
+                } finally {
+                    el.classList.remove('is-saving');
+                }
+            };
+
+            el.addEventListener('change', saveInline);
+            el.addEventListener('blur', () => {
+                if (el.tagName !== 'SELECT') saveInline();
+            });
+            el.addEventListener('keydown', (e) => {
+                if (e.key === 'Enter' && el.tagName !== 'TEXTAREA') {
+                    e.preventDefault();
+                    el.blur();
                 }
             });
         });
@@ -5873,7 +6107,7 @@
         }
 
         document.getElementById('relancesTableBody')?.addEventListener('click', (e) => {
-            if (e.target.closest('.rappel-date-form') || e.target.closest('.statue-form') || e.target.closest('.envoye-switch')) return;
+            if (e.target.closest('.rappel-date-form') || e.target.closest('.statue-form') || e.target.closest('.envoye-switch') || e.target.closest('.relance-inline-input')) return;
             const row = e.target.closest('tr[data-id]');
             if (!row) return;
 

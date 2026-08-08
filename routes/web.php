@@ -681,6 +681,53 @@ Route::patch('/relances/{id}/envoye', function (Request $request, string $id) {
         ->with('open_fiche_relance', true);
 })->name('relances.envoye');
 
+Route::patch('/relances/{id}/inline', function (Request $request, string $id) {
+    $data = $request->validate([
+        'field' => ['required', 'string', 'in:telephone,nom_complet,titre_projet,description,budget,a_rappeler,ville'],
+        'value' => ['nullable'],
+    ]);
+
+    $field = $data['field'];
+    $value = $data['value'];
+
+    if ($field === 'budget') {
+        $value = is_numeric($value) ? (float) $value : null;
+        if ($value === null || $value < 0) {
+            return response()->json(['ok' => false, 'message' => 'Budget invalide'], 422);
+        }
+    } elseif ($field === 'a_rappeler') {
+        $value = (string) $value;
+        if (! in_array($value, ['oui', 'non'], true)) {
+            return response()->json(['ok' => false, 'message' => 'Valeur invalide'], 422);
+        }
+    } else {
+        $value = trim((string) ($value ?? ''));
+        if ($value === '') {
+            return response()->json(['ok' => false, 'message' => 'Champ requis'], 422);
+        }
+        if (mb_strlen($value) > ($field === 'description' ? 2000 : 255)) {
+            return response()->json(['ok' => false, 'message' => 'Trop long'], 422);
+        }
+    }
+
+    $relances = AppStore::get('relances');
+    $index = collect($relances)->search(fn ($r) => ($r['id'] ?? '') === $id);
+
+    if ($index === false) {
+        return response()->json(['ok' => false, 'message' => 'Introuvable'], 404);
+    }
+
+    $relances[$index][$field] = $value;
+    AppStore::put('relances', $relances);
+
+    return response()->json([
+        'ok' => true,
+        'id' => $id,
+        'field' => $field,
+        'value' => $value,
+    ]);
+})->name('relances.inline');
+
 Route::delete('/relances/{id}', function (string $id) {
     $relances = collect(AppStore::get('relances'))
         ->reject(fn ($r) => ($r['id'] ?? '') === $id)
