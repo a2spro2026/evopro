@@ -434,6 +434,73 @@ Route::post('/relances', function (Request $request) {
         ->with('open_fiche_relance', true);
 })->name('relances.store');
 
+Route::post('/relances/import', function (Request $request) {
+    $data = $request->validate([
+        'telephones' => ['required', 'array', 'min:1', 'max:200'],
+        'telephones.*' => ['required', 'string', 'max:40'],
+    ]);
+
+    $relances = AppStore::get('relances');
+    $today = now()->format('d/m/Y');
+    $existingPhones = collect($relances)
+        ->map(fn ($r) => preg_replace('/\D+/', '', (string) ($r['telephone'] ?? '')))
+        ->filter()
+        ->all();
+    $created = 0;
+    $skipped = 0;
+
+    foreach ($data['telephones'] as $telephone) {
+        $phone = trim((string) $telephone);
+        if ($phone === '') {
+            continue;
+        }
+
+        $digits = preg_replace('/\D+/', '', $phone);
+        if ($digits !== '' && in_array($digits, $existingPhones, true)) {
+            $skipped++;
+            continue;
+        }
+
+        $n = count($relances) + 1;
+        $relances[] = [
+            'id' => uniqid('rel_', true),
+            'date' => $today,
+            'ref' => 'REL-'.str_pad((string) $n, 4, '0', STR_PAD_LEFT),
+            'nom_complet' => 'À compléter',
+            'telephone' => $phone,
+            'ville' => 'À compléter',
+            'titre_projet' => 'À compléter',
+            'description' => 'À compléter',
+            'budget' => 0.0,
+            'envoye' => 'lien',
+            'statue' => 'a_voir',
+            'a_rappeler' => 'non',
+            'date_rappel' => $today,
+            'client_id' => null,
+            'from_import' => true,
+        ];
+        if ($digits !== '') {
+            $existingPhones[] = $digits;
+        }
+        $created++;
+    }
+
+    AppStore::put('relances', $relances);
+
+    if ($request->expectsJson() || $request->ajax()) {
+        return response()->json([
+            'ok' => true,
+            'created' => $created,
+            'skipped' => $skipped,
+        ]);
+    }
+
+    return redirect()
+        ->route('dashboard')
+        ->with('open_fiche_relance', true)
+        ->with('import_relance_count', $created);
+})->name('relances.import');
+
 Route::put('/relances/{id}', function (Request $request, string $id) {
     $data = $request->validate([
         'nom_complet' => ['required', 'string', 'max:255'],

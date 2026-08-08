@@ -1242,6 +1242,174 @@
             padding: 0 1.15rem 1.15rem;
         }
 
+        .modal-foot-split {
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .modal-foot-actions {
+            display: flex;
+            gap: 0.6rem;
+            align-items: center;
+        }
+
+        .modal.modal-import {
+            width: min(560px, 94vw);
+        }
+
+        .modal-body-import {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .import-dropzone {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 0.45rem;
+            min-height: 170px;
+            padding: 1.25rem 1rem;
+            border-radius: 14px;
+            border: 1.5px dashed rgba(110, 168, 255, 0.35);
+            background:
+                linear-gradient(160deg, rgba(59, 158, 255, 0.08), rgba(10, 22, 40, 0.35));
+            cursor: pointer;
+            text-align: center;
+            transition: border-color 0.2s ease, background 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .import-dropzone:hover,
+        .import-dropzone.is-dragover {
+            border-color: rgba(94, 176, 255, 0.7);
+            box-shadow: 0 0 0 3px rgba(59, 158, 255, 0.12);
+            background:
+                linear-gradient(160deg, rgba(59, 158, 255, 0.14), rgba(10, 22, 40, 0.4));
+        }
+
+        .import-dropzone-icon {
+            width: 42px;
+            height: 42px;
+            border-radius: 12px;
+            display: grid;
+            place-items: center;
+            color: var(--accent-soft);
+            background: rgba(59, 158, 255, 0.14);
+            border: 1px solid rgba(110, 168, 255, 0.25);
+            margin-bottom: 0.25rem;
+        }
+
+        .import-dropzone-icon svg {
+            width: 22px;
+            height: 22px;
+        }
+
+        .import-dropzone-title {
+            font-size: 0.92rem;
+            font-weight: 650;
+            color: var(--text);
+            text-transform: none;
+        }
+
+        .import-dropzone-hint,
+        .import-dropzone-file {
+            font-size: 0.78rem;
+            color: var(--muted);
+            text-transform: none;
+        }
+
+        .import-dropzone-file:not(:empty) {
+            color: var(--accent-soft);
+            font-weight: 600;
+        }
+
+        .import-status {
+            font-size: 0.82rem;
+            color: var(--muted);
+            text-transform: none;
+            padding: 0.65rem 0.8rem;
+            border-radius: 10px;
+            background: rgba(59, 158, 255, 0.08);
+            border: 1px solid rgba(110, 168, 255, 0.18);
+        }
+
+        .import-status.is-error {
+            color: #ffb3b8;
+            background: rgba(240, 113, 120, 0.1);
+            border-color: rgba(240, 113, 120, 0.28);
+        }
+
+        .import-status.is-ok {
+            color: #9be7b5;
+            background: rgba(46, 160, 110, 0.12);
+            border-color: rgba(46, 160, 110, 0.28);
+        }
+
+        .import-phones-head {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 0.75rem;
+            margin-bottom: 0.55rem;
+            font-size: 0.8rem;
+            font-weight: 650;
+            color: var(--accent-soft);
+            text-transform: none;
+        }
+
+        .import-phones-clear {
+            height: 30px;
+            padding: 0 0.7rem;
+            font-size: 0.72rem;
+        }
+
+        .import-phones-list {
+            list-style: none;
+            margin: 0;
+            padding: 0;
+            max-height: 220px;
+            overflow: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 0.4rem;
+        }
+
+        .import-phones-list li {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 0.75rem;
+            padding: 0.55rem 0.7rem;
+            border-radius: 10px;
+            background: rgba(8, 18, 34, 0.55);
+            border: 1px solid rgba(110, 168, 255, 0.16);
+            font-size: 0.86rem;
+            font-variant-numeric: tabular-nums;
+            text-transform: none;
+        }
+
+        .import-phones-list li button {
+            border: none;
+            background: transparent;
+            color: #ff9aa0;
+            cursor: pointer;
+            font-family: inherit;
+            font-size: 0.72rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.03em;
+        }
+
+        html[data-theme="light"] .import-dropzone {
+            background: linear-gradient(160deg, rgba(30, 111, 217, 0.06), rgba(255, 255, 255, 0.7));
+        }
+
+        html[data-theme="light"] .import-phones-list li {
+            background: rgba(255, 255, 255, 0.85);
+            border-color: rgba(30, 111, 217, 0.14);
+        }
+
         .btn-ghost,
         .btn-primary {
             height: 38px;
@@ -4089,11 +4257,46 @@
                         <input type="hidden" id="relance_rappel_date" name="date_rappel" required>
                     </div>
                 </div>
-                <div class="modal-foot">
-                    <button type="button" class="btn-ghost" id="cancelRelanceModal">Fermer</button>
-                    <button type="submit" class="btn-primary" id="relanceSubmitBtn">Valider</button>
+                <div class="modal-foot modal-foot-split">
+                    <button type="button" class="btn-ghost" id="btnOpenRelanceImport">Importer</button>
+                    <div class="modal-foot-actions">
+                        <button type="button" class="btn-ghost" id="cancelRelanceModal">Fermer</button>
+                        <button type="submit" class="btn-primary" id="relanceSubmitBtn">Valider</button>
+                    </div>
                 </div>
             </form>
+        </div>
+    </div>
+
+    <div class="modal-backdrop" id="relanceImportModal" aria-hidden="true">
+        <div class="modal modal-import" role="dialog" aria-modal="true" aria-labelledby="relanceImportModalTitle">
+            <div class="modal-head">
+                <h2 id="relanceImportModalTitle">Importer des numéros</h2>
+                <button type="button" class="modal-close" id="closeRelanceImportModal" aria-label="Fermer">×</button>
+            </div>
+            <div class="modal-body modal-body-import">
+                <div class="import-dropzone" id="relanceImportDropzone" tabindex="0" role="button" aria-label="Choisir une photo ou un PDF">
+                    <input type="file" id="relanceImportFile" accept="image/*,application/pdf,.pdf" hidden>
+                    <div class="import-dropzone-icon" aria-hidden="true">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><path d="M17 8l-5-5-5 5"/><path d="M12 3v12"/></svg>
+                    </div>
+                    <p class="import-dropzone-title">Photo ou PDF de numéros</p>
+                    <p class="import-dropzone-hint">Glisser-déposer ici, ou cliquer pour choisir un fichier</p>
+                    <p class="import-dropzone-file" id="relanceImportFileName"></p>
+                </div>
+                <div class="import-status" id="relanceImportStatus" hidden></div>
+                <div class="import-phones" id="relanceImportPhonesWrap" hidden>
+                    <div class="import-phones-head">
+                        <span id="relanceImportPhonesCount">0 numéro détecté</span>
+                        <button type="button" class="btn-ghost import-phones-clear" id="btnClearRelanceImportPhones">Tout retirer</button>
+                    </div>
+                    <ul class="import-phones-list" id="relanceImportPhoneList"></ul>
+                </div>
+            </div>
+            <div class="modal-foot">
+                <button type="button" class="btn-ghost" id="cancelRelanceImportModal">Fermer</button>
+                <button type="button" class="btn-primary" id="btnConfirmRelanceImport" disabled>Classer dans le tableau</button>
+            </div>
         </div>
     </div>
 
@@ -4134,6 +4337,13 @@
         </div>
     </div>
 
+    <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+    <script>
+        if (window.pdfjsLib) {
+            pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+        }
+    </script>
     <script>
         const sidebar = document.getElementById('sidebar');
         const toggle = document.getElementById('menuToggle');
@@ -5591,6 +5801,11 @@
             relanceRappelDateApi.setParts(relance.date_rappel || '');
         }
 
+        function setRelanceImportBtnVisible(visible) {
+            const btn = document.getElementById('btnOpenRelanceImport');
+            if (btn) btn.style.display = visible ? '' : 'none';
+        }
+
         function openRelanceModal() {
             const relanceForm = document.getElementById('relanceForm');
             const relanceModalTitle = document.getElementById('relanceModalTitle');
@@ -5602,6 +5817,7 @@
             relanceHttpMethod.value = 'POST';
             relanceModalTitle.textContent = 'Nouveau Prospect';
             relanceSubmitBtn.style.display = '';
+            setRelanceImportBtnVisible(true);
 
             document.getElementById('relance_date').value = todayFr();
             document.getElementById('relance_ref').value = nextRelanceRef();
@@ -5626,6 +5842,7 @@
             fillRelanceForm(relance);
             document.getElementById('relanceModalTitle').textContent = 'Voir Relance';
             document.getElementById('relanceSubmitBtn').style.display = 'none';
+            setRelanceImportBtnVisible(false);
             setRelanceFormFields('view');
 
             relanceModal.classList.add('open');
@@ -5642,6 +5859,7 @@
             fillRelanceForm(relance);
             document.getElementById('relanceModalTitle').textContent = 'Modifier Relance';
             document.getElementById('relanceSubmitBtn').style.display = '';
+            setRelanceImportBtnVisible(false);
             setRelanceFormFields('edit');
 
             relanceModal.classList.add('open');
@@ -5672,6 +5890,289 @@
         relanceModal?.addEventListener('click', (e) => {
             if (e.target === relanceModal) closeRelanceModalFn();
         });
+
+        (function initRelanceImport() {
+            const importModal = document.getElementById('relanceImportModal');
+            const dropzone = document.getElementById('relanceImportDropzone');
+            const fileInput = document.getElementById('relanceImportFile');
+            const fileNameEl = document.getElementById('relanceImportFileName');
+            const statusEl = document.getElementById('relanceImportStatus');
+            const phonesWrap = document.getElementById('relanceImportPhonesWrap');
+            const phonesCountEl = document.getElementById('relanceImportPhonesCount');
+            const phoneListEl = document.getElementById('relanceImportPhoneList');
+            const btnConfirm = document.getElementById('btnConfirmRelanceImport');
+            const btnClear = document.getElementById('btnClearRelanceImportPhones');
+            const btnOpenImport = document.getElementById('btnOpenRelanceImport');
+            if (!importModal || !dropzone || !fileInput) return;
+
+            let detectedPhones = [];
+
+            function setStatus(msg, type) {
+                if (!statusEl) return;
+                if (!msg) {
+                    statusEl.hidden = true;
+                    statusEl.textContent = '';
+                    statusEl.className = 'import-status';
+                    return;
+                }
+                statusEl.hidden = false;
+                statusEl.textContent = msg;
+                statusEl.className = 'import-status' + (type ? ' is-' + type : '');
+            }
+
+            function formatPhoneFr(digits) {
+                let d = digits;
+                if (d.startsWith('212') && d.length >= 11) {
+                    d = '0' + d.slice(3);
+                } else if (d.startsWith('33') && d.length >= 11) {
+                    d = '0' + d.slice(2);
+                }
+                if (d.length === 10 && d.startsWith('0')) {
+                    return d.replace(/(\d{2})(?=\d)/g, '$1 ').trim();
+                }
+                if (digits.startsWith('212')) return '+' + digits;
+                return digits;
+            }
+
+            function extractPhones(text) {
+                const raw = String(text || '');
+                const candidates = [];
+                const re = /(?:\+|00)?(?:212|33)?[\s.\-()]*(?:0?[5-7]|0?[6-7])(?:[\s.\-()]*\d){8,10}|\b0[5-7](?:[\s.\-]*\d){8}\b|(?:\+|00)212[\s.\-]*[5-7](?:[\s.\-]*\d){8}/g;
+                let m;
+                while ((m = re.exec(raw)) !== null) {
+                    candidates.push(m[0]);
+                }
+                const loose = raw.match(/(?:\+?\d[\d\s.\-()]{8,18}\d)/g) || [];
+                loose.forEach((c) => candidates.push(c));
+
+                const seen = new Set();
+                const out = [];
+                candidates.forEach((c) => {
+                    let digits = c.replace(/\D+/g, '');
+                    if (digits.startsWith('00')) digits = digits.slice(2);
+                    if (digits.startsWith('212') && digits.length >= 11) {
+                        digits = '0' + digits.slice(3);
+                    } else if (digits.startsWith('33') && digits.length === 11) {
+                        digits = '0' + digits.slice(2);
+                    }
+                    if (!(digits.length === 10 && /^0[5-7]\d{8}$/.test(digits))) {
+                        const alt = c.replace(/\D+/g, '');
+                        if (/^212[5-7]\d{8}$/.test(alt)) {
+                            digits = '0' + alt.slice(3);
+                        } else {
+                            return;
+                        }
+                    }
+                    if (seen.has(digits)) return;
+                    seen.add(digits);
+                    out.push(formatPhoneFr(digits));
+                });
+                return out;
+            }
+
+            function renderPhones() {
+                if (!phoneListEl || !phonesWrap || !phonesCountEl || !btnConfirm) return;
+                phoneListEl.innerHTML = '';
+                const n = detectedPhones.length;
+                phonesWrap.hidden = n === 0;
+                phonesCountEl.textContent = n === 0
+                    ? '0 numéro détecté'
+                    : (n === 1 ? '1 numéro détecté' : n + ' numéros détectés');
+                btnConfirm.disabled = n === 0;
+                detectedPhones.forEach((phone, idx) => {
+                    const li = document.createElement('li');
+                    li.className = 'import-phone-item';
+                    const span = document.createElement('span');
+                    span.textContent = phone;
+                    const rm = document.createElement('button');
+                    rm.type = 'button';
+                    rm.className = 'import-phone-remove';
+                    rm.setAttribute('aria-label', 'Retirer');
+                    rm.textContent = '×';
+                    rm.addEventListener('click', () => {
+                        detectedPhones.splice(idx, 1);
+                        renderPhones();
+                    });
+                    li.appendChild(span);
+                    li.appendChild(rm);
+                    phoneListEl.appendChild(li);
+                });
+            }
+
+            function resetImportUi() {
+                detectedPhones = [];
+                fileInput.value = '';
+                if (fileNameEl) fileNameEl.textContent = '';
+                setStatus('');
+                renderPhones();
+            }
+
+            function openImportModal() {
+                resetImportUi();
+                closeRelanceModalFn();
+                importModal.classList.add('open');
+                importModal.setAttribute('aria-hidden', 'false');
+            }
+
+            function closeImportModal() {
+                importModal.classList.remove('open');
+                importModal.setAttribute('aria-hidden', 'true');
+            }
+
+            async function ocrImageSource(src) {
+                if (typeof Tesseract === 'undefined') {
+                    throw new Error('OCR indisponible');
+                }
+                const result = await Tesseract.recognize(src, 'fra+eng', {
+                    logger: (info) => {
+                        if (info.status === 'recognizing text' && info.progress != null) {
+                            setStatus('Analyse OCR… ' + Math.round(info.progress * 100) + '%');
+                        }
+                    },
+                });
+                return result?.data?.text || '';
+            }
+
+            async function extractTextFromImageFile(file) {
+                setStatus('Analyse de l’image…', 'info');
+                return ocrImageSource(file);
+            }
+
+            async function extractTextFromPdf(file) {
+                if (!window.pdfjsLib) {
+                    throw new Error('PDF.js indisponible');
+                }
+                setStatus('Lecture du PDF…', 'info');
+                const buf = await file.arrayBuffer();
+                const pdf = await pdfjsLib.getDocument({ data: buf }).promise;
+                let fullText = '';
+                for (let pageNum = 1; pageNum <= pdf.numPages; pageNum++) {
+                    setStatus('PDF page ' + pageNum + '/' + pdf.numPages + '…', 'info');
+                    const page = await pdf.getPage(pageNum);
+                    const content = await page.getTextContent();
+                    const pageText = content.items.map((it) => it.str || '').join(' ');
+                    fullText += '\n' + pageText;
+                }
+                const phonesFromText = extractPhones(fullText);
+                if (phonesFromText.length > 0 || fullText.replace(/\s+/g, '').length > 40) {
+                    return fullText;
+                }
+                setStatus('PDF scanné détecté, OCR…', 'info');
+                let ocrText = '';
+                for (let pageNum = 1; pageNum <= Math.min(pdf.numPages, 8); pageNum++) {
+                    const page = await pdf.getPage(pageNum);
+                    const viewport = page.getViewport({ scale: 2 });
+                    const canvas = document.createElement('canvas');
+                    canvas.width = viewport.width;
+                    canvas.height = viewport.height;
+                    const ctx = canvas.getContext('2d');
+                    await page.render({ canvasContext: ctx, viewport }).promise;
+                    ocrText += '\n' + await ocrImageSource(canvas);
+                }
+                return ocrText || fullText;
+            }
+
+            async function processFile(file) {
+                if (!file) return;
+                if (fileNameEl) fileNameEl.textContent = file.name;
+                detectedPhones = [];
+                renderPhones();
+                btnConfirm.disabled = true;
+                try {
+                    const isPdf = /pdf$/i.test(file.type) || /\.pdf$/i.test(file.name);
+                    const isImage = /^image\//i.test(file.type) || /\.(jpe?g|png|webp|gif|bmp)$/i.test(file.name);
+                    if (!isPdf && !isImage) {
+                        setStatus('Format non supporté. Utilisez une image ou un PDF.', 'error');
+                        return;
+                    }
+                    const text = isPdf
+                        ? await extractTextFromPdf(file)
+                        : await extractTextFromImageFile(file);
+                    detectedPhones = extractPhones(text);
+                    renderPhones();
+                    if (detectedPhones.length === 0) {
+                        setStatus('Aucun numéro détecté. Essayez une image plus nette.', 'error');
+                    } else {
+                        setStatus(detectedPhones.length + ' numéro(s) prêt(s) à classer.', 'ok');
+                    }
+                } catch (err) {
+                    console.error(err);
+                    setStatus('Échec de l’analyse : ' + (err.message || 'erreur'), 'error');
+                }
+            }
+
+            dropzone.addEventListener('click', () => fileInput.click());
+            dropzone.addEventListener('keydown', (e) => {
+                if (e.key === 'Enter' || e.key === ' ') {
+                    e.preventDefault();
+                    fileInput.click();
+                }
+            });
+            fileInput.addEventListener('change', () => {
+                const f = fileInput.files && fileInput.files[0];
+                if (f) processFile(f);
+            });
+            ['dragenter', 'dragover'].forEach((ev) => {
+                dropzone.addEventListener(ev, (e) => {
+                    e.preventDefault();
+                    dropzone.classList.add('is-dragover');
+                });
+            });
+            ['dragleave', 'drop'].forEach((ev) => {
+                dropzone.addEventListener(ev, (e) => {
+                    e.preventDefault();
+                    dropzone.classList.remove('is-dragover');
+                });
+            });
+            dropzone.addEventListener('drop', (e) => {
+                const f = e.dataTransfer && e.dataTransfer.files && e.dataTransfer.files[0];
+                if (f) processFile(f);
+            });
+
+            btnOpenImport?.addEventListener('click', openImportModal);
+            document.getElementById('closeRelanceImportModal')?.addEventListener('click', closeImportModal);
+            document.getElementById('cancelRelanceImportModal')?.addEventListener('click', closeImportModal);
+            importModal.addEventListener('click', (e) => {
+                if (e.target === importModal) closeImportModal();
+            });
+            btnClear?.addEventListener('click', () => {
+                detectedPhones = [];
+                renderPhones();
+                setStatus('Liste vidée.', 'info');
+            });
+
+            btnConfirm?.addEventListener('click', async () => {
+                if (!detectedPhones.length) return;
+                btnConfirm.disabled = true;
+                setStatus('Création des prospects…', 'info');
+                try {
+                    const res = await fetch('{{ url('/relances/import') }}', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Accept': 'application/json',
+                            'X-CSRF-TOKEN': csrfToken,
+                            'X-Requested-With': 'XMLHttpRequest',
+                        },
+                        body: JSON.stringify({ telephones: detectedPhones }),
+                    });
+                    const data = await res.json().catch(() => ({}));
+                    if (!res.ok) {
+                        throw new Error(data.message || 'Import refusé');
+                    }
+                    const created = data.created ?? detectedPhones.length;
+                    const skipped = data.skipped || 0;
+                    setStatus(created + ' créé(s)' + (skipped ? ', ' + skipped + ' déjà présent(s)' : '') + '. Redirection…', 'ok');
+                    const url = new URL('{{ url('/dashboard') }}', window.location.origin);
+                    url.searchParams.set('open', 'relance');
+                    window.location.href = url.toString();
+                } catch (err) {
+                    console.error(err);
+                    setStatus('Import impossible : ' + (err.message || 'erreur'), 'error');
+                    btnConfirm.disabled = false;
+                }
+            });
+        })();
 
         function setAutorisationFormFields(mode) {
             const userSelect = document.getElementById('autorisation_utilisateur_id');
@@ -5786,6 +6287,12 @@
         @if (session('open_fiche_relance'))
             showPanel('fiche-relance');
         @endif
+
+        if (new URLSearchParams(window.location.search).get('open') === 'relance') {
+            showPanel('fiche-relance');
+            const clean = window.location.pathname + window.location.hash;
+            window.history.replaceState({}, '', clean);
+        }
 
         @if (session('open_fiche_autorisation'))
             showPanel('fiche-autorisation');
