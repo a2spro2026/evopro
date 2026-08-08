@@ -3001,17 +3001,17 @@
                                                     @csrf
                                                     @method('PATCH')
                                                     <input type="hidden" name="from_dashboard" value="1">
-                                                    <input
-                                                        type="text"
-                                                        name="date_rappel"
-                                                        class="rappel-date-input"
-                                                        value="{{ $relance['date_rappel'] ?? '' }}"
-                                                        placeholder="JJ/MM/AAAA"
-                                                        maxlength="10"
-                                                        inputmode="numeric"
-                                                        autocomplete="off"
-                                                        aria-label="Modifier la date de rappel"
-                                                    >
+                                                <input
+                                                    type="text"
+                                                    name="date_rappel"
+                                                    class="rappel-date-input"
+                                                    value="{{ ($relance['date_rappel'] ?? '') !== '' ? ($relance['date_rappel'] ?? '') : '../../2026' }}"
+                                                    placeholder="../../2026"
+                                                    maxlength="10"
+                                                    inputmode="numeric"
+                                                    autocomplete="off"
+                                                    aria-label="Modifier la date de rappel"
+                                                >
                                                 </form>
                                             </td>
                                         </tr>
@@ -3335,8 +3335,8 @@
                                                     type="text"
                                                     name="date_rappel"
                                                     class="rappel-date-input"
-                                                    value="{{ $relance['date_rappel'] ?? '' }}"
-                                                    placeholder="JJ/MM/AAAA"
+                                                    value="{{ ($relance['date_rappel'] ?? '') !== '' ? ($relance['date_rappel'] ?? '') : '../../2026' }}"
+                                                    placeholder="../../2026"
                                                     maxlength="10"
                                                     inputmode="numeric"
                                                     autocomplete="off"
@@ -4409,11 +4409,11 @@
                     <div class="field">
                         <label for="relance_rappel_date_jj">Date</label>
                         <div class="date-parts" role="group" aria-label="Date JJ/MM/AAAA">
-                            <input type="text" id="relance_rappel_date_jj" class="date-jj" inputmode="numeric" maxlength="2" pattern="\d{2}" placeholder="JJ" autocomplete="off" required>
+                            <input type="text" id="relance_rappel_date_jj" class="date-jj" inputmode="numeric" maxlength="2" pattern="\d{0,2}" placeholder=".." autocomplete="off">
                             <span class="date-sep">/</span>
-                            <input type="text" id="relance_rappel_date_mm" class="date-mm" inputmode="numeric" maxlength="2" pattern="\d{2}" placeholder="MM" autocomplete="off" required>
+                            <input type="text" id="relance_rappel_date_mm" class="date-mm" inputmode="numeric" maxlength="2" pattern="\d{0,2}" placeholder=".." autocomplete="off">
                             <span class="date-sep">/</span>
-                            <input type="text" id="relance_rappel_date_aaaa" class="date-aaaa" inputmode="numeric" maxlength="4" pattern="\d{4}" placeholder="AAAA" autocomplete="off" required>
+                            <input type="text" id="relance_rappel_date_aaaa" class="date-aaaa" inputmode="numeric" maxlength="4" pattern="\d{4}" placeholder="2026" autocomplete="off" required>
                         </div>
                         <input type="hidden" id="relance_rappel_date" name="date_rappel" required>
                     </div>
@@ -4752,16 +4752,20 @@
             function sync() {
                 const day = (jj?.value || '').trim();
                 const month = (mm?.value || '').trim();
-                const year = (aaaa?.value || '').trim();
+                const year = (aaaa?.value || '').trim() || '2026';
                 if (hidden) {
-                    hidden.value = (day.length === 2 && month.length === 2 && year.length === 4)
-                        ? `${day}/${month}/${year}`
-                        : '';
+                    if (day.length === 2 && month.length === 2 && year.length === 4) {
+                        hidden.value = `${day}/${month}/${year}`;
+                    } else if (year.length === 4) {
+                        hidden.value = `${day.length === 2 ? day : '..'}/${month.length === 2 ? month : '..'}/${year}`;
+                    } else {
+                        hidden.value = '../../2026';
+                    }
                 }
             }
 
-            function setParts(dateStr, { emptyDayMonth = false } = {}) {
-                const year = String(new Date().getFullYear());
+            function setParts(dateStr, { emptyDayMonth = false, defaultYear = null } = {}) {
+                const year = defaultYear || String(new Date().getFullYear());
                 if (emptyDayMonth) {
                     if (jj) jj.value = '';
                     if (mm) mm.value = '';
@@ -4771,9 +4775,12 @@
                 }
 
                 const parts = String(dateStr || '').split('/');
-                if (jj) jj.value = (parts[0] || '').replace(/\D/g, '').slice(0, 2);
-                if (mm) mm.value = (parts[1] || '').replace(/\D/g, '').slice(0, 2);
-                if (aaaa) aaaa.value = (parts[2] || '').replace(/\D/g, '').slice(0, 4);
+                const dayPart = (parts[0] || '').replace(/[^\d.]/g, '').slice(0, 2);
+                const monthPart = (parts[1] || '').replace(/[^\d.]/g, '').slice(0, 2);
+                const yearPart = (parts[2] || '').replace(/\D/g, '').slice(0, 4);
+                if (jj) jj.value = dayPart === '..' ? '' : dayPart.replace(/\D/g, '').slice(0, 2);
+                if (mm) mm.value = monthPart === '..' ? '' : monthPart.replace(/\D/g, '').slice(0, 2);
+                if (aaaa) aaaa.value = yearPart || year;
                 sync();
             }
 
@@ -4797,12 +4804,20 @@
             return { sync, setParts, jj, mm, aaaa, fieldIds: [`${prefix}_date_jj`, `${prefix}_date_mm`, `${prefix}_date_aaaa`] };
         }
 
-        function validateDatePartsSubmit(form, dateApi, label) {
+        function validateDatePartsSubmit(form, dateApi, label, { allowIncomplete = false } = {}) {
             form?.addEventListener('submit', (e) => {
                 dateApi.sync();
                 const day = (dateApi.jj?.value || '').trim();
                 const month = (dateApi.mm?.value || '').trim();
                 const year = (dateApi.aaaa?.value || '').trim();
+                if (allowIncomplete) {
+                    if (!/^\d{4}$/.test(year)) {
+                        e.preventDefault();
+                        alert(`${label} invalide : année AAAA requise.`);
+                        dateApi.aaaa?.focus();
+                    }
+                    return;
+                }
                 if (!/^\d{2}$/.test(day) || !/^\d{2}$/.test(month) || !/^\d{4}$/.test(year)) {
                     e.preventDefault();
                     alert(`${label} invalide : JJ (2 chiffres) / MM (2 chiffres) / AAAA (4 chiffres).`);
@@ -4818,7 +4833,7 @@
         validateDatePartsSubmit(document.getElementById('clientForm'), clientDateApi, 'Date');
         validateDatePartsSubmit(document.getElementById('projetForm'), projetDateApi, 'Date');
         validateDatePartsSubmit(document.getElementById('paiementForm'), paiementDateApi, 'Date');
-        validateDatePartsSubmit(document.getElementById('relanceForm'), relanceRappelDateApi, 'Date');
+        validateDatePartsSubmit(document.getElementById('relanceForm'), relanceRappelDateApi, 'Date', { allowIncomplete: true });
 
         function nextRef() {
             const rows = document.querySelectorAll('#clientsTableBody tr[data-id]');
@@ -5639,23 +5654,62 @@
         bindDateMask('filter_dashboard_relance_a');
 
         document.querySelectorAll('.rappel-date-input').forEach((input) => {
-            const initial = input.value;
-            input.dataset.initial = initial;
+            const normalizeRappel = (raw) => {
+                const s = String(raw || '').trim();
+                if (!s || s === '../../2026') return '../../2026';
+                if (/^(\d{2}|\.\.)\/(\d{2}|\.\.)\/\d{4}$/.test(s)) return s;
+                const digits = s.replace(/\D/g, '').slice(0, 8);
+                if (digits.length === 0) return '../../2026';
+                if (digits.length <= 2) return `${digits.padEnd(2, '.')}/../2026`.replace(/\.(?=\/)/g, '.');
+                // Build JJ/MM/AAAA with year default 2026
+                let day = digits.slice(0, 2);
+                let month = digits.length >= 4 ? digits.slice(2, 4) : digits.slice(2);
+                let year = digits.length > 4 ? digits.slice(4, 8) : '2026';
+                if (day.length < 2) day = day.padEnd(2, '.');
+                if (month.length < 2) month = month.padEnd(2, '.');
+                if (year.length < 4) year = (year + '2026').slice(0, 4);
+                return `${day}/${month}/${year}`;
+            };
+
+            if (!input.value.trim()) input.value = '../../2026';
+            input.dataset.initial = input.value;
+
+            input.addEventListener('focus', () => {
+                if (input.value === '../../2026') {
+                    input.value = '';
+                }
+            });
 
             input.addEventListener('input', () => {
-                let v = input.value.replace(/\D/g, '').slice(0, 8);
-                if (v.length >= 5) v = `${v.slice(0, 2)}/${v.slice(2, 4)}/${v.slice(4)}`;
-                else if (v.length >= 3) v = `${v.slice(0, 2)}/${v.slice(2)}`;
+                let v = input.value.replace(/[^\d./]/g, '');
+                const digits = v.replace(/\D/g, '').slice(0, 8);
+                if (digits.length >= 5) v = `${digits.slice(0, 2)}/${digits.slice(2, 4)}/${digits.slice(4)}`;
+                else if (digits.length >= 3) v = `${digits.slice(0, 2)}/${digits.slice(2)}`;
+                else v = digits;
                 input.value = v;
             });
 
             const trySubmit = () => {
-                const value = (input.value || '').trim();
-                if (!/^\d{2}\/\d{2}\/\d{4}$/.test(value)) return;
+                let value = normalizeRappel(input.value);
+                if (value === '' || /^\d{1,2}$/.test(value.replace(/\D/g, ''))) {
+                    value = '../../2026';
+                }
+                // Incomplete day/month → keep ../../2026 template with year
+                if (!/^(\d{2}|\.\.)\/(\d{2}|\.\.)\/\d{4}$/.test(value)) {
+                    const d = value.replace(/\D/g, '');
+                    if (d.length === 8) value = `${d.slice(0, 2)}/${d.slice(2, 4)}/${d.slice(4)}`;
+                    else if (d.length === 4) value = `${d.slice(0, 2)}/${d.slice(2, 4)}/2026`;
+                    else if (d.length === 0) value = '../../2026';
+                    else return;
+                }
+                input.value = value;
                 if (value === (input.dataset.initial || '')) return;
                 input.form?.submit();
             };
 
+            input.addEventListener('blur', () => {
+                if (!input.value.trim()) input.value = '../../2026';
+            });
             input.addEventListener('change', trySubmit);
             input.addEventListener('keydown', (e) => {
                 if (e.key === 'Enter') {
@@ -6064,7 +6118,7 @@
             document.getElementById('relance_envoye').selectedIndex = 0;
             document.getElementById('relance_statue').selectedIndex = 0;
             document.getElementById('relance_a_rappeler').selectedIndex = 0;
-            relanceRappelDateApi.setParts('', { emptyDayMonth: true });
+            relanceRappelDateApi.setParts('', { emptyDayMonth: true, defaultYear: '2026' });
             setRelanceFormFields('create');
 
             relanceModal.classList.add('open');

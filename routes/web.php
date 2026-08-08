@@ -186,6 +186,15 @@ Route::get('/dashboard', function () use ($requireAuth) {
                 $relancesCleaned = true;
             }
         }
+        $dr = trim((string) ($relanceRow['date_rappel'] ?? ''));
+        if ($dr === '') {
+            $relanceRow['date_rappel'] = '../../2026';
+            $relancesCleaned = true;
+        } elseif (! empty($relanceRow['from_import']) && $dr === trim((string) ($relanceRow['date'] ?? ''))) {
+            // Auto-filled at import (same day as creation) → empty day/month, year 2026
+            $relanceRow['date_rappel'] = '../../2026';
+            $relancesCleaned = true;
+        }
     }
     unset($relanceRow);
     if ($relancesCleaned) {
@@ -395,7 +404,7 @@ Route::post('/relances', function (Request $request) {
         'envoye' => ['required', 'string', 'in:lien,conception'],
         'statue' => ['required', 'string', 'in:confirme,a_voir,inj'],
         'a_rappeler' => ['required', 'string', 'in:oui,non'],
-        'date_rappel' => ['required', 'string', 'regex:/^\d{2}\/\d{2}\/\d{4}$/'],
+        'date_rappel' => ['required', 'string', 'regex:/^(\d{2}|\.\.)\/(\d{2}|\.\.)\/\d{4}$/'],
     ]);
 
     $clientId = null;
@@ -490,7 +499,7 @@ Route::post('/relances/import', function (Request $request) {
             'envoye' => 'lien',
             'statue' => 'a_voir',
             'a_rappeler' => 'non',
-            'date_rappel' => $today,
+            'date_rappel' => '../../2026',
             'client_id' => null,
             'from_import' => true,
         ];
@@ -527,7 +536,7 @@ Route::put('/relances/{id}', function (Request $request, string $id) {
         'envoye' => ['required', 'string', 'in:lien,conception'],
         'statue' => ['required', 'string', 'in:confirme,a_voir,inj'],
         'a_rappeler' => ['required', 'string', 'in:oui,non'],
-        'date_rappel' => ['required', 'string', 'regex:/^\d{2}\/\d{2}\/\d{4}$/'],
+        'date_rappel' => ['required', 'string', 'regex:/^(\d{2}|\.\.)\/(\d{2}|\.\.)\/\d{4}$/'],
     ]);
 
     $relances = AppStore::get('relances');
@@ -638,7 +647,7 @@ Route::patch('/relances/{id}/statue', function (Request $request, string $id) {
 
 Route::patch('/relances/{id}/date-rappel', function (Request $request, string $id) {
     $data = $request->validate([
-        'date_rappel' => ['required', 'string', 'regex:/^\d{2}\/\d{2}\/\d{4}$/'],
+        'date_rappel' => ['required', 'string', 'regex:/^(\d{2}|\.\.)\/(\d{2}|\.\.)\/\d{4}$/'],
     ]);
 
     $relances = AppStore::get('relances');
@@ -652,6 +661,14 @@ Route::patch('/relances/{id}/date-rappel', function (Request $request, string $i
 
     $relances[$index]['date_rappel'] = $data['date_rappel'];
     AppStore::put('relances', $relances);
+
+    if ($request->expectsJson() || $request->ajax()) {
+        return response()->json([
+            'ok' => true,
+            'id' => $id,
+            'date_rappel' => $data['date_rappel'],
+        ]);
+    }
 
     if ($request->boolean('from_dashboard')) {
         return redirect()->route('dashboard');
