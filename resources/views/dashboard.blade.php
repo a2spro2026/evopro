@@ -5633,6 +5633,7 @@
                 deId: 'filter_dashboard_relance_de',
                 aId: 'filter_dashboard_relance_a',
             }, 'dashboardRelancesNoResult');
+            persistRelanceFilters();
         }
 
         function bindDateMask(inputId) {
@@ -5660,10 +5661,8 @@
                 if (/^(\d{2}|\.\.)\/(\d{2}|\.\.)\/\d{4}$/.test(s)) return s;
                 const digits = s.replace(/\D/g, '').slice(0, 8);
                 if (digits.length === 0) return '../../2026';
-                if (digits.length <= 2) return `${digits.padEnd(2, '.')}/../2026`.replace(/\.(?=\/)/g, '.');
-                // Build JJ/MM/AAAA with year default 2026
-                let day = digits.slice(0, 2);
-                let month = digits.length >= 4 ? digits.slice(2, 4) : digits.slice(2);
+                let day = digits.slice(0, Math.min(2, digits.length));
+                let month = digits.length >= 3 ? digits.slice(2, Math.min(4, digits.length)) : '';
                 let year = digits.length > 4 ? digits.slice(4, 8) : '2026';
                 if (day.length < 2) day = day.padEnd(2, '.');
                 if (month.length < 2) month = month.padEnd(2, '.');
@@ -5689,32 +5688,67 @@
                 input.value = v;
             });
 
-            const trySubmit = () => {
+            const trySave = async () => {
                 let value = normalizeRappel(input.value);
-                if (value === '' || /^\d{1,2}$/.test(value.replace(/\D/g, ''))) {
-                    value = '../../2026';
-                }
-                // Incomplete day/month → keep ../../2026 template with year
                 if (!/^(\d{2}|\.\.)\/(\d{2}|\.\.)\/\d{4}$/.test(value)) {
-                    const d = value.replace(/\D/g, '');
+                    const d = (input.value || '').replace(/\D/g, '');
                     if (d.length === 8) value = `${d.slice(0, 2)}/${d.slice(2, 4)}/${d.slice(4)}`;
                     else if (d.length === 4) value = `${d.slice(0, 2)}/${d.slice(2, 4)}/2026`;
                     else if (d.length === 0) value = '../../2026';
                     else return;
                 }
                 input.value = value;
-                if (value === (input.dataset.initial || '')) return;
-                input.form?.submit();
+                if (value === (input.dataset.initial || '') || input.classList.contains('is-saving')) return;
+
+                const form = input.form;
+                const action = form?.getAttribute('action') || '';
+                const idMatch = action.match(/\/relances\/([^/]+)\/date-rappel/);
+                const id = idMatch ? decodeURIComponent(idMatch[1]) : '';
+                if (!id) return;
+
+                const previous = input.dataset.initial || '';
+                input.classList.add('is-saving');
+                try {
+                    const response = await fetch(action, {
+                        method: 'PATCH',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Accept': 'application/json',
+                            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '',
+                            'X-Requested-With': 'XMLHttpRequest',
+                        },
+                        body: JSON.stringify({ date_rappel: value }),
+                    });
+                    if (!response.ok) throw new Error('save_failed');
+                    input.dataset.initial = value;
+                    const item = (typeof relancesData !== 'undefined')
+                        ? relancesData.find((r) => r.id === id)
+                        : null;
+                    if (item) item.date_rappel = value;
+                    document.querySelectorAll(`.rappel-date-input`).forEach((twin) => {
+                        if (twin === input) return;
+                        const twinAction = twin.form?.getAttribute('action') || '';
+                        if (twinAction.includes(`/relances/${id}/date-rappel`) || twinAction.includes(`/relances/${encodeURIComponent(id)}/date-rappel`)) {
+                            twin.value = value;
+                            twin.dataset.initial = value;
+                        }
+                    });
+                } catch (err) {
+                    input.value = previous;
+                } finally {
+                    input.classList.remove('is-saving');
+                }
             };
 
             input.addEventListener('blur', () => {
                 if (!input.value.trim()) input.value = '../../2026';
+                trySave();
             });
-            input.addEventListener('change', trySubmit);
+            input.addEventListener('change', trySave);
             input.addEventListener('keydown', (e) => {
                 if (e.key === 'Enter') {
                     e.preventDefault();
-                    trySubmit();
+                    input.blur();
                 }
             });
         });
@@ -6021,6 +6055,43 @@
                 deId: 'filter_relance_de',
                 aId: 'filter_relance_a',
             }, 'relancesNoResult');
+            persistRelanceFilters();
+        }
+
+        function persistRelanceFilters() {
+            try {
+                const payload = {
+                    mois: document.getElementById('filter_relance_mois')?.value || '',
+                    statue: document.getElementById('filter_relance_statue')?.value || '',
+                    de: document.getElementById('filter_relance_de')?.value || '',
+                    a: document.getElementById('filter_relance_a')?.value || '',
+                    dashMois: document.getElementById('filter_dashboard_relance_mois')?.value || '',
+                    dashStatue: document.getElementById('filter_dashboard_relance_statue')?.value || '',
+                    dashDe: document.getElementById('filter_dashboard_relance_de')?.value || '',
+                    dashA: document.getElementById('filter_dashboard_relance_a')?.value || '',
+                };
+                sessionStorage.setItem('evopro_relance_filters', JSON.stringify(payload));
+            } catch (e) {}
+        }
+
+        function restoreRelanceFilters() {
+            try {
+                const raw = sessionStorage.getItem('evopro_relance_filters');
+                if (!raw) return;
+                const payload = JSON.parse(raw);
+                const setVal = (id, val) => {
+                    const el = document.getElementById(id);
+                    if (el && typeof val === 'string') el.value = val;
+                };
+                setVal('filter_relance_mois', payload.mois);
+                setVal('filter_relance_statue', payload.statue);
+                setVal('filter_relance_de', payload.de);
+                setVal('filter_relance_a', payload.a);
+                setVal('filter_dashboard_relance_mois', payload.dashMois);
+                setVal('filter_dashboard_relance_statue', payload.dashStatue);
+                setVal('filter_dashboard_relance_de', payload.dashDe);
+                setVal('filter_dashboard_relance_a', payload.dashA);
+            } catch (e) {}
         }
 
         function filterUtilisateursTable() {
@@ -6572,6 +6643,12 @@
             showPanel('fiche-utilisateur');
         @endif
 
+        document.querySelectorAll('.statue-form').forEach((form) => {
+            form.addEventListener('submit', () => {
+                if (typeof persistRelanceFilters === 'function') persistRelanceFilters();
+            });
+        });
+
         @if (session('open_fiche_relance'))
             showPanel('fiche-relance');
         @endif
@@ -6581,6 +6658,10 @@
             const clean = window.location.pathname + window.location.hash;
             window.history.replaceState({}, '', clean);
         }
+
+        restoreRelanceFilters();
+        filterRelancesTable();
+        filterDashboardRelancesTable();
 
         @if (session('open_fiche_autorisation'))
             showPanel('fiche-autorisation');
