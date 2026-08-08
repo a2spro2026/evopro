@@ -775,16 +775,20 @@
         .data-table tbody tr.row-relance-no-rappel .statue-select,
         .data-table tbody tr.row-relance-no-rappel .envoye-switch:not(.rappeler-switch),
         .data-table tbody tr.row-relance-no-rappel .rappel-date-input,
-        .data-table tbody tr.row-relance-no-rappel .action-btn {
+        .data-table tbody tr.row-relance-no-rappel .action-btn,
+        .data-table tbody tr.row-relance-no-rappel .actions form {
             opacity: 0.55;
             filter: grayscale(0.35);
+            pointer-events: none;
         }
         .data-table tbody tr.row-relance-no-rappel .rappeler-switch {
             opacity: 1;
             filter: none;
             pointer-events: auto;
         }
-        .data-table tbody tr.row-relance-no-rappel .rappel-date-input:disabled {
+        .data-table tbody tr.row-relance-no-rappel .rappel-date-input:disabled,
+        .data-table tbody tr.row-relance-no-rappel .relance-inline-input:disabled,
+        .data-table tbody tr.row-relance-no-rappel .statue-select:disabled {
             cursor: not-allowed;
             opacity: 0.45;
         }
@@ -5873,13 +5877,24 @@
         const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '';
 
         function applyRelanceRappelerUi(id, value) {
-            const canEditDate = value === 'oui';
+            const locked = value === 'non';
             document.querySelectorAll(`tr[data-id="${CSS.escape(id)}"]`).forEach((row) => {
                 row.dataset.aRappeler = value;
-                row.classList.toggle('row-relance-no-rappel', value === 'non');
-                row.querySelectorAll('.rappel-date-input').forEach((input) => {
-                    input.disabled = !canEditDate;
-                    if (!canEditDate) input.blur();
+                row.classList.toggle('row-relance-no-rappel', locked);
+
+                row.querySelectorAll('.relance-inline-input, .rappel-date-input, .statue-select').forEach((el) => {
+                    el.disabled = locked;
+                    if (locked) el.blur();
+                });
+
+                row.querySelectorAll('.envoye-switch:not(.rappeler-switch)').forEach((sw) => {
+                    sw.classList.toggle('is-locked', locked);
+                    sw.setAttribute('aria-disabled', locked ? 'true' : 'false');
+                });
+
+                row.querySelectorAll('.action-btn, .actions button[type="submit"]').forEach((btn) => {
+                    btn.disabled = locked;
+                    btn.setAttribute('aria-disabled', locked ? 'true' : 'false');
                 });
             });
         }
@@ -5889,11 +5904,16 @@
                 const btn = e.target.closest('.envoye-opt');
                 if (!btn || group.classList.contains('is-saving')) return;
 
+                const endpoint = group.dataset.endpoint === 'a-rappeler' ? 'a-rappeler' : 'envoye';
+                if (endpoint !== 'a-rappeler') {
+                    const row = group.closest('tr[data-id]');
+                    if (row?.classList.contains('row-relance-no-rappel') || group.classList.contains('is-locked')) return;
+                }
+
                 const value = btn.dataset.value;
                 const id = group.dataset.id;
                 if (!value || !id || group.dataset.value === value) return;
 
-                const endpoint = group.dataset.endpoint === 'a-rappeler' ? 'a-rappeler' : 'envoye';
                 const fieldKey = endpoint === 'a-rappeler' ? 'a_rappeler' : 'envoye';
                 const previous = group.dataset.value || '';
                 group.classList.add('is-saving');
@@ -5957,7 +5977,8 @@
             const saveInline = async () => {
                 const id = el.dataset.id;
                 const field = el.dataset.field;
-                if (!id || !field || el.classList.contains('is-saving')) return;
+                if (!id || !field || el.classList.contains('is-saving') || el.disabled) return;
+                if (el.closest('tr.row-relance-no-rappel')) return;
 
                 let value = el.tagName === 'SELECT' ? el.value : (el.value || '').trim();
                 if (field === 'budget') {
@@ -6827,6 +6848,10 @@
         restoreRelanceFilters();
         filterRelancesTable();
         filterDashboardRelancesTable();
+
+        document.querySelectorAll('tr[data-id][data-a-rappeler="non"]').forEach((row) => {
+            if (row.dataset.id) applyRelanceRappelerUi(row.dataset.id, 'non');
+        });
 
         @if (session('open_fiche_autorisation'))
             showPanel('fiche-autorisation');
