@@ -761,6 +761,34 @@
         .data-table tbody tr.row-relance-inj td {
             color: #ffb4b8;
         }
+
+        .data-table tbody tr.row-relance-no-rappel {
+            background: rgba(100, 110, 125, 0.42) !important;
+        }
+        .data-table tbody tr.row-relance-no-rappel:hover {
+            background: rgba(100, 110, 125, 0.5) !important;
+        }
+        .data-table tbody tr.row-relance-no-rappel td {
+            color: rgba(175, 185, 200, 0.62) !important;
+        }
+        .data-table tbody tr.row-relance-no-rappel .relance-inline-input,
+        .data-table tbody tr.row-relance-no-rappel .statue-select,
+        .data-table tbody tr.row-relance-no-rappel .envoye-switch:not(.rappeler-switch),
+        .data-table tbody tr.row-relance-no-rappel .rappel-date-input,
+        .data-table tbody tr.row-relance-no-rappel .action-btn {
+            opacity: 0.55;
+            filter: grayscale(0.35);
+        }
+        .data-table tbody tr.row-relance-no-rappel .rappeler-switch {
+            opacity: 1;
+            filter: none;
+            pointer-events: auto;
+        }
+        .data-table tbody tr.row-relance-no-rappel .rappel-date-input:disabled {
+            cursor: not-allowed;
+            opacity: 0.45;
+        }
+
         .data-table td { color: rgba(235, 242, 255, 0.9); }
         .data-table td.solde-cell {
             color: #ff6b78;
@@ -2424,6 +2452,16 @@
             color: #842029;
         }
 
+        html[data-theme="light"] .data-table tbody tr.row-relance-no-rappel {
+            background: rgba(148, 163, 184, 0.32) !important;
+        }
+        html[data-theme="light"] .data-table tbody tr.row-relance-no-rappel:hover {
+            background: rgba(148, 163, 184, 0.4) !important;
+        }
+        html[data-theme="light"] .data-table tbody tr.row-relance-no-rappel td {
+            color: #6b7280 !important;
+        }
+
         html[data-theme="light"] .data-table td.solde-cell {
             color: #d12b3a;
             text-shadow: none;
@@ -2956,10 +2994,12 @@
                                             data-date="{{ $relance['date'] ?? '' }}"
                                             data-import="{{ !empty($relance['from_import']) ? '1' : '0' }}"
                                             data-telephone="{{ preg_replace('/\D+/', '', (string) ($relance['telephone'] ?? '')) }}"
+                                            data-a-rappeler="{{ $rappelerRelanceDash }}"
                                             @class([
                                                 'row-relance-a-voir' => $statueRelanceDash === 'a_voir',
                                                 'row-relance-confirme' => $statueRelanceDash === 'confirme',
                                                 'row-relance-inj' => $statueRelanceDash === 'inj',
+                                                'row-relance-no-rappel' => $rappelerRelanceDash === 'non',
                                             ])
                                         >
                                             <td>{{ $relance['date'] ?? '' }}</td>
@@ -3071,6 +3111,7 @@
                                                     inputmode="numeric"
                                                     autocomplete="off"
                                                     aria-label="Modifier la date de rappel"
+                                                    @disabled($rappelerRelanceDash === 'non')
                                                 >
                                                 </form>
                                             </td>
@@ -3295,10 +3336,12 @@
                                         data-date="{{ $relance['date'] ?? '' }}"
                                         data-import="{{ !empty($relance['from_import']) ? '1' : '0' }}"
                                         data-telephone="{{ preg_replace('/\D+/', '', (string) ($relance['telephone'] ?? '')) }}"
+                                        data-a-rappeler="{{ $rappelerRelance }}"
                                         @class([
                                             'row-relance-a-voir' => $statueRelance === 'a_voir',
                                             'row-relance-confirme' => $statueRelance === 'confirme',
                                             'row-relance-inj' => $statueRelance === 'inj',
+                                            'row-relance-no-rappel' => $rappelerRelance === 'non',
                                         ])
                                     >
                                         <td>{{ $relance['date'] ?? '' }}</td>
@@ -3408,6 +3451,7 @@
                                                     inputmode="numeric"
                                                     autocomplete="off"
                                                     aria-label="Modifier la date de rappel"
+                                                    @disabled($rappelerRelance === 'non')
                                                 >
                                             </form>
                                         </td>
@@ -5761,6 +5805,7 @@
             });
 
             const trySave = async () => {
+                if (input.disabled) return;
                 let value = normalizeRappel(input.value);
                 if (!/^(\d{2}|\.\.)\/(\d{2}|\.\.)\/\d{4}$/.test(value)) {
                     const d = (input.value || '').replace(/\D/g, '');
@@ -5827,6 +5872,18 @@
 
         const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '';
 
+        function applyRelanceRappelerUi(id, value) {
+            const canEditDate = value === 'oui';
+            document.querySelectorAll(`tr[data-id="${CSS.escape(id)}"]`).forEach((row) => {
+                row.dataset.aRappeler = value;
+                row.classList.toggle('row-relance-no-rappel', value === 'non');
+                row.querySelectorAll('.rappel-date-input').forEach((input) => {
+                    input.disabled = !canEditDate;
+                    if (!canEditDate) input.blur();
+                });
+            });
+        }
+
         document.querySelectorAll('.envoye-switch').forEach((group) => {
             group.addEventListener('click', async (e) => {
                 const btn = e.target.closest('.envoye-opt');
@@ -5844,6 +5901,9 @@
                 group.querySelectorAll('.envoye-opt').forEach((opt) => {
                     opt.classList.toggle('is-active', opt.dataset.value === value);
                 });
+                if (endpoint === 'a-rappeler') {
+                    applyRelanceRappelerUi(id, value);
+                }
 
                 try {
                     const response = await fetch(`{{ url('/relances') }}/${encodeURIComponent(id)}/${endpoint}`, {
@@ -5873,11 +5933,17 @@
                             opt.classList.toggle('is-active', opt.dataset.value === value);
                         });
                     });
+                    if (endpoint === 'a-rappeler') {
+                        applyRelanceRappelerUi(id, value);
+                    }
                 } catch (err) {
                     group.dataset.value = previous;
                     group.querySelectorAll('.envoye-opt').forEach((opt) => {
                         opt.classList.toggle('is-active', opt.dataset.value === previous);
                     });
+                    if (endpoint === 'a-rappeler') {
+                        applyRelanceRappelerUi(id, previous);
+                    }
                 } finally {
                     group.classList.remove('is-saving');
                 }
