@@ -1603,6 +1603,203 @@
             font-size: 0.9rem;
         }
 
+        .notif-wrap {
+            position: relative;
+        }
+
+        .btn-notif-cal {
+            position: relative;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 40px;
+            height: 40px;
+            border-radius: 12px;
+            border: 1px solid rgba(110, 168, 255, 0.28);
+            background: rgba(59, 158, 255, 0.12);
+            color: var(--accent-soft);
+            cursor: pointer;
+            transition: background 0.15s ease, border-color 0.15s ease;
+        }
+
+        .btn-notif-cal:hover,
+        .btn-notif-cal.is-open {
+            background: rgba(59, 158, 255, 0.22);
+            border-color: rgba(94, 176, 255, 0.5);
+        }
+
+        .btn-notif-cal svg {
+            width: 20px;
+            height: 20px;
+        }
+
+        .btn-notif-cal .notif-badge {
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            min-width: 18px;
+            height: 18px;
+            padding: 0 5px;
+            border-radius: 999px;
+            background: linear-gradient(135deg, #f07178, #d12b3a);
+            color: #fff;
+            font-size: 0.65rem;
+            font-weight: 700;
+            line-height: 18px;
+            text-align: center;
+            box-shadow: 0 4px 10px rgba(209, 43, 58, 0.35);
+        }
+
+        .btn-notif-cal .notif-badge.is-empty {
+            display: none;
+        }
+
+        .notif-panel {
+            position: absolute;
+            top: calc(100% + 0.55rem);
+            right: 0;
+            width: min(360px, calc(100vw - 1.5rem));
+            max-height: min(420px, 70vh);
+            display: none;
+            flex-direction: column;
+            border-radius: 14px;
+            border: 1px solid rgba(110, 168, 255, 0.22);
+            background: linear-gradient(165deg, rgba(12, 24, 42, 0.98), rgba(8, 16, 30, 0.98));
+            box-shadow: 0 18px 48px rgba(0, 0, 0, 0.35);
+            overflow: hidden;
+            z-index: 40;
+        }
+
+        .notif-panel.open {
+            display: flex;
+        }
+
+        .notif-panel-head {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 0.75rem;
+            padding: 0.85rem 1rem;
+            border-bottom: 1px solid rgba(110, 168, 255, 0.16);
+        }
+
+        .notif-panel-head h3 {
+            margin: 0;
+            font-size: 0.88rem;
+            font-weight: 650;
+            color: var(--text);
+            text-transform: none;
+        }
+
+        .notif-panel-head span {
+            font-size: 0.72rem;
+            color: var(--muted);
+            text-transform: none;
+        }
+
+        .notif-panel-list {
+            list-style: none;
+            margin: 0;
+            padding: 0.45rem;
+            overflow: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 0.35rem;
+        }
+
+        .notif-item {
+            display: grid;
+            grid-template-columns: 1fr auto;
+            gap: 0.25rem 0.75rem;
+            padding: 0.7rem 0.8rem;
+            border-radius: 10px;
+            border: 1px solid rgba(110, 168, 255, 0.14);
+            background: rgba(59, 158, 255, 0.06);
+            cursor: pointer;
+            text-align: left;
+            font-family: inherit;
+            color: inherit;
+            width: 100%;
+        }
+
+        .notif-item:hover {
+            background: rgba(59, 158, 255, 0.12);
+            border-color: rgba(94, 176, 255, 0.28);
+        }
+
+        .notif-item.is-today {
+            border-color: rgba(240, 180, 41, 0.4);
+            background: rgba(240, 180, 41, 0.12);
+        }
+
+        .notif-item.is-overdue {
+            border-color: rgba(240, 113, 120, 0.4);
+            background: rgba(240, 113, 120, 0.1);
+        }
+
+        .notif-item-phone {
+            font-size: 0.9rem;
+            font-weight: 650;
+            font-variant-numeric: tabular-nums;
+            color: var(--text);
+            text-transform: none;
+        }
+
+        .notif-item-date {
+            font-size: 0.75rem;
+            color: var(--accent-soft);
+            text-transform: none;
+            justify-self: end;
+        }
+
+        .notif-item-days {
+            grid-column: 1 / -1;
+            font-size: 0.72rem;
+            color: var(--muted);
+            text-transform: none;
+        }
+
+        .notif-item.is-today .notif-item-days {
+            color: #ffd978;
+        }
+
+        .notif-item.is-overdue .notif-item-days {
+            color: #ffb3b8;
+        }
+
+        .notif-empty {
+            padding: 1.4rem 1rem;
+            text-align: center;
+            color: var(--muted);
+            font-size: 0.82rem;
+            text-transform: none;
+        }
+
+        html[data-theme="light"] .btn-notif-cal {
+            background: rgba(30, 111, 217, 0.08);
+            border-color: rgba(30, 111, 217, 0.22);
+            color: #1e6fd9;
+        }
+
+        html[data-theme="light"] .notif-panel {
+            background: linear-gradient(165deg, #ffffff, #eef4fc);
+            border-color: rgba(30, 111, 217, 0.18);
+            box-shadow: 0 18px 48px rgba(30, 90, 180, 0.16);
+        }
+
+        html[data-theme="light"] .notif-item {
+            background: rgba(30, 111, 217, 0.04);
+            border-color: rgba(30, 111, 217, 0.12);
+        }
+
+        html[data-theme="light"] .notif-item.is-today {
+            background: rgba(240, 180, 41, 0.12);
+        }
+
+        html[data-theme="light"] .notif-item.is-overdue {
+            background: rgba(240, 113, 120, 0.1);
+        }
+
         .user-chip {
             display: inline-flex;
             align-items: center;
@@ -2818,6 +3015,23 @@
                 </div>
 
                 <div class="nav-right">
+                    <div class="notif-wrap" id="relanceNotifWrap">
+                        <button type="button" class="btn-notif-cal" id="btnRelanceNotif" aria-label="Notifications de relance" aria-expanded="false" aria-controls="relanceNotifPanel">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                                <rect x="3" y="5" width="18" height="16" rx="2"/>
+                                <path d="M8 3v4M16 3v4M3 10h18"/>
+                                <path d="M8 14h.01M12 14h.01M16 14h.01M8 18h.01M12 18h.01"/>
+                            </svg>
+                            <span class="notif-badge is-empty" id="relanceNotifBadge">0</span>
+                        </button>
+                        <div class="notif-panel" id="relanceNotifPanel" role="dialog" aria-label="Numéros à relancer" aria-hidden="true">
+                            <div class="notif-panel-head">
+                                <h3>À relancer</h3>
+                                <span id="relanceNotifCountLabel">0 numéro</span>
+                            </div>
+                            <ul class="notif-panel-list" id="relanceNotifList"></ul>
+                        </div>
+                    </div>
                     <button type="button" class="btn-theme-toggle" id="themeToggleNav" aria-label="Changer le thème" style="width:auto;padding:0.48rem 0.85rem;">
                         <span class="theme-icon-dark-nav" aria-hidden="true">
                             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
@@ -4674,6 +4888,131 @@
         const autorisationsData = @json($autorisations ?? []);
         const menuSectionsData = @json($menuSections ?? []);
 
+        function parseDateFrParts(dateStr) {
+            const m = String(dateStr || '').trim().match(/^(\d{2})\/(\d{2})\/(\d{4})$/);
+            if (!m) return null;
+            const day = Number(m[1]);
+            const month = Number(m[2]);
+            const year = Number(m[3]);
+            const dt = new Date(year, month - 1, day);
+            if (dt.getFullYear() !== year || dt.getMonth() !== month - 1 || dt.getDate() !== day) return null;
+            dt.setHours(0, 0, 0, 0);
+            return dt;
+        }
+
+        function daysUntilRelance(dateStr) {
+            const target = parseDateFrParts(dateStr);
+            if (!target) return null;
+            const today = new Date();
+            today.setHours(0, 0, 0, 0);
+            return Math.round((target - today) / 86400000);
+        }
+
+        function formatRelanceDaysLabel(diff) {
+            if (diff === null) return 'Date à compléter';
+            if (diff === 0) return 'Aujourd’hui';
+            if (diff === 1) return 'Demain';
+            if (diff === -1) return 'En retard d’1 jour';
+            if (diff > 1) return `Dans ${diff} jours`;
+            return `En retard de ${Math.abs(diff)} jours`;
+        }
+
+        function getRelanceNotifItems() {
+            return (relancesData || [])
+                .filter((r) => (r.a_rappeler || '') === 'oui')
+                .map((r) => {
+                    const dateRappel = String(r.date_rappel || '').trim();
+                    const complete = /^\d{2}\/\d{2}\/\d{4}$/.test(dateRappel);
+                    const diff = complete ? daysUntilRelance(dateRappel) : null;
+                    return {
+                        id: r.id,
+                        telephone: r.telephone || '—',
+                        date_rappel: complete ? dateRappel : (dateRappel || '../../2026'),
+                        diff,
+                        sort: diff === null ? 9999 : diff,
+                    };
+                })
+                .sort((a, b) => a.sort - b.sort);
+        }
+
+        function refreshRelanceNotif() {
+            const badge = document.getElementById('relanceNotifBadge');
+            const list = document.getElementById('relanceNotifList');
+            const countLabel = document.getElementById('relanceNotifCountLabel');
+            if (!badge || !list || !countLabel) return;
+
+            const items = getRelanceNotifItems();
+            const n = items.length;
+            badge.textContent = String(n);
+            badge.classList.toggle('is-empty', n === 0);
+            countLabel.textContent = n === 0 ? '0 numéro' : (n === 1 ? '1 numéro' : `${n} numéros`);
+
+            if (n === 0) {
+                list.innerHTML = '<li class="notif-empty">Aucun numéro à relancer</li>';
+                return;
+            }
+
+            list.innerHTML = items.map((item) => {
+                const cls = item.diff === 0 ? ' is-today' : (item.diff !== null && item.diff < 0 ? ' is-overdue' : '');
+                return `<li>
+                    <button type="button" class="notif-item${cls}" data-id="${String(item.id).replace(/"/g, '&quot;')}">
+                        <span class="notif-item-phone">${String(item.telephone).replace(/</g, '&lt;')}</span>
+                        <span class="notif-item-date">${String(item.date_rappel).replace(/</g, '&lt;')}</span>
+                        <span class="notif-item-days">${formatRelanceDaysLabel(item.diff)}</span>
+                    </button>
+                </li>`;
+            }).join('');
+        }
+
+        function openRelanceNotifPanel(open) {
+            const btn = document.getElementById('btnRelanceNotif');
+            const panel = document.getElementById('relanceNotifPanel');
+            if (!btn || !panel) return;
+            panel.classList.toggle('open', open);
+            btn.classList.toggle('is-open', open);
+            btn.setAttribute('aria-expanded', open ? 'true' : 'false');
+            panel.setAttribute('aria-hidden', open ? 'false' : 'true');
+        }
+
+        (function initRelanceNotif() {
+            const btn = document.getElementById('btnRelanceNotif');
+            const panel = document.getElementById('relanceNotifPanel');
+            const list = document.getElementById('relanceNotifList');
+            if (!btn || !panel || !list) return;
+
+            refreshRelanceNotif();
+
+            btn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                openRelanceNotifPanel(!panel.classList.contains('open'));
+            });
+
+            document.addEventListener('click', (e) => {
+                if (!e.target.closest('#relanceNotifWrap')) {
+                    openRelanceNotifPanel(false);
+                }
+            });
+
+            list.addEventListener('click', (e) => {
+                const itemBtn = e.target.closest('.notif-item[data-id]');
+                if (!itemBtn) return;
+                const id = itemBtn.dataset.id;
+                openRelanceNotifPanel(false);
+                if (typeof showPanel === 'function') showPanel('fiche-relance');
+                const statueFilter = document.getElementById('filter_relance_statue');
+                if (statueFilter) {
+                    statueFilter.value = '';
+                    filterRelancesTable();
+                }
+                const row = document.querySelector(`#relancesTableBody tr[data-id="${CSS.escape(id)}"]`);
+                if (row) {
+                    row.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    row.style.outline = '2px solid rgba(94, 176, 255, 0.7)';
+                    setTimeout(() => { row.style.outline = ''; }, 1800);
+                }
+            });
+        })();
+
         const userStatueLabels = {
             admin: 'Administrateur',
             manager: 'Manager',
@@ -5854,6 +6193,7 @@
                             twin.dataset.initial = value;
                         }
                     });
+                    if (typeof refreshRelanceNotif === 'function') refreshRelanceNotif();
                 } catch (err) {
                     input.value = previous;
                 } finally {
@@ -5956,6 +6296,7 @@
                     if (endpoint === 'a-rappeler') {
                         applyRelanceRappelerUi(id, value);
                     }
+                    if (typeof refreshRelanceNotif === 'function') refreshRelanceNotif();
                 } catch (err) {
                     group.dataset.value = previous;
                     group.querySelectorAll('.envoye-opt').forEach((opt) => {
