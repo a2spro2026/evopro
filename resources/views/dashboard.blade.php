@@ -684,15 +684,83 @@
             gap: 0.25rem;
         }
 
-        #panel-dashboard .balance-section .table-wrap.table-freeze-body,
+        #panel-dashboard .balance-section-body .table-wrap.table-freeze-body,
         #panel-fiche-relance .table-wrap.table-freeze-body {
-            max-height: none;
-            overflow: visible;
+            max-height: calc(100vh - 17.5rem);
+            overflow: auto;
+            -webkit-overflow-scrolling: touch;
         }
 
-        #panel-dashboard .balance-section .table-wrap,
+        #panel-dashboard .balance-section-body .table-wrap,
         #panel-fiche-relance .table-wrap {
-            overflow: visible;
+            overflow: auto;
+        }
+
+        .dashboard-sticky-lock {
+            position: sticky;
+            top: 3.85rem;
+            z-index: 18;
+            margin: 0 0 0.75rem;
+            padding: 0.15rem 0 0.15rem;
+            background:
+                linear-gradient(180deg, rgba(7, 17, 31, 0.995) 0%, rgba(7, 17, 31, 0.98) 88%, rgba(7, 17, 31, 0.94) 100%);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+        }
+
+        html[data-theme="light"] .dashboard-sticky-lock {
+            background:
+                linear-gradient(180deg, rgba(244, 248, 255, 0.995) 0%, rgba(244, 248, 255, 0.98) 88%, rgba(244, 248, 255, 0.94) 100%);
+        }
+
+        .dashboard-sticky-lock .cards {
+            margin-bottom: 0.55rem;
+            position: relative;
+            top: auto;
+            z-index: 1;
+        }
+
+        .dashboard-sticky-lock .balance-section-head {
+            margin: 0;
+            padding: 0.75rem 1.15rem 0.85rem;
+            border-radius: 16px;
+            box-shadow: none;
+            animation: none;
+        }
+
+        .dashboard-sticky-lock .panel-freeze {
+            position: relative;
+            top: auto;
+            z-index: 1;
+            margin: 0;
+            padding: 0;
+            background: transparent;
+            backdrop-filter: none;
+            -webkit-backdrop-filter: none;
+        }
+
+        .balance-section-body {
+            margin-top: 0;
+        }
+
+        .balance-section-body .table-wrap.table-freeze-body {
+            max-height: calc(100vh - 17.5rem);
+        }
+
+        #panel-fiche-relance {
+            display: flex;
+            flex-direction: column;
+            min-height: calc(100vh - 6rem);
+        }
+
+        #panel-fiche-relance .panel-freeze {
+            flex: 0 0 auto;
+        }
+
+        #panel-fiche-relance .table-wrap.table-freeze-body {
+            flex: 1 1 auto;
+            min-height: 0;
+            max-height: calc(100vh - 14rem);
         }
 
         .data-table th,
@@ -1054,7 +1122,7 @@
         }
 
         html.cards-hidden-boot #panel-dashboard .cards,
-        html.cards-hidden-boot #panel-dashboard .balance-section .search-bar {
+        html.cards-hidden-boot #panel-dashboard .balance-section-head .search-bar {
             display: none !important;
         }
 
@@ -2095,28 +2163,28 @@
         }
 
         .balance-section .panel-freeze {
-            position: sticky;
-            top: 3.85rem;
-            z-index: 16;
+            position: relative;
+            top: auto;
+            z-index: 1;
             margin: 0 0 0.75rem;
             padding: 0 0 0.55rem;
-            background:
-                linear-gradient(180deg, rgba(16, 32, 54, 0.98) 0%, rgba(12, 26, 46, 0.96) 100%);
-            backdrop-filter: blur(10px);
-            -webkit-backdrop-filter: blur(10px);
+            background: transparent;
+            backdrop-filter: none;
+            -webkit-backdrop-filter: none;
         }
 
         html[data-theme="light"] .balance-section .panel-freeze {
-            background:
-                linear-gradient(180deg, rgba(255, 255, 255, 0.98) 0%, rgba(243, 247, 253, 0.96) 100%);
+            background: transparent;
         }
 
         .balance-section .table-wrap.table-freeze-body {
-            max-height: none;
+            max-height: calc(100vh - 17.5rem);
+            overflow: auto;
         }
 
         #panel-fiche-relance .table-wrap.table-freeze-body {
-            max-height: none;
+            max-height: calc(100vh - 14rem);
+            overflow: auto;
         }
 
         .paiement-sticky-lock {
@@ -2397,7 +2465,7 @@
             display: none !important;
         }
 
-        #panel-dashboard.cards-hidden .balance-section .search-bar {
+        #panel-dashboard.cards-hidden .balance-section-head .search-bar {
             display: none !important;
         }
 
@@ -2407,31 +2475,30 @@
             min-height: calc(100vh - 5.5rem);
         }
 
-        #panel-dashboard.active.cards-hidden .balance-section {
+        #panel-dashboard.active.cards-hidden .dashboard-sticky-lock {
+            flex: 0 0 auto;
+            position: sticky;
+            top: 3.85rem;
+            z-index: 18;
+            margin-bottom: 0.55rem;
+        }
+
+        #panel-dashboard.active.cards-hidden .balance-section-body {
             margin-top: 0;
             margin-bottom: 0;
             flex: 1 1 auto;
             display: flex;
             flex-direction: column;
             min-height: 0;
-            overflow: visible;
+            overflow: hidden;
         }
 
-        #panel-dashboard.active.cards-hidden .balance-section .panel-freeze {
-            flex: 0 0 auto;
-            position: relative;
-            top: auto;
-            z-index: 2;
-            margin: 0 0 0.55rem;
-            padding: 0 0 0.35rem;
-        }
-
-        #panel-dashboard.active.cards-hidden .balance-section .table-wrap.table-freeze-body {
+        #panel-dashboard.active.cards-hidden .balance-section-body .table-wrap.table-freeze-body {
             flex: 1 1 auto;
             max-height: none;
             height: auto;
             min-height: 0;
-            overflow: visible;
+            overflow: auto;
         }
 
         html[data-theme="light"] .btn-toggle-cards {
@@ -2775,8 +2842,8 @@
 
             .cards {
                 grid-template-columns: repeat(2, 1fr);
-                position: sticky;
-                top: 3.6rem;
+                position: relative;
+                top: auto;
             }
 
             .paiement-cards {
@@ -2787,14 +2854,18 @@
                 top: 3.6rem;
             }
 
+            .dashboard-sticky-lock {
+                top: 3.6rem;
+            }
+
             .table-wrap.table-freeze-body {
                 max-height: calc(100vh - 16rem);
             }
 
-            #panel-dashboard .balance-section .table-wrap.table-freeze-body,
+            #panel-dashboard .balance-section-body .table-wrap.table-freeze-body,
             #panel-fiche-relance .table-wrap.table-freeze-body {
-                max-height: none;
-                overflow: visible;
+                max-height: calc(100vh - 18rem);
+                overflow: auto;
             }
 
             #panel-fiche-paiement .table-wrap.table-freeze-body {
@@ -3049,6 +3120,7 @@
 
             <main class="content">
                 <section class="panel active" id="panel-dashboard">
+                    <div class="dashboard-sticky-lock">
                     <section class="cards" aria-label="Statistiques">
                         <article class="card actif">
                             <div class="card-top">
@@ -3111,7 +3183,7 @@
                         </article>
                     </section>
 
-                    <section class="balance-section" aria-label="Tableau des relances">
+                    <section class="balance-section balance-section-head" aria-label="Filtres relances">
                         <div class="panel-freeze">
                             <div class="balance-toolbar">
                                 <div class="balance-head">
@@ -3164,7 +3236,10 @@
                                 </div>
                             </div>
                         </div>
+                    </section>
+                    </div>
 
+                    <section class="balance-section balance-section-body" aria-label="Tableau des relances">
                         <div class="table-wrap table-freeze-body">
                             <table class="data-table data-table-relances">
                                 <colgroup>
