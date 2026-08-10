@@ -47,6 +47,12 @@
 
         * { box-sizing: border-box; margin: 0; padding: 0; }
 
+        html {
+            font-size: 15px;
+            -webkit-text-size-adjust: 100%;
+            text-size-adjust: 100%;
+        }
+
         body {
             min-height: 100vh;
             font-family: 'Outfit', sans-serif;
@@ -56,6 +62,7 @@
                 radial-gradient(ellipse 60% 45% at 10% 0%, rgba(40, 120, 255, 0.22), transparent 60%),
                 radial-gradient(ellipse 50% 40% at 90% 100%, rgba(20, 90, 180, 0.18), transparent 55%),
                 linear-gradient(160deg, #050d18 0%, #0a1628 45%, #07111f 100%);
+            overflow-x: hidden;
         }
 
         a { color: inherit; text-decoration: none; }
@@ -2002,7 +2009,7 @@
         }
 
         .brand-glow {
-            font-size: clamp(1.35rem, 2vw, 1.65rem);
+            font-size: clamp(1.15rem, 1.4vw, 1.45rem);
             font-weight: 700;
             letter-spacing: -0.03em;
             line-height: 1;
@@ -3268,7 +3275,52 @@
             background: linear-gradient(145deg, rgba(240, 113, 120, 0.12), rgba(255, 255, 255, 0.95));
         }
 
-        @media (max-width: 1100px) {
+        @media (max-width: 1440px) {
+            html { font-size: 14px; }
+
+            .shell { grid-template-columns: 220px 1fr; }
+
+            .sidebar {
+                padding: 1.1rem 0.85rem;
+                gap: 1.15rem;
+            }
+
+            .navbar {
+                padding: 0.85rem 1.35rem;
+            }
+
+            .content {
+                padding: 1.25rem 1.35rem 1.85rem;
+            }
+
+            .cards {
+                grid-template-columns: repeat(3, minmax(0, 1fr));
+                gap: 0.65rem;
+            }
+
+            .card {
+                min-height: 76px;
+                height: 76px;
+                padding: 0.6rem 0.75rem 0.55rem;
+            }
+
+            .card-value { font-size: 1.28rem; }
+            .card-icon { width: 28px; height: 28px; }
+            .card-icon svg { width: 14px; height: 14px; }
+
+            .search-bar {
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+                gap: 0.65rem;
+                padding: 0.75rem 0.85rem;
+            }
+
+            .panel-freeze { top: 3.55rem; }
+            .dashboard-sticky-lock { top: 3.55rem; }
+        }
+
+        @media (max-width: 1200px) {
+            html { font-size: 13.5px; }
+
             .shell { grid-template-columns: 1fr; }
 
             .sidebar {
@@ -3276,7 +3328,7 @@
                 left: 0;
                 top: 0;
                 z-index: 40;
-                width: min(280px, 86vw);
+                width: min(260px, 84vw);
                 transform: translateX(-105%);
                 transition: transform 0.25s ease;
                 box-shadow: 20px 0 50px rgba(0, 0, 0, 0.4);
@@ -3298,7 +3350,7 @@
             }
 
             .cards {
-                grid-template-columns: repeat(2, 1fr);
+                grid-template-columns: repeat(3, minmax(0, 1fr));
                 position: relative;
                 top: auto;
             }
@@ -3308,20 +3360,20 @@
             }
 
             .panel-freeze {
-                top: 3.6rem;
+                top: 3.4rem;
             }
 
             .dashboard-sticky-lock {
-                top: 3.6rem;
+                top: 3.4rem;
             }
 
             .table-wrap.table-freeze-body {
-                max-height: calc(100vh - 16rem);
+                max-height: calc(100vh - 15rem);
             }
 
             #panel-fiche-relance.active {
-                height: calc(100vh - 5.2rem);
-                max-height: calc(100vh - 5.2rem);
+                height: calc(100vh - 5rem);
+                max-height: calc(100vh - 5rem);
             }
 
             #panel-fiche-relance .table-wrap.table-freeze-body {
@@ -3330,26 +3382,147 @@
             }
 
             #panel-fiche-paiement .table-wrap.table-freeze-body {
-                max-height: calc(100vh - 22rem);
+                max-height: calc(100vh - 20rem);
             }
 
             .paiement-sticky-lock {
                 position: sticky;
-                top: 3.6rem;
-                margin-bottom: 1rem;
+                top: 3.4rem;
+                margin-bottom: 0.85rem;
             }
 
             .card {
-                min-height: 78px;
-                height: 78px;
+                min-height: 72px;
+                height: 72px;
             }
-            .card-value { font-size: 1.3rem; }
+            .card-value { font-size: 1.18rem; }
 
             .table-wrap {
                 -webkit-overflow-scrolling: touch;
             }
 
-            .navbar, .content { padding-left: 1.1rem; padding-right: 1.1rem; }
+            .navbar, .content {
+                padding-left: 1rem;
+                padding-right: 1rem;
+            }
+
+            .navbar {
+                padding-top: 0.75rem;
+                padding-bottom: 0.75rem;
+                gap: 0.65rem;
+            }
+
+            .content {
+                padding-top: 1rem;
+                padding-bottom: 1.5rem;
+            }
+
+            .nav-right { gap: 0.55rem; }
+
+            .btn-notif-wa,
+            .btn-notif-cal,
+            .menu-toggle {
+                width: 36px;
+                height: 36px;
+            }
+
+            .modal {
+                width: min(560px, calc(100vw - 1.25rem));
+            }
+        }
+
+        @media (max-width: 768px) {
+            html { font-size: 13px; }
+
+            .cards {
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+                gap: 0.5rem;
+            }
+
+            .card {
+                min-height: 68px;
+                height: auto;
+            }
+
+            .card-label { font-size: 0.66rem; }
+            .card-value { font-size: 1.1rem; }
+
+            .brand-tagline { display: none; }
+
+            .navbar-brand .brand-glow {
+                font-size: 1.1rem;
+            }
+
+            .content-head h1 {
+                font-size: 1rem;
+            }
+
+            .search-bar {
+                grid-template-columns: 1fr;
+                padding: 0.65rem 0.7rem;
+            }
+
+            .wa-panel,
+            .notif-panel {
+                width: min(100vw - 1rem, 360px);
+                right: -0.35rem;
+            }
+
+            table.data-table:not(.data-table-relances) {
+                min-width: 920px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            html { font-size: 12.5px; }
+
+            .navbar, .content {
+                padding-left: 0.7rem;
+                padding-right: 0.7rem;
+            }
+
+            .cards {
+                grid-template-columns: 1fr 1fr;
+                gap: 0.4rem;
+            }
+
+            .card {
+                padding: 0.5rem 0.55rem;
+                border-radius: 10px;
+            }
+
+            .card-icon { display: none; }
+
+            .btn-add {
+                width: 100%;
+                justify-content: center;
+            }
+
+            .user-chip span {
+                display: none;
+            }
+
+            .btn-theme-toggle {
+                padding: 0.45rem !important;
+                width: 36px;
+            }
+        }
+
+        @media (max-height: 820px) and (min-width: 769px) {
+            .card {
+                min-height: 68px;
+                height: 68px;
+            }
+
+            .content {
+                padding-top: 0.95rem;
+                padding-bottom: 1.25rem;
+            }
+
+            .dashboard-nav-btn {
+                padding: 0.7rem 0.85rem;
+                margin-bottom: 0.4rem;
+            }
         }
     </style>
 </head>
@@ -5511,7 +5684,7 @@
         const shell = document.querySelector('.shell');
 
         function isMobileSidebar() {
-            return window.innerWidth <= 1100;
+            return window.innerWidth <= 1200;
         }
 
         function updateMenuToggleState(isOpen) {
