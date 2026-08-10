@@ -8424,27 +8424,29 @@ EvoPro`;
             const t3 = montant * 0.3;
             const html = `<!DOCTYPE html><html lang="fr"><head><meta charset="utf-8"><title>Devis EvoPro</title>
                 <style>
-                    @page { margin: 18mm; }
-                    body { font-family: Arial, Helvetica, sans-serif; color: #12233d; line-height: 1.45; }
-                    .brand { display:flex; justify-content:space-between; align-items:flex-start; margin-bottom: 18px; border-bottom: 2px solid #1e6fd9; padding-bottom: 12px; }
-                    .brand h1 { margin:0; font-size: 22px; color:#1e6fd9; letter-spacing: .04em; }
-                    .brand small { color:#66788f; font-size:12px; }
-                    .meta { display:grid; grid-template-columns: 1fr 1fr; gap: 8px 18px; margin-bottom: 16px; font-size: 13px; }
-                    .meta strong { display:block; color:#66788f; font-size:11px; text-transform:uppercase; margin-bottom:2px; }
-                    h2 { font-size:15px; margin: 18px 0 8px; color:#0a1628; }
-                    .box { border:1px solid #d5e2f3; border-radius:10px; padding:12px 14px; background:#f7fafe; margin-bottom:12px; white-space:pre-wrap; font-size:13px; }
-                    table { width:100%; border-collapse:collapse; margin-top:8px; font-size:13px; }
-                    th, td { border:1px solid #d5e2f3; padding:8px 10px; text-align:left; }
+                    @page { margin: 8mm 12mm 10mm 12mm; }
+                    * { box-sizing: border-box; }
+                    html, body { margin: 0; padding: 0; }
+                    body { font-family: Arial, Helvetica, sans-serif; color: #12233d; line-height: 1.35; }
+                    .brand { display:flex; justify-content:space-between; align-items:flex-start; margin: 0 0 10px; border-bottom: 2px solid #1e6fd9; padding: 0 0 8px; }
+                    .brand h1 { margin:0; font-size: 18px; color:#1e6fd9; letter-spacing: .04em; line-height:1.1; }
+                    .brand small { color:#66788f; font-size:11px; }
+                    .meta { display:grid; grid-template-columns: 1fr 1fr; gap: 6px 14px; margin-bottom: 10px; font-size: 12.5px; }
+                    .meta strong { display:block; color:#66788f; font-size:10px; text-transform:uppercase; margin-bottom:1px; }
+                    h2 { font-size:13px; margin: 10px 0 5px; color:#0a1628; }
+                    .box { border:1px solid #d5e2f3; border-radius:8px; padding:8px 10px; background:#f7fafe; margin-bottom:8px; white-space:pre-wrap; font-size:12px; }
+                    table { width:100%; border-collapse:collapse; margin-top:4px; font-size:12px; }
+                    th, td { border:1px solid #d5e2f3; padding:5px 8px; text-align:left; }
                     th { background:#eef4fc; width:42%; }
-                    .nb { margin-top:16px; border-left:3px solid #1e6fd9; padding:10px 12px; background:#f3f8ff; font-size:12.5px; white-space:pre-line; }
-                    .foot { margin-top:22px; font-size:12px; color:#66788f; text-align:center; }
+                    .nb { margin-top:10px; border-left:3px solid #1e6fd9; padding:7px 10px; background:#f3f8ff; font-size:11px; line-height:1.35; white-space:pre-line; }
+                    .foot { margin-top:10px; font-size:11px; color:#66788f; text-align:center; }
                 </style></head><body>
                 <div class="brand">
                     <div>
                         <h1>EVOPRO</h1>
                         <small>Devis commercial</small>
                     </div>
-                    <div style="text-align:right;font-size:12px;color:#66788f;">
+                    <div style="text-align:right;font-size:11px;color:#66788f;line-height:1.35;">
                         <div>Date : ${escapeHtml(data.date)}</div>
                         <div>Tél : ${escapeHtml(data.telephone)}</div>
                     </div>
