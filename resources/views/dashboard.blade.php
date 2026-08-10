@@ -659,6 +659,48 @@
             vertical-align: middle;
         }
 
+        /* Date + ID resserrés pour laisser la place au téléphone */
+        table.data-table.data-table-relances th:nth-child(1),
+        table.data-table.data-table-relances td:nth-child(1) {
+            padding-left: 0.25rem;
+            padding-right: 0.15rem;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        table.data-table.data-table-relances th:nth-child(2),
+        table.data-table.data-table-relances td:nth-child(2) {
+            padding-left: 0.1rem;
+            padding-right: 0.2rem;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        table.data-table.data-table-relances th:nth-child(3),
+        table.data-table.data-table-relances td:nth-child(3) {
+            overflow: visible;
+            overflow-wrap: normal;
+            word-break: normal;
+        }
+
+        table.data-table.data-table-relances .tel-wa-cell .relance-inline-input {
+            min-width: 0;
+            flex: 1 1 auto;
+            font-size: 0.7rem;
+        }
+
+        table.data-table.data-table-relances .wa-row-actions .action-btn {
+            width: 26px;
+            height: 26px;
+        }
+
+        table.data-table.data-table-relances .wa-row-actions .action-btn svg {
+            width: 12px;
+            height: 12px;
+        }
+
         table.data-table.data-table-relances th {
             font-size: 0.68rem;
             letter-spacing: 0.02em;
@@ -3457,12 +3499,12 @@
                         <div class="table-wrap table-freeze-body">
                             <table class="data-table data-table-relances">
                                 <colgroup>
-                                    <col style="width:7.5%">
-                                    <col style="width:6%">
-                                    <col style="width:8%">
+                                    <col style="width:5%">
+                                    <col style="width:4%">
+                                    <col style="width:13%">
                                     <col style="width:11%">
                                     <col style="width:10%">
-                                    <col style="width:14%">
+                                    <col style="width:13.5%">
                                     <col style="width:7%">
                                     <col style="width:7%">
                                     <col style="width:9%">
@@ -3807,12 +3849,12 @@
                     <div class="table-wrap table-freeze-body">
                         <table class="data-table data-table-relances">
                             <colgroup>
-                                <col style="width:7%">
-                                <col style="width:5.5%">
-                                <col style="width:7.5%">
+                                <col style="width:4.5%">
+                                <col style="width:3.5%">
+                                <col style="width:12%">
                                 <col style="width:10%">
                                 <col style="width:9%">
-                                <col style="width:12%">
+                                <col style="width:11.5%">
                                 <col style="width:6.5%">
                                 <col style="width:6.5%">
                                 <col style="width:8%">
