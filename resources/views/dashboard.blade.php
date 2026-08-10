@@ -5608,6 +5608,7 @@ Merci pour votre confiance.</p>
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
     <script>
         if (window.pdfjsLib) {
@@ -8391,15 +8392,18 @@ Merci pour votre confiance.`;
             whatsappDevisModal?.setAttribute('aria-hidden', 'true');
         }
 
-        function buildDevisWhatsappMessage(data) {
+        function buildDevisWhatsappMessage(data, pdfUrl = '') {
             const montant = formatMoneyFr(data.montant);
             const t1 = formatMoneyFr(data.montant * 0.3);
             const t2 = formatMoneyFr(data.montant * 0.4);
             const t3 = formatMoneyFr(data.montant * 0.3);
+            const linkLine = pdfUrl
+                ? `\n📄 PDF du devis :\n${pdfUrl}\n`
+                : '';
             return `Bonjour ${data.nom || 'Client'},
 
 Voici notre devis EvoPro :
-
+${linkLine}
 Date : ${data.date}
 Projet : ${data.titre}
 Description : ${data.description}
@@ -8411,77 +8415,136 @@ Modalités de paiement :
 • 40% à mi-parcours : ${t2} DH
 • 30% à la livraison : ${t3} DH
 
-Le PDF du devis a été généré — vous pouvez l’enregistrer puis le joindre dans WhatsApp.
-
 Merci pour votre confiance.
 EvoPro`;
         }
 
-        function openDevisPdf(data) {
+        function buildDevisHtml(data) {
             const montant = Number(data.montant) || 0;
             const t1 = montant * 0.3;
             const t2 = montant * 0.4;
             const t3 = montant * 0.3;
-            const html = `<!DOCTYPE html><html lang="fr"><head><meta charset="utf-8"><title>Devis EvoPro</title>
-                <style>
-                    @page { margin: 8mm 12mm 10mm 12mm; }
-                    * { box-sizing: border-box; }
-                    html, body { margin: 0; padding: 0; }
-                    body { font-family: Arial, Helvetica, sans-serif; color: #12233d; line-height: 1.35; }
-                    .brand { display:flex; justify-content:space-between; align-items:flex-start; margin: 0 0 10px; border-bottom: 2px solid #1e6fd9; padding: 0 0 8px; }
-                    .brand h1 { margin:0; font-size: 18px; color:#1e6fd9; letter-spacing: .04em; line-height:1.1; }
-                    .brand small { color:#66788f; font-size:11px; }
-                    .meta { display:grid; grid-template-columns: 1fr 1fr; gap: 6px 14px; margin-bottom: 10px; font-size: 12.5px; }
-                    .meta strong { display:block; color:#66788f; font-size:10px; text-transform:uppercase; margin-bottom:1px; }
-                    h2 { font-size:13px; margin: 10px 0 5px; color:#0a1628; }
-                    .box { border:1px solid #d5e2f3; border-radius:8px; padding:8px 10px; background:#f7fafe; margin-bottom:8px; white-space:pre-wrap; font-size:12px; }
-                    table { width:100%; border-collapse:collapse; margin-top:4px; font-size:12px; }
-                    th, td { border:1px solid #d5e2f3; padding:5px 8px; text-align:left; }
-                    th { background:#eef4fc; width:42%; }
-                    .nb { margin-top:10px; border-left:3px solid #1e6fd9; padding:7px 10px; background:#f3f8ff; font-size:11px; line-height:1.35; white-space:pre-line; }
-                    .foot { margin-top:10px; font-size:11px; color:#66788f; text-align:center; }
-                </style></head><body>
-                <div class="brand">
+            return `<div class="devis-pdf-root" style="font-family:Arial,Helvetica,sans-serif;color:#12233d;line-height:1.35;width:190mm;">
+                <div style="display:flex;justify-content:space-between;align-items:flex-start;margin:0 0 10px;border-bottom:2px solid #1e6fd9;padding:0 0 8px;">
                     <div>
-                        <h1>EVOPRO</h1>
-                        <small>Devis commercial</small>
+                        <div style="margin:0;font-size:18px;color:#1e6fd9;letter-spacing:.04em;font-weight:700;line-height:1.1;">EVOPRO</div>
+                        <div style="color:#66788f;font-size:11px;">Devis commercial</div>
                     </div>
                     <div style="text-align:right;font-size:11px;color:#66788f;line-height:1.35;">
                         <div>Date : ${escapeHtml(data.date)}</div>
                         <div>Tél : ${escapeHtml(data.telephone)}</div>
                     </div>
                 </div>
-                <div class="meta">
-                    <div><strong>Client</strong>${escapeHtml(data.nom || '—')}</div>
-                    <div><strong>Titre de projet</strong>${escapeHtml(data.titre)}</div>
-                    <div><strong>Montant</strong>${escapeHtml(formatMoneyFr(montant))} DH</div>
-                    <div><strong>Délai de travail</strong>${escapeHtml(data.delai)}</div>
+                <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px 14px;margin-bottom:10px;font-size:12.5px;">
+                    <div><div style="color:#66788f;font-size:10px;text-transform:uppercase;margin-bottom:1px;font-weight:700;">Client</div>${escapeHtml(data.nom || '—')}</div>
+                    <div><div style="color:#66788f;font-size:10px;text-transform:uppercase;margin-bottom:1px;font-weight:700;">Titre de projet</div>${escapeHtml(data.titre)}</div>
+                    <div><div style="color:#66788f;font-size:10px;text-transform:uppercase;margin-bottom:1px;font-weight:700;">Montant</div>${escapeHtml(formatMoneyFr(montant))} DH</div>
+                    <div><div style="color:#66788f;font-size:10px;text-transform:uppercase;margin-bottom:1px;font-weight:700;">Délai de travail</div>${escapeHtml(data.delai)}</div>
                 </div>
-                <h2>Description</h2>
-                <div class="box">${escapeHtml(data.description)}</div>
-                <h2>Répartition des paiements</h2>
-                <table>
-                    <tr><th>30 % à la commande</th><td>${escapeHtml(formatMoneyFr(t1))} DH</td></tr>
-                    <tr><th>40 % à mi-parcours</th><td>${escapeHtml(formatMoneyFr(t2))} DH</td></tr>
-                    <tr><th>30 % à la livraison finale</th><td>${escapeHtml(formatMoneyFr(t3))} DH</td></tr>
-                    <tr><th>Total</th><td><strong>${escapeHtml(formatMoneyFr(montant))} DH</strong></td></tr>
+                <div style="font-size:13px;margin:10px 0 5px;color:#0a1628;font-weight:700;">Description</div>
+                <div style="border:1px solid #d5e2f3;border-radius:8px;padding:8px 10px;background:#f7fafe;margin-bottom:8px;white-space:pre-wrap;font-size:12px;">${escapeHtml(data.description)}</div>
+                <div style="font-size:13px;margin:10px 0 5px;color:#0a1628;font-weight:700;">Répartition des paiements</div>
+                <table style="width:100%;border-collapse:collapse;margin-top:4px;font-size:12px;">
+                    <tr><th style="border:1px solid #d5e2f3;padding:5px 8px;text-align:left;background:#eef4fc;width:42%;">30 % à la commande</th><td style="border:1px solid #d5e2f3;padding:5px 8px;text-align:left;">${escapeHtml(formatMoneyFr(t1))} DH</td></tr>
+                    <tr><th style="border:1px solid #d5e2f3;padding:5px 8px;text-align:left;background:#eef4fc;">40 % à mi-parcours</th><td style="border:1px solid #d5e2f3;padding:5px 8px;text-align:left;">${escapeHtml(formatMoneyFr(t2))} DH</td></tr>
+                    <tr><th style="border:1px solid #d5e2f3;padding:5px 8px;text-align:left;background:#eef4fc;">30 % à la livraison finale</th><td style="border:1px solid #d5e2f3;padding:5px 8px;text-align:left;">${escapeHtml(formatMoneyFr(t3))} DH</td></tr>
+                    <tr><th style="border:1px solid #d5e2f3;padding:5px 8px;text-align:left;background:#eef4fc;">Total</th><td style="border:1px solid #d5e2f3;padding:5px 8px;text-align:left;"><strong>${escapeHtml(formatMoneyFr(montant))} DH</strong></td></tr>
                 </table>
-                <div class="nb"><strong>NB :</strong>\n${escapeHtml(DEVIS_NB_TEXT)}</div>
-                <div class="foot">Document généré par EvoPro — Merci pour votre confiance.</div>
-                </body></html>`;
+                <div style="margin-top:10px;border-left:3px solid #1e6fd9;padding:7px 10px;background:#f3f8ff;font-size:11px;line-height:1.35;white-space:pre-line;"><strong>NB :</strong>
+${escapeHtml(DEVIS_NB_TEXT)}</div>
+                <div style="margin-top:10px;font-size:11px;color:#66788f;text-align:center;">Document généré par EvoPro — Merci pour votre confiance.</div>
+            </div>`;
+        }
 
-            const printWindow = window.open('', '_blank');
-            if (!printWindow) {
-                alert('Autorisez les pop-ups pour générer le PDF.');
-                return false;
+        async function buildDevisPdfBlob(data) {
+            if (!window.html2pdf) {
+                throw new Error('Générateur PDF indisponible.');
             }
-            printWindow.document.write(html);
-            printWindow.document.close();
-            printWindow.onload = () => {
-                printWindow.focus();
-                printWindow.print();
-            };
-            return true;
+            const host = document.createElement('div');
+            host.style.cssText = 'position:fixed;left:-10000px;top:0;width:210mm;background:#fff;padding:0;margin:0;';
+            host.innerHTML = buildDevisHtml(data);
+            document.body.appendChild(host);
+            try {
+                const opt = {
+                    margin: [6, 10, 8, 10],
+                    filename: 'devis-evopro.pdf',
+                    image: { type: 'jpeg', quality: 0.98 },
+                    html2canvas: { scale: 2, useCORS: true, backgroundColor: '#ffffff' },
+                    jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' },
+                    pagebreak: { mode: ['avoid-all', 'css', 'legacy'] },
+                };
+                return await html2pdf().set(opt).from(host.firstElementChild).outputPdf('blob');
+            } finally {
+                host.remove();
+            }
+        }
+
+        async function uploadDevisPdf(blob, data) {
+            const safeTitre = String(data.titre || 'projet')
+                .replace(/[^\w\-]+/g, '_')
+                .replace(/_+/g, '_')
+                .slice(0, 40) || 'projet';
+            const file = new File([blob], `Devis_EvoPro_${safeTitre}.pdf`, { type: 'application/pdf' });
+            const form = new FormData();
+            form.append('pdf', file);
+            form.append('telephone', data.telephone || '');
+            form.append('nom_complet', data.nom || '');
+            form.append('titre', data.titre || '');
+            form.append('relance_id', waActionContext.relanceId || '');
+
+            const response = await fetch('{{ url('/whatsapp/devis') }}', {
+                method: 'POST',
+                headers: {
+                    'Accept': 'application/json',
+                    'X-CSRF-TOKEN': waCsrfToken,
+                },
+                body: form,
+            });
+            const payload = await response.json().catch(() => ({}));
+            if (!response.ok || !payload.ok || !payload.url) {
+                throw new Error(payload.message || 'Échec de l’envoi du PDF.');
+            }
+            if (Array.isArray(payload.messages)) whatsappMessages = payload.messages;
+            refreshWhatsappNavBadge(payload.unread);
+            return payload;
+        }
+
+        async function sendDevisViaWhatsapp(data) {
+            const blob = await buildDevisPdfBlob(data);
+            const safeTitre = String(data.titre || 'projet')
+                .replace(/[^\w\-]+/g, '_')
+                .replace(/_+/g, '_')
+                .slice(0, 40) || 'projet';
+            const file = new File([blob], `Devis_EvoPro_${safeTitre}.pdf`, { type: 'application/pdf' });
+
+            // Mobile : partage natif vers WhatsApp avec le fichier PDF
+            if (navigator.canShare && navigator.canShare({ files: [file] })) {
+                try {
+                    await navigator.share({
+                        files: [file],
+                        title: 'Devis EvoPro',
+                        text: buildDevisWhatsappMessage(data),
+                    });
+                    await logWhatsappMessage({
+                        telephone: data.telephone,
+                        message: `Devis PDF — ${data.titre}`,
+                        relanceId: waActionContext.relanceId,
+                        nomComplet: data.nom,
+                    });
+                    return true;
+                } catch (err) {
+                    if (err && err.name === 'AbortError') return false;
+                }
+            }
+
+            // PC / fallback : héberge le PDF et envoie le lien dans WhatsApp
+            const uploaded = await uploadDevisPdf(blob, data);
+            const message = buildDevisWhatsappMessage(data, uploaded.url);
+            return openWhatsappNow(data.telephone, message, {
+                relanceId: waActionContext.relanceId,
+                nomComplet: data.nom,
+                log: false,
+            });
         }
 
         function phoneFromRelanceRow(row) {
@@ -8599,7 +8662,7 @@ EvoPro`;
             if (openWhatsappNow(telephone, message)) closeWhatsappMessageModal();
         });
 
-        whatsappDevisForm?.addEventListener('submit', (e) => {
+        whatsappDevisForm?.addEventListener('submit', async (e) => {
             e.preventDefault();
             const data = {
                 date: (waDevisDate?.value || todayFr()).trim(),
@@ -8618,16 +8681,24 @@ EvoPro`;
                 alert('Renseignez le titre, la description, le montant et le délai.');
                 return;
             }
-            const pdfOk = openDevisPdf(data);
-            if (!pdfOk) return;
-            const message = buildDevisWhatsappMessage(data);
-            setTimeout(() => {
-                openWhatsappNow(data.telephone, message, {
-                    relanceId: waActionContext.relanceId,
-                    nomComplet: data.nom,
-                });
-                closeWhatsappDevisModal();
-            }, 350);
+
+            const submitBtn = document.getElementById('whatsappDevisSubmitBtn');
+            const prevLabel = submitBtn?.textContent || 'Envoyer PDF';
+            if (submitBtn) {
+                submitBtn.disabled = true;
+                submitBtn.textContent = 'Envoi…';
+            }
+            try {
+                const ok = await sendDevisViaWhatsapp(data);
+                if (ok) closeWhatsappDevisModal();
+            } catch (err) {
+                alert(err?.message || 'Impossible d’envoyer le devis PDF.');
+            } finally {
+                if (submitBtn) {
+                    submitBtn.disabled = false;
+                    submitBtn.textContent = prevLabel;
+                }
+            }
         });
 
         document.addEventListener('click', (e) => {

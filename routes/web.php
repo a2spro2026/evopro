@@ -306,6 +306,22 @@ Route::post('/deconnexion', function () {
     return redirect('/');
 })->name('logout');
 
+Route::get('/devis/{token}', function (string $token) {
+    if (! preg_match('/^[A-Za-z0-9_-]{16,80}$/', $token)) {
+        abort(404);
+    }
+
+    $path = storage_path('app/devis/'.$token.'.pdf');
+    if (! is_file($path)) {
+        abort(404);
+    }
+
+    return response()->file($path, [
+        'Content-Type' => 'application/pdf',
+        'Content-Disposition' => 'inline; filename="devis-evopro.pdf"',
+    ]);
+})->name('devis.show');
+
 Route::middleware('auth.user')->group(function () {
 
 Route::post('/clients', function (Request $request) {
@@ -1546,5 +1562,54 @@ Route::post('/whatsapp/messages/read', function (Request $request) {
         'messages' => array_slice($messages, 0, 80),
     ]);
 })->name('whatsapp.messages.read');
+
+Route::post('/whatsapp/devis', function (Request $request) {
+    $data = $request->validate([
+        'pdf' => ['required', 'file', 'mimes:pdf', 'max:8192'],
+        'telephone' => ['required', 'string', 'max:40'],
+        'nom_complet' => ['nullable', 'string', 'max:255'],
+        'titre' => ['nullable', 'string', 'max:255'],
+        'relance_id' => ['nullable', 'string', 'max:80'],
+    ]);
+
+    $dir = storage_path('app/devis');
+    if (! is_dir($dir)) {
+        mkdir($dir, 0775, true);
+    }
+
+    $token = bin2hex(random_bytes(16));
+    $filename = $token.'.pdf';
+    $request->file('pdf')->move($dir, $filename);
+
+    $url = url('/devis/'.$token);
+
+    $preview = 'Devis PDF'.(trim((string) ($data['titre'] ?? '')) !== '' ? ' — '.$data['titre'] : '');
+    $messages = AppStore::get('whatsapp_messages');
+    $now = now();
+    $row = [
+        'id' => uniqid('wam_', true),
+        'relance_id' => trim((string) ($data['relance_id'] ?? '')) ?: null,
+        'telephone' => trim($data['telephone']),
+        'telephone_digits' => preg_replace('/\D+/', '', $data['telephone']) ?? '',
+        'nom_complet' => trim((string) ($data['nom_complet'] ?? '')),
+        'message' => $preview.' '.$url,
+        'sent_at' => $now->format('d/m/Y H:i'),
+        'sent_at_iso' => $now->toIso8601String(),
+        'unread' => true,
+        'type' => 'devis',
+        'devis_url' => $url,
+    ];
+    array_unshift($messages, $row);
+    AppStore::put('whatsapp_messages', array_slice(array_values($messages), 0, 200));
+
+    return response()->json([
+        'ok' => true,
+        'url' => $url,
+        'token' => $token,
+        'item' => $row,
+        'unread' => collect($messages)->where('unread', true)->count(),
+        'messages' => array_slice($messages, 0, 80),
+    ]);
+})->name('whatsapp.devis.upload');
 
 });
