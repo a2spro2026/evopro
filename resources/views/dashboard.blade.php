@@ -4991,15 +4991,20 @@
 
                     <div class="whatsapp-settings-card">
                         <p class="whatsapp-hint" style="color:#6fe3a1;">
-                            Simple : un clic sur l’icône WhatsApp ouvre WhatsApp avec le numéro du client (message déjà prérempli).
+                            Pour envoyer le devis PDF automatiquement au client (1 clic), configurez l’API WhatsApp ci-dessous.
                         </p>
                         @if (session('whatsapp_saved'))
                             <p class="whatsapp-hint" style="color:#6fe3a1;">Configuration enregistrée.</p>
                         @endif
+                        @if (!empty($wa['api_ready']))
+                            <p class="whatsapp-hint" style="color:#6fe3a1;">Envoi automatique : prêt.</p>
+                        @else
+                            <p class="whatsapp-hint">Envoi automatique : incomplet — renseignez Token + Phone Number ID.</p>
+                        @endif
                         <form method="post" action="{{ route('whatsapp.settings.update') }}" id="whatsappSettingsForm">
                             @csrf
                             @method('PUT')
-                            <input type="hidden" name="mode" value="lien">
+                            <input type="hidden" name="mode" value="{{ !empty($wa['api_ready']) ? 'api' : 'lien' }}">
                             <div class="whatsapp-settings-grid">
                                 <div class="field full">
                                     <label>Activation</label>
@@ -5014,18 +5019,37 @@
                                     <input type="text" id="wa_indicatif" name="indicatif" value="{{ $wa['indicatif'] ?? '212' }}" placeholder="212" inputmode="numeric" required>
                                 </div>
                                 <div class="field">
-                                    <label for="wa_numero_business">Votre n° WhatsApp (optionnel)</label>
+                                    <label for="wa_numero_business">Votre n° WhatsApp Business</label>
                                     <input type="text" id="wa_numero_business" name="numero_business" value="{{ $wa['numero_business'] ?? '' }}" placeholder="Ex: 0612345678" inputmode="tel">
                                 </div>
                                 <div class="field full">
-                                    <label for="wa_message_defaut">Message prérempli à l’ouverture</label>
+                                    <label for="wa_message_defaut">Message prérempli (pour Message simple)</label>
                                     <textarea id="wa_message_defaut" name="message_defaut" rows="3" placeholder="Ce texte s’affiche déjà dans WhatsApp">{{ $wa['message_defaut'] ?? '' }}</textarea>
                                 </div>
-                                {{-- Champs Meta conservés en arrière-plan si déjà saisis --}}
-                                <input type="hidden" name="access_token" value="{{ !empty($wa['access_token']) ? '********' : '' }}">
-                                <input type="hidden" name="phone_number_id" value="{{ $wa['phone_number_id'] ?? '' }}">
-                                <input type="hidden" name="template_name" value="{{ $wa['template_name'] ?? '' }}">
-                                <input type="hidden" name="template_lang" value="{{ $wa['template_lang'] ?? 'fr' }}">
+                                <div class="field full">
+                                    <label for="wa_access_token">Token d’accès Meta (obligatoire pour envoyer le devis)</label>
+                                    <input type="password" id="wa_access_token" name="access_token" value="{{ !empty($wa['has_token']) ? '********' : '' }}" placeholder="Collez le token ici" autocomplete="off">
+                                </div>
+                                <div class="field full">
+                                    <label for="wa_phone_number_id">Phone Number ID Meta</label>
+                                    <input type="text" id="wa_phone_number_id" name="phone_number_id" value="{{ $wa['phone_number_id'] ?? '' }}" placeholder="Ex: 123456789012345" inputmode="numeric">
+                                </div>
+                                <div class="field">
+                                    <label for="wa_template_name">Template (optionnel)</label>
+                                    <input type="text" id="wa_template_name" name="template_name" value="{{ $wa['template_name'] ?? '' }}" placeholder="nom_du_modele">
+                                </div>
+                                <div class="field">
+                                    <label for="wa_template_lang">Langue template</label>
+                                    <input type="text" id="wa_template_lang" name="template_lang" value="{{ $wa['template_lang'] ?? 'fr' }}" placeholder="fr">
+                                </div>
+                                <div class="field full whatsapp-guide">
+                                    <strong>En 3 étapes :</strong>
+                                    <ol>
+                                        <li>Ouvrez <a href="https://developers.facebook.com/apps/" target="_blank" rel="noopener">Meta for Developers</a> → créez une app → WhatsApp → API Setup.</li>
+                                        <li>Copiez <code>Phone number ID</code> et un <code>Temporary access token</code> (ou token permanent).</li>
+                                        <li>Collez-les ici → Enregistrer → testez un devis vers votre numéro.</li>
+                                    </ol>
+                                </div>
                             </div>
                             <div class="whatsapp-settings-actions">
                                 <button type="submit" class="btn-primary">Enregistrer</button>
@@ -5601,7 +5625,7 @@ Merci pour votre confiance.</p>
                 </div>
                 <div class="modal-foot">
                     <button type="button" class="btn-ghost" id="cancelWhatsappDevisModal">Fermer</button>
-                    <button type="submit" class="btn-primary" id="whatsappDevisSubmitBtn">Envoyer PDF</button>
+                    <button type="submit" class="btn-primary" id="whatsappDevisSubmitBtn">Envoyer</button>
                 </div>
             </form>
         </div>
@@ -8490,6 +8514,7 @@ ${escapeHtml(DEVIS_NB_TEXT)}</div>
             form.append('telephone', data.telephone || '');
             form.append('nom_complet', data.nom || '');
             form.append('titre', data.titre || '');
+            form.append('caption', buildDevisWhatsappMessage(data));
             form.append('relance_id', waActionContext.relanceId || '');
 
             const response = await fetch('{{ url('/whatsapp/devis') }}', {
@@ -8501,50 +8526,22 @@ ${escapeHtml(DEVIS_NB_TEXT)}</div>
                 body: form,
             });
             const payload = await response.json().catch(() => ({}));
-            if (!response.ok || !payload.ok || !payload.url) {
-                throw new Error(payload.message || 'Échec de l’envoi du PDF.');
-            }
             if (Array.isArray(payload.messages)) whatsappMessages = payload.messages;
             refreshWhatsappNavBadge(payload.unread);
+            if (!response.ok || !payload.ok || !payload.sent) {
+                const err = new Error(payload.message || 'Échec de l’envoi du devis.');
+                err.needsApi = !!payload.needs_api;
+                err.url = payload.url || '';
+                throw err;
+            }
             return payload;
         }
 
         async function sendDevisViaWhatsapp(data) {
             const blob = await buildDevisPdfBlob(data);
-            const safeTitre = String(data.titre || 'projet')
-                .replace(/[^\w\-]+/g, '_')
-                .replace(/_+/g, '_')
-                .slice(0, 40) || 'projet';
-            const file = new File([blob], `Devis_EvoPro_${safeTitre}.pdf`, { type: 'application/pdf' });
-
-            // Mobile : partage natif vers WhatsApp avec le fichier PDF
-            if (navigator.canShare && navigator.canShare({ files: [file] })) {
-                try {
-                    await navigator.share({
-                        files: [file],
-                        title: 'Devis EvoPro',
-                        text: buildDevisWhatsappMessage(data),
-                    });
-                    await logWhatsappMessage({
-                        telephone: data.telephone,
-                        message: `Devis PDF — ${data.titre}`,
-                        relanceId: waActionContext.relanceId,
-                        nomComplet: data.nom,
-                    });
-                    return true;
-                } catch (err) {
-                    if (err && err.name === 'AbortError') return false;
-                }
-            }
-
-            // PC / fallback : héberge le PDF et envoie le lien dans WhatsApp
-            const uploaded = await uploadDevisPdf(blob, data);
-            const message = buildDevisWhatsappMessage(data, uploaded.url);
-            return openWhatsappNow(data.telephone, message, {
-                relanceId: waActionContext.relanceId,
-                nomComplet: data.nom,
-                log: false,
-            });
+            await uploadDevisPdf(blob, data);
+            alert('Devis envoyé au client sur WhatsApp.');
+            return true;
         }
 
         function phoneFromRelanceRow(row) {
@@ -8692,7 +8689,13 @@ ${escapeHtml(DEVIS_NB_TEXT)}</div>
                 const ok = await sendDevisViaWhatsapp(data);
                 if (ok) closeWhatsappDevisModal();
             } catch (err) {
-                alert(err?.message || 'Impossible d’envoyer le devis PDF.');
+                if (err?.needsApi) {
+                    alert((err.message || 'Envoi automatique non configuré.') + '\n\nOuvrez Configuration → WhatsApp et collez Token + Phone Number ID, puis réessayez.');
+                    closeWhatsappDevisModal();
+                    if (typeof showPanel === 'function') showPanel('fiche-whatsapp');
+                } else {
+                    alert(err?.message || 'Impossible d’envoyer le devis PDF.');
+                }
             } finally {
                 if (submitBtn) {
                     submitBtn.disabled = false;

@@ -220,9 +220,9 @@ Route::get('/dashboard', function () use ($requireAuth) {
             $cfg = WhatsApp::config();
             $cfg['has_token'] = trim((string) ($cfg['access_token'] ?? '')) !== '';
             $cfg['access_token'] = $cfg['has_token'] ? '********' : '';
-            $cfg['api_ready'] = WhatsApp::isApiReady(array_merge($cfg, [
+            $cfg['api_ready'] = WhatsApp::hasApiCredentials(array_merge($cfg, [
                 'access_token' => $cfg['has_token'] ? 'x' : '',
-            ]));
+            ])) && ! empty($cfg['actif']) && ! empty($cfg['messages_actifs']);
 
             return $cfg;
         })(),
@@ -1422,7 +1422,7 @@ Route::put('/whatsapp/settings', function (Request $request) {
 
     AppStore::putConfig('whatsapp', [
         'actif' => ($data['actif'] ?? '0') === '1',
-        'mode' => $data['mode'],
+        'mode' => ($token !== '' && trim((string) ($data['phone_number_id'] ?? '')) !== '') ? 'api' : $data['mode'],
         'indicatif' => preg_replace('/\D+/', '', $data['indicatif']) ?: '212',
         'numero_business' => trim((string) ($data['numero_business'] ?? '')),
         'access_token' => $token,
@@ -1569,6 +1569,7 @@ Route::post('/whatsapp/devis', function (Request $request) {
         'telephone' => ['required', 'string', 'max:40'],
         'nom_complet' => ['nullable', 'string', 'max:255'],
         'titre' => ['nullable', 'string', 'max:255'],
+        'caption' => ['nullable', 'string', 'max:1000'],
         'relance_id' => ['nullable', 'string', 'max:80'],
     ]);
 
@@ -1579,11 +1580,27 @@ Route::post('/whatsapp/devis', function (Request $request) {
 
     $token = bin2hex(random_bytes(16));
     $filename = $token.'.pdf';
+    $absolutePath = $dir.DIRECTORY_SEPARATOR.$filename;
     $request->file('pdf')->move($dir, $filename);
 
     $url = url('/devis/'.$token);
+    $titre = trim((string) ($data['titre'] ?? ''));
+    $safeName = $titre !== ''
+        ? ('Devis_EvoPro_'.preg_replace('/[^\p{L}\p{N}\-_]+/u', '_', $titre).'.pdf')
+        : 'Devis_EvoPro.pdf';
+    $caption = trim((string) ($data['caption'] ?? ''));
+    if ($caption === '') {
+        $caption = 'Devis EvoPro'.($titre !== '' ? ' — '.$titre : '');
+    }
 
-    $preview = 'Devis PDF'.(trim((string) ($data['titre'] ?? '')) !== '' ? ' — '.$data['titre'] : '');
+    $send = WhatsApp::sendDocument(
+        $data['telephone'],
+        $absolutePath,
+        $safeName,
+        $caption
+    );
+
+    $preview = 'Devis PDF'.($titre !== '' ? ' — '.$titre : '');
     $messages = AppStore::get('whatsapp_messages');
     $now = now();
     $row = [
@@ -1592,18 +1609,34 @@ Route::post('/whatsapp/devis', function (Request $request) {
         'telephone' => trim($data['telephone']),
         'telephone_digits' => preg_replace('/\D+/', '', $data['telephone']) ?? '',
         'nom_complet' => trim((string) ($data['nom_complet'] ?? '')),
-        'message' => $preview.' '.$url,
+        'message' => ($send['ok'] ?? false) ? ($preview.' (envoyé)') : ($preview.' '.$url),
         'sent_at' => $now->format('d/m/Y H:i'),
         'sent_at_iso' => $now->toIso8601String(),
         'unread' => true,
         'type' => 'devis',
         'devis_url' => $url,
+        'sent' => (bool) ($send['ok'] ?? false),
     ];
     array_unshift($messages, $row);
     AppStore::put('whatsapp_messages', array_slice(array_values($messages), 0, 200));
 
+    if (! ($send['ok'] ?? false)) {
+        return response()->json([
+            'ok' => false,
+            'sent' => false,
+            'needs_api' => (bool) ($send['needs_api'] ?? false),
+            'message' => $send['message'] ?? 'Échec de l’envoi WhatsApp.',
+            'url' => $url,
+            'item' => $row,
+            'unread' => collect($messages)->where('unread', true)->count(),
+            'messages' => array_slice($messages, 0, 80),
+        ], 422);
+    }
+
     return response()->json([
         'ok' => true,
+        'sent' => true,
+        'message' => $send['message'] ?? 'Devis envoyé.',
         'url' => $url,
         'token' => $token,
         'item' => $row,
