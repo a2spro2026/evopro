@@ -479,8 +479,22 @@ Route::post('/relances/import', function (Request $request) {
     $relances = AppStore::get('relances');
     $today = now()->format('d/m/Y');
     $existingPhones = collect($relances)
-        ->map(fn ($r) => preg_replace('/\D+/', '', (string) ($r['telephone'] ?? '')))
+        ->map(function ($r) {
+            $digits = preg_replace('/\D+/', '', (string) ($r['telephone'] ?? '')) ?? '';
+            if (str_starts_with($digits, '00')) {
+                $digits = substr($digits, 2);
+            }
+            if (str_starts_with($digits, '212') && strlen($digits) >= 11) {
+                $digits = '0'.substr($digits, 3);
+            }
+            if (strlen($digits) === 9 && preg_match('/^[5-8]\d{8}$/', $digits)) {
+                $digits = '0'.$digits;
+            }
+
+            return $digits;
+        })
         ->filter()
+        ->values()
         ->all();
     $created = 0;
     $skipped = 0;
@@ -491,7 +505,17 @@ Route::post('/relances/import', function (Request $request) {
             continue;
         }
 
-        $digits = preg_replace('/\D+/', '', $phone);
+        $digits = preg_replace('/\D+/', '', $phone) ?? '';
+        if (str_starts_with($digits, '00')) {
+            $digits = substr($digits, 2);
+        }
+        if (str_starts_with($digits, '212') && strlen($digits) >= 11) {
+            $digits = '0'.substr($digits, 3);
+        }
+        if (strlen($digits) === 9 && preg_match('/^[5-8]\d{8}$/', $digits)) {
+            $digits = '0'.$digits;
+        }
+
         if ($digits !== '' && in_array($digits, $existingPhones, true)) {
             $skipped++;
             continue;
