@@ -869,6 +869,27 @@ Route::delete('/relances/{id}', function (string $id) {
         ->with('open_fiche_relance', true);
 })->name('relances.destroy');
 
+Route::post('/relances/bulk-destroy', function (Request $request) {
+    $data = $request->validate([
+        'ids' => ['required', 'array', 'min:1'],
+        'ids.*' => ['required', 'string', 'max:80'],
+    ]);
+
+    $ids = collect($data['ids'])->map(fn ($id) => (string) $id)->unique()->values()->all();
+    $relances = collect(AppStore::get('relances'))
+        ->reject(fn ($r) => in_array((string) ($r['id'] ?? ''), $ids, true))
+        ->values()
+        ->all();
+
+    AppStore::put('relances', $relances);
+
+    return response()->json([
+        'ok' => true,
+        'deleted' => count($ids),
+        'remaining' => count($relances),
+    ]);
+})->name('relances.bulk-destroy');
+
 Route::post('/utilisateurs', function (Request $request) {
     $data = $request->validate([
         'date' => ['required', 'string'],

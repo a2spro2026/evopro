@@ -669,9 +669,17 @@
             vertical-align: middle;
         }
 
-        /* Date + ID resserrés pour laisser la place au téléphone */
+        /* Checkbox + Date + ID resserrés pour laisser la place au téléphone */
         table.data-table.data-table-relances th:nth-child(1),
         table.data-table.data-table-relances td:nth-child(1) {
+            padding-left: 0.2rem;
+            padding-right: 0.15rem;
+            text-align: center;
+            white-space: nowrap;
+        }
+
+        table.data-table.data-table-relances th:nth-child(2),
+        table.data-table.data-table-relances td:nth-child(2) {
             padding-left: 0.25rem;
             padding-right: 0.15rem;
             white-space: nowrap;
@@ -679,8 +687,8 @@
             text-overflow: ellipsis;
         }
 
-        table.data-table.data-table-relances th:nth-child(2),
-        table.data-table.data-table-relances td:nth-child(2) {
+        table.data-table.data-table-relances th:nth-child(3),
+        table.data-table.data-table-relances td:nth-child(3) {
             padding-left: 0.1rem;
             padding-right: 0.2rem;
             white-space: nowrap;
@@ -688,11 +696,44 @@
             text-overflow: ellipsis;
         }
 
-        table.data-table.data-table-relances th:nth-child(3),
-        table.data-table.data-table-relances td:nth-child(3) {
+        table.data-table.data-table-relances th:nth-child(4),
+        table.data-table.data-table-relances td:nth-child(4) {
             overflow: visible;
             overflow-wrap: normal;
             word-break: normal;
+        }
+
+        .relance-check {
+            width: 15px;
+            height: 15px;
+            accent-color: #3b9eff;
+            cursor: pointer;
+            vertical-align: middle;
+        }
+
+        .btn-delete-selected {
+            display: none;
+            align-items: center;
+            gap: 0.4rem;
+            height: 38px;
+            padding: 0 0.9rem;
+            border: 1px solid rgba(240, 113, 120, 0.4);
+            border-radius: 10px;
+            background: rgba(240, 113, 120, 0.14);
+            color: #ffb3b8;
+            font-family: inherit;
+            font-size: 0.82rem;
+            font-weight: 600;
+            cursor: pointer;
+            text-transform: none;
+        }
+
+        .btn-delete-selected.is-visible {
+            display: inline-flex;
+        }
+
+        .btn-delete-selected:hover {
+            background: rgba(240, 113, 120, 0.22);
         }
 
         table.data-table.data-table-relances .tel-wa-cell .relance-inline-input {
@@ -4058,10 +4099,15 @@
                             <div class="content-head" style="margin-bottom:0;">
                                 <h1>Relance</h1>
                             </div>
-                            <button type="button" class="btn-add" id="btnAddRelance">
-                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>
-                                Nouveau Prospect
-                            </button>
+                            <div class="toolbar-actions">
+                                <button type="button" class="btn-delete-selected" id="btnDeleteSelectedRelances" aria-label="Supprimer la sélection">
+                                    Supprimer (<span id="relanceSelectedCount">0</span>)
+                                </button>
+                                <button type="button" class="btn-add" id="btnAddRelance">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>
+                                    Nouveau Prospect
+                                </button>
+                            </div>
                         </div>
 
                         <div class="search-bar" aria-label="Recherche relances" style="grid-template-columns: repeat(5, minmax(0, 1fr));">
@@ -4113,21 +4159,25 @@
                     <div class="table-wrap table-freeze-body">
                         <table class="data-table data-table-relances">
                             <colgroup>
-                                <col style="width:4.5%">
-                                <col style="width:3.5%">
-                                <col style="width:14%">
-                                <col style="width:10%">
-                                <col style="width:8.5%">
-                                <col style="width:10.5%">
-                                <col style="width:6.5%">
-                                <col style="width:6.5%">
+                                <col style="width:2.5%">
+                                <col style="width:4%">
+                                <col style="width:3.2%">
+                                <col style="width:13.5%">
+                                <col style="width:9.5%">
                                 <col style="width:8%">
-                                <col style="width:6.5%">
+                                <col style="width:10%">
+                                <col style="width:6%">
+                                <col style="width:6%">
                                 <col style="width:7.5%">
-                                <col style="width:7.5%">
+                                <col style="width:6%">
+                                <col style="width:7%">
+                                <col style="width:7%">
                             </colgroup>
                             <thead>
                                 <tr>
+                                    <th title="Sélectionner tout">
+                                        <input type="checkbox" class="relance-check" id="relanceSelectAll" aria-label="Sélectionner tout">
+                                    </th>
                                     <th>Date</th>
                                     <th>ID</th>
                                     <th>Téléphone</th>
@@ -4167,6 +4217,9 @@
                                             'row-relance-no-rappel' => $rappelerRelance === 'non',
                                         ])
                                     >
+                                        <td>
+                                            <input type="checkbox" class="relance-check relance-row-check" value="{{ $relance['id'] }}" aria-label="Sélectionner la ligne">
+                                        </td>
                                         <td>{{ $relance['date'] ?? '' }}</td>
                                         <td>{{ $relance['ref'] ?? '' }}</td>
                                         <td>
@@ -4308,11 +4361,11 @@
                                     </tr>
                                 @empty
                                     <tr class="empty-row">
-                                        <td colspan="12" class="empty">Aucune relance enregistrée. Cliquez sur Nouveau Prospect.</td>
+                                        <td colspan="13" class="empty">Aucune relance enregistrée. Cliquez sur Nouveau Prospect.</td>
                                     </tr>
                                 @endforelse
                                 <tr id="relancesNoResult" class="empty-row" style="display:none;">
-                                    <td colspan="12" class="empty">Aucun résultat pour cette recherche.</td>
+                                    <td colspan="13" class="empty">Aucun résultat pour cette recherche.</td>
                                 </tr>
                             </tbody>
                         </table>
@@ -7553,7 +7606,7 @@ Merci pour votre confiance.</p>
         }
 
         document.getElementById('relancesTableBody')?.addEventListener('click', (e) => {
-            if (e.target.closest('.rappel-date-form') || e.target.closest('.statue-form') || e.target.closest('.envoye-switch') || e.target.closest('.relance-inline-input')) return;
+            if (e.target.closest('.rappel-date-form') || e.target.closest('.statue-form') || e.target.closest('.envoye-switch') || e.target.closest('.relance-inline-input') || e.target.closest('.relance-check')) return;
             const row = e.target.closest('tr[data-id]');
             if (!row) return;
 
@@ -7563,6 +7616,96 @@ Merci pour votre confiance.</p>
             if (e.target.closest('.action-btn.voir')) openRelanceView(relance);
             if (e.target.closest('.action-btn.modifier')) openRelanceEdit(relance);
         });
+
+        (function initRelanceBulkSelect() {
+            const selectAll = document.getElementById('relanceSelectAll');
+            const deleteBtn = document.getElementById('btnDeleteSelectedRelances');
+            const countEl = document.getElementById('relanceSelectedCount');
+            const tbody = document.getElementById('relancesTableBody');
+            if (!selectAll || !deleteBtn || !tbody) return;
+
+            function visibleRowChecks() {
+                return Array.from(tbody.querySelectorAll('tr[data-id]'))
+                    .filter((row) => row.style.display !== 'none')
+                    .map((row) => row.querySelector('.relance-row-check'))
+                    .filter(Boolean);
+            }
+
+            function selectedIds() {
+                return visibleRowChecks()
+                    .filter((cb) => cb.checked)
+                    .map((cb) => cb.value)
+                    .filter(Boolean);
+            }
+
+            function refreshSelectionUi() {
+                const checks = visibleRowChecks();
+                const selected = checks.filter((cb) => cb.checked);
+                const n = selected.length;
+                if (countEl) countEl.textContent = String(n);
+                deleteBtn.classList.toggle('is-visible', n > 0);
+                selectAll.checked = checks.length > 0 && selected.length === checks.length;
+                selectAll.indeterminate = selected.length > 0 && selected.length < checks.length;
+            }
+
+            selectAll.addEventListener('change', () => {
+                const checked = selectAll.checked;
+                visibleRowChecks().forEach((cb) => { cb.checked = checked; });
+                refreshSelectionUi();
+            });
+
+            tbody.addEventListener('change', (e) => {
+                if (!e.target.classList.contains('relance-row-check')) return;
+                refreshSelectionUi();
+            });
+
+            deleteBtn.addEventListener('click', async () => {
+                const ids = selectedIds();
+                if (!ids.length) return;
+                const label = ids.length === 1 ? 'cette ligne' : `ces ${ids.length} lignes`;
+                if (!confirm(`Supprimer ${label} ?`)) return;
+
+                deleteBtn.disabled = true;
+                try {
+                    const csrf = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '';
+                    const response = await fetch('{{ url('/relances/bulk-destroy') }}', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Accept': 'application/json',
+                            'X-CSRF-TOKEN': csrf,
+                        },
+                        body: JSON.stringify({ ids }),
+                    });
+                    const data = await response.json().catch(() => ({}));
+                    if (!response.ok || !data.ok) {
+                        throw new Error(data.message || 'Suppression impossible.');
+                    }
+                    ids.forEach((id) => {
+                        tbody.querySelector(`tr[data-id="${CSS.escape(id)}"]`)?.remove();
+                        const idx = relancesData.findIndex((r) => r.id === id);
+                        if (idx >= 0) relancesData.splice(idx, 1);
+                    });
+                    selectAll.checked = false;
+                    selectAll.indeterminate = false;
+                    refreshSelectionUi();
+                    if (typeof refreshRelanceNotif === 'function') refreshRelanceNotif();
+                    if (typeof filterRelancesTable === 'function') filterRelancesTable();
+                } catch (err) {
+                    alert(err?.message || 'Suppression impossible.');
+                } finally {
+                    deleteBtn.disabled = false;
+                }
+            });
+
+            document.getElementById('filter_relance_numero')?.addEventListener('input', () => setTimeout(refreshSelectionUi, 0));
+            document.getElementById('filter_relance_mois')?.addEventListener('change', () => setTimeout(refreshSelectionUi, 0));
+            document.getElementById('filter_relance_statue')?.addEventListener('change', () => setTimeout(refreshSelectionUi, 0));
+            document.getElementById('filter_relance_de')?.addEventListener('input', () => setTimeout(refreshSelectionUi, 0));
+            document.getElementById('filter_relance_a')?.addEventListener('input', () => setTimeout(refreshSelectionUi, 0));
+
+            refreshSelectionUi();
+        })();
 
         btnAddRelance?.addEventListener('click', openRelanceModal);
         closeRelanceModal?.addEventListener('click', closeRelanceModalFn);
