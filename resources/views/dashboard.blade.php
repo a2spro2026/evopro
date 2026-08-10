@@ -8,13 +8,6 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <script>
-        try {
-            if (localStorage.getItem('evopro_dashboard_cards_hidden') === '1') {
-                document.documentElement.classList.add('cards-hidden-boot');
-            }
-        } catch (e) {}
-    </script>
     <style>
         :root {
             --bg: #07111f;
@@ -3439,254 +3432,7 @@
                         </article>
                     </section>
 
-                    <section class="balance-section balance-section-head" aria-label="Filtres relances">
-                        <div class="panel-freeze">
-                            <div class="balance-toolbar">
-                                <div class="balance-head">
-                                    <h2>Relances</h2>
-                                    <button type="button" class="btn-toggle-cards" id="btnToggleDashboardCards" aria-pressed="false">Masquer</button>
-                                    <div class="balance-head-numero">
-                                        <label for="filter_dashboard_relance_numero">Numéro</label>
-                                        <input type="text" id="filter_dashboard_relance_numero" placeholder="Ex. 06…" maxlength="20" autocomplete="off" inputmode="tel">
-                                    </div>
-                                </div>
-                                <div class="search-bar balance-search" aria-label="Recherche relances" style="grid-template-columns: repeat(4, minmax(0, 1fr));">
-                                    <div class="search-field">
-                                        <label for="filter_dashboard_relance_mois">Mois</label>
-                                        <select id="filter_dashboard_relance_mois">
-                                            <option value="">TOUS LES MOIS</option>
-                                            @php
-                                                $moisDashboardRelances = collect($relances ?? [])
-                                                    ->map(function ($r) {
-                                                        $parts = explode('/', $r['date'] ?? '');
-                                                        return count($parts) >= 3 ? $parts[1].'/'.$parts[2] : null;
-                                                    })
-                                                    ->filter()
-                                                    ->unique()
-                                                    ->sort()
-                                                    ->values();
-                                            @endphp
-                                            @foreach ($moisDashboardRelances as $mois)
-                                                <option value="{{ $mois }}">{{ $mois }}</option>
-                                            @endforeach
-                                        </select>
-                                    </div>
-                                    <div class="search-field">
-                                        <label for="filter_dashboard_relance_statue">Statue</label>
-                                        <select id="filter_dashboard_relance_statue">
-                                            <option value="">TOUTES LES STATUES</option>
-                                            <option value="a_voir">A VOIR</option>
-                                            <option value="confirme">CONFIRME</option>
-                                            <option value="inj">INJ</option>
-                                            <option value="nv_tab">Nv Tab</option>
-                                        </select>
-                                    </div>
-                                    <div class="search-field">
-                                        <label for="filter_dashboard_relance_de">De</label>
-                                        <input type="text" id="filter_dashboard_relance_de" placeholder="JJ/MM/AAAA" maxlength="10" autocomplete="off">
-                                    </div>
-                                    <div class="search-field">
-                                        <label for="filter_dashboard_relance_a">A</label>
-                                        <input type="text" id="filter_dashboard_relance_a" placeholder="JJ/MM/AAAA" maxlength="10" autocomplete="off">
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </section>
                     </div>
-
-                    <section class="balance-section balance-section-body" aria-label="Tableau des relances">
-                        <div class="table-wrap table-freeze-body">
-                            <table class="data-table data-table-relances">
-                                <colgroup>
-                                    <col style="width:5%">
-                                    <col style="width:4%">
-                                    <col style="width:13%">
-                                    <col style="width:11%">
-                                    <col style="width:10%">
-                                    <col style="width:13.5%">
-                                    <col style="width:7%">
-                                    <col style="width:7%">
-                                    <col style="width:9%">
-                                    <col style="width:7%">
-                                    <col style="width:8.5%">
-                                </colgroup>
-                                <thead>
-                                    <tr>
-                                        <th>Date</th>
-                                        <th>ID</th>
-                                        <th>Téléphone</th>
-                                        <th>Nom Complet</th>
-                                        <th>Titre Projet</th>
-                                        <th>Description</th>
-                                        <th>Budget</th>
-                                        <th>Envoyé</th>
-                                        <th>Statue</th>
-                                        <th>A Rappeler</th>
-                                        <th>Date Rappel</th>
-                                    </tr>
-                                </thead>
-                                <tbody id="dashboardRelancesTableBody">
-                                    @forelse (($relances ?? []) as $relance)
-                                        @php
-                                            $statueRelanceDash = $relance['statue'] ?? '';
-                                            $envoyeRelanceDash = $relance['envoye'] ?? '';
-                                            $rappelerRelanceDash = $relance['a_rappeler'] ?? '';
-                                            $rappelerRelanceDashLabel = $rappelerRelanceDash === 'oui' ? 'Oui' : ($rappelerRelanceDash === 'non' ? 'Non' : $rappelerRelanceDash);
-                                            $partsRelanceDash = explode('/', $relance['date'] ?? '');
-                                            $moisRelanceDash = count($partsRelanceDash) >= 3 ? $partsRelanceDash[1].'/'.$partsRelanceDash[2] : '';
-                                        @endphp
-                                        <tr
-                                            data-id="{{ $relance['id'] ?? '' }}"
-                                            data-mois="{{ $moisRelanceDash }}"
-                                            data-statue="{{ $statueRelanceDash }}"
-                                            data-date="{{ $relance['date'] ?? '' }}"
-                                            data-import="{{ !empty($relance['from_import']) ? '1' : '0' }}"
-                                            data-telephone="{{ preg_replace('/\D+/', '', (string) ($relance['telephone'] ?? '')) }}"
-                                            data-a-rappeler="{{ $rappelerRelanceDash }}"
-                                            @class([
-                                                'row-relance-a-voir' => $statueRelanceDash === 'a_voir',
-                                                'row-relance-confirme' => $statueRelanceDash === 'confirme',
-                                                'row-relance-inj' => $statueRelanceDash === 'inj',
-                                                'row-relance-no-rappel' => $rappelerRelanceDash === 'non',
-                                            ])
-                                        >
-                                            <td>{{ $relance['date'] ?? '' }}</td>
-                                            <td>{{ $relance['ref'] ?? '' }}</td>
-                                            <td>
-                                                <div class="tel-wa-cell">
-                                                    <input
-                                                        type="text"
-                                                        class="relance-inline-input"
-                                                        data-field="telephone"
-                                                        data-id="{{ $relance['id'] ?? '' }}"
-                                                        value="{{ $relance['telephone'] ?? '' }}"
-                                                        aria-label="Téléphone"
-                                                    >
-                                                    <div class="wa-row-actions">
-                                                        <button type="button" class="action-btn wa-msg" title="Message WhatsApp" aria-label="Message WhatsApp" data-wa-action="message">
-                                                            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12.04 2C6.58 2 2.15 6.43 2.15 11.89c0 1.96.52 3.81 1.43 5.42L2 22l4.85-1.55a9.84 9.84 0 0 0 5.19 1.44h.01c5.46 0 9.89-4.43 9.89-9.89C21.94 6.43 17.5 2 12.04 2zm5.76 14.01c-.24.68-1.4 1.25-1.93 1.33-.5.07-1.13.1-1.82-.11-.42-.13-.96-.31-1.65-.61-2.9-1.26-4.79-4.2-4.94-4.39-.14-.19-1.18-1.57-1.18-3 0-1.42.74-2.12 1-2.41.26-.29.57-.36.76-.36h.55c.18 0 .42-.07.65.5.24.59.81 2.04.88 2.19.07.15.12.32.02.52-.1.2-.15.32-.29.5-.14.17-.3.39-.43.52-.14.14-.29.29-.12.57.16.28.73 1.2 1.56 1.94 1.07.96 1.97 1.26 2.25 1.4.28.14.44.12.61-.07.17-.19.71-.83.9-1.11.19-.28.38-.23.64-.14.26.1 1.66.78 1.95.93.28.14.47.22.54.34.07.12.07.7-.17 1.38z"/></svg>
-                                                        </button>
-                                                        <button type="button" class="action-btn wa-call" title="Appel WhatsApp" aria-label="Appel WhatsApp" data-wa-action="call">
-                                                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.8 19.8 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.8 19.8 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.13.81.36 1.6.68 2.34a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.74.32 1.53.55 2.34.68A2 2 0 0 1 22 16.92z"/></svg>
-                                                        </button>
-                                                    </div>
-                                                </div>
-                                            </td>
-                                            <td>
-                                                <input
-                                                    type="text"
-                                                    class="relance-inline-input"
-                                                    data-field="nom_complet"
-                                                    data-id="{{ $relance['id'] ?? '' }}"
-                                                    value="{{ $relance['nom_complet'] ?? '' }}"
-                                                    aria-label="Nom Complet"
-                                                >
-                                            </td>
-                                            <td>
-                                                <input
-                                                    type="text"
-                                                    class="relance-inline-input"
-                                                    data-field="titre_projet"
-                                                    data-id="{{ $relance['id'] ?? '' }}"
-                                                    value="{{ $relance['titre_projet'] ?? '' }}"
-                                                    aria-label="Titre Projet"
-                                                >
-                                            </td>
-                                            <td class="cell-wrap">
-                                                <textarea
-                                                    class="relance-inline-input relance-inline-textarea"
-                                                    data-field="description"
-                                                    data-id="{{ $relance['id'] ?? '' }}"
-                                                    rows="2"
-                                                    aria-label="Description"
-                                                >{{ $relance['description'] ?? '' }}</textarea>
-                                            </td>
-                                            <td>
-                                                <input
-                                                    type="text"
-                                                    class="relance-inline-input relance-inline-budget"
-                                                    data-field="budget"
-                                                    data-id="{{ $relance['id'] ?? '' }}"
-                                                    value="{{ number_format((float) ($relance['budget'] ?? 0), 2, '.', '') }}"
-                                                    inputmode="decimal"
-                                                    aria-label="Budget"
-                                                >
-                                            </td>
-                                            <td>
-                                                <div
-                                                    class="envoye-switch"
-                                                    data-id="{{ $relance['id'] ?? '' }}"
-                                                    data-value="{{ $envoyeRelanceDash }}"
-                                                    role="group"
-                                                    aria-label="Envoyé"
-                                                >
-                                                    <button type="button" class="envoye-opt{{ $envoyeRelanceDash === 'lien' ? ' is-active' : '' }}" data-value="lien">Lien</button>
-                                                    <button type="button" class="envoye-opt{{ $envoyeRelanceDash === 'conception' ? ' is-active' : '' }}" data-value="conception">Concep</button>
-                                                </div>
-                                            </td>
-                                            <td>
-                                                <form method="post" action="{{ url('/relances/'.$relance['id'].'/statue') }}" class="statue-form">
-                                                    @csrf
-                                                    @method('PATCH')
-                                                    <input type="hidden" name="from_dashboard" value="1">
-                                                    <select
-                                                        name="statue"
-                                                        class="statue-select {{ $statueRelanceDash }}"
-                                                        aria-label="Choisir la statue de la relance"
-                                                        onchange="this.form.submit()"
-                                                    >
-                                                        <option value="a_voir" @selected($statueRelanceDash === 'a_voir')>A VOIR</option>
-                                                        <option value="confirme" @selected($statueRelanceDash === 'confirme')>CONFIRME</option>
-                                                        <option value="inj" @selected($statueRelanceDash === 'inj')>INJ</option>
-                                                    </select>
-                                                </form>
-                                            </td>
-                                            <td>
-                                                <div
-                                                    class="envoye-switch rappeler-switch"
-                                                    data-id="{{ $relance['id'] ?? '' }}"
-                                                    data-value="{{ $rappelerRelanceDash }}"
-                                                    data-endpoint="a-rappeler"
-                                                    role="group"
-                                                    aria-label="A Rappeler"
-                                                >
-                                                    <button type="button" class="envoye-opt{{ $rappelerRelanceDash === 'oui' ? ' is-active' : '' }}" data-value="oui">Oui</button>
-                                                    <button type="button" class="envoye-opt{{ $rappelerRelanceDash === 'non' ? ' is-active' : '' }}" data-value="non">Non</button>
-                                                </div>
-                                            </td>
-                                            <td>
-                                                <form method="post" action="{{ url('/relances/'.$relance['id'].'/date-rappel') }}" class="rappel-date-form">
-                                                    @csrf
-                                                    @method('PATCH')
-                                                    <input type="hidden" name="from_dashboard" value="1">
-                                                <input
-                                                    type="text"
-                                                    name="date_rappel"
-                                                    class="rappel-date-input"
-                                                    value="{{ ($relance['date_rappel'] ?? '') !== '' ? ($relance['date_rappel'] ?? '') : '../../2026' }}"
-                                                    placeholder="../../2026"
-                                                    maxlength="10"
-                                                    inputmode="numeric"
-                                                    autocomplete="off"
-                                                    aria-label="Modifier la date de rappel"
-                                                    @disabled($rappelerRelanceDash === 'non')
-                                                >
-                                                </form>
-                                            </td>
-                                        </tr>
-                                    @empty
-                                        <tr class="empty-row">
-                                            <td colspan="11" class="empty">Aucune relance enregistrée.</td>
-                                        </tr>
-                                    @endforelse
-                                    <tr id="dashboardRelancesNoResult" class="empty-row" style="display:none;">
-                                        <td colspan="11" class="empty">Aucun résultat pour cette recherche.</td>
-                                    </tr>
-                                </tbody>
-                            </table>
-                        </div>
-                    </section>
 
                 </section>
 
@@ -3851,15 +3597,15 @@
                             <colgroup>
                                 <col style="width:4.5%">
                                 <col style="width:3.5%">
-                                <col style="width:12%">
+                                <col style="width:14%">
                                 <col style="width:10%">
-                                <col style="width:9%">
-                                <col style="width:11.5%">
+                                <col style="width:8.5%">
+                                <col style="width:10.5%">
                                 <col style="width:6.5%">
                                 <col style="width:6.5%">
                                 <col style="width:8%">
                                 <col style="width:6.5%">
-                                <col style="width:8%">
+                                <col style="width:7.5%">
                                 <col style="width:7.5%">
                             </colgroup>
                             <thead>
@@ -6537,35 +6283,12 @@
             if (emptyRow) emptyRow.style.display = rows.length === 0 ? '' : 'none';
         }
 
-        function filterDashboardRelancesTable() {
-            filterRelancesRows('#dashboardRelancesTableBody', {
-                moisId: 'filter_dashboard_relance_mois',
-                statueId: 'filter_dashboard_relance_statue',
-                deId: 'filter_dashboard_relance_de',
-                aId: 'filter_dashboard_relance_a',
-                numeroId: 'filter_dashboard_relance_numero',
-            }, 'dashboardRelancesNoResult');
-            persistRelanceFilters();
-        }
 
-        function bindDateMask(inputId) {
-            const input = document.getElementById(inputId);
-            if (!input) return;
-            input.addEventListener('input', () => {
-                let v = input.value.replace(/\D/g, '').slice(0, 8);
-                if (v.length >= 5) v = `${v.slice(0, 2)}/${v.slice(2, 4)}/${v.slice(4)}`;
-                else if (v.length >= 3) v = `${v.slice(0, 2)}/${v.slice(2)}`;
-                input.value = v;
-                filterDashboardRelancesTable();
-            });
-            input.addEventListener('change', filterDashboardRelancesTable);
-        }
 
-        document.getElementById('filter_dashboard_relance_mois')?.addEventListener('change', filterDashboardRelancesTable);
-        document.getElementById('filter_dashboard_relance_statue')?.addEventListener('change', filterDashboardRelancesTable);
-        document.getElementById('filter_dashboard_relance_numero')?.addEventListener('input', filterDashboardRelancesTable);
-        bindDateMask('filter_dashboard_relance_de');
-        bindDateMask('filter_dashboard_relance_a');
+
+
+
+
 
         document.querySelectorAll('.rappel-date-input').forEach((input) => {
             const normalizeRappel = (raw) => {
@@ -6816,7 +6539,6 @@
                             row.dataset.telephone = digits;
                         });
                         filterRelancesTable();
-                        filterDashboardRelancesTable();
                     }
 
                     document.querySelectorAll(`.relance-inline-input[data-id="${CSS.escape(id)}"][data-field="${field}"]`).forEach((twin) => {
@@ -6845,31 +6567,6 @@
             });
         });
 
-        const btnToggleDashboardCards = document.getElementById('btnToggleDashboardCards');
-        const panelDashboard = document.getElementById('panel-dashboard');
-
-        function applyDashboardCardsVisibility(hidden) {
-            panelDashboard?.classList.toggle('cards-hidden', hidden);
-            document.documentElement.classList.toggle('cards-hidden-boot', hidden);
-            if (btnToggleDashboardCards) {
-                btnToggleDashboardCards.textContent = hidden ? 'Afficher' : 'Masquer';
-                btnToggleDashboardCards.setAttribute('aria-pressed', hidden ? 'true' : 'false');
-            }
-            try {
-                localStorage.setItem('evopro_dashboard_cards_hidden', hidden ? '1' : '0');
-            } catch (e) {}
-        }
-
-        btnToggleDashboardCards?.addEventListener('click', () => {
-            const hidden = !panelDashboard?.classList.contains('cards-hidden');
-            applyDashboardCardsVisibility(hidden);
-        });
-
-        try {
-            if (localStorage.getItem('evopro_dashboard_cards_hidden') === '1') {
-                applyDashboardCardsVisibility(true);
-            }
-        } catch (e) {}
 
         function filterProjetsTable() {
             const mois = document.getElementById('filter_projet_mois')?.value || '';
@@ -7042,11 +6739,6 @@
                     statue: document.getElementById('filter_relance_statue')?.value || '',
                     de: document.getElementById('filter_relance_de')?.value || '',
                     a: document.getElementById('filter_relance_a')?.value || '',
-                    dashNumero: document.getElementById('filter_dashboard_relance_numero')?.value || '',
-                    dashMois: document.getElementById('filter_dashboard_relance_mois')?.value || '',
-                    dashStatue: document.getElementById('filter_dashboard_relance_statue')?.value || '',
-                    dashDe: document.getElementById('filter_dashboard_relance_de')?.value || '',
-                    dashA: document.getElementById('filter_dashboard_relance_a')?.value || '',
                 };
                 sessionStorage.setItem('evopro_relance_filters', JSON.stringify(payload));
             } catch (e) {}
@@ -7066,11 +6758,6 @@
                 setVal('filter_relance_statue', payload.statue);
                 setVal('filter_relance_de', payload.de);
                 setVal('filter_relance_a', payload.a);
-                setVal('filter_dashboard_relance_numero', payload.dashNumero);
-                setVal('filter_dashboard_relance_mois', payload.dashMois);
-                setVal('filter_dashboard_relance_statue', payload.dashStatue);
-                setVal('filter_dashboard_relance_de', payload.dashDe);
-                setVal('filter_dashboard_relance_a', payload.dashA);
             } catch (e) {}
         }
 
@@ -7642,7 +7329,6 @@
 
         restoreRelanceFilters();
         filterRelancesTable();
-        filterDashboardRelancesTable();
 
         document.querySelectorAll('tr[data-id][data-a-rappeler="non"]').forEach((row) => {
             if (row.dataset.id) applyRelanceRappelerUi(row.dataset.id, 'non');
