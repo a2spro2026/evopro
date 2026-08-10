@@ -6,12 +6,12 @@ use Illuminate\Support\Facades\File;
 
 class AppStore
 {
-    private const LIST_KEYS = ['clients', 'projets', 'paiements', 'utilisateurs', 'evolutions', 'relances', 'autorisations'];
+    private const LIST_KEYS = ['clients', 'projets', 'paiements', 'utilisateurs', 'evolutions', 'relances', 'autorisations', 'whatsapp_messages'];
 
     private const CONFIG_KEYS = ['whatsapp'];
 
     private const KEYS = [
-        'clients', 'projets', 'paiements', 'utilisateurs', 'evolutions', 'relances', 'autorisations', 'whatsapp',
+        'clients', 'projets', 'paiements', 'utilisateurs', 'evolutions', 'relances', 'autorisations', 'whatsapp', 'whatsapp_messages',
     ];
 
     public static function path(): string
@@ -152,6 +152,7 @@ class AppStore
             'relances' => [],
             'autorisations' => [],
             'whatsapp' => WhatsApp::defaults(),
+            'whatsapp_messages' => [],
         ];
     }
 

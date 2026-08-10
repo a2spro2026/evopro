@@ -1303,21 +1303,48 @@
             background: #6b7c90;
         }
 
+        .btn-notif-wa .wa-dot.has-badge {
+            display: none;
+        }
+
+        .btn-notif-wa .notif-badge {
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            min-width: 18px;
+            height: 18px;
+            padding: 0 5px;
+            border-radius: 999px;
+            background: linear-gradient(135deg, #25d366, #128c7e);
+            color: #fff;
+            font-size: 0.65rem;
+            font-weight: 700;
+            line-height: 18px;
+            text-align: center;
+            box-shadow: 0 4px 10px rgba(37, 211, 102, 0.35);
+        }
+
+        .btn-notif-wa .notif-badge.is-empty {
+            display: none;
+        }
+
         .wa-panel {
             position: absolute;
             top: calc(100% + 0.55rem);
             right: 0;
-            width: min(320px, calc(100vw - 1.5rem));
+            width: min(360px, calc(100vw - 1.5rem));
+            max-height: min(460px, 75vh);
             border-radius: 14px;
             border: 1px solid rgba(37, 211, 102, 0.28);
             background: linear-gradient(165deg, #122038, #0b1728);
             box-shadow: 0 18px 40px rgba(0, 0, 0, 0.45);
             display: none;
+            flex-direction: column;
             z-index: 70;
             overflow: hidden;
         }
 
-        .wa-panel.open { display: block; }
+        .wa-panel.open { display: flex; }
 
         .wa-panel-head {
             display: flex;
@@ -1326,6 +1353,7 @@
             gap: 0.75rem;
             padding: 0.85rem 1rem;
             border-bottom: 1px solid rgba(126, 196, 255, 0.12);
+            flex-shrink: 0;
         }
 
         .wa-panel-head h3 {
@@ -1340,9 +1368,10 @@
         }
 
         .wa-panel-body {
-            padding: 0.85rem 1rem 1rem;
+            padding: 0.75rem 1rem 0.35rem;
             display: grid;
-            gap: 0.65rem;
+            gap: 0.55rem;
+            flex-shrink: 0;
         }
 
         .wa-panel-status {
@@ -1354,6 +1383,69 @@
         .wa-panel-actions {
             display: grid;
             gap: 0.45rem;
+        }
+
+        .wa-panel-list {
+            list-style: none;
+            margin: 0;
+            padding: 0.35rem 0.45rem 0.55rem;
+            overflow: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 0.35rem;
+            border-top: 1px solid rgba(37, 211, 102, 0.14);
+            min-height: 0;
+        }
+
+        .wa-msg-item {
+            display: grid;
+            grid-template-columns: 1fr auto;
+            gap: 0.2rem 0.65rem;
+            padding: 0.65rem 0.75rem;
+            border-radius: 10px;
+            border: 1px solid rgba(37, 211, 102, 0.16);
+            background: rgba(37, 211, 102, 0.06);
+            cursor: pointer;
+            text-align: left;
+            font-family: inherit;
+            color: inherit;
+            width: 100%;
+        }
+
+        .wa-msg-item:hover {
+            background: rgba(37, 211, 102, 0.12);
+            border-color: rgba(37, 211, 102, 0.32);
+        }
+
+        .wa-msg-item.is-unread {
+            border-color: rgba(37, 211, 102, 0.45);
+            background: rgba(37, 211, 102, 0.14);
+        }
+
+        .wa-msg-item-name {
+            font-size: 0.86rem;
+            font-weight: 650;
+            color: var(--text);
+        }
+
+        .wa-msg-item-date {
+            font-size: 0.72rem;
+            color: #6fe3a1;
+            justify-self: end;
+        }
+
+        .wa-msg-item-phone,
+        .wa-msg-item-preview {
+            grid-column: 1 / -1;
+            font-size: 0.74rem;
+            color: var(--muted);
+            line-height: 1.35;
+        }
+
+        .wa-msg-item-preview {
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
         }
 
         .wa-panel-actions .btn-primary,
@@ -1449,6 +1541,16 @@
             background: #fff;
             border-color: rgba(18, 140, 74, 0.2);
             box-shadow: 0 12px 28px rgba(15, 35, 55, 0.1);
+        }
+
+        html[data-theme="light"] .wa-msg-item {
+            background: rgba(37, 211, 102, 0.06);
+            border-color: rgba(18, 140, 74, 0.18);
+        }
+
+        html[data-theme="light"] .wa-msg-item.is-unread {
+            background: rgba(37, 211, 102, 0.12);
+            border-color: rgba(18, 140, 74, 0.35);
         }
 
         @media (max-width: 760px) {
@@ -3455,20 +3557,22 @@
 
                 <div class="nav-right">
                     <div class="notif-wrap" id="whatsappNotifWrap">
+                        @php
+                            $waUnreadCount = collect($whatsappMessages ?? [])->where('unread', true)->count();
+                        @endphp
                         <button type="button" class="btn-notif-wa" id="btnWhatsappNav" aria-label="WhatsApp" aria-expanded="false" aria-controls="whatsappNavPanel">
                             <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12.04 2C6.58 2 2.15 6.43 2.15 11.89c0 1.96.52 3.81 1.43 5.42L2 22l4.85-1.55a9.84 9.84 0 0 0 5.19 1.44h.01c5.46 0 9.89-4.43 9.89-9.89C21.94 6.43 17.5 2 12.04 2zm5.76 14.01c-.24.68-1.4 1.25-1.93 1.33-.5.07-1.13.1-1.82-.11-.42-.13-.96-.31-1.65-.61-2.9-1.26-4.79-4.2-4.94-4.39-.14-.19-1.18-1.57-1.18-3 0-1.42.74-2.12 1-2.41.26-.29.57-.36.76-.36h.55c.18 0 .42-.07.65.5.24.59.81 2.04.88 2.19.07.15.12.32.02.52-.1.2-.15.32-.29.5-.14.17-.3.39-.43.52-.14.14-.29.29-.12.57.16.28.73 1.2 1.56 1.94 1.07.96 1.97 1.26 2.25 1.4.28.14.44.12.61-.07.17-.19.71-.83.9-1.11.19-.28.38-.23.64-.14.26.1 1.66.78 1.95.93.28.14.47.22.54.34.07.12.07.7-.17 1.38z"/></svg>
-                            <span class="wa-dot{{ !empty($whatsappConfig['actif']) ? '' : ' is-off' }}" id="whatsappNavDot" title="{{ !empty($whatsappConfig['actif']) ? 'Actif' : 'Inactif' }}"></span>
+                            <span class="wa-dot{{ !empty($whatsappConfig['actif']) ? '' : ' is-off' }}{{ $waUnreadCount > 0 ? ' has-badge' : '' }}" id="whatsappNavDot" title="{{ !empty($whatsappConfig['actif']) ? 'Actif' : 'Inactif' }}"></span>
+                            <span class="notif-badge{{ $waUnreadCount > 0 ? '' : ' is-empty' }}" id="whatsappNavBadge">{{ $waUnreadCount }}</span>
                         </button>
                         <div class="wa-panel" id="whatsappNavPanel" role="dialog" aria-label="WhatsApp" aria-hidden="true">
                             <div class="wa-panel-head">
                                 <h3>WhatsApp</h3>
-                                <span id="whatsappNavStatusLabel">{{ !empty($whatsappConfig['actif']) ? 'Actif' : 'Inactif' }}</span>
+                                <span id="whatsappNavCountLabel">{{ $waUnreadCount }} non lu{{ $waUnreadCount > 1 ? 's' : '' }}</span>
                             </div>
                             <div class="wa-panel-body">
                                 <p class="wa-panel-status" id="whatsappNavStatusText">
-                                    Mode ouverture WhatsApp —
-                                    messages {{ !empty($whatsappConfig['messages_actifs']) ? 'ON' : 'OFF' }},
-                                    appels {{ !empty($whatsappConfig['appels_actifs']) ? 'ON' : 'OFF' }}.
+                                    Clients contactés par WhatsApp depuis Relance.
                                 </p>
                                 <div class="wa-panel-actions">
                                     <button type="button" class="btn-primary" id="btnWhatsappQuickMsg">Nouveau message</button>
@@ -3478,6 +3582,7 @@
                                     @endif
                                 </div>
                             </div>
+                            <ul class="wa-panel-list" id="whatsappNavList"></ul>
                         </div>
                     </div>
                     <div class="notif-wrap" id="relanceNotifWrap">
@@ -7680,20 +7785,132 @@
         @endif
 
         const whatsappConfig = @json($whatsappConfig ?? []);
+        let whatsappMessages = @json($whatsappMessages ?? []);
         const whatsappNavWrap = document.getElementById('whatsappNotifWrap');
         const btnWhatsappNav = document.getElementById('btnWhatsappNav');
         const whatsappNavPanel = document.getElementById('whatsappNavPanel');
+        const whatsappNavBadge = document.getElementById('whatsappNavBadge');
+        const whatsappNavDot = document.getElementById('whatsappNavDot');
+        const whatsappNavCountLabel = document.getElementById('whatsappNavCountLabel');
+        const whatsappNavList = document.getElementById('whatsappNavList');
         const whatsappMessageModal = document.getElementById('whatsappMessageModal');
         const whatsappMessageForm = document.getElementById('whatsappMessageForm');
         const waMsgTelephone = document.getElementById('wa_msg_telephone');
         const waMsgBody = document.getElementById('wa_msg_body');
         const waMsgHint = document.getElementById('wa_msg_hint');
+        const waCsrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '';
+
+        function escapeHtml(value) {
+            return String(value ?? '')
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;')
+                .replace(/"/g, '&quot;');
+        }
+
+        function whatsappUnreadCount() {
+            return (whatsappMessages || []).filter((m) => m && m.unread).length;
+        }
+
+        function refreshWhatsappNavBadge(unread = null) {
+            const n = unread === null ? whatsappUnreadCount() : Number(unread) || 0;
+            if (whatsappNavBadge) {
+                whatsappNavBadge.textContent = String(n);
+                whatsappNavBadge.classList.toggle('is-empty', n === 0);
+            }
+            whatsappNavDot?.classList.toggle('has-badge', n > 0);
+            if (whatsappNavCountLabel) {
+                whatsappNavCountLabel.textContent = n === 0
+                    ? 'Aucun non lu'
+                    : (n === 1 ? '1 non lu' : `${n} non lus`);
+            }
+        }
+
+        function refreshWhatsappNavList() {
+            if (!whatsappNavList) return;
+            const items = Array.isArray(whatsappMessages) ? whatsappMessages : [];
+            if (!items.length) {
+                whatsappNavList.innerHTML = '<li class="notif-empty">Aucun message WhatsApp envoyé</li>';
+                return;
+            }
+            whatsappNavList.innerHTML = items.map((item) => {
+                const name = escapeHtml(item.nom_complet || 'Client');
+                const phone = escapeHtml(item.telephone || '');
+                const date = escapeHtml(item.sent_at || '');
+                const preview = escapeHtml(item.message || 'Message envoyé');
+                const unreadCls = item.unread ? ' is-unread' : '';
+                const id = escapeHtml(item.id || '');
+                const relanceId = escapeHtml(item.relance_id || '');
+                return `<li>
+                    <button type="button" class="wa-msg-item${unreadCls}" data-id="${id}" data-relance-id="${relanceId}">
+                        <span class="wa-msg-item-name">${name}</span>
+                        <span class="wa-msg-item-date">${date}</span>
+                        <span class="wa-msg-item-phone">${phone}</span>
+                        <span class="wa-msg-item-preview">${preview}</span>
+                    </button>
+                </li>`;
+            }).join('');
+        }
 
         function setWhatsappNavOpen(open) {
             whatsappNavPanel?.classList.toggle('open', open);
             btnWhatsappNav?.classList.toggle('is-open', open);
             btnWhatsappNav?.setAttribute('aria-expanded', open ? 'true' : 'false');
             whatsappNavPanel?.setAttribute('aria-hidden', open ? 'false' : 'true');
+            if (open) {
+                refreshWhatsappNavList();
+                if (whatsappUnreadCount() > 0) {
+                    markWhatsappMessagesRead({ all: true });
+                }
+            }
+        }
+
+        async function markWhatsappMessagesRead({ all = false, id = '' } = {}) {
+            if (!all && !id) return;
+            try {
+                const response = await fetch('{{ url('/whatsapp/messages/read') }}', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json',
+                        'X-CSRF-TOKEN': waCsrfToken,
+                    },
+                    body: JSON.stringify({ all: !!all, id: id || null }),
+                });
+                const data = await response.json().catch(() => ({}));
+                if (!response.ok || !data.ok) return;
+                if (Array.isArray(data.messages)) whatsappMessages = data.messages;
+                else if (all) whatsappMessages = (whatsappMessages || []).map((m) => ({ ...m, unread: false }));
+                else whatsappMessages = (whatsappMessages || []).map((m) => m.id === id ? { ...m, unread: false } : m);
+                refreshWhatsappNavBadge(data.unread);
+                refreshWhatsappNavList();
+            } catch (_) { /* ignore */ }
+        }
+
+        async function logWhatsappMessage({ telephone, message = '', relanceId = '', nomComplet = '' } = {}) {
+            if (!telephone) return;
+            try {
+                const response = await fetch('{{ url('/whatsapp/messages/log') }}', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json',
+                        'X-CSRF-TOKEN': waCsrfToken,
+                    },
+                    body: JSON.stringify({
+                        telephone,
+                        message: message || '',
+                        relance_id: relanceId || null,
+                        nom_complet: nomComplet || null,
+                    }),
+                });
+                const data = await response.json().catch(() => ({}));
+                if (!response.ok || !data.ok) return;
+                if (Array.isArray(data.messages)) whatsappMessages = data.messages;
+                else if (data.item) whatsappMessages = [data.item, ...(whatsappMessages || [])].slice(0, 80);
+                refreshWhatsappNavBadge(data.unread);
+                if (whatsappNavPanel?.classList.contains('open')) refreshWhatsappNavList();
+            } catch (_) { /* ignore */ }
         }
 
         function normalizeWhatsappPhone(telephone) {
@@ -7714,7 +7931,7 @@
             return url;
         }
 
-        function openWhatsappNow(telephone, message = '') {
+        function openWhatsappNow(telephone, message = '', meta = {}) {
             if (whatsappConfig.actif === false) {
                 alert('WhatsApp est désactivé dans Configuration > WhatsApp.');
                 return false;
@@ -7725,6 +7942,14 @@
                 return false;
             }
             window.open(url, '_blank', 'noopener');
+            if (meta.log !== false) {
+                logWhatsappMessage({
+                    telephone,
+                    message,
+                    relanceId: meta.relanceId || '',
+                    nomComplet: meta.nomComplet || '',
+                });
+            }
             return true;
         }
 
@@ -7749,12 +7974,45 @@
             return (input?.value || row.dataset.telephone || '').trim();
         }
 
+        function nomFromRelanceRow(row) {
+            if (!row) return '';
+            const input = row.querySelector('input[data-field="nom_complet"]');
+            return (input?.value || '').trim();
+        }
+
+        function focusRelanceFromWhatsapp(relanceId) {
+            if (!relanceId) return;
+            if (typeof showPanel === 'function') showPanel('fiche-relance');
+            const statueFilter = document.getElementById('filter_relance_statue');
+            if (statueFilter) {
+                statueFilter.value = '';
+                if (typeof filterRelancesTable === 'function') filterRelancesTable();
+            }
+            const row = document.querySelector(`#relancesTableBody tr[data-id="${CSS.escape(relanceId)}"]`);
+            if (row) {
+                row.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                row.style.outline = '2px solid rgba(37, 211, 102, 0.75)';
+                setTimeout(() => { row.style.outline = ''; }, 1800);
+            }
+        }
+
+        refreshWhatsappNavBadge();
+        refreshWhatsappNavList();
+
         btnWhatsappNav?.addEventListener('click', (e) => {
             e.stopPropagation();
             const open = !whatsappNavPanel?.classList.contains('open');
             setWhatsappNavOpen(open);
             document.getElementById('relanceNotifPanel')?.classList.remove('open');
             document.getElementById('btnRelanceNotif')?.classList.remove('is-open');
+        });
+
+        whatsappNavList?.addEventListener('click', (e) => {
+            const itemBtn = e.target.closest('.wa-msg-item[data-id]');
+            if (!itemBtn) return;
+            const relanceId = itemBtn.dataset.relanceId || '';
+            setWhatsappNavOpen(false);
+            focusRelanceFromWhatsapp(relanceId);
         });
 
         document.getElementById('btnWhatsappQuickMsg')?.addEventListener('click', () => {
@@ -7801,18 +8059,22 @@
                     alert('Aucun numéro de téléphone sur cette ligne.');
                     return;
                 }
+                const meta = {
+                    relanceId: row?.dataset.id || '',
+                    nomComplet: nomFromRelanceRow(row),
+                };
                 if (waBtn.dataset.waAction === 'call') {
                     if (whatsappConfig.appels_actifs === false) {
                         alert('Les appels WhatsApp sont désactivés.');
                         return;
                     }
-                    openWhatsappNow(phone, '');
+                    openWhatsappNow(phone, '', { ...meta, log: false });
                 } else {
                     if (whatsappConfig.messages_actifs === false) {
                         alert('Les messages WhatsApp sont désactivés.');
                         return;
                     }
-                    openWhatsappNow(phone, whatsappConfig.message_defaut || '');
+                    openWhatsappNow(phone, whatsappConfig.message_defaut || '', meta);
                 }
                 return;
             }

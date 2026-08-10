@@ -211,6 +211,11 @@ Route::get('/dashboard', function () use ($requireAuth) {
         'evolutions' => AppStore::get('evolutions'),
         'relances' => $relances,
         'autorisations' => AppStore::get('autorisations'),
+        'whatsappMessages' => collect(AppStore::get('whatsapp_messages'))
+            ->sortByDesc(fn ($m) => (string) ($m['sent_at_iso'] ?? $m['sent_at'] ?? ''))
+            ->values()
+            ->take(80)
+            ->all(),
         'whatsappConfig' => (static function () {
             $cfg = WhatsApp::config();
             $cfg['has_token'] = trim((string) ($cfg['access_token'] ?? '')) !== '';
@@ -1456,5 +1461,90 @@ Route::post('/whatsapp/call', function (Request $request) {
         'url' => $url,
     ]);
 })->name('whatsapp.call');
+
+Route::post('/whatsapp/messages/log', function (Request $request) {
+    $data = $request->validate([
+        'telephone' => ['required', 'string', 'max:40'],
+        'message' => ['nullable', 'string', 'max:1000'],
+        'relance_id' => ['nullable', 'string', 'max:80'],
+        'nom_complet' => ['nullable', 'string', 'max:255'],
+    ]);
+
+    $phone = trim($data['telephone']);
+    $digits = preg_replace('/\D+/', '', $phone) ?? '';
+    if ($digits === '') {
+        return response()->json(['ok' => false, 'message' => 'Numéro invalide.'], 422);
+    }
+
+    $nom = trim((string) ($data['nom_complet'] ?? ''));
+    $relanceId = trim((string) ($data['relance_id'] ?? ''));
+    if ($relanceId !== '') {
+        $relance = collect(AppStore::get('relances'))->firstWhere('id', $relanceId);
+        if ($relance) {
+            if ($nom === '') {
+                $nom = (string) ($relance['nom_complet'] ?? '');
+            }
+            $relancePhone = trim((string) ($relance['telephone'] ?? ''));
+            if ($relancePhone !== '') {
+                $phone = $relancePhone;
+                $digits = preg_replace('/\D+/', '', $phone) ?? $digits;
+            }
+        }
+    }
+
+    $messages = AppStore::get('whatsapp_messages');
+    $now = now();
+    $row = [
+        'id' => uniqid('wam_', true),
+        'relance_id' => $relanceId !== '' ? $relanceId : null,
+        'telephone' => $phone,
+        'telephone_digits' => $digits,
+        'nom_complet' => $nom,
+        'message' => trim((string) ($data['message'] ?? '')),
+        'sent_at' => $now->format('d/m/Y H:i'),
+        'sent_at_iso' => $now->toIso8601String(),
+        'unread' => true,
+        'type' => 'out',
+    ];
+    array_unshift($messages, $row);
+    $messages = array_slice(array_values($messages), 0, 200);
+    AppStore::put('whatsapp_messages', $messages);
+
+    $unread = collect($messages)->where('unread', true)->count();
+
+    return response()->json([
+        'ok' => true,
+        'item' => $row,
+        'unread' => $unread,
+        'messages' => array_slice($messages, 0, 80),
+    ]);
+})->name('whatsapp.messages.log');
+
+Route::post('/whatsapp/messages/read', function (Request $request) {
+    $data = $request->validate([
+        'id' => ['nullable', 'string', 'max:80'],
+        'all' => ['nullable', 'boolean'],
+    ]);
+
+    $messages = AppStore::get('whatsapp_messages');
+    $markAll = (bool) ($data['all'] ?? false);
+    $id = (string) ($data['id'] ?? '');
+
+    foreach ($messages as &$msg) {
+        if ($markAll || ($id !== '' && (string) ($msg['id'] ?? '') === $id)) {
+            $msg['unread'] = false;
+        }
+    }
+    unset($msg);
+
+    AppStore::put('whatsapp_messages', array_values($messages));
+    $unread = collect($messages)->where('unread', true)->count();
+
+    return response()->json([
+        'ok' => true,
+        'unread' => $unread,
+        'messages' => array_slice($messages, 0, 80),
+    ]);
+})->name('whatsapp.messages.read');
 
 });
