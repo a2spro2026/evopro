@@ -719,15 +719,13 @@
             gap: 0.25rem;
         }
 
-        #panel-dashboard .balance-section-body .table-wrap.table-freeze-body,
-        #panel-fiche-relance .table-wrap.table-freeze-body {
+        #panel-dashboard .balance-section-body .table-wrap.table-freeze-body {
             max-height: calc(100vh - 17.5rem);
             overflow: auto;
             -webkit-overflow-scrolling: touch;
         }
 
-        #panel-dashboard .balance-section-body .table-wrap,
-        #panel-fiche-relance .table-wrap {
+        #panel-dashboard .balance-section-body .table-wrap {
             overflow: auto;
         }
 
@@ -782,20 +780,37 @@
             max-height: calc(100vh - 17.5rem);
         }
 
-        #panel-fiche-relance {
+        #panel-fiche-relance.active {
             display: flex;
             flex-direction: column;
-            min-height: calc(100vh - 6rem);
+            height: calc(100vh - 5.6rem);
+            max-height: calc(100vh - 5.6rem);
+            min-height: 0;
+            overflow: hidden;
+            animation: fadeInPanel 0.35s ease both;
         }
 
         #panel-fiche-relance .panel-freeze {
+            position: relative;
+            top: auto;
             flex: 0 0 auto;
+            z-index: 8;
+            margin: 0 0 0.65rem;
+            padding: 0.15rem 0 0.65rem;
         }
 
         #panel-fiche-relance .table-wrap.table-freeze-body {
             flex: 1 1 auto;
             min-height: 0;
-            max-height: calc(100vh - 14rem);
+            max-height: none;
+            overflow: auto;
+            -webkit-overflow-scrolling: touch;
+        }
+
+        #panel-fiche-relance .table-wrap.table-freeze-body .data-table thead th {
+            position: sticky;
+            top: 0;
+            z-index: 6;
         }
 
         .data-table th,
@@ -2399,11 +2414,6 @@
             overflow: auto;
         }
 
-        #panel-fiche-relance .table-wrap.table-freeze-body {
-            max-height: calc(100vh - 14rem);
-            overflow: auto;
-        }
-
         .paiement-sticky-lock {
             position: sticky;
             top: 3.85rem;
@@ -3079,9 +3089,13 @@
                 max-height: calc(100vh - 16rem);
             }
 
-            #panel-dashboard .balance-section-body .table-wrap.table-freeze-body,
+            #panel-fiche-relance.active {
+                height: calc(100vh - 5.2rem);
+                max-height: calc(100vh - 5.2rem);
+            }
+
             #panel-fiche-relance .table-wrap.table-freeze-body {
-                max-height: calc(100vh - 18rem);
+                max-height: none;
                 overflow: auto;
             }
 
