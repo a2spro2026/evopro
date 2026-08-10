@@ -1461,6 +1461,101 @@
             justify-content: center;
         }
 
+        .wa-choice-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 0.75rem;
+            padding: 0.25rem 0 0.35rem;
+        }
+
+        .wa-choice-btn {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 0.35rem;
+            padding: 1rem 0.95rem;
+            border-radius: 14px;
+            border: 1px solid rgba(37, 211, 102, 0.28);
+            background: rgba(37, 211, 102, 0.08);
+            color: var(--text);
+            font-family: inherit;
+            text-align: left;
+            cursor: pointer;
+            transition: background 0.15s ease, border-color 0.15s ease, transform 0.15s ease;
+        }
+
+        .wa-choice-btn:hover {
+            background: rgba(37, 211, 102, 0.16);
+            border-color: rgba(37, 211, 102, 0.5);
+            transform: translateY(-1px);
+        }
+
+        .wa-choice-btn strong {
+            font-size: 0.95rem;
+            font-weight: 650;
+            text-transform: none;
+        }
+
+        .wa-choice-btn span {
+            font-size: 0.74rem;
+            color: var(--muted);
+            text-transform: none;
+            line-height: 1.35;
+        }
+
+        .wa-choice-btn.is-devis {
+            border-color: rgba(59, 158, 255, 0.3);
+            background: rgba(59, 158, 255, 0.08);
+        }
+
+        .wa-choice-btn.is-devis:hover {
+            background: rgba(59, 158, 255, 0.16);
+            border-color: rgba(59, 158, 255, 0.5);
+        }
+
+        .devis-nb-box {
+            grid-column: 1 / -1;
+            border-radius: 12px;
+            border: 1px solid rgba(110, 168, 255, 0.22);
+            background: rgba(59, 158, 255, 0.07);
+            padding: 0.85rem 0.95rem;
+            display: grid;
+            gap: 0.45rem;
+        }
+
+        .devis-nb-box strong {
+            font-size: 0.78rem;
+            color: var(--accent-soft);
+            text-transform: none;
+        }
+
+        .devis-nb-box p {
+            margin: 0;
+            font-size: 0.74rem;
+            line-height: 1.45;
+            color: var(--muted);
+            text-transform: none;
+            white-space: pre-line;
+        }
+
+        #whatsappDevisModal .modal {
+            width: min(640px, 100%);
+            max-height: min(92vh, 820px);
+            display: flex;
+            flex-direction: column;
+        }
+
+        #whatsappDevisModal .modal form {
+            display: flex;
+            flex-direction: column;
+            min-height: 0;
+            flex: 1;
+        }
+
+        #whatsappDevisModal .modal-body {
+            overflow: auto;
+        }
+
         .whatsapp-settings-card {
             max-width: 820px;
             border-radius: 16px;
@@ -4085,7 +4180,7 @@
                                                     aria-label="Téléphone"
                                                 >
                                                 <div class="wa-row-actions">
-                                                    <button type="button" class="action-btn wa-msg" title="Message WhatsApp" aria-label="Message WhatsApp" data-wa-action="message">
+                                                    <button type="button" class="action-btn wa-msg" title="WhatsApp : Message ou Devis" aria-label="WhatsApp Message ou Devis" data-wa-action="choose">
                                                         <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12.04 2C6.58 2 2.15 6.43 2.15 11.89c0 1.96.52 3.81 1.43 5.42L2 22l4.85-1.55a9.84 9.84 0 0 0 5.19 1.44h.01c5.46 0 9.89-4.43 9.89-9.89C21.94 6.43 17.5 2 12.04 2zm5.76 14.01c-.24.68-1.4 1.25-1.93 1.33-.5.07-1.13.1-1.82-.11-.42-.13-.96-.31-1.65-.61-2.9-1.26-4.79-4.2-4.94-4.39-.14-.19-1.18-1.57-1.18-3 0-1.42.74-2.12 1-2.41.26-.29.57-.36.76-.36h.55c.18 0 .42-.07.65.5.24.59.81 2.04.88 2.19.07.15.12.32.02.52-.1.2-.15.32-.29.5-.14.17-.3.39-.43.52-.14.14-.29.29-.12.57.16.28.73 1.2 1.56 1.94 1.07.96 1.97 1.26 2.25 1.4.28.14.44.12.61-.07.17-.19.71-.83.9-1.11.19-.28.38-.23.64-.14.26.1 1.66.78 1.95.93.28.14.47.22.54.34.07.12.07.7-.17 1.38z"/></svg>
                                                     </button>
                                                     <button type="button" class="action-btn wa-call" title="Appel WhatsApp" aria-label="Appel WhatsApp" data-wa-action="call">
@@ -5426,6 +5521,87 @@
                 <div class="modal-foot">
                     <button type="button" class="btn-ghost" id="cancelWhatsappMessageModal">Fermer</button>
                     <button type="submit" class="btn-primary" id="whatsappMessageSubmitBtn">Envoyer</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div class="modal-backdrop" id="whatsappChoiceModal" aria-hidden="true">
+        <div class="modal" role="dialog" aria-modal="true" aria-labelledby="whatsappChoiceModalTitle" style="width:min(420px,100%);">
+            <div class="modal-head">
+                <h2 id="whatsappChoiceModalTitle">WhatsApp</h2>
+                <button type="button" class="modal-close" id="closeWhatsappChoiceModal" aria-label="Fermer">×</button>
+            </div>
+            <div class="modal-body" style="grid-template-columns:1fr;">
+                <p class="whatsapp-hint" id="whatsappChoiceHint" style="margin:0;">Choisissez une action pour ce client.</p>
+                <div class="wa-choice-grid">
+                    <button type="button" class="wa-choice-btn" id="btnWaChoiceMessage">
+                        <strong>Message</strong>
+                        <span>Envoyer un message WhatsApp</span>
+                    </button>
+                    <button type="button" class="wa-choice-btn is-devis" id="btnWaChoiceDevis">
+                        <strong>Devis</strong>
+                        <span>Créer un devis PDF à envoyer</span>
+                    </button>
+                </div>
+            </div>
+            <div class="modal-foot">
+                <button type="button" class="btn-ghost" id="cancelWhatsappChoiceModal">Fermer</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal-backdrop" id="whatsappDevisModal" aria-hidden="true">
+        <div class="modal" role="dialog" aria-modal="true" aria-labelledby="whatsappDevisModalTitle">
+            <div class="modal-head">
+                <h2 id="whatsappDevisModalTitle">Devis WhatsApp</h2>
+                <button type="button" class="modal-close" id="closeWhatsappDevisModal" aria-label="Fermer">×</button>
+            </div>
+            <form id="whatsappDevisForm">
+                <div class="modal-body">
+                    <div class="field">
+                        <label for="wa_devis_date">Date</label>
+                        <input type="text" id="wa_devis_date" name="date" readonly>
+                    </div>
+                    <div class="field">
+                        <label for="wa_devis_telephone">Téléphone</label>
+                        <input type="text" id="wa_devis_telephone" name="telephone" readonly>
+                    </div>
+                    <div class="field full">
+                        <label for="wa_devis_nom">Nom Complet</label>
+                        <input type="text" id="wa_devis_nom" name="nom_complet" readonly>
+                    </div>
+                    <div class="field full">
+                        <label for="wa_devis_titre">Titre de projet</label>
+                        <input type="text" id="wa_devis_titre" name="titre" required placeholder="Titre du projet">
+                    </div>
+                    <div class="field full">
+                        <label for="wa_devis_description">Description</label>
+                        <textarea id="wa_devis_description" name="description" rows="3" required placeholder="Description du projet"></textarea>
+                    </div>
+                    <div class="field">
+                        <label for="wa_devis_montant">Montant</label>
+                        <input type="number" id="wa_devis_montant" name="montant" required min="0" step="0.01" placeholder="0.00" inputmode="decimal">
+                    </div>
+                    <div class="field">
+                        <label for="wa_devis_delai">Délai de travail</label>
+                        <input type="text" id="wa_devis_delai" name="delai" required placeholder="Ex: 15 jours">
+                    </div>
+                    <div class="devis-nb-box">
+                        <strong>NB :</strong>
+                        <p id="wa_devis_nb_text">Concernant les modalités de paiement, le montant total du projet sera réparti en 3 tranches :
+
+• 30 % à la commande : acompte pour le lancement du projet et le début des travaux.
+• 40 % à mi-parcours : paiement effectué après validation de l’avancement principal du projet.
+• 30 % à la livraison finale : solde à régler après finalisation, vérification et validation du travail.
+
+Cette organisation permet d’assurer un suivi clair du projet et de garantir un bon déroulement des différentes étapes jusqu’à la livraison finale.
+Merci pour votre confiance.</p>
+                    </div>
+                </div>
+                <div class="modal-foot">
+                    <button type="button" class="btn-ghost" id="cancelWhatsappDevisModal">Fermer</button>
+                    <button type="submit" class="btn-primary" id="whatsappDevisSubmitBtn">Envoyer PDF</button>
                 </div>
             </form>
         </div>
@@ -7967,11 +8143,32 @@
         const whatsappNavCountLabel = document.getElementById('whatsappNavCountLabel');
         const whatsappNavList = document.getElementById('whatsappNavList');
         const whatsappMessageModal = document.getElementById('whatsappMessageModal');
+        const whatsappChoiceModal = document.getElementById('whatsappChoiceModal');
+        const whatsappDevisModal = document.getElementById('whatsappDevisModal');
         const whatsappMessageForm = document.getElementById('whatsappMessageForm');
+        const whatsappDevisForm = document.getElementById('whatsappDevisForm');
         const waMsgTelephone = document.getElementById('wa_msg_telephone');
         const waMsgBody = document.getElementById('wa_msg_body');
         const waMsgHint = document.getElementById('wa_msg_hint');
+        const waDevisDate = document.getElementById('wa_devis_date');
+        const waDevisTelephone = document.getElementById('wa_devis_telephone');
+        const waDevisNom = document.getElementById('wa_devis_nom');
+        const waDevisTitre = document.getElementById('wa_devis_titre');
+        const waDevisDescription = document.getElementById('wa_devis_description');
+        const waDevisMontant = document.getElementById('wa_devis_montant');
+        const waDevisDelai = document.getElementById('wa_devis_delai');
+        const waDevisNbText = document.getElementById('wa_devis_nb_text');
         const waCsrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '';
+        let waActionContext = { telephone: '', nomComplet: '', relanceId: '' };
+
+        const DEVIS_NB_TEXT = `Concernant les modalités de paiement, le montant total du projet sera réparti en 3 tranches :
+
+• 30 % à la commande : acompte pour le lancement du projet et le début des travaux.
+• 40 % à mi-parcours : paiement effectué après validation de l’avancement principal du projet.
+• 30 % à la livraison finale : solde à régler après finalisation, vérification et validation du travail.
+
+Cette organisation permet d’assurer un suivi clair du projet et de garantir un bon déroulement des différentes étapes jusqu’à la livraison finale.
+Merci pour votre confiance.`;
 
         function escapeHtml(value) {
             return String(value ?? '')
@@ -7979,6 +8176,12 @@
                 .replace(/</g, '&lt;')
                 .replace(/>/g, '&gt;')
                 .replace(/"/g, '&quot;');
+        }
+
+        function formatMoneyFr(value) {
+            const n = Number(value);
+            if (!Number.isFinite(n)) return '0,00';
+            return n.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ' ').replace('.', ',');
         }
 
         function whatsappUnreadCount() {
@@ -8141,6 +8344,144 @@
             whatsappMessageModal?.setAttribute('aria-hidden', 'true');
         }
 
+        function openWhatsappChoiceModal(ctx = {}) {
+            waActionContext = {
+                telephone: ctx.telephone || '',
+                nomComplet: ctx.nomComplet || '',
+                relanceId: ctx.relanceId || '',
+            };
+            const hint = document.getElementById('whatsappChoiceHint');
+            if (hint) {
+                const label = [waActionContext.nomComplet, waActionContext.telephone].filter(Boolean).join(' — ');
+                hint.textContent = label
+                    ? `Choisissez une action pour ${label}.`
+                    : 'Choisissez une action pour ce client.';
+            }
+            whatsappChoiceModal?.classList.add('open');
+            whatsappChoiceModal?.setAttribute('aria-hidden', 'false');
+        }
+
+        function closeWhatsappChoiceModal() {
+            whatsappChoiceModal?.classList.remove('open');
+            whatsappChoiceModal?.setAttribute('aria-hidden', 'true');
+        }
+
+        function openWhatsappDevisModal(ctx = {}) {
+            if (waDevisNbText) waDevisNbText.textContent = DEVIS_NB_TEXT;
+            if (waDevisDate) waDevisDate.value = todayFr();
+            if (waDevisTelephone) waDevisTelephone.value = ctx.telephone || waActionContext.telephone || '';
+            if (waDevisNom) waDevisNom.value = ctx.nomComplet || waActionContext.nomComplet || '';
+            if (waDevisTitre) waDevisTitre.value = '';
+            if (waDevisDescription) waDevisDescription.value = '';
+            if (waDevisMontant) waDevisMontant.value = '';
+            if (waDevisDelai) waDevisDelai.value = '';
+            waActionContext = {
+                telephone: waDevisTelephone?.value || '',
+                nomComplet: waDevisNom?.value || '',
+                relanceId: ctx.relanceId || waActionContext.relanceId || '',
+            };
+            closeWhatsappChoiceModal();
+            whatsappDevisModal?.classList.add('open');
+            whatsappDevisModal?.setAttribute('aria-hidden', 'false');
+            setTimeout(() => waDevisTitre?.focus(), 50);
+        }
+
+        function closeWhatsappDevisModal() {
+            whatsappDevisModal?.classList.remove('open');
+            whatsappDevisModal?.setAttribute('aria-hidden', 'true');
+        }
+
+        function buildDevisWhatsappMessage(data) {
+            const montant = formatMoneyFr(data.montant);
+            const t1 = formatMoneyFr(data.montant * 0.3);
+            const t2 = formatMoneyFr(data.montant * 0.4);
+            const t3 = formatMoneyFr(data.montant * 0.3);
+            return `Bonjour ${data.nom || 'Client'},
+
+Voici notre devis EvoPro :
+
+Date : ${data.date}
+Projet : ${data.titre}
+Description : ${data.description}
+Montant : ${montant} DH
+Délai : ${data.delai}
+
+Modalités de paiement :
+• 30% à la commande : ${t1} DH
+• 40% à mi-parcours : ${t2} DH
+• 30% à la livraison : ${t3} DH
+
+Le PDF du devis a été généré — vous pouvez l’enregistrer puis le joindre dans WhatsApp.
+
+Merci pour votre confiance.
+EvoPro`;
+        }
+
+        function openDevisPdf(data) {
+            const montant = Number(data.montant) || 0;
+            const t1 = montant * 0.3;
+            const t2 = montant * 0.4;
+            const t3 = montant * 0.3;
+            const html = `<!DOCTYPE html><html lang="fr"><head><meta charset="utf-8"><title>Devis EvoPro</title>
+                <style>
+                    @page { margin: 18mm; }
+                    body { font-family: Arial, Helvetica, sans-serif; color: #12233d; line-height: 1.45; }
+                    .brand { display:flex; justify-content:space-between; align-items:flex-start; margin-bottom: 18px; border-bottom: 2px solid #1e6fd9; padding-bottom: 12px; }
+                    .brand h1 { margin:0; font-size: 22px; color:#1e6fd9; letter-spacing: .04em; }
+                    .brand small { color:#66788f; font-size:12px; }
+                    .meta { display:grid; grid-template-columns: 1fr 1fr; gap: 8px 18px; margin-bottom: 16px; font-size: 13px; }
+                    .meta strong { display:block; color:#66788f; font-size:11px; text-transform:uppercase; margin-bottom:2px; }
+                    h2 { font-size:15px; margin: 18px 0 8px; color:#0a1628; }
+                    .box { border:1px solid #d5e2f3; border-radius:10px; padding:12px 14px; background:#f7fafe; margin-bottom:12px; white-space:pre-wrap; font-size:13px; }
+                    table { width:100%; border-collapse:collapse; margin-top:8px; font-size:13px; }
+                    th, td { border:1px solid #d5e2f3; padding:8px 10px; text-align:left; }
+                    th { background:#eef4fc; width:42%; }
+                    .nb { margin-top:16px; border-left:3px solid #1e6fd9; padding:10px 12px; background:#f3f8ff; font-size:12.5px; white-space:pre-line; }
+                    .foot { margin-top:22px; font-size:12px; color:#66788f; text-align:center; }
+                </style></head><body>
+                <div class="brand">
+                    <div>
+                        <h1>EVOPRO</h1>
+                        <small>Devis commercial</small>
+                    </div>
+                    <div style="text-align:right;font-size:12px;color:#66788f;">
+                        <div>Date : ${escapeHtml(data.date)}</div>
+                        <div>Tél : ${escapeHtml(data.telephone)}</div>
+                    </div>
+                </div>
+                <div class="meta">
+                    <div><strong>Client</strong>${escapeHtml(data.nom || '—')}</div>
+                    <div><strong>Titre de projet</strong>${escapeHtml(data.titre)}</div>
+                    <div><strong>Montant</strong>${escapeHtml(formatMoneyFr(montant))} DH</div>
+                    <div><strong>Délai de travail</strong>${escapeHtml(data.delai)}</div>
+                </div>
+                <h2>Description</h2>
+                <div class="box">${escapeHtml(data.description)}</div>
+                <h2>Répartition des paiements</h2>
+                <table>
+                    <tr><th>30 % à la commande</th><td>${escapeHtml(formatMoneyFr(t1))} DH</td></tr>
+                    <tr><th>40 % à mi-parcours</th><td>${escapeHtml(formatMoneyFr(t2))} DH</td></tr>
+                    <tr><th>30 % à la livraison finale</th><td>${escapeHtml(formatMoneyFr(t3))} DH</td></tr>
+                    <tr><th>Total</th><td><strong>${escapeHtml(formatMoneyFr(montant))} DH</strong></td></tr>
+                </table>
+                <div class="nb"><strong>NB :</strong>\n${escapeHtml(DEVIS_NB_TEXT)}</div>
+                <div class="foot">Document généré par EvoPro — Merci pour votre confiance.</div>
+                </body></html>`;
+
+            const printWindow = window.open('', '_blank');
+            if (!printWindow) {
+                alert('Autorisez les pop-ups pour générer le PDF.');
+                return false;
+            }
+            printWindow.document.write(html);
+            printWindow.document.close();
+            printWindow.onload = () => {
+                printWindow.focus();
+                printWindow.print();
+            };
+            return true;
+        }
+
         function phoneFromRelanceRow(row) {
             if (!row) return '';
             const input = row.querySelector('input[data-field="telephone"]');
@@ -8209,6 +8550,42 @@
             if (e.target === whatsappMessageModal) closeWhatsappMessageModal();
         });
 
+        document.getElementById('closeWhatsappChoiceModal')?.addEventListener('click', closeWhatsappChoiceModal);
+        document.getElementById('cancelWhatsappChoiceModal')?.addEventListener('click', closeWhatsappChoiceModal);
+        whatsappChoiceModal?.addEventListener('click', (e) => {
+            if (e.target === whatsappChoiceModal) closeWhatsappChoiceModal();
+        });
+
+        document.getElementById('btnWaChoiceMessage')?.addEventListener('click', () => {
+            closeWhatsappChoiceModal();
+            if (whatsappConfig.messages_actifs === false) {
+                alert('Les messages WhatsApp sont désactivés.');
+                return;
+            }
+            openWhatsappNow(
+                waActionContext.telephone,
+                whatsappConfig.message_defaut || '',
+                {
+                    relanceId: waActionContext.relanceId,
+                    nomComplet: waActionContext.nomComplet,
+                }
+            );
+        });
+
+        document.getElementById('btnWaChoiceDevis')?.addEventListener('click', () => {
+            if (whatsappConfig.messages_actifs === false) {
+                alert('Les messages WhatsApp sont désactivés.');
+                return;
+            }
+            openWhatsappDevisModal(waActionContext);
+        });
+
+        document.getElementById('closeWhatsappDevisModal')?.addEventListener('click', closeWhatsappDevisModal);
+        document.getElementById('cancelWhatsappDevisModal')?.addEventListener('click', closeWhatsappDevisModal);
+        whatsappDevisModal?.addEventListener('click', (e) => {
+            if (e.target === whatsappDevisModal) closeWhatsappDevisModal();
+        });
+
         whatsappMessageForm?.addEventListener('submit', (e) => {
             e.preventDefault();
             const telephone = (waMsgTelephone?.value || '').trim();
@@ -8218,6 +8595,37 @@
                 return;
             }
             if (openWhatsappNow(telephone, message)) closeWhatsappMessageModal();
+        });
+
+        whatsappDevisForm?.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const data = {
+                date: (waDevisDate?.value || todayFr()).trim(),
+                telephone: (waDevisTelephone?.value || waActionContext.telephone || '').trim(),
+                nom: (waDevisNom?.value || waActionContext.nomComplet || '').trim(),
+                titre: (waDevisTitre?.value || '').trim(),
+                description: (waDevisDescription?.value || '').trim(),
+                montant: Number(waDevisMontant?.value || 0),
+                delai: (waDevisDelai?.value || '').trim(),
+            };
+            if (!data.telephone) {
+                alert('Numéro de téléphone manquant.');
+                return;
+            }
+            if (!data.titre || !data.description || !data.delai || !(data.montant > 0)) {
+                alert('Renseignez le titre, la description, le montant et le délai.');
+                return;
+            }
+            const pdfOk = openDevisPdf(data);
+            if (!pdfOk) return;
+            const message = buildDevisWhatsappMessage(data);
+            setTimeout(() => {
+                openWhatsappNow(data.telephone, message, {
+                    relanceId: waActionContext.relanceId,
+                    nomComplet: data.nom,
+                });
+                closeWhatsappDevisModal();
+            }, 350);
         });
 
         document.addEventListener('click', (e) => {
@@ -8235,6 +8643,7 @@
                 const meta = {
                     relanceId: row?.dataset.id || '',
                     nomComplet: nomFromRelanceRow(row),
+                    telephone: phone,
                 };
                 if (waBtn.dataset.waAction === 'call') {
                     if (whatsappConfig.appels_actifs === false) {
@@ -8242,12 +8651,12 @@
                         return;
                     }
                     openWhatsappNow(phone, '', { ...meta, log: false });
-                } else {
+                } else if (waBtn.dataset.waAction === 'choose' || waBtn.dataset.waAction === 'message') {
                     if (whatsappConfig.messages_actifs === false) {
                         alert('Les messages WhatsApp sont désactivés.');
                         return;
                     }
-                    openWhatsappNow(phone, whatsappConfig.message_defaut || '', meta);
+                    openWhatsappChoiceModal(meta);
                 }
                 return;
             }
