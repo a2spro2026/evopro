@@ -1183,6 +1183,188 @@
         .action-btn.modifier:hover { color: #ffc857; border-color: rgba(240, 180, 41, 0.35); background: rgba(240, 180, 41, 0.12); }
         .action-btn.supprimer:hover { color: #ff9aa0; border-color: rgba(240, 113, 120, 0.35); background: rgba(240, 113, 120, 0.12); }
         .action-btn.pdf:hover { color: #ff8f7a; border-color: rgba(255, 120, 90, 0.35); background: rgba(255, 120, 90, 0.12); }
+        .action-btn.wa-msg:hover { color: #6fe3a1; border-color: rgba(37, 211, 102, 0.4); background: rgba(37, 211, 102, 0.14); }
+        .action-btn.wa-call:hover { color: #7ec4ff; border-color: rgba(59, 158, 255, 0.4); background: rgba(59, 158, 255, 0.14); }
+
+        .tel-wa-cell {
+            display: flex;
+            align-items: center;
+            gap: 0.35rem;
+            min-width: 0;
+        }
+
+        .tel-wa-cell .relance-inline-input {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .wa-row-actions {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.2rem;
+            flex-shrink: 0;
+        }
+
+        .btn-notif-wa {
+            width: 40px;
+            height: 40px;
+            border-radius: 12px;
+            border: 1px solid rgba(37, 211, 102, 0.35);
+            background: rgba(37, 211, 102, 0.12);
+            color: #6fe3a1;
+            display: inline-grid;
+            place-items: center;
+            cursor: pointer;
+            position: relative;
+            transition: background 0.15s ease, border-color 0.15s ease, color 0.15s ease;
+        }
+
+        .btn-notif-wa:hover,
+        .btn-notif-wa.is-open {
+            background: rgba(37, 211, 102, 0.22);
+            border-color: rgba(37, 211, 102, 0.55);
+            color: #9ff0c0;
+        }
+
+        .btn-notif-wa svg { width: 18px; height: 18px; }
+
+        .btn-notif-wa .wa-dot {
+            position: absolute;
+            top: 6px;
+            right: 6px;
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: #25d366;
+            box-shadow: 0 0 0 2px rgba(8, 18, 32, 0.9);
+        }
+
+        .btn-notif-wa .wa-dot.is-off {
+            background: #6b7c90;
+        }
+
+        .wa-panel {
+            position: absolute;
+            top: calc(100% + 0.55rem);
+            right: 0;
+            width: min(320px, calc(100vw - 1.5rem));
+            border-radius: 14px;
+            border: 1px solid rgba(37, 211, 102, 0.28);
+            background: linear-gradient(165deg, #122038, #0b1728);
+            box-shadow: 0 18px 40px rgba(0, 0, 0, 0.45);
+            display: none;
+            z-index: 70;
+            overflow: hidden;
+        }
+
+        .wa-panel.open { display: block; }
+
+        .wa-panel-head {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 0.75rem;
+            padding: 0.85rem 1rem;
+            border-bottom: 1px solid rgba(126, 196, 255, 0.12);
+        }
+
+        .wa-panel-head h3 {
+            margin: 0;
+            font-size: 0.95rem;
+            color: var(--text);
+        }
+
+        .wa-panel-head span {
+            font-size: 0.75rem;
+            color: var(--muted);
+        }
+
+        .wa-panel-body {
+            padding: 0.85rem 1rem 1rem;
+            display: grid;
+            gap: 0.65rem;
+        }
+
+        .wa-panel-status {
+            font-size: 0.8rem;
+            color: var(--muted);
+            line-height: 1.4;
+        }
+
+        .wa-panel-actions {
+            display: grid;
+            gap: 0.45rem;
+        }
+
+        .wa-panel-actions .btn-primary,
+        .wa-panel-actions .btn-ghost {
+            width: 100%;
+            justify-content: center;
+        }
+
+        .whatsapp-settings-card {
+            max-width: 820px;
+            border-radius: 16px;
+            border: 1px solid rgba(126, 196, 255, 0.18);
+            background: linear-gradient(165deg, rgba(18, 32, 56, 0.92), rgba(11, 23, 40, 0.95));
+            padding: 1.15rem 1.2rem 1.25rem;
+        }
+
+        .whatsapp-settings-grid {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 0.9rem 1rem;
+        }
+
+        .whatsapp-settings-grid .field.full { grid-column: 1 / -1; }
+
+        .whatsapp-hint {
+            margin: 0 0 1rem;
+            font-size: 0.84rem;
+            color: var(--muted);
+            line-height: 1.45;
+        }
+
+        .whatsapp-switch-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.75rem 1.25rem;
+            align-items: center;
+        }
+
+        .whatsapp-switch-row label {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.45rem;
+            font-size: 0.86rem;
+            color: var(--text);
+            cursor: pointer;
+        }
+
+        .whatsapp-settings-actions {
+            margin-top: 1.1rem;
+            display: flex;
+            justify-content: flex-end;
+            gap: 0.55rem;
+        }
+
+        html[data-theme="light"] .btn-notif-wa {
+            background: rgba(37, 211, 102, 0.1);
+            border-color: rgba(37, 211, 102, 0.35);
+            color: #128c4a;
+        }
+
+        html[data-theme="light"] .wa-panel,
+        html[data-theme="light"] .whatsapp-settings-card {
+            background: #fff;
+            border-color: rgba(18, 140, 74, 0.2);
+            box-shadow: 0 12px 28px rgba(15, 35, 55, 0.1);
+        }
+
+        @media (max-width: 760px) {
+            .whatsapp-settings-grid { grid-template-columns: 1fr; }
+            .tel-wa-cell { flex-wrap: wrap; }
+        }
 
         .modal-backdrop {
             position: fixed;
@@ -3024,7 +3206,7 @@
                     </span>
                     Rapports
                 </a>
-                <div class="nav-group{{ ($can('fiche-utilisateur') || $can('fiche-autorisation')) ? '' : ' nav-hidden' }}" id="configGroup">
+                <div class="nav-group{{ ($can('fiche-utilisateur') || $can('fiche-autorisation') || $can('fiche-whatsapp')) ? '' : ' nav-hidden' }}" id="configGroup">
                     <button type="button" class="nav-item nav-parent" id="configToggle">
                         <span class="nav-left">
                             <span class="nav-icon config" aria-hidden="true">
@@ -3046,6 +3228,12 @@
                                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
                             </span>
                             Autorisation
+                        </a>
+                        <a href="#fiche-whatsapp" class="submenu-link{{ $can('fiche-whatsapp') ? '' : ' nav-hidden' }}" data-panel="fiche-whatsapp" data-auth="fiche-whatsapp">
+                            <span class="submenu-icon" aria-hidden="true">
+                                <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12.04 2C6.58 2 2.15 6.43 2.15 11.89c0 1.96.52 3.81 1.43 5.42L2 22l4.85-1.55a9.84 9.84 0 0 0 5.19 1.44h.01c5.46 0 9.89-4.43 9.89-9.89C21.94 6.43 17.5 2 12.04 2zm5.76 14.01c-.24.68-1.4 1.25-1.93 1.33-.5.07-1.13.1-1.82-.11-.42-.13-.96-.31-1.65-.61-2.9-1.26-4.79-4.2-4.94-4.39-.14-.19-1.18-1.57-1.18-3 0-1.42.74-2.12 1-2.41.26-.29.57-.36.76-.36h.55c.18 0 .42-.07.65.5.24.59.81 2.04.88 2.19.07.15.12.32.02.52-.1.2-.15.32-.29.5-.14.17-.3.39-.43.52-.14.14-.29.29-.12.57.16.28.73 1.2 1.56 1.94 1.07.96 1.97 1.26 2.25 1.4.28.14.44.12.61-.07.17-.19.71-.83.9-1.11.19-.28.38-.23.64-.14.26.1 1.66.78 1.95.93.28.14.47.22.54.34.07.12.07.7-.17 1.38z"/></svg>
+                            </span>
+                            WhatsApp
                         </a>
                     </div>
                 </div>
@@ -3086,6 +3274,32 @@
                 </div>
 
                 <div class="nav-right">
+                    <div class="notif-wrap" id="whatsappNotifWrap">
+                        <button type="button" class="btn-notif-wa" id="btnWhatsappNav" aria-label="WhatsApp" aria-expanded="false" aria-controls="whatsappNavPanel">
+                            <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12.04 2C6.58 2 2.15 6.43 2.15 11.89c0 1.96.52 3.81 1.43 5.42L2 22l4.85-1.55a9.84 9.84 0 0 0 5.19 1.44h.01c5.46 0 9.89-4.43 9.89-9.89C21.94 6.43 17.5 2 12.04 2zm5.76 14.01c-.24.68-1.4 1.25-1.93 1.33-.5.07-1.13.1-1.82-.11-.42-.13-.96-.31-1.65-.61-2.9-1.26-4.79-4.2-4.94-4.39-.14-.19-1.18-1.57-1.18-3 0-1.42.74-2.12 1-2.41.26-.29.57-.36.76-.36h.55c.18 0 .42-.07.65.5.24.59.81 2.04.88 2.19.07.15.12.32.02.52-.1.2-.15.32-.29.5-.14.17-.3.39-.43.52-.14.14-.29.29-.12.57.16.28.73 1.2 1.56 1.94 1.07.96 1.97 1.26 2.25 1.4.28.14.44.12.61-.07.17-.19.71-.83.9-1.11.19-.28.38-.23.64-.14.26.1 1.66.78 1.95.93.28.14.47.22.54.34.07.12.07.7-.17 1.38z"/></svg>
+                            <span class="wa-dot{{ !empty($whatsappConfig['actif']) ? '' : ' is-off' }}" id="whatsappNavDot" title="{{ !empty($whatsappConfig['actif']) ? 'Actif' : 'Inactif' }}"></span>
+                        </button>
+                        <div class="wa-panel" id="whatsappNavPanel" role="dialog" aria-label="WhatsApp" aria-hidden="true">
+                            <div class="wa-panel-head">
+                                <h3>WhatsApp</h3>
+                                <span id="whatsappNavStatusLabel">{{ !empty($whatsappConfig['actif']) ? 'Actif' : 'Inactif' }}</span>
+                            </div>
+                            <div class="wa-panel-body">
+                                <p class="wa-panel-status" id="whatsappNavStatusText">
+                                    Mode {{ ($whatsappConfig['mode'] ?? 'lien') === 'api' ? 'API Meta' : 'lien WhatsApp' }} —
+                                    messages {{ !empty($whatsappConfig['messages_actifs']) ? 'ON' : 'OFF' }},
+                                    appels {{ !empty($whatsappConfig['appels_actifs']) ? 'ON' : 'OFF' }}.
+                                </p>
+                                <div class="wa-panel-actions">
+                                    <button type="button" class="btn-primary" id="btnWhatsappQuickMsg">Nouveau message</button>
+                                    <button type="button" class="btn-ghost" id="btnWhatsappOpenWeb">Ouvrir WhatsApp Web</button>
+                                    @if ($can('fiche-whatsapp'))
+                                        <button type="button" class="btn-ghost" id="btnWhatsappOpenConfig">Configuration</button>
+                                    @endif
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                     <div class="notif-wrap" id="relanceNotifWrap">
                         <button type="button" class="btn-notif-cal" id="btnRelanceNotif" aria-label="Notifications de relance" aria-expanded="false" aria-controls="relanceNotifPanel">
                             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
@@ -3298,14 +3512,24 @@
                                             <td>{{ $relance['date'] ?? '' }}</td>
                                             <td>{{ $relance['ref'] ?? '' }}</td>
                                             <td>
-                                                <input
-                                                    type="text"
-                                                    class="relance-inline-input"
-                                                    data-field="telephone"
-                                                    data-id="{{ $relance['id'] ?? '' }}"
-                                                    value="{{ $relance['telephone'] ?? '' }}"
-                                                    aria-label="Téléphone"
-                                                >
+                                                <div class="tel-wa-cell">
+                                                    <input
+                                                        type="text"
+                                                        class="relance-inline-input"
+                                                        data-field="telephone"
+                                                        data-id="{{ $relance['id'] ?? '' }}"
+                                                        value="{{ $relance['telephone'] ?? '' }}"
+                                                        aria-label="Téléphone"
+                                                    >
+                                                    <div class="wa-row-actions">
+                                                        <button type="button" class="action-btn wa-msg" title="Message WhatsApp" aria-label="Message WhatsApp" data-wa-action="message">
+                                                            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12.04 2C6.58 2 2.15 6.43 2.15 11.89c0 1.96.52 3.81 1.43 5.42L2 22l4.85-1.55a9.84 9.84 0 0 0 5.19 1.44h.01c5.46 0 9.89-4.43 9.89-9.89C21.94 6.43 17.5 2 12.04 2zm5.76 14.01c-.24.68-1.4 1.25-1.93 1.33-.5.07-1.13.1-1.82-.11-.42-.13-.96-.31-1.65-.61-2.9-1.26-4.79-4.2-4.94-4.39-.14-.19-1.18-1.57-1.18-3 0-1.42.74-2.12 1-2.41.26-.29.57-.36.76-.36h.55c.18 0 .42-.07.65.5.24.59.81 2.04.88 2.19.07.15.12.32.02.52-.1.2-.15.32-.29.5-.14.17-.3.39-.43.52-.14.14-.29.29-.12.57.16.28.73 1.2 1.56 1.94 1.07.96 1.97 1.26 2.25 1.4.28.14.44.12.61-.07.17-.19.71-.83.9-1.11.19-.28.38-.23.64-.14.26.1 1.66.78 1.95.93.28.14.47.22.54.34.07.12.07.7-.17 1.38z"/></svg>
+                                                        </button>
+                                                        <button type="button" class="action-btn wa-call" title="Appel WhatsApp" aria-label="Appel WhatsApp" data-wa-action="call">
+                                                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.8 19.8 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.8 19.8 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.13.81.36 1.6.68 2.34a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.74.32 1.53.55 2.34.68A2 2 0 0 1 22 16.92z"/></svg>
+                                                        </button>
+                                                    </div>
+                                                </div>
                                             </td>
                                             <td>
                                                 <input
@@ -3640,14 +3864,24 @@
                                         <td>{{ $relance['date'] ?? '' }}</td>
                                         <td>{{ $relance['ref'] ?? '' }}</td>
                                         <td>
-                                            <input
-                                                type="text"
-                                                class="relance-inline-input"
-                                                data-field="telephone"
-                                                data-id="{{ $relance['id'] }}"
-                                                value="{{ $relance['telephone'] ?? '' }}"
-                                                aria-label="Téléphone"
-                                            >
+                                            <div class="tel-wa-cell">
+                                                <input
+                                                    type="text"
+                                                    class="relance-inline-input"
+                                                    data-field="telephone"
+                                                    data-id="{{ $relance['id'] }}"
+                                                    value="{{ $relance['telephone'] ?? '' }}"
+                                                    aria-label="Téléphone"
+                                                >
+                                                <div class="wa-row-actions">
+                                                    <button type="button" class="action-btn wa-msg" title="Message WhatsApp" aria-label="Message WhatsApp" data-wa-action="message">
+                                                        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12.04 2C6.58 2 2.15 6.43 2.15 11.89c0 1.96.52 3.81 1.43 5.42L2 22l4.85-1.55a9.84 9.84 0 0 0 5.19 1.44h.01c5.46 0 9.89-4.43 9.89-9.89C21.94 6.43 17.5 2 12.04 2zm5.76 14.01c-.24.68-1.4 1.25-1.93 1.33-.5.07-1.13.1-1.82-.11-.42-.13-.96-.31-1.65-.61-2.9-1.26-4.79-4.2-4.94-4.39-.14-.19-1.18-1.57-1.18-3 0-1.42.74-2.12 1-2.41.26-.29.57-.36.76-.36h.55c.18 0 .42-.07.65.5.24.59.81 2.04.88 2.19.07.15.12.32.02.52-.1.2-.15.32-.29.5-.14.17-.3.39-.43.52-.14.14-.29.29-.12.57.16.28.73 1.2 1.56 1.94 1.07.96 1.97 1.26 2.25 1.4.28.14.44.12.61-.07.17-.19.71-.83.9-1.11.19-.28.38-.23.64-.14.26.1 1.66.78 1.95.93.28.14.47.22.54.34.07.12.07.7-.17 1.38z"/></svg>
+                                                    </button>
+                                                    <button type="button" class="action-btn wa-call" title="Appel WhatsApp" aria-label="Appel WhatsApp" data-wa-action="call">
+                                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.8 19.8 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.8 19.8 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.13.81.36 1.6.68 2.34a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.74.32 1.53.55 2.34.68A2 2 0 0 1 22 16.92z"/></svg>
+                                                    </button>
+                                                </div>
+                                            </div>
                                         </td>
                                         <td>
                                             <input
@@ -4435,6 +4669,74 @@
                         </table>
                     </div>
                 </section>
+
+                <section class="panel" id="panel-fiche-whatsapp">
+                    @php $wa = $whatsappConfig ?? []; @endphp
+                    <div class="panel-freeze">
+                        <div class="section-toolbar">
+                            <div class="content-head" style="margin-bottom:0;">
+                                <h1>WhatsApp</h1>
+                            </div>
+                            <div class="toolbar-actions">
+                                <button type="button" class="btn-ghost" id="btnCloseWhatsapp">Fermer</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="whatsapp-settings-card">
+                        <p class="whatsapp-hint">
+                            Configurez l’intégration WhatsApp pour envoyer des messages et ouvrir des appels directement depuis Relances.
+                            Mode <strong>Lien</strong> : ouvre WhatsApp Web/App. Mode <strong>API Meta</strong> : envoi via Cloud API (jeton + Phone Number ID).
+                        </p>
+                        @if (session('whatsapp_saved'))
+                            <p class="whatsapp-hint" style="color:#6fe3a1;">Configuration enregistrée.</p>
+                        @endif
+                        <form method="post" action="{{ route('whatsapp.settings.update') }}" id="whatsappSettingsForm">
+                            @csrf
+                            @method('PUT')
+                            <div class="whatsapp-settings-grid">
+                                <div class="field full">
+                                    <label>Activation</label>
+                                    <div class="whatsapp-switch-row">
+                                        <label><input type="checkbox" name="actif" value="1" {{ !empty($wa['actif']) ? 'checked' : '' }}> WhatsApp actif</label>
+                                        <label><input type="checkbox" name="messages_actifs" value="1" {{ !empty($wa['messages_actifs']) ? 'checked' : '' }}> Messages</label>
+                                        <label><input type="checkbox" name="appels_actifs" value="1" {{ !empty($wa['appels_actifs']) ? 'checked' : '' }}> Appels</label>
+                                    </div>
+                                </div>
+                                <div class="field">
+                                    <label for="wa_mode">Mode d’envoi</label>
+                                    <select id="wa_mode" name="mode" required>
+                                        <option value="lien" {{ ($wa['mode'] ?? 'lien') === 'lien' ? 'selected' : '' }}>Lien WhatsApp (wa.me)</option>
+                                        <option value="api" {{ ($wa['mode'] ?? '') === 'api' ? 'selected' : '' }}>API Meta Cloud</option>
+                                    </select>
+                                </div>
+                                <div class="field">
+                                    <label for="wa_indicatif">Indicatif pays</label>
+                                    <input type="text" id="wa_indicatif" name="indicatif" value="{{ $wa['indicatif'] ?? '212' }}" placeholder="212" inputmode="numeric" required>
+                                </div>
+                                <div class="field">
+                                    <label for="wa_numero_business">N° WhatsApp Business</label>
+                                    <input type="text" id="wa_numero_business" name="numero_business" value="{{ $wa['numero_business'] ?? '' }}" placeholder="Ex: 2126xxxxxxxx" inputmode="tel">
+                                </div>
+                                <div class="field">
+                                    <label for="wa_phone_number_id">Phone Number ID (Meta)</label>
+                                    <input type="text" id="wa_phone_number_id" name="phone_number_id" value="{{ $wa['phone_number_id'] ?? '' }}" placeholder="Pour mode API">
+                                </div>
+                                <div class="field full">
+                                    <label for="wa_access_token">Jeton d’accès Meta</label>
+                                    <input type="password" id="wa_access_token" name="access_token" value="{{ !empty($wa['access_token']) ? '********' : '' }}" placeholder="{{ !empty($wa['access_token']) ? 'Laisser ******** pour conserver' : 'Permanent / temporaire' }}" autocomplete="new-password">
+                                </div>
+                                <div class="field full">
+                                    <label for="wa_message_defaut">Message par défaut</label>
+                                    <textarea id="wa_message_defaut" name="message_defaut" rows="3" placeholder="Message prérempli">{{ $wa['message_defaut'] ?? '' }}</textarea>
+                                </div>
+                            </div>
+                            <div class="whatsapp-settings-actions">
+                                <button type="submit" class="btn-primary">Enregistrer</button>
+                            </div>
+                        </form>
+                    </div>
+                </section>
             </main>
         </div>
     </div>
@@ -4902,6 +5204,32 @@
         </div>
     </div>
 
+    <div class="modal-backdrop" id="whatsappMessageModal" aria-hidden="true">
+        <div class="modal" role="dialog" aria-modal="true" aria-labelledby="whatsappMessageModalTitle">
+            <div class="modal-head">
+                <h2 id="whatsappMessageModalTitle">Message WhatsApp</h2>
+                <button type="button" class="modal-close" id="closeWhatsappMessageModal" aria-label="Fermer">×</button>
+            </div>
+            <form id="whatsappMessageForm">
+                <div class="modal-body">
+                    <div class="field full">
+                        <label for="wa_msg_telephone">Téléphone</label>
+                        <input type="text" id="wa_msg_telephone" name="telephone" required placeholder="Téléphone" inputmode="tel">
+                    </div>
+                    <div class="field full">
+                        <label for="wa_msg_body">Message</label>
+                        <textarea id="wa_msg_body" name="message" rows="4" placeholder="Votre message"></textarea>
+                    </div>
+                    <p class="whatsapp-hint" id="wa_msg_hint" style="margin:0;"></p>
+                </div>
+                <div class="modal-foot">
+                    <button type="button" class="btn-ghost" id="cancelWhatsappMessageModal">Fermer</button>
+                    <button type="submit" class="btn-primary" id="whatsappMessageSubmitBtn">Envoyer</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
     <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
     <script>
@@ -5047,6 +5375,11 @@
             btn.classList.toggle('is-open', open);
             btn.setAttribute('aria-expanded', open ? 'true' : 'false');
             panel.setAttribute('aria-hidden', open ? 'false' : 'true');
+            if (open) {
+                document.getElementById('whatsappNavPanel')?.classList.remove('open');
+                document.getElementById('btnWhatsappNav')?.classList.remove('is-open');
+                document.getElementById('btnWhatsappNav')?.setAttribute('aria-expanded', 'false');
+            }
         }
 
         (function initRelanceNotif() {
@@ -5253,6 +5586,10 @@
                 configGroup.classList.add('open');
                 configToggle.classList.add('active');
                 document.querySelector('[data-panel="fiche-autorisation"]')?.classList.add('active');
+            } else if (name === 'fiche-whatsapp') {
+                configGroup.classList.add('open');
+                configToggle.classList.add('active');
+                document.querySelector('[data-panel="fiche-whatsapp"]')?.classList.add('active');
             } else if (name === 'dashboard') {
                 document.querySelector(`.nav-item[data-panel="dashboard"]`)?.classList.add('active');
             }
@@ -7272,6 +7609,182 @@
         @if (session('open_fiche_autorisation'))
             showPanel('fiche-autorisation');
         @endif
+
+        @if (session('open_fiche_whatsapp'))
+            showPanel('fiche-whatsapp');
+        @endif
+
+        const whatsappConfig = @json($whatsappConfig ?? []);
+        const whatsappNavWrap = document.getElementById('whatsappNotifWrap');
+        const btnWhatsappNav = document.getElementById('btnWhatsappNav');
+        const whatsappNavPanel = document.getElementById('whatsappNavPanel');
+        const whatsappMessageModal = document.getElementById('whatsappMessageModal');
+        const whatsappMessageForm = document.getElementById('whatsappMessageForm');
+        const waMsgTelephone = document.getElementById('wa_msg_telephone');
+        const waMsgBody = document.getElementById('wa_msg_body');
+        const waMsgHint = document.getElementById('wa_msg_hint');
+
+        function setWhatsappNavOpen(open) {
+            whatsappNavPanel?.classList.toggle('open', open);
+            btnWhatsappNav?.classList.toggle('is-open', open);
+            btnWhatsappNav?.setAttribute('aria-expanded', open ? 'true' : 'false');
+            whatsappNavPanel?.setAttribute('aria-hidden', open ? 'false' : 'true');
+        }
+
+        function openWhatsappMessageModal(phone = '', message = '') {
+            if (waMsgTelephone) waMsgTelephone.value = phone || '';
+            if (waMsgBody) waMsgBody.value = message || (whatsappConfig.message_defaut || '');
+            if (waMsgHint) waMsgHint.textContent = (whatsappConfig.mode === 'api')
+                ? 'Envoi via API Meta Cloud.'
+                : 'Ouverture de WhatsApp avec le message prérempli.';
+            whatsappMessageModal?.classList.add('open');
+            whatsappMessageModal?.setAttribute('aria-hidden', 'false');
+            setWhatsappNavOpen(false);
+            setTimeout(() => (phone ? waMsgBody : waMsgTelephone)?.focus(), 50);
+        }
+
+        function closeWhatsappMessageModal() {
+            whatsappMessageModal?.classList.remove('open');
+            whatsappMessageModal?.setAttribute('aria-hidden', 'true');
+        }
+
+        function phoneFromRelanceRow(row) {
+            if (!row) return '';
+            const input = row.querySelector('input[data-field="telephone"]');
+            return (input?.value || row.dataset.telephone || '').trim();
+        }
+
+        async function whatsappCall(telephone) {
+            if (!whatsappConfig.actif) {
+                alert('WhatsApp est désactivé. Activez-le dans Configuration > WhatsApp.');
+                return;
+            }
+            if (!whatsappConfig.appels_actifs) {
+                alert('Les appels WhatsApp sont désactivés.');
+                return;
+            }
+            try {
+                const response = await fetch(@json(route('whatsapp.call')), {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json',
+                        'X-CSRF-TOKEN': csrfToken,
+                        'X-Requested-With': 'XMLHttpRequest',
+                    },
+                    body: JSON.stringify({ telephone }),
+                });
+                const data = await response.json();
+                if (!response.ok || !data.ok) {
+                    alert(data.message || 'Impossible d’ouvrir l’appel WhatsApp.');
+                    return;
+                }
+                if (data.url) window.open(data.url, '_blank', 'noopener');
+            } catch (err) {
+                alert('Erreur lors de l’ouverture de WhatsApp.');
+            }
+        }
+
+        async function whatsappSend(telephone, message) {
+            if (!whatsappConfig.actif) {
+                alert('WhatsApp est désactivé. Activez-le dans Configuration > WhatsApp.');
+                return false;
+            }
+            if (!whatsappConfig.messages_actifs) {
+                alert('Les messages WhatsApp sont désactivés.');
+                return false;
+            }
+            const response = await fetch(@json(route('whatsapp.send')), {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json',
+                    'X-CSRF-TOKEN': csrfToken,
+                    'X-Requested-With': 'XMLHttpRequest',
+                },
+                body: JSON.stringify({ telephone, message }),
+            });
+            const data = await response.json();
+            if (!response.ok || !data.ok) {
+                alert(data.message || 'Échec de l’envoi WhatsApp.');
+                return false;
+            }
+            if (data.url) window.open(data.url, '_blank', 'noopener');
+            else alert(data.message || 'Message envoyé.');
+            return true;
+        }
+
+        btnWhatsappNav?.addEventListener('click', (e) => {
+            e.stopPropagation();
+            const open = !whatsappNavPanel?.classList.contains('open');
+            setWhatsappNavOpen(open);
+            document.getElementById('relanceNotifPanel')?.classList.remove('open');
+            document.getElementById('btnRelanceNotif')?.classList.remove('is-open');
+        });
+
+        document.getElementById('btnWhatsappQuickMsg')?.addEventListener('click', () => {
+            openWhatsappMessageModal('', whatsappConfig.message_defaut || '');
+        });
+
+        document.getElementById('btnWhatsappOpenWeb')?.addEventListener('click', () => {
+            window.open('https://web.whatsapp.com/', '_blank', 'noopener');
+            setWhatsappNavOpen(false);
+        });
+
+        document.getElementById('btnWhatsappOpenConfig')?.addEventListener('click', () => {
+            setWhatsappNavOpen(false);
+            showPanel('fiche-whatsapp');
+        });
+
+        document.getElementById('btnCloseWhatsapp')?.addEventListener('click', () => showPanel('dashboard'));
+        document.getElementById('closeWhatsappMessageModal')?.addEventListener('click', closeWhatsappMessageModal);
+        document.getElementById('cancelWhatsappMessageModal')?.addEventListener('click', closeWhatsappMessageModal);
+        whatsappMessageModal?.addEventListener('click', (e) => {
+            if (e.target === whatsappMessageModal) closeWhatsappMessageModal();
+        });
+
+        whatsappMessageForm?.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const telephone = (waMsgTelephone?.value || '').trim();
+            const message = (waMsgBody?.value || '').trim();
+            if (!telephone) {
+                alert('Saisissez un numéro de téléphone.');
+                return;
+            }
+            const btn = document.getElementById('whatsappMessageSubmitBtn');
+            if (btn) btn.disabled = true;
+            try {
+                const ok = await whatsappSend(telephone, message);
+                if (ok) closeWhatsappMessageModal();
+            } finally {
+                if (btn) btn.disabled = false;
+            }
+        });
+
+        document.addEventListener('click', (e) => {
+            const waBtn = e.target.closest('[data-wa-action]');
+            if (waBtn) {
+                e.preventDefault();
+                e.stopPropagation();
+                if (waBtn.disabled || waBtn.getAttribute('aria-disabled') === 'true') return;
+                const row = waBtn.closest('tr[data-id]');
+                const phone = phoneFromRelanceRow(row);
+                if (!phone) {
+                    alert('Aucun numéro de téléphone sur cette ligne.');
+                    return;
+                }
+                if (waBtn.dataset.waAction === 'call') {
+                    whatsappCall(phone);
+                } else {
+                    openWhatsappMessageModal(phone, whatsappConfig.message_defaut || '');
+                }
+                return;
+            }
+
+            if (whatsappNavWrap && !whatsappNavWrap.contains(e.target)) {
+                setWhatsappNavOpen(false);
+            }
+        });
     </script>
 </body>
 </html>

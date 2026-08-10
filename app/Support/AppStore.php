@@ -6,7 +6,13 @@ use Illuminate\Support\Facades\File;
 
 class AppStore
 {
-    private const KEYS = ['clients', 'projets', 'paiements', 'utilisateurs', 'evolutions', 'relances', 'autorisations'];
+    private const LIST_KEYS = ['clients', 'projets', 'paiements', 'utilisateurs', 'evolutions', 'relances', 'autorisations'];
+
+    private const CONFIG_KEYS = ['whatsapp'];
+
+    private const KEYS = [
+        'clients', 'projets', 'paiements', 'utilisateurs', 'evolutions', 'relances', 'autorisations', 'whatsapp',
+    ];
 
     public static function path(): string
     {
@@ -29,9 +35,15 @@ class AppStore
 
         $data = self::defaults();
 
-        foreach (self::KEYS as $key) {
+        foreach (self::LIST_KEYS as $key) {
             if (isset($decoded[$key]) && is_array($decoded[$key])) {
                 $data[$key] = array_values($decoded[$key]);
+            }
+        }
+
+        foreach (self::CONFIG_KEYS as $key) {
+            if (isset($decoded[$key]) && is_array($decoded[$key])) {
+                $data[$key] = $decoded[$key];
             }
         }
 
@@ -40,7 +52,7 @@ class AppStore
 
     public static function get(string $key, array $default = []): array
     {
-        if (! in_array($key, self::KEYS, true)) {
+        if (! in_array($key, self::LIST_KEYS, true)) {
             return $default;
         }
 
@@ -51,12 +63,34 @@ class AppStore
 
     public static function put(string $key, array $value): void
     {
-        if (! in_array($key, self::KEYS, true)) {
+        if (! in_array($key, self::LIST_KEYS, true)) {
             return;
         }
 
         $data = self::all();
         $data[$key] = array_values($value);
+        self::write($data);
+    }
+
+    public static function getConfig(string $key, array $default = []): array
+    {
+        if (! in_array($key, self::CONFIG_KEYS, true)) {
+            return $default;
+        }
+
+        $data = self::all();
+
+        return is_array($data[$key] ?? null) ? $data[$key] : $default;
+    }
+
+    public static function putConfig(string $key, array $value): void
+    {
+        if (! in_array($key, self::CONFIG_KEYS, true)) {
+            return;
+        }
+
+        $data = self::all();
+        $data[$key] = $value;
         self::write($data);
     }
 
@@ -68,11 +102,15 @@ class AppStore
         $data = self::all();
 
         foreach ($pairs as $key => $value) {
-            if (! in_array($key, self::KEYS, true) || ! is_array($value)) {
+            if (! is_array($value)) {
                 continue;
             }
 
-            $data[$key] = array_values($value);
+            if (in_array($key, self::LIST_KEYS, true)) {
+                $data[$key] = array_values($value);
+            } elseif (in_array($key, self::CONFIG_KEYS, true)) {
+                $data[$key] = $value;
+            }
         }
 
         self::write($data);
@@ -86,7 +124,7 @@ class AppStore
         $data = self::all();
         $imported = false;
 
-        foreach (self::KEYS as $key) {
+        foreach (self::LIST_KEYS as $key) {
             if (! empty($data[$key])) {
                 continue;
             }
@@ -113,6 +151,7 @@ class AppStore
             'evolutions' => [],
             'relances' => [],
             'autorisations' => [],
+            'whatsapp' => WhatsApp::defaults(),
         ];
     }
 

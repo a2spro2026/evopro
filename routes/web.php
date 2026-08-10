@@ -1,6 +1,7 @@
 <?php
 
 use App\Support\AppStore;
+use App\Support\WhatsApp;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -152,6 +153,7 @@ Route::get('/dashboard', function () use ($requireAuth) {
             'items' => [
                 ['key' => 'fiche-utilisateur', 'label' => 'Utilisateur'],
                 ['key' => 'fiche-autorisation', 'label' => 'Autorisation'],
+                ['key' => 'fiche-whatsapp', 'label' => 'WhatsApp'],
             ],
         ],
     ];
@@ -209,6 +211,7 @@ Route::get('/dashboard', function () use ($requireAuth) {
         'evolutions' => AppStore::get('evolutions'),
         'relances' => $relances,
         'autorisations' => AppStore::get('autorisations'),
+        'whatsappConfig' => WhatsApp::config(),
         'menuSections' => $menuSections,
         'userPermissions' => $userPermissions,
         'dashboardCounts' => $dashboardCounts,
@@ -893,6 +896,7 @@ Route::post('/autorisations', function (Request $request) {
     $menuSections = [
         'dashboard', 'fiche-client', 'fiche-relance', 'fiche-projet', 'fiche-evolution',
         'fiche-paiement', 'charges', 'suivie', 'rapports', 'fiche-utilisateur', 'fiche-autorisation',
+        'fiche-whatsapp',
     ];
 
     $data = $request->validate([
@@ -944,6 +948,7 @@ Route::put('/autorisations/{id}', function (Request $request, string $id) {
     $menuSections = [
         'dashboard', 'fiche-client', 'fiche-relance', 'fiche-projet', 'fiche-evolution',
         'fiche-paiement', 'charges', 'suivie', 'rapports', 'fiche-utilisateur', 'fiche-autorisation',
+        'fiche-whatsapp',
     ];
 
     $data = $request->validate([
@@ -1339,5 +1344,80 @@ Route::delete('/paiements/{id}', function (string $id) {
         ->route('dashboard')
         ->with('open_fiche_paiement', true);
 })->name('paiements.destroy');
+
+Route::put('/whatsapp/settings', function (Request $request) {
+    $data = $request->validate([
+        'actif' => ['nullable', 'in:0,1'],
+        'mode' => ['required', 'string', 'in:lien,api'],
+        'indicatif' => ['required', 'string', 'max:6'],
+        'numero_business' => ['nullable', 'string', 'max:40'],
+        'access_token' => ['nullable', 'string', 'max:2000'],
+        'phone_number_id' => ['nullable', 'string', 'max:120'],
+        'messages_actifs' => ['nullable', 'in:0,1'],
+        'appels_actifs' => ['nullable', 'in:0,1'],
+        'message_defaut' => ['nullable', 'string', 'max:1000'],
+    ]);
+
+    $current = WhatsApp::config();
+    $token = trim((string) ($data['access_token'] ?? ''));
+    if ($token === '' || $token === '********') {
+        $token = (string) ($current['access_token'] ?? '');
+    }
+
+    AppStore::putConfig('whatsapp', [
+        'actif' => ($data['actif'] ?? '0') === '1',
+        'mode' => $data['mode'],
+        'indicatif' => preg_replace('/\D+/', '', $data['indicatif']) ?: '212',
+        'numero_business' => trim((string) ($data['numero_business'] ?? '')),
+        'access_token' => $token,
+        'phone_number_id' => trim((string) ($data['phone_number_id'] ?? '')),
+        'messages_actifs' => ($data['messages_actifs'] ?? '0') === '1',
+        'appels_actifs' => ($data['appels_actifs'] ?? '0') === '1',
+        'message_defaut' => trim((string) ($data['message_defaut'] ?? '')),
+    ]);
+
+    return redirect()
+        ->route('dashboard')
+        ->with('open_fiche_whatsapp', true)
+        ->with('whatsapp_saved', true);
+})->name('whatsapp.settings.update');
+
+Route::post('/whatsapp/send', function (Request $request) {
+    $data = $request->validate([
+        'telephone' => ['required', 'string', 'max:40'],
+        'message' => ['nullable', 'string', 'max:1000'],
+    ]);
+
+    $result = WhatsApp::sendMessage($data['telephone'], (string) ($data['message'] ?? ''));
+
+    return response()->json($result, ($result['ok'] ?? false) ? 200 : 422);
+})->name('whatsapp.send');
+
+Route::post('/whatsapp/call', function (Request $request) {
+    $cfg = WhatsApp::config();
+
+    if (! ($cfg['actif'] ?? false)) {
+        return response()->json(['ok' => false, 'message' => 'WhatsApp est désactivé.'], 422);
+    }
+
+    if (! ($cfg['appels_actifs'] ?? false)) {
+        return response()->json(['ok' => false, 'message' => 'Les appels WhatsApp sont désactivés.'], 422);
+    }
+
+    $data = $request->validate([
+        'telephone' => ['required', 'string', 'max:40'],
+    ]);
+
+    $url = WhatsApp::callUrl($data['telephone'], $cfg['indicatif'] ?? '212');
+    if (! $url) {
+        return response()->json(['ok' => false, 'message' => 'Numéro de téléphone invalide.'], 422);
+    }
+
+    return response()->json([
+        'ok' => true,
+        'message' => 'Ouverture de WhatsApp pour appeler.',
+        'url' => $url,
+    ]);
+})->name('whatsapp.call');
 
 });
