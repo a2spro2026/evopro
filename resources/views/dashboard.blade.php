@@ -64,6 +64,7 @@
             display: grid;
             grid-template-columns: 260px 1fr;
             min-height: 100vh;
+            transition: grid-template-columns 0.28s ease;
         }
 
         /* Sidebar */
@@ -77,6 +78,8 @@
             display: flex;
             flex-direction: column;
             gap: 1.5rem;
+            transition: opacity 0.22s ease, border-color 0.22s ease;
+            min-width: 0;
         }
 
         .side-brand {
@@ -469,9 +472,16 @@
             flex-wrap: wrap;
         }
 
-        .menu-toggle .icon-close { display: none; }
-        .menu-toggle.is-open .icon-menu { display: none; }
-        .menu-toggle.is-open .icon-close { display: block; }
+        .shell.sidebar-collapsed {
+            grid-template-columns: 0 1fr;
+        }
+
+        .shell.sidebar-collapsed .sidebar {
+            opacity: 0;
+            pointer-events: none;
+            border-right-color: transparent;
+            overflow: hidden;
+        }
 
         .panel { display: none; }
         .panel.active {
@@ -2871,7 +2881,6 @@
             color: #0a1628;
         }
 
-        html[data-theme="light"] .menu-toggle,
         html[data-theme="light"] .sidebar-close {
             background: rgba(30, 111, 217, 0.08);
             border-color: rgba(30, 111, 217, 0.2);
@@ -3061,19 +3070,101 @@
         }
 
         .menu-toggle {
-            display: none;
-            width: 40px;
-            height: 40px;
-            border: 1px solid var(--line);
-            border-radius: 10px;
-            background: rgba(59, 158, 255, 0.08);
-            color: var(--text);
+            display: inline-flex;
+            position: relative;
+            width: 42px;
+            height: 42px;
+            border: 1px solid rgba(126, 196, 255, 0.28);
+            border-radius: 12px;
+            background:
+                linear-gradient(145deg, rgba(30, 111, 217, 0.22), rgba(14, 40, 72, 0.55));
+            color: #9fd0ff;
             cursor: pointer;
             align-items: center;
             justify-content: center;
+            box-shadow:
+                0 0 0 1px rgba(59, 158, 255, 0.08),
+                0 8px 20px rgba(0, 0, 0, 0.22),
+                inset 0 1px 0 rgba(255, 255, 255, 0.06);
+            transition: transform 0.18s ease, border-color 0.18s ease, background 0.18s ease, color 0.18s ease, box-shadow 0.18s ease;
         }
 
-        .menu-toggle svg { width: 20px; height: 20px; }
+        .menu-toggle:hover {
+            transform: translateY(-1px);
+            color: #d7ecff;
+            border-color: rgba(126, 196, 255, 0.5);
+            background:
+                linear-gradient(145deg, rgba(59, 158, 255, 0.32), rgba(20, 70, 130, 0.55));
+            box-shadow:
+                0 0 0 1px rgba(59, 158, 255, 0.16),
+                0 10px 24px rgba(20, 90, 180, 0.28),
+                inset 0 1px 0 rgba(255, 255, 255, 0.08);
+        }
+
+        .menu-toggle:active {
+            transform: translateY(0);
+        }
+
+        .menu-toggle.is-open {
+            color: #ffb4b8;
+            border-color: rgba(240, 113, 120, 0.4);
+            background:
+                linear-gradient(145deg, rgba(240, 113, 120, 0.2), rgba(40, 18, 28, 0.55));
+        }
+
+        .menu-toggle-bars {
+            position: relative;
+            width: 18px;
+            height: 14px;
+            display: block;
+        }
+
+        .menu-toggle-bars span {
+            position: absolute;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            border-radius: 99px;
+            background: currentColor;
+            transition: transform 0.28s ease, opacity 0.2s ease, top 0.28s ease, width 0.28s ease;
+            box-shadow: 0 0 8px rgba(159, 208, 255, 0.35);
+        }
+
+        .menu-toggle-bars span:nth-child(1) { top: 0; width: 100%; }
+        .menu-toggle-bars span:nth-child(2) { top: 6px; width: 72%; }
+        .menu-toggle-bars span:nth-child(3) { top: 12px; width: 88%; }
+
+        .menu-toggle.is-open .menu-toggle-bars span:nth-child(1) {
+            top: 6px;
+            width: 100%;
+            transform: rotate(45deg);
+        }
+
+        .menu-toggle.is-open .menu-toggle-bars span:nth-child(2) {
+            opacity: 0;
+            width: 0;
+        }
+
+        .menu-toggle.is-open .menu-toggle-bars span:nth-child(3) {
+            top: 6px;
+            width: 100%;
+            transform: rotate(-45deg);
+        }
+
+        .menu-toggle svg { width: 20px; height: 20px; display: none; }
+
+        html[data-theme="light"] .menu-toggle {
+            color: #1a5fad;
+            border-color: rgba(30, 90, 180, 0.25);
+            background: linear-gradient(145deg, rgba(59, 158, 255, 0.14), rgba(255, 255, 255, 0.9));
+            box-shadow: 0 6px 16px rgba(30, 70, 140, 0.12);
+        }
+
+        html[data-theme="light"] .menu-toggle.is-open {
+            color: #c0394a;
+            border-color: rgba(200, 70, 90, 0.3);
+            background: linear-gradient(145deg, rgba(240, 113, 120, 0.12), rgba(255, 255, 255, 0.95));
+        }
 
         @media (max-width: 1100px) {
             .shell { grid-template-columns: 1fr; }
@@ -3095,7 +3186,14 @@
 
             .sidebar-backdrop { display: block; }
 
-            .menu-toggle { display: inline-flex; }
+            .shell.sidebar-collapsed {
+                grid-template-columns: 1fr;
+            }
+
+            .shell.sidebar-collapsed .sidebar {
+                opacity: 1;
+                pointer-events: auto;
+            }
 
             .cards {
                 grid-template-columns: repeat(2, 1fr);
@@ -3342,9 +3440,12 @@
         <div class="main">
             <header class="navbar">
                 <div style="display:flex;align-items:center;gap:0.85rem;">
-                    <button class="menu-toggle" type="button" id="menuToggle" aria-label="Ouvrir le menu">
-                        <svg class="icon-menu" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 6h16M4 12h16M4 18h16"/></svg>
-                        <svg class="icon-close" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M18 6L6 18M6 6l12 12"/></svg>
+                    <button class="menu-toggle is-open" type="button" id="menuToggle" aria-label="Fermer le menu" aria-expanded="true" aria-controls="sidebar" title="Ouvrir / fermer le menu">
+                        <span class="menu-toggle-bars" aria-hidden="true">
+                            <span></span>
+                            <span></span>
+                            <span></span>
+                        </span>
                     </button>
                     <div class="navbar-brand">
                         <div class="brand-glow">Evo<span>Pro</span></div>
@@ -5302,6 +5403,8 @@
             };
         }
 
+        const shell = document.querySelector('.shell');
+
         function isMobileSidebar() {
             return window.innerWidth <= 1100;
         }
@@ -5309,33 +5412,70 @@
         function updateMenuToggleState(isOpen) {
             if (!toggle) return;
             toggle.classList.toggle('is-open', isOpen);
+            toggle.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
             toggle.setAttribute('aria-label', isOpen ? 'Fermer le menu' : 'Ouvrir le menu');
+            toggle.title = isOpen ? 'Fermer le menu' : 'Ouvrir le menu';
         }
 
         function openSidebar() {
-            sidebar?.classList.add('open');
-            sidebarBackdrop?.classList.add('open');
-            sidebarBackdrop?.setAttribute('aria-hidden', 'false');
-            if (isMobileSidebar()) document.body.style.overflow = 'hidden';
+            if (isMobileSidebar()) {
+                shell?.classList.remove('sidebar-collapsed');
+                sidebar?.classList.add('open');
+                sidebarBackdrop?.classList.add('open');
+                sidebarBackdrop?.setAttribute('aria-hidden', 'false');
+                document.body.style.overflow = 'hidden';
+            } else {
+                shell?.classList.remove('sidebar-collapsed');
+                try { localStorage.setItem('evopro_sidebar_collapsed', '0'); } catch (e) {}
+            }
             updateMenuToggleState(true);
         }
 
         function closeSidebar() {
-            sidebar?.classList.remove('open');
-            sidebarBackdrop?.classList.remove('open');
-            sidebarBackdrop?.setAttribute('aria-hidden', 'true');
-            document.body.style.overflow = '';
+            if (isMobileSidebar()) {
+                sidebar?.classList.remove('open');
+                sidebarBackdrop?.classList.remove('open');
+                sidebarBackdrop?.setAttribute('aria-hidden', 'true');
+                document.body.style.overflow = '';
+            } else {
+                shell?.classList.add('sidebar-collapsed');
+                try { localStorage.setItem('evopro_sidebar_collapsed', '1'); } catch (e) {}
+            }
             updateMenuToggleState(false);
         }
 
         function toggleSidebar() {
-            if (sidebar?.classList.contains('open')) closeSidebar();
-            else openSidebar();
+            if (isMobileSidebar()) {
+                if (sidebar?.classList.contains('open')) closeSidebar();
+                else openSidebar();
+                return;
+            }
+            if (shell?.classList.contains('sidebar-collapsed')) openSidebar();
+            else closeSidebar();
+        }
+
+        function syncSidebarForViewport() {
+            if (isMobileSidebar()) {
+                shell?.classList.remove('sidebar-collapsed');
+                if (!sidebar?.classList.contains('open')) updateMenuToggleState(false);
+                else updateMenuToggleState(true);
+                return;
+            }
+            document.body.style.overflow = '';
+            sidebar?.classList.remove('open');
+            sidebarBackdrop?.classList.remove('open');
+            sidebarBackdrop?.setAttribute('aria-hidden', 'true');
+            let collapsed = false;
+            try { collapsed = localStorage.getItem('evopro_sidebar_collapsed') === '1'; } catch (e) {}
+            shell?.classList.toggle('sidebar-collapsed', collapsed);
+            updateMenuToggleState(!collapsed);
         }
 
         toggle?.addEventListener('click', toggleSidebar);
         sidebarClose?.addEventListener('click', closeSidebar);
         sidebarBackdrop?.addEventListener('click', closeSidebar);
+        window.addEventListener('resize', syncSidebarForViewport);
+        syncSidebarForViewport();
 
         clientToggle?.addEventListener('click', () => {
             clientGroup.classList.toggle('open');
