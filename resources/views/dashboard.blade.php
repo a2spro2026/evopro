@@ -7122,52 +7122,119 @@
             }
 
             function formatPhoneFr(digits) {
-                let d = digits;
+                let d = String(digits || '').replace(/\D+/g, '');
                 if (d.startsWith('212') && d.length >= 11) {
                     d = '0' + d.slice(3);
                 } else if (d.startsWith('33') && d.length >= 11) {
                     d = '0' + d.slice(2);
                 }
+                if (d.length === 9 && /^[5-7]\d{8}$/.test(d)) {
+                    d = '0' + d;
+                }
                 if (d.length === 10 && d.startsWith('0')) {
                     return d.replace(/(\d{2})(?=\d)/g, '$1 ').trim();
                 }
-                if (digits.startsWith('212')) return '+' + digits;
-                return digits;
+                if (String(digits).startsWith('212')) return '+' + String(digits).replace(/\D+/g, '');
+                return d || String(digits || '');
+            }
+
+            function normalizePhoneDigits(rawDigits) {
+                let d = String(rawDigits || '').replace(/\D+/g, '');
+                if (!d) return null;
+                if (d.startsWith('00')) d = d.slice(2);
+                if (d.startsWith('212') && d.length === 12) d = '0' + d.slice(3);
+                else if (d.startsWith('212') && d.length === 11) d = '0' + d.slice(3);
+                else if (d.startsWith('33') && d.length === 11) d = '0' + d.slice(2);
+                if (d.length === 9 && /^[5-7]\d{8}$/.test(d)) d = '0' + d;
+                if (d.length === 10 && /^0[5-7]\d{8}$/.test(d)) return d;
+                return null;
+            }
+
+            function harvestDigitRun(run) {
+                const found = [];
+                let i = 0;
+                const s = String(run || '');
+                while (i < s.length) {
+                    const slice12 = s.slice(i, i + 12);
+                    if (/^212[5-7]\d{8}/.test(slice12)) {
+                        found.push(slice12);
+                        i += 12;
+                        continue;
+                    }
+                    const slice10 = s.slice(i, i + 10);
+                    if (/^0[5-7]\d{8}/.test(slice10)) {
+                        found.push(slice10);
+                        i += 10;
+                        continue;
+                    }
+                    const slice9 = s.slice(i, i + 9);
+                    if (/^[5-7]\d{8}/.test(slice9)) {
+                        found.push(slice9);
+                        i += 9;
+                        continue;
+                    }
+                    i += 1;
+                }
+                return found;
             }
 
             function extractPhones(text) {
-                const raw = String(text || '');
-                const candidates = [];
-                const re = /(?:\+|00)?(?:212|33)?[\s.\-()]*(?:0?[5-7]|0?[6-7])(?:[\s.\-()]*\d){8,10}|\b0[5-7](?:[\s.\-]*\d){8}\b|(?:\+|00)212[\s.\-]*[5-7](?:[\s.\-]*\d){8}/g;
-                let m;
-                while ((m = re.exec(raw)) !== null) {
-                    candidates.push(m[0]);
-                }
-                const loose = raw.match(/(?:\+?\d[\d\s.\-()]{8,18}\d)/g) || [];
-                loose.forEach((c) => candidates.push(c));
-
+                const raw = String(text || '')
+                    .split(/[\n\r]+/)
+                    .map((line) => {
+                        const digitCount = (line.match(/\d/g) || []).length;
+                        if (digitCount >= 8) {
+                            return line.replace(/[Oo]/g, '0').replace(/[Il|]/g, '1');
+                        }
+                        return line;
+                    })
+                    .join('\n');
                 const seen = new Set();
                 const out = [];
-                candidates.forEach((c) => {
-                    let digits = c.replace(/\D+/g, '');
-                    if (digits.startsWith('00')) digits = digits.slice(2);
-                    if (digits.startsWith('212') && digits.length >= 11) {
-                        digits = '0' + digits.slice(3);
-                    } else if (digits.startsWith('33') && digits.length === 11) {
-                        digits = '0' + digits.slice(2);
+
+                const pushNormalized = (digits) => {
+                    const norm = normalizePhoneDigits(digits);
+                    if (!norm || seen.has(norm)) return;
+                    seen.add(norm);
+                    out.push(formatPhoneFr(norm));
+                };
+
+                // 1) Ligne par ligne (listes OCR / PDF)
+                raw.split(/[\n\r]+/).forEach((line) => {
+                    const cleaned = line.replace(/[^\d+]/g, ' ').trim();
+                    if (!cleaned) return;
+                    const groups = cleaned.split(/\s+/).filter(Boolean);
+                    groups.forEach((g) => {
+                        const d = g.replace(/\D+/g, '');
+                        if (d.length >= 9 && d.length <= 13) pushNormalized(d);
+                    });
+                    const lineDigits = line.replace(/\D+/g, '');
+                    if (lineDigits.length >= 9) {
+                        harvestDigitRun(lineDigits).forEach(pushNormalized);
                     }
-                    if (!(digits.length === 10 && /^0[5-7]\d{8}$/.test(digits))) {
-                        const alt = c.replace(/\D+/g, '');
-                        if (/^212[5-7]\d{8}$/.test(alt)) {
-                            digits = '0' + alt.slice(3);
-                        } else {
-                            return;
-                        }
-                    }
-                    if (seen.has(digits)) return;
-                    seen.add(digits);
-                    out.push(formatPhoneFr(digits));
                 });
+
+                // 2) Motifs classiques espacés
+                const spaced = raw.match(/0\s*[5-7](?:[\s.\-()]*\d){8}|(?:\+|00)?\s*212[\s.\-()]*[5-7](?:[\s.\-()]*\d){8}|[5-7](?:[\s.\-()]*\d){8}/g) || [];
+                spaced.forEach((m) => pushNormalized(m));
+
+                // 3) Suites de chiffres longues (plusieurs numéros collés)
+                const runs = raw.match(/\d{9,40}/g) || [];
+                runs.forEach((run) => {
+                    harvestDigitRun(run).forEach(pushNormalized);
+                });
+
+                // 4) Suites avec séparateurs
+                const loose = raw.match(/\+?\d(?:[\d\s.\-()]{7,22})\d/g) || [];
+                loose.forEach((chunk) => {
+                    const d = chunk.replace(/\D+/g, '');
+                    if (d.length >= 9 && d.length <= 13) {
+                        pushNormalized(d);
+                    } else if (d.length > 13) {
+                        harvestDigitRun(d).forEach(pushNormalized);
+                    }
+                });
+
                 return out;
             }
 
@@ -7224,12 +7291,15 @@
                 if (typeof Tesseract === 'undefined') {
                     throw new Error('OCR indisponible');
                 }
-                const result = await Tesseract.recognize(src, 'fra+eng', {
+                const result = await Tesseract.recognize(src, 'eng', {
                     logger: (info) => {
                         if (info.status === 'recognizing text' && info.progress != null) {
                             setStatus('Analyse OCR… ' + Math.round(info.progress * 100) + '%');
                         }
                     },
+                    tessedit_char_whitelist: '0123456789+()- ./\n',
+                    preserve_interword_spaces: '1',
+                    tessedit_pageseg_mode: '6',
                 });
                 return result?.data?.text || '';
             }
@@ -7251,7 +7321,18 @@
                     setStatus('PDF page ' + pageNum + '/' + pdf.numPages + '…', 'info');
                     const page = await pdf.getPage(pageNum);
                     const content = await page.getTextContent();
-                    const pageText = content.items.map((it) => it.str || '').join(' ');
+                    let pageText = '';
+                    let lastY = null;
+                    content.items.forEach((it) => {
+                        const y = it.transform ? it.transform[5] : null;
+                        if (lastY != null && y != null && Math.abs(y - lastY) > 2) {
+                            pageText += '\n';
+                        } else if (pageText && !/\s$/.test(pageText)) {
+                            pageText += ' ';
+                        }
+                        pageText += (it.str || '');
+                        if (y != null) lastY = y;
+                    });
                     fullText += '\n' + pageText;
                 }
                 const phonesFromText = extractPhones(fullText);
