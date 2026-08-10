@@ -5618,7 +5618,7 @@
                     </button>
                     <button type="button" class="wa-choice-btn is-devis" id="btnWaChoiceDevis">
                         <strong>Devis</strong>
-                        <span>Créer un devis PDF à envoyer</span>
+                        <span>Créer et télécharger un devis PDF</span>
                     </button>
                 </div>
             </div>
@@ -5631,7 +5631,7 @@
     <div class="modal-backdrop" id="whatsappDevisModal" aria-hidden="true">
         <div class="modal" role="dialog" aria-modal="true" aria-labelledby="whatsappDevisModalTitle">
             <div class="modal-head">
-                <h2 id="whatsappDevisModalTitle">Devis WhatsApp</h2>
+                <h2 id="whatsappDevisModalTitle">Devis PDF</h2>
                 <button type="button" class="modal-close" id="closeWhatsappDevisModal" aria-label="Fermer">×</button>
             </div>
             <form id="whatsappDevisForm">
@@ -5678,7 +5678,7 @@ Merci pour votre confiance.</p>
                 </div>
                 <div class="modal-foot">
                     <button type="button" class="btn-ghost" id="cancelWhatsappDevisModal">Fermer</button>
-                    <button type="submit" class="btn-primary" id="whatsappDevisSubmitBtn">Envoyer</button>
+                    <button type="submit" class="btn-primary" id="whatsappDevisSubmitBtn">Télécharger</button>
                 </div>
             </form>
         </div>
@@ -8646,44 +8646,21 @@ ${escapeHtml(DEVIS_NB_TEXT)}</div>
             }
         }
 
-        async function uploadDevisPdf(blob, data) {
+        async function downloadDevisPdf(data) {
+            const blob = await buildDevisPdfBlob(data);
             const safeTitre = String(data.titre || 'projet')
                 .replace(/[^\w\-]+/g, '_')
                 .replace(/_+/g, '_')
                 .slice(0, 40) || 'projet';
-            const file = new File([blob], `Devis_EvoPro_${safeTitre}.pdf`, { type: 'application/pdf' });
-            const form = new FormData();
-            form.append('pdf', file);
-            form.append('telephone', data.telephone || '');
-            form.append('nom_complet', data.nom || '');
-            form.append('titre', data.titre || '');
-            form.append('caption', buildDevisWhatsappMessage(data));
-            form.append('relance_id', waActionContext.relanceId || '');
-
-            const response = await fetch('{{ url('/whatsapp/devis') }}', {
-                method: 'POST',
-                headers: {
-                    'Accept': 'application/json',
-                    'X-CSRF-TOKEN': waCsrfToken,
-                },
-                body: form,
-            });
-            const payload = await response.json().catch(() => ({}));
-            if (Array.isArray(payload.messages)) whatsappMessages = payload.messages;
-            refreshWhatsappNavBadge(payload.unread);
-            if (!response.ok || !payload.ok || !payload.sent) {
-                const err = new Error(payload.message || 'Échec de l’envoi du devis.');
-                err.needsApi = !!payload.needs_api;
-                err.url = payload.url || '';
-                throw err;
-            }
-            return payload;
-        }
-
-        async function sendDevisViaWhatsapp(data) {
-            const blob = await buildDevisPdfBlob(data);
-            await uploadDevisPdf(blob, data);
-            alert('Devis envoyé au client sur WhatsApp.');
+            const fileName = `Devis_EvoPro_${safeTitre}.pdf`;
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = fileName;
+            document.body.appendChild(a);
+            a.click();
+            a.remove();
+            setTimeout(() => URL.revokeObjectURL(url), 1500);
             return true;
         }
 
@@ -8778,10 +8755,6 @@ ${escapeHtml(DEVIS_NB_TEXT)}</div>
         });
 
         document.getElementById('btnWaChoiceDevis')?.addEventListener('click', () => {
-            if (whatsappConfig.messages_actifs === false) {
-                alert('Les messages WhatsApp sont désactivés.');
-                return;
-            }
             openWhatsappDevisModal(waActionContext);
         });
 
@@ -8823,22 +8796,16 @@ ${escapeHtml(DEVIS_NB_TEXT)}</div>
             }
 
             const submitBtn = document.getElementById('whatsappDevisSubmitBtn');
-            const prevLabel = submitBtn?.textContent || 'Envoyer PDF';
+            const prevLabel = submitBtn?.textContent || 'Télécharger';
             if (submitBtn) {
                 submitBtn.disabled = true;
-                submitBtn.textContent = 'Envoi…';
+                submitBtn.textContent = 'Téléchargement…';
             }
             try {
-                const ok = await sendDevisViaWhatsapp(data);
-                if (ok) closeWhatsappDevisModal();
+                await downloadDevisPdf(data);
+                closeWhatsappDevisModal();
             } catch (err) {
-                if (err?.needsApi) {
-                    alert((err.message || 'Envoi automatique non configuré.') + '\n\nOuvrez Configuration → WhatsApp et collez Token + Phone Number ID, puis réessayez.');
-                    closeWhatsappDevisModal();
-                    if (typeof showPanel === 'function') showPanel('fiche-whatsapp');
-                } else {
-                    alert(err?.message || 'Impossible d’envoyer le devis PDF.');
-                }
+                alert(err?.message || 'Impossible de télécharger le devis PDF.');
             } finally {
                 if (submitBtn) {
                     submitBtn.disabled = false;
