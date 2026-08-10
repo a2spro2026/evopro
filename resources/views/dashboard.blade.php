@@ -1375,6 +1375,36 @@
             line-height: 1.45;
         }
 
+        .whatsapp-guide {
+            margin: 0 0 1.1rem;
+            padding: 0.85rem 1rem;
+            border-radius: 12px;
+            border: 1px solid rgba(37, 211, 102, 0.22);
+            background: rgba(37, 211, 102, 0.07);
+            font-size: 0.84rem;
+            color: var(--text);
+            line-height: 1.45;
+        }
+
+        .whatsapp-guide ol {
+            margin: 0.55rem 0 0;
+            padding-left: 1.2rem;
+        }
+
+        .whatsapp-guide li { margin: 0.25rem 0; }
+
+        .whatsapp-guide a {
+            color: #6fe3a1;
+            text-decoration: underline;
+        }
+
+        .whatsapp-guide code {
+            font-size: 0.78rem;
+            padding: 0.05rem 0.3rem;
+            border-radius: 4px;
+            background: rgba(255, 255, 255, 0.06);
+        }
+
         .whatsapp-switch-row {
             display: flex;
             flex-wrap: wrap;
@@ -4486,10 +4516,33 @@
                     </div>
 
                     <div class="whatsapp-settings-card">
-                        <p class="whatsapp-hint">
-                            Configurez l’intégration WhatsApp pour envoyer des messages et ouvrir des appels directement depuis Relances.
-                            Mode <strong>Lien</strong> : ouvre WhatsApp Web/App. Mode <strong>API Meta</strong> : envoi via Cloud API (jeton + Phone Number ID).
+                        @php
+                            $waApiReady = \App\Support\WhatsApp::isApiReady($wa);
+                        @endphp
+                        <p class="whatsapp-hint" style="{{ $waApiReady ? 'color:#6fe3a1;' : '' }}">
+                            @if ($waApiReady)
+                                Prêt : un clic sur l’icône WhatsApp (message) envoie automatiquement le message au client.
+                            @else
+                                Pour envoyer <strong>automatiquement</strong> (sans ouvrir WhatsApp), branchez Meta une seule fois ci-dessous.
+                            @endif
                         </p>
+
+                        <div class="whatsapp-guide">
+                            <strong>Comment remplir (une seule fois) :</strong>
+                            <ol>
+                                <li>Ouvre <a href="https://developers.facebook.com/" target="_blank" rel="noopener">developers.facebook.com</a> et connecte-toi.</li>
+                                <li>Crée une application → ajoute le produit <strong>WhatsApp</strong>.</li>
+                                <li>Va dans <strong>WhatsApp → Configuration API</strong> (API Setup).</li>
+                                <li>Copie le <strong>Jeton d’accès</strong> (Access token) et colle-le ici.</li>
+                                <li>Copie le <strong>Identifiant du numéro de téléphone</strong> (Phone number ID) et colle-le ici.</li>
+                                <li>Choisis <strong>Envoi automatique</strong>, écris ton message, puis <strong>Enregistrer</strong>.</li>
+                            </ol>
+                            <p style="margin:0.55rem 0 0;font-size:0.8rem;color:var(--muted);">
+                                Test Meta : ajoute d’abord le numéro du client dans la liste des numéros autorisés (API Setup).
+                                Premier contact : Meta peut exiger un modèle (ex. <code>hello_world</code>) — laisse le champ modèle vide pour un texte libre.
+                            </p>
+                        </div>
+
                         @if (session('whatsapp_saved'))
                             <p class="whatsapp-hint" style="color:#6fe3a1;">Configuration enregistrée.</p>
                         @endif
@@ -4506,31 +4559,39 @@
                                     </div>
                                 </div>
                                 <div class="field">
-                                    <label for="wa_mode">Mode d’envoi</label>
+                                    <label for="wa_mode">Comment envoyer</label>
                                     <select id="wa_mode" name="mode" required>
-                                        <option value="lien" {{ ($wa['mode'] ?? 'lien') === 'lien' ? 'selected' : '' }}>Lien WhatsApp (wa.me)</option>
-                                        <option value="api" {{ ($wa['mode'] ?? '') === 'api' ? 'selected' : '' }}>API Meta Cloud</option>
+                                        <option value="api" {{ ($wa['mode'] ?? 'api') === 'api' ? 'selected' : '' }}>Envoi automatique (recommandé)</option>
+                                        <option value="lien" {{ ($wa['mode'] ?? '') === 'lien' ? 'selected' : '' }}>Ouvrir WhatsApp manuellement</option>
                                     </select>
                                 </div>
                                 <div class="field">
                                     <label for="wa_indicatif">Indicatif pays</label>
                                     <input type="text" id="wa_indicatif" name="indicatif" value="{{ $wa['indicatif'] ?? '212' }}" placeholder="212" inputmode="numeric" required>
                                 </div>
+                                <div class="field full">
+                                    <label for="wa_access_token">1) Jeton d’accès (Access token) — coller ici</label>
+                                    <input type="password" id="wa_access_token" name="access_token" value="{{ !empty($wa['access_token']) ? '********' : '' }}" placeholder="{{ !empty($wa['access_token']) ? 'Laisser ******** pour conserver' : 'Collez le jeton Meta' }}" autocomplete="new-password">
+                                </div>
                                 <div class="field">
-                                    <label for="wa_numero_business">N° WhatsApp Business</label>
+                                    <label for="wa_phone_number_id">2) Phone number ID — coller ici</label>
+                                    <input type="text" id="wa_phone_number_id" name="phone_number_id" value="{{ $wa['phone_number_id'] ?? '' }}" placeholder="Ex: 1098xxxxxxxx">
+                                </div>
+                                <div class="field">
+                                    <label for="wa_numero_business">N° WhatsApp Business (optionnel)</label>
                                     <input type="text" id="wa_numero_business" name="numero_business" value="{{ $wa['numero_business'] ?? '' }}" placeholder="Ex: 2126xxxxxxxx" inputmode="tel">
                                 </div>
+                                <div class="field full">
+                                    <label for="wa_message_defaut">Message envoyé au clic</label>
+                                    <textarea id="wa_message_defaut" name="message_defaut" rows="3" placeholder="Ce texte part automatiquement au client">{{ $wa['message_defaut'] ?? '' }}</textarea>
+                                </div>
                                 <div class="field">
-                                    <label for="wa_phone_number_id">Phone Number ID (Meta)</label>
-                                    <input type="text" id="wa_phone_number_id" name="phone_number_id" value="{{ $wa['phone_number_id'] ?? '' }}" placeholder="Pour mode API">
+                                    <label for="wa_template_name">Modèle Meta (optionnel)</label>
+                                    <input type="text" id="wa_template_name" name="template_name" value="{{ $wa['template_name'] ?? '' }}" placeholder="Ex: hello_world — vide = texte libre">
                                 </div>
-                                <div class="field full">
-                                    <label for="wa_access_token">Jeton d’accès Meta</label>
-                                    <input type="password" id="wa_access_token" name="access_token" value="{{ !empty($wa['access_token']) ? '********' : '' }}" placeholder="{{ !empty($wa['access_token']) ? 'Laisser ******** pour conserver' : 'Permanent / temporaire' }}" autocomplete="new-password">
-                                </div>
-                                <div class="field full">
-                                    <label for="wa_message_defaut">Message par défaut</label>
-                                    <textarea id="wa_message_defaut" name="message_defaut" rows="3" placeholder="Message prérempli">{{ $wa['message_defaut'] ?? '' }}</textarea>
+                                <div class="field">
+                                    <label for="wa_template_lang">Langue du modèle</label>
+                                    <input type="text" id="wa_template_lang" name="template_lang" value="{{ $wa['template_lang'] ?? 'fr' }}" placeholder="fr">
                                 </div>
                             </div>
                             <div class="whatsapp-settings-actions">
@@ -7366,6 +7427,19 @@
         const waMsgBody = document.getElementById('wa_msg_body');
         const waMsgHint = document.getElementById('wa_msg_hint');
 
+        function whatsappApiReady() {
+            if (typeof whatsappConfig.api_ready === 'boolean') {
+                return whatsappConfig.api_ready;
+            }
+            return !!(
+                whatsappConfig.actif
+                && whatsappConfig.messages_actifs
+                && whatsappConfig.mode === 'api'
+                && (whatsappConfig.has_token || String(whatsappConfig.access_token || '').trim() !== '')
+                && String(whatsappConfig.phone_number_id || '').trim() !== ''
+            );
+        }
+
         function setWhatsappNavOpen(open) {
             whatsappNavPanel?.classList.toggle('open', open);
             btnWhatsappNav?.classList.toggle('is-open', open);
@@ -7376,9 +7450,9 @@
         function openWhatsappMessageModal(phone = '', message = '') {
             if (waMsgTelephone) waMsgTelephone.value = phone || '';
             if (waMsgBody) waMsgBody.value = message || (whatsappConfig.message_defaut || '');
-            if (waMsgHint) waMsgHint.textContent = (whatsappConfig.mode === 'api')
-                ? 'Envoi via API Meta Cloud.'
-                : 'Ouverture de WhatsApp avec le message prérempli.';
+            if (waMsgHint) waMsgHint.textContent = whatsappApiReady()
+                ? 'Le message sera envoyé automatiquement au client.'
+                : 'Configurez d’abord le jeton Meta pour un envoi automatique.';
             whatsappMessageModal?.classList.add('open');
             whatsappMessageModal?.setAttribute('aria-hidden', 'false');
             setWhatsappNavOpen(false);
@@ -7451,9 +7525,34 @@
                 alert(data.message || 'Échec de l’envoi WhatsApp.');
                 return false;
             }
-            if (data.url) window.open(data.url, '_blank', 'noopener');
-            else alert(data.message || 'Message envoyé.');
+            if (data.url) {
+                window.open(data.url, '_blank', 'noopener');
+            } else {
+                alert(data.message || 'Message envoyé au client.');
+            }
             return true;
+        }
+
+        async function sendWhatsappAuto(telephone, btn) {
+            if (!whatsappApiReady()) {
+                const go = confirm(
+                    'Pour envoyer automatiquement le message, il faut coller une fois le jeton Meta et le Phone number ID.\n\nOuvrir Configuration → WhatsApp maintenant ?'
+                );
+                if (go) showPanel('fiche-whatsapp');
+                return;
+            }
+            if (btn) {
+                btn.disabled = true;
+                btn.classList.add('is-saving');
+            }
+            try {
+                await whatsappSend(telephone, whatsappConfig.message_defaut || '');
+            } finally {
+                if (btn) {
+                    btn.disabled = false;
+                    btn.classList.remove('is-saving');
+                }
+            }
         }
 
         btnWhatsappNav?.addEventListener('click', (e) => {
@@ -7465,7 +7564,12 @@
         });
 
         document.getElementById('btnWhatsappQuickMsg')?.addEventListener('click', () => {
-            openWhatsappMessageModal('', whatsappConfig.message_defaut || '');
+            if (whatsappApiReady()) {
+                openWhatsappMessageModal('', whatsappConfig.message_defaut || '');
+            } else {
+                setWhatsappNavOpen(false);
+                showPanel('fiche-whatsapp');
+            }
         });
 
         document.getElementById('btnWhatsappOpenWeb')?.addEventListener('click', () => {
@@ -7518,7 +7622,7 @@
                 if (waBtn.dataset.waAction === 'call') {
                     whatsappCall(phone);
                 } else {
-                    openWhatsappMessageModal(phone, whatsappConfig.message_defaut || '');
+                    sendWhatsappAuto(phone, waBtn);
                 }
                 return;
             }

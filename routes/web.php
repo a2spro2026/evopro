@@ -211,7 +211,16 @@ Route::get('/dashboard', function () use ($requireAuth) {
         'evolutions' => AppStore::get('evolutions'),
         'relances' => $relances,
         'autorisations' => AppStore::get('autorisations'),
-        'whatsappConfig' => WhatsApp::config(),
+        'whatsappConfig' => (static function () {
+            $cfg = WhatsApp::config();
+            $cfg['has_token'] = trim((string) ($cfg['access_token'] ?? '')) !== '';
+            $cfg['access_token'] = $cfg['has_token'] ? '********' : '';
+            $cfg['api_ready'] = WhatsApp::isApiReady(array_merge($cfg, [
+                'access_token' => $cfg['has_token'] ? 'x' : '',
+            ]));
+
+            return $cfg;
+        })(),
         'menuSections' => $menuSections,
         'userPermissions' => $userPermissions,
         'dashboardCounts' => $dashboardCounts,
@@ -1356,6 +1365,8 @@ Route::put('/whatsapp/settings', function (Request $request) {
         'messages_actifs' => ['nullable', 'in:0,1'],
         'appels_actifs' => ['nullable', 'in:0,1'],
         'message_defaut' => ['nullable', 'string', 'max:1000'],
+        'template_name' => ['nullable', 'string', 'max:120'],
+        'template_lang' => ['nullable', 'string', 'max:12'],
     ]);
 
     $current = WhatsApp::config();
@@ -1374,6 +1385,8 @@ Route::put('/whatsapp/settings', function (Request $request) {
         'messages_actifs' => ($data['messages_actifs'] ?? '0') === '1',
         'appels_actifs' => ($data['appels_actifs'] ?? '0') === '1',
         'message_defaut' => trim((string) ($data['message_defaut'] ?? '')),
+        'template_name' => trim((string) ($data['template_name'] ?? '')),
+        'template_lang' => trim((string) ($data['template_lang'] ?? 'fr')) ?: 'fr',
     ]);
 
     return redirect()

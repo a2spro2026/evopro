@@ -10,7 +10,7 @@ class WhatsApp
     {
         return [
             'actif' => true,
-            'mode' => 'lien',
+            'mode' => 'api',
             'indicatif' => '212',
             'numero_business' => '',
             'access_token' => '',
@@ -18,12 +18,25 @@ class WhatsApp
             'messages_actifs' => true,
             'appels_actifs' => true,
             'message_defaut' => 'Bonjour, je vous contacte concernant votre projet.',
+            'template_name' => '',
+            'template_lang' => 'fr',
         ];
     }
 
     public static function config(): array
     {
         return array_merge(self::defaults(), AppStore::getConfig('whatsapp'));
+    }
+
+    public static function isApiReady(?array $cfg = null): bool
+    {
+        $cfg ??= self::config();
+
+        return ($cfg['actif'] ?? false)
+            && ($cfg['messages_actifs'] ?? false)
+            && ($cfg['mode'] ?? '') === 'api'
+            && trim((string) ($cfg['access_token'] ?? '')) !== ''
+            && trim((string) ($cfg['phone_number_id'] ?? '')) !== '';
     }
 
     public static function normalizePhone(string $telephone, ?string $indicatif = null): string
@@ -69,7 +82,6 @@ class WhatsApp
             return null;
         }
 
-        // Ouvre WhatsApp sur le contact (appel possible depuis l'app).
         return 'https://wa.me/'.$phone;
     }
 
@@ -110,21 +122,39 @@ class WhatsApp
         $phoneNumberId = trim((string) ($cfg['phone_number_id'] ?? ''));
 
         if ($token === '' || $phoneNumberId === '') {
-            return ['ok' => false, 'message' => 'Configurez le jeton d’accès et le Phone Number ID Meta.'];
+            return [
+                'ok' => false,
+                'message' => 'Pour envoyer automatiquement, collez le jeton et le Phone Number ID dans Configuration → WhatsApp.',
+            ];
+        }
+
+        $templateName = trim((string) ($cfg['template_name'] ?? ''));
+        $payload = [
+            'messaging_product' => 'whatsapp',
+            'to' => $phone,
+        ];
+
+        if ($templateName !== '') {
+            $payload['type'] = 'template';
+            $payload['template'] = [
+                'name' => $templateName,
+                'language' => [
+                    'code' => trim((string) ($cfg['template_lang'] ?? 'fr')) ?: 'fr',
+                ],
+            ];
+        } else {
+            $payload['type'] = 'text';
+            $payload['text'] = [
+                'preview_url' => false,
+                'body' => $message !== '' ? $message : 'Bonjour',
+            ];
         }
 
         try {
             $response = Http::withToken($token)
                 ->acceptJson()
-                ->post('https://graph.facebook.com/v21.0/'.$phoneNumberId.'/messages', [
-                    'messaging_product' => 'whatsapp',
-                    'to' => $phone,
-                    'type' => 'text',
-                    'text' => [
-                        'preview_url' => false,
-                        'body' => $message !== '' ? $message : 'Bonjour',
-                    ],
-                ]);
+                ->timeout(25)
+                ->post('https://graph.facebook.com/v21.0/'.$phoneNumberId.'/messages', $payload);
 
             if (! $response->successful()) {
                 $error = data_get($response->json(), 'error.message', 'Échec de l’envoi via l’API Meta.');
@@ -132,7 +162,7 @@ class WhatsApp
                 return ['ok' => false, 'message' => (string) $error];
             }
 
-            return ['ok' => true, 'message' => 'Message WhatsApp envoyé.', 'url' => null];
+            return ['ok' => true, 'message' => 'Message WhatsApp envoyé au client.', 'url' => null];
         } catch (\Throwable $e) {
             return ['ok' => false, 'message' => 'Erreur réseau WhatsApp : '.$e->getMessage()];
         }
