@@ -10,7 +10,7 @@ class WhatsApp
     {
         return [
             'actif' => true,
-            'mode' => 'api',
+            'mode' => 'lien',
             'indicatif' => '212',
             'numero_business' => '',
             'access_token' => '',

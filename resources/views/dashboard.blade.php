@@ -3365,7 +3365,7 @@
                             </div>
                             <div class="wa-panel-body">
                                 <p class="wa-panel-status" id="whatsappNavStatusText">
-                                    Mode {{ ($whatsappConfig['mode'] ?? 'lien') === 'api' ? 'API Meta' : 'lien WhatsApp' }} —
+                                    Mode ouverture WhatsApp —
                                     messages {{ !empty($whatsappConfig['messages_actifs']) ? 'ON' : 'OFF' }},
                                     appels {{ !empty($whatsappConfig['appels_actifs']) ? 'ON' : 'OFF' }}.
                                 </p>
@@ -4516,39 +4516,16 @@
                     </div>
 
                     <div class="whatsapp-settings-card">
-                        @php
-                            $waApiReady = \App\Support\WhatsApp::isApiReady($wa);
-                        @endphp
-                        <p class="whatsapp-hint" style="{{ $waApiReady ? 'color:#6fe3a1;' : '' }}">
-                            @if ($waApiReady)
-                                Prêt : un clic sur l’icône WhatsApp (message) envoie automatiquement le message au client.
-                            @else
-                                Pour envoyer <strong>automatiquement</strong> (sans ouvrir WhatsApp), branchez Meta une seule fois ci-dessous.
-                            @endif
+                        <p class="whatsapp-hint" style="color:#6fe3a1;">
+                            Simple : un clic sur l’icône WhatsApp ouvre WhatsApp avec le numéro du client (message déjà prérempli).
                         </p>
-
-                        <div class="whatsapp-guide">
-                            <strong>Comment remplir (une seule fois) :</strong>
-                            <ol>
-                                <li>Ouvre <a href="https://developers.facebook.com/" target="_blank" rel="noopener">developers.facebook.com</a> et connecte-toi.</li>
-                                <li>Crée une application → ajoute le produit <strong>WhatsApp</strong>.</li>
-                                <li>Va dans <strong>WhatsApp → Configuration API</strong> (API Setup).</li>
-                                <li>Copie le <strong>Jeton d’accès</strong> (Access token) et colle-le ici.</li>
-                                <li>Copie le <strong>Identifiant du numéro de téléphone</strong> (Phone number ID) et colle-le ici.</li>
-                                <li>Choisis <strong>Envoi automatique</strong>, écris ton message, puis <strong>Enregistrer</strong>.</li>
-                            </ol>
-                            <p style="margin:0.55rem 0 0;font-size:0.8rem;color:var(--muted);">
-                                Test Meta : ajoute d’abord le numéro du client dans la liste des numéros autorisés (API Setup).
-                                Premier contact : Meta peut exiger un modèle (ex. <code>hello_world</code>) — laisse le champ modèle vide pour un texte libre.
-                            </p>
-                        </div>
-
                         @if (session('whatsapp_saved'))
                             <p class="whatsapp-hint" style="color:#6fe3a1;">Configuration enregistrée.</p>
                         @endif
                         <form method="post" action="{{ route('whatsapp.settings.update') }}" id="whatsappSettingsForm">
                             @csrf
                             @method('PUT')
+                            <input type="hidden" name="mode" value="lien">
                             <div class="whatsapp-settings-grid">
                                 <div class="field full">
                                     <label>Activation</label>
@@ -4559,40 +4536,22 @@
                                     </div>
                                 </div>
                                 <div class="field">
-                                    <label for="wa_mode">Comment envoyer</label>
-                                    <select id="wa_mode" name="mode" required>
-                                        <option value="api" {{ ($wa['mode'] ?? 'api') === 'api' ? 'selected' : '' }}>Envoi automatique (recommandé)</option>
-                                        <option value="lien" {{ ($wa['mode'] ?? '') === 'lien' ? 'selected' : '' }}>Ouvrir WhatsApp manuellement</option>
-                                    </select>
-                                </div>
-                                <div class="field">
                                     <label for="wa_indicatif">Indicatif pays</label>
                                     <input type="text" id="wa_indicatif" name="indicatif" value="{{ $wa['indicatif'] ?? '212' }}" placeholder="212" inputmode="numeric" required>
                                 </div>
-                                <div class="field full">
-                                    <label for="wa_access_token">1) Jeton d’accès (Access token) — coller ici</label>
-                                    <input type="password" id="wa_access_token" name="access_token" value="{{ !empty($wa['access_token']) ? '********' : '' }}" placeholder="{{ !empty($wa['access_token']) ? 'Laisser ******** pour conserver' : 'Collez le jeton Meta' }}" autocomplete="new-password">
-                                </div>
                                 <div class="field">
-                                    <label for="wa_phone_number_id">2) Phone number ID — coller ici</label>
-                                    <input type="text" id="wa_phone_number_id" name="phone_number_id" value="{{ $wa['phone_number_id'] ?? '' }}" placeholder="Ex: 1098xxxxxxxx">
-                                </div>
-                                <div class="field">
-                                    <label for="wa_numero_business">N° WhatsApp Business (optionnel)</label>
-                                    <input type="text" id="wa_numero_business" name="numero_business" value="{{ $wa['numero_business'] ?? '' }}" placeholder="Ex: 2126xxxxxxxx" inputmode="tel">
+                                    <label for="wa_numero_business">Votre n° WhatsApp (optionnel)</label>
+                                    <input type="text" id="wa_numero_business" name="numero_business" value="{{ $wa['numero_business'] ?? '' }}" placeholder="Ex: 0612345678" inputmode="tel">
                                 </div>
                                 <div class="field full">
-                                    <label for="wa_message_defaut">Message envoyé au clic</label>
-                                    <textarea id="wa_message_defaut" name="message_defaut" rows="3" placeholder="Ce texte part automatiquement au client">{{ $wa['message_defaut'] ?? '' }}</textarea>
+                                    <label for="wa_message_defaut">Message prérempli à l’ouverture</label>
+                                    <textarea id="wa_message_defaut" name="message_defaut" rows="3" placeholder="Ce texte s’affiche déjà dans WhatsApp">{{ $wa['message_defaut'] ?? '' }}</textarea>
                                 </div>
-                                <div class="field">
-                                    <label for="wa_template_name">Modèle Meta (optionnel)</label>
-                                    <input type="text" id="wa_template_name" name="template_name" value="{{ $wa['template_name'] ?? '' }}" placeholder="Ex: hello_world — vide = texte libre">
-                                </div>
-                                <div class="field">
-                                    <label for="wa_template_lang">Langue du modèle</label>
-                                    <input type="text" id="wa_template_lang" name="template_lang" value="{{ $wa['template_lang'] ?? 'fr' }}" placeholder="fr">
-                                </div>
+                                {{-- Champs Meta conservés en arrière-plan si déjà saisis --}}
+                                <input type="hidden" name="access_token" value="{{ !empty($wa['access_token']) ? '********' : '' }}">
+                                <input type="hidden" name="phone_number_id" value="{{ $wa['phone_number_id'] ?? '' }}">
+                                <input type="hidden" name="template_name" value="{{ $wa['template_name'] ?? '' }}">
+                                <input type="hidden" name="template_lang" value="{{ $wa['template_lang'] ?? 'fr' }}">
                             </div>
                             <div class="whatsapp-settings-actions">
                                 <button type="submit" class="btn-primary">Enregistrer</button>
@@ -7427,19 +7386,6 @@
         const waMsgBody = document.getElementById('wa_msg_body');
         const waMsgHint = document.getElementById('wa_msg_hint');
 
-        function whatsappApiReady() {
-            if (typeof whatsappConfig.api_ready === 'boolean') {
-                return whatsappConfig.api_ready;
-            }
-            return !!(
-                whatsappConfig.actif
-                && whatsappConfig.messages_actifs
-                && whatsappConfig.mode === 'api'
-                && (whatsappConfig.has_token || String(whatsappConfig.access_token || '').trim() !== '')
-                && String(whatsappConfig.phone_number_id || '').trim() !== ''
-            );
-        }
-
         function setWhatsappNavOpen(open) {
             whatsappNavPanel?.classList.toggle('open', open);
             btnWhatsappNav?.classList.toggle('is-open', open);
@@ -7447,12 +7393,42 @@
             whatsappNavPanel?.setAttribute('aria-hidden', open ? 'false' : 'true');
         }
 
+        function normalizeWhatsappPhone(telephone) {
+            let digits = String(telephone || '').replace(/\D+/g, '');
+            const indicatif = String(whatsappConfig.indicatif || '212').replace(/\D+/g, '') || '212';
+            if (!digits) return '';
+            if (digits.startsWith('00')) digits = digits.slice(2);
+            if (digits.startsWith('0') && digits.length >= 9) digits = indicatif + digits.slice(1);
+            return digits;
+        }
+
+        function buildWhatsappUrl(telephone, message = '') {
+            const phone = normalizeWhatsappPhone(telephone);
+            if (!phone) return null;
+            let url = 'https://wa.me/' + phone;
+            const text = String(message || '').trim();
+            if (text) url += '?text=' + encodeURIComponent(text);
+            return url;
+        }
+
+        function openWhatsappNow(telephone, message = '') {
+            if (whatsappConfig.actif === false) {
+                alert('WhatsApp est désactivé dans Configuration > WhatsApp.');
+                return false;
+            }
+            const url = buildWhatsappUrl(telephone, message);
+            if (!url) {
+                alert('Numéro de téléphone invalide.');
+                return false;
+            }
+            window.open(url, '_blank', 'noopener');
+            return true;
+        }
+
         function openWhatsappMessageModal(phone = '', message = '') {
             if (waMsgTelephone) waMsgTelephone.value = phone || '';
             if (waMsgBody) waMsgBody.value = message || (whatsappConfig.message_defaut || '');
-            if (waMsgHint) waMsgHint.textContent = whatsappApiReady()
-                ? 'Le message sera envoyé automatiquement au client.'
-                : 'Configurez d’abord le jeton Meta pour un envoi automatique.';
+            if (waMsgHint) waMsgHint.textContent = 'WhatsApp s’ouvrira avec ce numéro et ce message.';
             whatsappMessageModal?.classList.add('open');
             whatsappMessageModal?.setAttribute('aria-hidden', 'false');
             setWhatsappNavOpen(false);
@@ -7470,91 +7446,6 @@
             return (input?.value || row.dataset.telephone || '').trim();
         }
 
-        async function whatsappCall(telephone) {
-            if (!whatsappConfig.actif) {
-                alert('WhatsApp est désactivé. Activez-le dans Configuration > WhatsApp.');
-                return;
-            }
-            if (!whatsappConfig.appels_actifs) {
-                alert('Les appels WhatsApp sont désactivés.');
-                return;
-            }
-            try {
-                const response = await fetch(@json(route('whatsapp.call')), {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'Accept': 'application/json',
-                        'X-CSRF-TOKEN': csrfToken,
-                        'X-Requested-With': 'XMLHttpRequest',
-                    },
-                    body: JSON.stringify({ telephone }),
-                });
-                const data = await response.json();
-                if (!response.ok || !data.ok) {
-                    alert(data.message || 'Impossible d’ouvrir l’appel WhatsApp.');
-                    return;
-                }
-                if (data.url) window.open(data.url, '_blank', 'noopener');
-            } catch (err) {
-                alert('Erreur lors de l’ouverture de WhatsApp.');
-            }
-        }
-
-        async function whatsappSend(telephone, message) {
-            if (!whatsappConfig.actif) {
-                alert('WhatsApp est désactivé. Activez-le dans Configuration > WhatsApp.');
-                return false;
-            }
-            if (!whatsappConfig.messages_actifs) {
-                alert('Les messages WhatsApp sont désactivés.');
-                return false;
-            }
-            const response = await fetch(@json(route('whatsapp.send')), {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Accept': 'application/json',
-                    'X-CSRF-TOKEN': csrfToken,
-                    'X-Requested-With': 'XMLHttpRequest',
-                },
-                body: JSON.stringify({ telephone, message }),
-            });
-            const data = await response.json();
-            if (!response.ok || !data.ok) {
-                alert(data.message || 'Échec de l’envoi WhatsApp.');
-                return false;
-            }
-            if (data.url) {
-                window.open(data.url, '_blank', 'noopener');
-            } else {
-                alert(data.message || 'Message envoyé au client.');
-            }
-            return true;
-        }
-
-        async function sendWhatsappAuto(telephone, btn) {
-            if (!whatsappApiReady()) {
-                const go = confirm(
-                    'Pour envoyer automatiquement le message, il faut coller une fois le jeton Meta et le Phone number ID.\n\nOuvrir Configuration → WhatsApp maintenant ?'
-                );
-                if (go) showPanel('fiche-whatsapp');
-                return;
-            }
-            if (btn) {
-                btn.disabled = true;
-                btn.classList.add('is-saving');
-            }
-            try {
-                await whatsappSend(telephone, whatsappConfig.message_defaut || '');
-            } finally {
-                if (btn) {
-                    btn.disabled = false;
-                    btn.classList.remove('is-saving');
-                }
-            }
-        }
-
         btnWhatsappNav?.addEventListener('click', (e) => {
             e.stopPropagation();
             const open = !whatsappNavPanel?.classList.contains('open');
@@ -7564,12 +7455,7 @@
         });
 
         document.getElementById('btnWhatsappQuickMsg')?.addEventListener('click', () => {
-            if (whatsappApiReady()) {
-                openWhatsappMessageModal('', whatsappConfig.message_defaut || '');
-            } else {
-                setWhatsappNavOpen(false);
-                showPanel('fiche-whatsapp');
-            }
+            openWhatsappMessageModal('', whatsappConfig.message_defaut || '');
         });
 
         document.getElementById('btnWhatsappOpenWeb')?.addEventListener('click', () => {
@@ -7589,7 +7475,7 @@
             if (e.target === whatsappMessageModal) closeWhatsappMessageModal();
         });
 
-        whatsappMessageForm?.addEventListener('submit', async (e) => {
+        whatsappMessageForm?.addEventListener('submit', (e) => {
             e.preventDefault();
             const telephone = (waMsgTelephone?.value || '').trim();
             const message = (waMsgBody?.value || '').trim();
@@ -7597,14 +7483,7 @@
                 alert('Saisissez un numéro de téléphone.');
                 return;
             }
-            const btn = document.getElementById('whatsappMessageSubmitBtn');
-            if (btn) btn.disabled = true;
-            try {
-                const ok = await whatsappSend(telephone, message);
-                if (ok) closeWhatsappMessageModal();
-            } finally {
-                if (btn) btn.disabled = false;
-            }
+            if (openWhatsappNow(telephone, message)) closeWhatsappMessageModal();
         });
 
         document.addEventListener('click', (e) => {
@@ -7620,9 +7499,17 @@
                     return;
                 }
                 if (waBtn.dataset.waAction === 'call') {
-                    whatsappCall(phone);
+                    if (whatsappConfig.appels_actifs === false) {
+                        alert('Les appels WhatsApp sont désactivés.');
+                        return;
+                    }
+                    openWhatsappNow(phone, '');
                 } else {
-                    sendWhatsappAuto(phone, waBtn);
+                    if (whatsappConfig.messages_actifs === false) {
+                        alert('Les messages WhatsApp sont désactivés.');
+                        return;
+                    }
+                    openWhatsappNow(phone, whatsappConfig.message_defaut || '');
                 }
                 return;
             }
