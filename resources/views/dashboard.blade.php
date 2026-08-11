@@ -8640,9 +8640,6 @@ Merci pour votre confiance.`;
 
         function buildDevisWhatsappMessage(data, pdfUrl = '') {
             const montant = formatMoneyFr(data.montant);
-            const t1 = formatMoneyFr(data.montant * 0.3);
-            const t2 = formatMoneyFr(data.montant * 0.4);
-            const t3 = formatMoneyFr(data.montant * 0.3);
             const linkLine = pdfUrl
                 ? `\n📄 PDF du devis :\n${pdfUrl}\n`
                 : '';
@@ -8656,20 +8653,12 @@ Description : ${data.description}
 Montant : ${montant} DH
 Délai : ${data.delai}
 
-Modalités de paiement :
-• 30% à la commande : ${t1} DH
-• 40% à mi-parcours : ${t2} DH
-• 30% à la livraison : ${t3} DH
-
 Merci pour votre confiance.
 EvoPro`;
         }
 
         function buildDevisHtml(data) {
             const montant = Number(data.montant) || 0;
-            const t1 = montant * 0.3;
-            const t2 = montant * 0.4;
-            const t3 = montant * 0.3;
             return `<div class="devis-pdf-root" style="font-family:Arial,Helvetica,sans-serif;color:#12233d;line-height:1.35;width:190mm;">
                 <div style="display:flex;justify-content:space-between;align-items:flex-start;margin:0 0 10px;border-bottom:2px solid #1e6fd9;padding:0 0 8px;">
                     <div>
@@ -8689,13 +8678,6 @@ EvoPro`;
                 </div>
                 <div style="font-size:13px;margin:10px 0 5px;color:#0a1628;font-weight:700;">Description</div>
                 <div style="border:1px solid #d5e2f3;border-radius:8px;padding:8px 10px;background:#f7fafe;margin-bottom:8px;white-space:pre-wrap;font-size:12px;">${escapeHtml(data.description)}</div>
-                <div style="font-size:13px;margin:10px 0 5px;color:#0a1628;font-weight:700;">Répartition des paiements</div>
-                <table style="width:100%;border-collapse:collapse;margin-top:4px;font-size:12px;">
-                    <tr><th style="border:1px solid #d5e2f3;padding:5px 8px;text-align:left;background:#eef4fc;width:42%;">30 % à la commande</th><td style="border:1px solid #d5e2f3;padding:5px 8px;text-align:left;">${escapeHtml(formatMoneyFr(t1))} DH</td></tr>
-                    <tr><th style="border:1px solid #d5e2f3;padding:5px 8px;text-align:left;background:#eef4fc;">40 % à mi-parcours</th><td style="border:1px solid #d5e2f3;padding:5px 8px;text-align:left;">${escapeHtml(formatMoneyFr(t2))} DH</td></tr>
-                    <tr><th style="border:1px solid #d5e2f3;padding:5px 8px;text-align:left;background:#eef4fc;">30 % à la livraison finale</th><td style="border:1px solid #d5e2f3;padding:5px 8px;text-align:left;">${escapeHtml(formatMoneyFr(t3))} DH</td></tr>
-                    <tr><th style="border:1px solid #d5e2f3;padding:5px 8px;text-align:left;background:#eef4fc;">Total</th><td style="border:1px solid #d5e2f3;padding:5px 8px;text-align:left;"><strong>${escapeHtml(formatMoneyFr(montant))} DH</strong></td></tr>
-                </table>
                 <div style="margin-top:10px;border-left:3px solid #1e6fd9;padding:7px 10px;background:#f3f8ff;font-size:11px;line-height:1.35;white-space:pre-line;"><strong>NB :</strong>
 ${escapeHtml(DEVIS_NB_TEXT)}</div>
                 <div style="margin-top:10px;font-size:11px;color:#66788f;text-align:center;">Document généré par EvoPro — Merci pour votre confiance.</div>
