@@ -564,6 +564,25 @@
             box-shadow: 0 0 0 3px rgba(59, 158, 255, 0.15);
         }
 
+        .relance-count {
+            display: none;
+            align-items: center;
+            height: 38px;
+            padding: 0 0.85rem;
+            border-radius: 10px;
+            border: 1px solid rgba(59, 158, 255, 0.35);
+            background: rgba(59, 158, 255, 0.14);
+            color: var(--accent-soft);
+            font-size: 0.82rem;
+            font-weight: 650;
+            white-space: nowrap;
+            text-transform: none;
+        }
+
+        .relance-count.is-visible {
+            display: inline-flex;
+        }
+
         @media (max-width: 768px) {
             .search-bar { grid-template-columns: 1fr; }
         }
@@ -3251,6 +3270,12 @@
             border-color: rgba(30, 90, 180, 0.14);
         }
 
+        html[data-theme="light"] .relance-count {
+            background: rgba(30, 111, 217, 0.1);
+            border-color: rgba(30, 111, 217, 0.28);
+            color: #1a5fad;
+        }
+
         html[data-theme="light"] .search-field input,
         html[data-theme="light"] .search-field select {
             background: #f4f8ff;
@@ -4110,7 +4135,7 @@
                             </div>
                         </div>
 
-                        <div class="search-bar" aria-label="Recherche relances" style="grid-template-columns: repeat(5, minmax(0, 1fr));">
+                        <div class="search-bar" aria-label="Recherche relances" style="grid-template-columns: repeat(6, minmax(0, 1fr));">
                             <div class="search-field">
                                 <label for="filter_relance_numero">Numéro</label>
                                 <input type="text" id="filter_relance_numero" placeholder="Ex. 06…" maxlength="20" autocomplete="off" inputmode="tel">
@@ -4152,6 +4177,10 @@
                             <div class="search-field">
                                 <label for="filter_relance_a">A</label>
                                 <input type="text" id="filter_relance_a" placeholder="JJ/MM/AAAA" maxlength="10" autocomplete="off">
+                            </div>
+                            <div class="search-field" style="justify-content:flex-end;">
+                                <label for="relanceVisibleCount">&nbsp;</label>
+                                <span class="relance-count" id="relanceVisibleCount">0 numéro</span>
                             </div>
                         </div>
                     </div>
@@ -6987,6 +7016,7 @@ Merci pour votre confiance.</p>
             const noResultRow = document.getElementById(noResultId);
             if (noResultRow) noResultRow.style.display = rows.length > 0 && visible === 0 ? '' : 'none';
             if (emptyRow) emptyRow.style.display = rows.length === 0 ? '' : 'none';
+            return visible;
         }
 
 
@@ -7447,14 +7477,29 @@ Merci pour votre confiance.</p>
             if (emptyRow) emptyRow.style.display = rows.length === 0 ? '' : 'none';
         }
 
+        function updateRelanceVisibleCount(visible) {
+            const el = document.getElementById('relanceVisibleCount');
+            if (!el) return;
+            const deVal = (document.getElementById('filter_relance_de')?.value || '').trim();
+            const aVal = (document.getElementById('filter_relance_a')?.value || '').trim();
+            const deOk = /^\d{2}\/\d{2}\/\d{4}$/.test(deVal);
+            const aOk = /^\d{2}\/\d{2}\/\d{4}$/.test(aVal);
+            const show = deOk || aOk;
+            el.classList.toggle('is-visible', show);
+            if (!show) return;
+            const n = Number(visible) || 0;
+            el.textContent = n === 1 ? '1 numéro' : `${n} numéros`;
+        }
+
         function filterRelancesTable() {
-            filterRelancesRows('#relancesTableBody', {
+            const visible = filterRelancesRows('#relancesTableBody', {
                 moisId: 'filter_relance_mois',
                 statueId: 'filter_relance_statue',
                 deId: 'filter_relance_de',
                 aId: 'filter_relance_a',
                 numeroId: 'filter_relance_numero',
             }, 'relancesNoResult');
+            updateRelanceVisibleCount(visible);
             persistRelanceFilters();
         }
 
