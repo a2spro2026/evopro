@@ -8408,6 +8408,26 @@ Merci pour votre confiance.</p>
         const waCsrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '';
         let waActionContext = { telephone: '', nomComplet: '', relanceId: '' };
 
+        const DEVIS_LOGO_URL = @json(asset('images/logo-a2s-evopro.png'));
+        let devisLogoDataUrl = '';
+
+        async function getDevisLogoDataUrl() {
+            if (devisLogoDataUrl) return devisLogoDataUrl;
+            try {
+                const response = await fetch(DEVIS_LOGO_URL, { cache: 'force-cache' });
+                const blob = await response.blob();
+                devisLogoDataUrl = await new Promise((resolve, reject) => {
+                    const reader = new FileReader();
+                    reader.onload = () => resolve(String(reader.result || ''));
+                    reader.onerror = reject;
+                    reader.readAsDataURL(blob);
+                });
+            } catch (err) {
+                devisLogoDataUrl = DEVIS_LOGO_URL;
+            }
+            return devisLogoDataUrl;
+        }
+
         const DEVIS_NB_TEXT = `Concernant les modalités de paiement, le montant total du projet sera réparti en 3 tranches :
 
 • 30 % à la commande : acompte pour le lancement du projet et le début des travaux.
@@ -8657,30 +8677,80 @@ Merci pour votre confiance.
 EvoPro`;
         }
 
-        function buildDevisHtml(data) {
+        function buildDevisHtml(data, logoSrc = '') {
             const montant = Number(data.montant) || 0;
-            return `<div class="devis-pdf-root" style="font-family:Arial,Helvetica,sans-serif;color:#12233d;line-height:1.35;width:190mm;">
-                <div style="display:flex;justify-content:space-between;align-items:flex-start;margin:0 0 10px;border-bottom:2px solid #1e6fd9;padding:0 0 8px;">
-                    <div>
-                        <div style="margin:0;font-size:18px;color:#1e6fd9;letter-spacing:.04em;font-weight:700;line-height:1.1;">EVOPRO</div>
-                        <div style="color:#66788f;font-size:11px;">Devis commercial</div>
+            const nom = escapeHtml(data.nom || '—');
+            const tel = escapeHtml(data.telephone || '—');
+            const titre = escapeHtml(data.titre || '—');
+            const delai = escapeHtml(data.delai || '—');
+            const date = escapeHtml(data.date || '');
+            const desc = escapeHtml(data.description || '');
+            const montantTxt = escapeHtml(formatMoneyFr(montant));
+            const logo = escapeHtml(logoSrc || DEVIS_LOGO_URL);
+            return `<div class="devis-pdf-root" style="box-sizing:border-box;width:210mm;height:148mm;overflow:hidden;display:flex;font-family:'Outfit',Arial,Helvetica,sans-serif;color:#0a1628;background:#eef4fc;text-transform:none;letter-spacing:0;line-height:1.3;">
+                <div style="width:7mm;flex:0 0 7mm;background:linear-gradient(180deg,#3b9eff 0%,#1e6fd9 42%,#0b3d8c 100%);"></div>
+                <div style="flex:1;min-width:0;display:flex;flex-direction:column;height:148mm;">
+                    <div style="background:#07111f;color:#fff;padding:4mm 8mm;display:flex;justify-content:space-between;align-items:center;position:relative;overflow:hidden;">
+                        <div style="position:absolute;right:-8mm;top:-12mm;width:42mm;height:42mm;border-radius:50%;background:rgba(59,158,255,0.16);"></div>
+                        <div style="position:absolute;right:18mm;bottom:-16mm;width:28mm;height:28mm;border-radius:50%;background:rgba(255,255,255,0.06);"></div>
+                        <img src="${logo}" alt="A2S-EvoPro" style="position:relative;height:24mm;width:auto;max-width:78mm;object-fit:contain;display:block;">
+                        <div style="text-align:right;position:relative;">
+                            <div style="display:inline-block;padding:1.6mm 4mm;border-radius:99px;background:rgba(59,158,255,0.22);border:1px solid rgba(126,196,255,0.45);font-size:9px;letter-spacing:.16em;font-weight:700;color:#d6ecff;">DEVIS COMMERCIAL</div>
+                            <div style="margin-top:2.6mm;font-size:12.5px;font-weight:700;color:#fff;">${date}</div>
+                        </div>
                     </div>
-                    <div style="text-align:right;font-size:11px;color:#66788f;line-height:1.35;">
-                        <div>Date : ${escapeHtml(data.date)}</div>
-                        <div>Tél : ${escapeHtml(data.telephone)}</div>
+                    <div style="flex:1;min-height:0;padding:6mm 8mm 4.5mm;display:flex;gap:5.5mm;">
+                        <div style="width:64mm;flex:0 0 64mm;display:flex;flex-direction:column;gap:3.8mm;">
+                            <div style="background:#fff;border:1px solid #d5e4f7;border-radius:3.2mm;padding:3.8mm 4.2mm;">
+                                <div style="font-size:8px;font-weight:700;letter-spacing:.14em;color:#1e6fd9;text-transform:uppercase;margin-bottom:1.6mm;">Client</div>
+                                <div style="font-size:15px;font-weight:700;color:#0a1628;line-height:1.25;">${nom}</div>
+                                <div style="margin-top:1.8mm;font-size:11.5px;color:#4d6480;">Tél. ${tel}</div>
+                            </div>
+                            <div style="background:#fff;border:1px solid #d5e4f7;border-radius:3.2mm;padding:3.8mm 4.2mm;">
+                                <div style="font-size:8px;font-weight:700;letter-spacing:.14em;color:#1e6fd9;text-transform:uppercase;margin-bottom:1.6mm;">Délai de travail</div>
+                                <div style="font-size:15px;font-weight:700;color:#0a1628;">${delai}</div>
+                            </div>
+                            <div style="margin-top:auto;background:linear-gradient(145deg,#0d2a52,#1e6fd9);border-radius:3.6mm;padding:5mm 4.4mm;color:#fff;">
+                                <div style="font-size:8px;font-weight:700;letter-spacing:.16em;color:#b9d8ff;text-transform:uppercase;margin-bottom:2mm;">Montant du projet</div>
+                                <div style="font-size:28px;font-weight:900;letter-spacing:.01em;line-height:1;"><strong>${montantTxt}</strong> <span style="font-size:13px;font-weight:900;opacity:.95;">DH</span></div>
+                            </div>
+                        </div>
+                        <div style="flex:1;min-width:0;display:flex;flex-direction:column;">
+                            <div style="background:#fff;border:1px solid #d5e4f7;border-radius:3.2mm;padding:3.8mm 4.4mm;">
+                                <div style="font-size:8px;font-weight:700;letter-spacing:.14em;color:#1e6fd9;text-transform:uppercase;margin-bottom:1.6mm;">Titre de projet</div>
+                                <div style="font-size:16.5px;font-weight:700;color:#0a1628;line-height:1.25;">${titre}</div>
+                            </div>
+                            <div style="height:9mm;flex:0 0 9mm;"></div>
+                            <div style="flex:1;min-height:0;background:#fff;border:1px solid #d5e4f7;border-radius:3.2mm;padding:4mm 4.4mm;display:flex;flex-direction:column;">
+                                <div style="font-size:8px;font-weight:700;letter-spacing:.14em;color:#1e6fd9;text-transform:uppercase;margin-bottom:2.2mm;">Description</div>
+                                <div style="flex:1;overflow:hidden;font-size:12.5px;line-height:1.5;color:#24364d;white-space:pre-wrap;">${desc}</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div style="padding:0 8mm 5mm;">
+                        <div style="background:#fff;border:1px solid #d5e4f7;border-radius:3.2mm;padding:3.4mm 4mm 3.6mm;">
+                            <div style="font-size:8px;font-weight:700;letter-spacing:.14em;color:#1e6fd9;text-transform:uppercase;margin-bottom:2.4mm;">NB — Modalités de paiement</div>
+                            <div style="display:flex;gap:2.6mm;">
+                                <div style="flex:1;background:#f3f8ff;border-radius:2.4mm;padding:2.5mm 2.8mm;border-left:2.6px solid #3b9eff;">
+                                    <div style="font-size:12.5px;font-weight:800;color:#1e6fd9;">30 %</div>
+                                    <div style="font-size:9.5px;color:#4d6480;margin-top:0.8mm;line-height:1.35;">À la commande — acompte pour le lancement du projet</div>
+                                </div>
+                                <div style="flex:1;background:#f3f8ff;border-radius:2.4mm;padding:2.5mm 2.8mm;border-left:2.6px solid #1e6fd9;">
+                                    <div style="font-size:12.5px;font-weight:800;color:#1e6fd9;">40 %</div>
+                                    <div style="font-size:9.5px;color:#4d6480;margin-top:0.8mm;line-height:1.35;">À mi-parcours — après validation de l’avancement</div>
+                                </div>
+                                <div style="flex:1;background:#f3f8ff;border-radius:2.4mm;padding:2.5mm 2.8mm;border-left:2.6px solid #0b3d8c;">
+                                    <div style="font-size:12.5px;font-weight:800;color:#1e6fd9;">30 %</div>
+                                    <div style="font-size:9.5px;color:#4d6480;margin-top:0.8mm;line-height:1.35;">À la livraison — solde après validation finale</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div style="margin-top:2.6mm;display:flex;justify-content:space-between;align-items:center;font-size:9px;color:#66788f;">
+                            <span>Merci pour votre confiance.</span>
+                            <span style="letter-spacing:.08em;font-weight:700;color:#1e6fd9;">A2S-EvoPro</span>
+                        </div>
                     </div>
                 </div>
-                <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px 14px;margin-bottom:10px;font-size:12.5px;">
-                    <div><div style="color:#66788f;font-size:10px;text-transform:uppercase;margin-bottom:1px;font-weight:700;">Client</div>${escapeHtml(data.nom || '—')}</div>
-                    <div><div style="color:#66788f;font-size:10px;text-transform:uppercase;margin-bottom:1px;font-weight:700;">Titre de projet</div>${escapeHtml(data.titre)}</div>
-                    <div><div style="color:#66788f;font-size:10px;text-transform:uppercase;margin-bottom:1px;font-weight:700;">Montant</div>${escapeHtml(formatMoneyFr(montant))} DH</div>
-                    <div><div style="color:#66788f;font-size:10px;text-transform:uppercase;margin-bottom:1px;font-weight:700;">Délai de travail</div>${escapeHtml(data.delai)}</div>
-                </div>
-                <div style="font-size:13px;margin:10px 0 5px;color:#0a1628;font-weight:700;">Description</div>
-                <div style="border:1px solid #d5e2f3;border-radius:8px;padding:8px 10px;background:#f7fafe;margin-bottom:8px;white-space:pre-wrap;font-size:12px;">${escapeHtml(data.description)}</div>
-                <div style="margin-top:10px;border-left:3px solid #1e6fd9;padding:7px 10px;background:#f3f8ff;font-size:11px;line-height:1.35;white-space:pre-line;"><strong>NB :</strong>
-${escapeHtml(DEVIS_NB_TEXT)}</div>
-                <div style="margin-top:10px;font-size:11px;color:#66788f;text-align:center;">Document généré par EvoPro — Merci pour votre confiance.</div>
             </div>`;
         }
 
@@ -8688,18 +8758,32 @@ ${escapeHtml(DEVIS_NB_TEXT)}</div>
             if (!window.html2pdf) {
                 throw new Error('Générateur PDF indisponible.');
             }
+            const logoSrc = await getDevisLogoDataUrl();
             const host = document.createElement('div');
-            host.style.cssText = 'position:fixed;left:-10000px;top:0;width:210mm;background:#fff;padding:0;margin:0;';
-            host.innerHTML = buildDevisHtml(data);
+            host.style.cssText = 'position:fixed;left:-10000px;top:0;width:210mm;height:148mm;background:#eef4fc;padding:0;margin:0;text-transform:none;';
+            host.innerHTML = buildDevisHtml(data, logoSrc);
             document.body.appendChild(host);
+            await Promise.all(Array.from(host.querySelectorAll('img')).map((img) => {
+                if (img.complete) return Promise.resolve();
+                return new Promise((resolve) => {
+                    img.onload = resolve;
+                    img.onerror = resolve;
+                });
+            }));
             try {
                 const opt = {
-                    margin: [6, 10, 8, 10],
+                    margin: 0,
                     filename: 'devis-evopro.pdf',
                     image: { type: 'jpeg', quality: 0.98 },
-                    html2canvas: { scale: 2, useCORS: true, backgroundColor: '#ffffff' },
-                    jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' },
-                    pagebreak: { mode: ['avoid-all', 'css', 'legacy'] },
+                    html2canvas: {
+                        scale: 2.5,
+                        useCORS: true,
+                        backgroundColor: '#eef4fc',
+                        windowWidth: 794,
+                        windowHeight: 560,
+                    },
+                    jsPDF: { unit: 'mm', format: 'a5', orientation: 'landscape' },
+                    pagebreak: { mode: [] },
                 };
                 return await html2pdf().set(opt).from(host.firstElementChild).outputPdf('blob');
             } finally {
