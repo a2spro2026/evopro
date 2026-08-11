@@ -7120,8 +7120,6 @@ Merci pour votre confiance.</p>
             }
         }
 
-        const csrfToken = getCsrfToken();
-
         function applyRelanceRappelerUi(id, value) {
             const locked = value === 'non';
             document.querySelectorAll(`tr[data-id="${CSS.escape(id)}"]`).forEach((row) => {
