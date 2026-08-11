@@ -324,6 +324,10 @@ Route::get('/devis/{token}', function (string $token) {
 
 Route::middleware('auth.user')->group(function () {
 
+Route::get('/csrf-token', function () {
+    return response()->json(['token' => csrf_token()]);
+})->name('csrf.token');
+
 Route::post('/clients', function (Request $request) {
     $data = $request->validate([
         'date' => ['required', 'string', 'regex:/^\d{2}\/\d{2}\/\d{4}$/'],

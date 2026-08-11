@@ -7097,7 +7097,30 @@ Merci pour votre confiance.</p>
             });
         });
 
-        const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '';
+        function getCsrfToken() {
+            return document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '';
+        }
+
+        function setCsrfToken(token) {
+            const meta = document.querySelector('meta[name="csrf-token"]');
+            if (meta && token) meta.setAttribute('content', token);
+        }
+
+        async function refreshCsrfToken() {
+            try {
+                const res = await fetch('{{ url('/csrf-token') }}', {
+                    headers: { 'Accept': 'application/json', 'X-Requested-With': 'XMLHttpRequest' },
+                    credentials: 'same-origin',
+                });
+                const data = await res.json().catch(() => ({}));
+                if (data.token) setCsrfToken(data.token);
+                return data.token || getCsrfToken();
+            } catch (_) {
+                return getCsrfToken();
+            }
+        }
+
+        const csrfToken = getCsrfToken();
 
         function applyRelanceRappelerUi(id, value) {
             const locked = value === 'non';
@@ -7154,7 +7177,7 @@ Merci pour votre confiance.</p>
                         headers: {
                             'Content-Type': 'application/json',
                             'Accept': 'application/json',
-                            'X-CSRF-TOKEN': csrfToken,
+                            'X-CSRF-TOKEN': getCsrfToken(),
                             'X-Requested-With': 'XMLHttpRequest',
                         },
                         body: JSON.stringify({ [fieldKey]: value }),
@@ -7217,7 +7240,7 @@ Merci pour votre confiance.</p>
                         headers: {
                             'Content-Type': 'application/json',
                             'Accept': 'application/json',
-                            'X-CSRF-TOKEN': csrfToken,
+                            'X-CSRF-TOKEN': getCsrfToken(),
                             'X-Requested-With': 'XMLHttpRequest',
                         },
                         body: JSON.stringify({ field, value }),
@@ -8132,23 +8155,36 @@ Merci pour votre confiance.</p>
                 btnConfirm.disabled = true;
                 setStatus('Création des prospects…', 'info');
                 try {
-                    const res = await fetch('{{ url('/relances/import') }}', {
+                    const postImport = async () => fetch('{{ url('/relances/import') }}', {
                         method: 'POST',
+                        credentials: 'same-origin',
                         headers: {
                             'Content-Type': 'application/json',
                             'Accept': 'application/json',
-                            'X-CSRF-TOKEN': csrfToken,
+                            'X-CSRF-TOKEN': getCsrfToken(),
                             'X-Requested-With': 'XMLHttpRequest',
                         },
-                        body: JSON.stringify({ telephones: detectedPhones }),
+                        body: JSON.stringify({
+                            telephones: detectedPhones,
+                            _token: getCsrfToken(),
+                        }),
                     });
+
+                    let res = await postImport();
+                    if (res.status === 419) {
+                        await refreshCsrfToken();
+                        res = await postImport();
+                    }
                     const data = await res.json().catch(() => ({}));
                     if (!res.ok) {
+                        if (res.status === 419) {
+                            throw new Error('Session expirée. Rechargez la page puis reclassez.');
+                        }
                         throw new Error(data.message || 'Import refusé');
                     }
                     const created = data.created ?? detectedPhones.length;
                     const skipped = data.skipped || 0;
-                    setStatus(created + ' créé(s)' + (skipped ? ', ' + skipped + ' déjà présent(s)' : '') + '. Redirection…', 'ok');
+                    setStatus(created + ' créé(s)' + (skipped ? ', ' + skipped + ' déjà présent(s)' : '') + '. Ouverture du tableau…', 'ok');
                     const url = new URL('{{ url('/dashboard') }}', window.location.origin);
                     url.searchParams.set('open', 'relance');
                     window.location.href = url.toString();
