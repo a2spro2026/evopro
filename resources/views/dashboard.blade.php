@@ -3956,11 +3956,6 @@
             <main class="content">
                 <section class="panel active" id="panel-dashboard">
                     <div class="dashboard-sticky-lock">
-                    @if (empty($isVendeur))
-                        <div class="dashboard-cards-toolbar">
-                            <button type="button" class="btn-toggle-cards" id="btnToggleCards">Masquer les cartes</button>
-                        </div>
-                    @endif
                     <section class="cards{{ !empty($isVendeur) ? ' cards-vendeur' : '' }}" aria-label="Statistiques">
                         @if (!empty($isVendeur))
                         <article class="card actif">
