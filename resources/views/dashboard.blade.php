@@ -525,6 +525,9 @@
             display: flex;
             flex-direction: column;
             gap: 0.35rem;
+            min-width: 0;
+            position: relative;
+            z-index: 2;
         }
 
         .search-field label {
@@ -633,8 +636,11 @@
         }
 
         .relance-inline-textarea {
+            display: block;
             height: auto;
             min-height: 110px;
+            max-width: 100%;
+            min-width: 0;
             padding: 0.55rem 0.6rem;
             resize: vertical;
             line-height: 1.45;
@@ -653,6 +659,16 @@
 
         .relance-inline-select {
             cursor: pointer;
+            pointer-events: auto;
+            position: relative;
+            z-index: 3;
+            appearance: none;
+            -webkit-appearance: none;
+            padding-right: 1.35rem;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='10' viewBox='0 0 24 24' fill='none' stroke='%237ec4ff' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 0.4rem center;
+            background-size: 10px;
         }
 
         html[data-theme="light"] .relance-inline-input {
@@ -786,7 +802,14 @@
         table.data-table.data-table-relances td.cell-wrap {
             white-space: normal;
             min-width: 0;
-            max-width: none;
+            max-width: 0;
+            overflow: hidden;
+        }
+
+        table.data-table.data-table-relances td:has(> .relance-inline-select) {
+            overflow: visible;
+            position: relative;
+            z-index: 4;
         }
 
         table.data-table.data-table-relances .statue-select {
@@ -4212,7 +4235,7 @@
                                 <select id="filter_relance_vendeur">
                                     <option value="">TOUS LES VENDEURS</option>
                                     @foreach (($vendeurs ?? []) as $vendeurNom)
-                                        <option value="{{ mb_strtolower($vendeurNom) }}">{{ $vendeurNom }}</option>
+                                        <option value="{{ $vendeurNom }}">{{ $vendeurNom }}</option>
                                     @endforeach
                                 </select>
                             </div>
@@ -4375,6 +4398,7 @@
                                                 data-field="description"
                                                 data-id="{{ $relance['id'] }}"
                                                 rows="5"
+                                                cols="1"
                                                 aria-label="Description"
                                             >{{ $relance['description'] ?? '' }}</textarea>
                                         </td>
@@ -4388,9 +4412,9 @@
                                             >
                                                 <option value="">—</option>
                                                 @foreach (($vendeurs ?? []) as $vendeurNom)
-                                                    <option value="{{ $vendeurNom }}" @selected($vendeurRelance === $vendeurNom)>{{ $vendeurNom }}</option>
+                                                    <option value="{{ $vendeurNom }}" @selected(mb_strtolower($vendeurRelance) === mb_strtolower($vendeurNom))>{{ $vendeurNom }}</option>
                                                 @endforeach
-                                                @if ($vendeurRelance !== '' && ! in_array($vendeurRelance, $vendeurs ?? [], true))
+                                                @if ($vendeurRelance !== '' && ! collect($vendeurs ?? [])->contains(fn ($n) => mb_strtolower($n) === mb_strtolower($vendeurRelance)))
                                                     <option value="{{ $vendeurRelance }}" selected>{{ $vendeurRelance }}</option>
                                                 @endif
                                             </select>
@@ -7132,14 +7156,14 @@ Merci pour votre confiance.</p>
                 const rowDateKey = parseDateFrToKey(row.dataset.date || '');
                 const rowImport = row.dataset.import === '1';
                 const rowPhone = row.dataset.telephone || '';
-                const rowVendeur = row.dataset.vendeur || '';
+                const rowVendeur = (row.dataset.vendeur || '').toLowerCase();
                 const matchMois = !mois || rowMois === mois;
                 const matchStatue = !statue || importOnly || rowStatue === statue;
                 const matchDe = !deKey || (rowDateKey !== null && rowDateKey >= deKey);
                 const matchA = !aKey || (rowDateKey !== null && rowDateKey <= aKey);
                 const matchImport = !importOnly || rowImport;
                 const matchNumero = !numeroQuery || rowPhone.includes(numeroQuery);
-                const matchVendeur = !vendeur || rowVendeur === vendeur;
+                const matchVendeur = !vendeur || rowVendeur === vendeur.toLowerCase();
                 const show = matchMois && matchStatue && matchDe && matchA && matchImport && matchNumero && matchVendeur;
                 row.style.display = show ? '' : 'none';
                 if (show) visible++;

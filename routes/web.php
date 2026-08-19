@@ -238,14 +238,13 @@ Route::get('/dashboard', function () use ($requireAuth) {
         'authUserNom' => (string) ($authUser['nom_complet'] ?? ''),
         'isVendeur' => $authUserStatue === 'vendeur',
         'vendeurs' => collect(AppStore::get('utilisateurs'))
-            ->filter(fn ($u) => ($u['statue'] ?? '') === 'vendeur')
             ->pluck('nom_complet')
             ->merge(collect($relances)->pluck('vendeur'))
             ->merge(collect($relances)->pluck('commercial'))
             ->map(fn ($n) => trim((string) $n))
             ->filter()
             ->unique(fn ($n) => mb_strtolower($n))
-            ->sort()
+            ->sort(fn ($a, $b) => strcasecmp($a, $b))
             ->values()
             ->all(),
         'dashboardCounts' => array_merge($dashboardCounts, [
