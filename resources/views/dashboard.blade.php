@@ -6140,19 +6140,19 @@ Merci pour votre confiance.</p>
         syncSidebarForViewport();
 
         clientToggle?.addEventListener('click', () => {
-            clientGroup.classList.toggle('open');
+            clientGroup?.classList.toggle('open');
         });
 
         projetToggle?.addEventListener('click', () => {
-            projetGroup.classList.toggle('open');
+            projetGroup?.classList.toggle('open');
         });
 
         paiementToggle?.addEventListener('click', () => {
-            paiementGroup.classList.toggle('open');
+            paiementGroup?.classList.toggle('open');
         });
 
         configToggle?.addEventListener('click', () => {
-            configGroup.classList.toggle('open');
+            configGroup?.classList.toggle('open');
         });
 
         function applyTheme(theme) {
@@ -6197,36 +6197,36 @@ Merci pour votre confiance.</p>
             document.getElementById('dashboardNavBtn')?.classList.toggle('active', name === 'dashboard');
 
             if (name === 'fiche-client') {
-                clientGroup.classList.add('open');
-                clientToggle.classList.add('active');
+                clientGroup?.classList.add('open');
+                clientToggle?.classList.add('active');
                 document.querySelector('[data-panel="fiche-client"]')?.classList.add('active');
             } else if (name === 'fiche-relance') {
-                clientGroup.classList.add('open');
-                clientToggle.classList.add('active');
+                clientGroup?.classList.add('open');
+                clientToggle?.classList.add('active');
                 document.querySelector('[data-panel="fiche-relance"]')?.classList.add('active');
             } else if (name === 'fiche-projet') {
-                projetGroup.classList.add('open');
-                projetToggle.classList.add('active');
+                projetGroup?.classList.add('open');
+                projetToggle?.classList.add('active');
                 document.querySelector('[data-panel="fiche-projet"]')?.classList.add('active');
             } else if (name === 'fiche-evolution') {
-                projetGroup.classList.add('open');
-                projetToggle.classList.add('active');
+                projetGroup?.classList.add('open');
+                projetToggle?.classList.add('active');
                 document.querySelector('[data-panel="fiche-evolution"]')?.classList.add('active');
             } else if (name === 'fiche-paiement') {
-                paiementGroup.classList.add('open');
-                paiementToggle.classList.add('active');
+                paiementGroup?.classList.add('open');
+                paiementToggle?.classList.add('active');
                 document.querySelector('[data-panel="fiche-paiement"]')?.classList.add('active');
             } else if (name === 'fiche-utilisateur') {
-                configGroup.classList.add('open');
-                configToggle.classList.add('active');
+                configGroup?.classList.add('open');
+                configToggle?.classList.add('active');
                 document.querySelector('[data-panel="fiche-utilisateur"]')?.classList.add('active');
             } else if (name === 'fiche-autorisation') {
-                configGroup.classList.add('open');
-                configToggle.classList.add('active');
+                configGroup?.classList.add('open');
+                configToggle?.classList.add('active');
                 document.querySelector('[data-panel="fiche-autorisation"]')?.classList.add('active');
             } else if (name === 'fiche-whatsapp') {
-                configGroup.classList.add('open');
-                configToggle.classList.add('active');
+                configGroup?.classList.add('open');
+                configToggle?.classList.add('active');
                 document.querySelector('[data-panel="fiche-whatsapp"]')?.classList.add('active');
             } else if (name === 'dashboard') {
                 document.querySelector(`.nav-item[data-panel="dashboard"]`)?.classList.add('active');
@@ -7466,6 +7466,8 @@ Merci pour votre confiance.</p>
                 input.value = v;
             });
         });
+
+        function filterProjetsTable() {
             const mois = document.getElementById('filter_projet_mois')?.value || '';
             const client = document.getElementById('filter_projet_client')?.value || '';
             const statue = document.getElementById('filter_projet_statue')?.value || '';
