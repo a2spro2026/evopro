@@ -188,6 +188,12 @@ Route::get('/dashboard', function () use ($requireAuth) {
                 $relancesCleaned = true;
             }
         }
+        $vendeur = trim((string) ($relanceRow['vendeur'] ?? ''));
+        $legacyCommercial = trim((string) ($relanceRow['commercial'] ?? ''));
+        if ($vendeur === '' && $legacyCommercial !== '') {
+            $relanceRow['vendeur'] = $legacyCommercial;
+            $relancesCleaned = true;
+        }
         $dr = trim((string) ($relanceRow['date_rappel'] ?? ''));
         if ($dr === '') {
             $relanceRow['date_rappel'] = '../../2026';
@@ -228,7 +234,23 @@ Route::get('/dashboard', function () use ($requireAuth) {
         })(),
         'menuSections' => $menuSections,
         'userPermissions' => $userPermissions,
-        'dashboardCounts' => $dashboardCounts,
+        'authUserStatue' => $authUserStatue,
+        'authUserNom' => (string) ($authUser['nom_complet'] ?? ''),
+        'isVendeur' => $authUserStatue === 'vendeur',
+        'vendeurs' => collect(AppStore::get('utilisateurs'))
+            ->filter(fn ($u) => ($u['statue'] ?? '') === 'vendeur')
+            ->pluck('nom_complet')
+            ->merge(collect($relances)->pluck('vendeur'))
+            ->merge(collect($relances)->pluck('commercial'))
+            ->map(fn ($n) => trim((string) $n))
+            ->filter()
+            ->unique(fn ($n) => mb_strtolower($n))
+            ->sort()
+            ->values()
+            ->all(),
+        'dashboardCounts' => array_merge($dashboardCounts, [
+            'confirme' => collect($relances)->where('statue', 'confirme')->count(),
+        ]),
         'revenuAyda' => $sumTresorerie('ayda'),
         'revenuBrahim' => $sumTresorerie('brahim'),
         'totalSolde' => $projetsCollection->sum(fn ($p) => (float) ($p['solde'] ?? 0)),
@@ -430,19 +452,26 @@ Route::delete('/clients/{id}', function (string $id) {
 
 Route::post('/relances', function (Request $request) {
     $data = $request->validate([
-        'date' => ['required', 'string'],
+        'date' => ['required', 'string', 'regex:/^\d{2}\/\d{2}\/\d{4}$/'],
         'ref' => ['required', 'string'],
         'nom_complet' => ['required', 'string', 'max:255'],
         'telephone' => ['required', 'string', 'max:255'],
         'ville' => ['required', 'string', 'max:255'],
         'titre_projet' => ['required', 'string', 'max:255'],
         'description' => ['required', 'string', 'max:2000'],
-        'budget' => ['required', 'numeric', 'min:0'],
+        'vendeur' => ['nullable', 'string', 'max:255'],
+        'commercial' => ['nullable', 'string', 'max:255'],
         'envoye' => ['required', 'string', 'in:lien,conception'],
         'statue' => ['required', 'string', 'in:confirme,a_voir,inj'],
         'a_rappeler' => ['required', 'string', 'in:oui,non'],
-        'date_rappel' => ['required', 'string', 'regex:/^(\d{2}|\.\.)\/(\d{2}|\.\.)\/\d{4}$/'],
+        'date_rappel' => ['nullable', 'string', 'regex:/^(\d{2}|\.\.)\/(\d{2}|\.\.)\/\d{4}$/'],
     ]);
+
+    if (($data['a_rappeler'] ?? '') !== 'oui') {
+        $data['date_rappel'] = '../../2026';
+    } elseif (empty($data['date_rappel'])) {
+        $data['date_rappel'] = '../../2026';
+    }
 
     $clientId = null;
     if ($data['statue'] === 'confirme') {
@@ -480,7 +509,8 @@ Route::post('/relances', function (Request $request) {
         'ville' => $data['ville'],
         'titre_projet' => $data['titre_projet'],
         'description' => $data['description'],
-        'budget' => (float) $data['budget'],
+        'vendeur' => trim((string) ($data['vendeur'] ?? $data['commercial'] ?? '')),
+        'budget' => 0.0,
         'envoye' => $data['envoye'],
         'statue' => $data['statue'],
         'a_rappeler' => $data['a_rappeler'],
@@ -556,6 +586,7 @@ Route::post('/relances/import', function (Request $request) {
             'ville' => '',
             'titre_projet' => '',
             'description' => '',
+            'vendeur' => '',
             'budget' => 0.0,
             'envoye' => 'lien',
             'statue' => 'a_voir',
@@ -588,17 +619,25 @@ Route::post('/relances/import', function (Request $request) {
 
 Route::put('/relances/{id}', function (Request $request, string $id) {
     $data = $request->validate([
+        'date' => ['required', 'string', 'regex:/^\d{2}\/\d{2}\/\d{4}$/'],
         'nom_complet' => ['required', 'string', 'max:255'],
         'telephone' => ['required', 'string', 'max:255'],
         'ville' => ['required', 'string', 'max:255'],
         'titre_projet' => ['required', 'string', 'max:255'],
         'description' => ['required', 'string', 'max:2000'],
-        'budget' => ['required', 'numeric', 'min:0'],
+        'vendeur' => ['nullable', 'string', 'max:255'],
+        'commercial' => ['nullable', 'string', 'max:255'],
         'envoye' => ['required', 'string', 'in:lien,conception'],
         'statue' => ['required', 'string', 'in:confirme,a_voir,inj'],
         'a_rappeler' => ['required', 'string', 'in:oui,non'],
-        'date_rappel' => ['required', 'string', 'regex:/^(\d{2}|\.\.)\/(\d{2}|\.\.)\/\d{4}$/'],
+        'date_rappel' => ['nullable', 'string', 'regex:/^(\d{2}|\.\.)\/(\d{2}|\.\.)\/\d{4}$/'],
     ]);
+
+    if (($data['a_rappeler'] ?? '') !== 'oui') {
+        $data['date_rappel'] = '../../2026';
+    } elseif (empty($data['date_rappel'])) {
+        $data['date_rappel'] = '../../2026';
+    }
 
     $relances = AppStore::get('relances');
     $index = collect($relances)->search(fn ($r) => ($r['id'] ?? '') === $id);
@@ -609,12 +648,13 @@ Route::put('/relances/{id}', function (Request $request, string $id) {
             ->with('open_fiche_relance', true);
     }
 
+    $relances[$index]['date'] = $data['date'];
     $relances[$index]['nom_complet'] = $data['nom_complet'];
     $relances[$index]['telephone'] = $data['telephone'];
     $relances[$index]['ville'] = $data['ville'];
     $relances[$index]['titre_projet'] = $data['titre_projet'];
     $relances[$index]['description'] = $data['description'];
-    $relances[$index]['budget'] = (float) $data['budget'];
+    $relances[$index]['vendeur'] = trim((string) ($data['vendeur'] ?? $data['commercial'] ?? ''));
     $relances[$index]['envoye'] = $data['envoye'];
     $relances[$index]['statue'] = $data['statue'];
     $relances[$index]['a_rappeler'] = $data['a_rappeler'];
@@ -810,18 +850,24 @@ Route::patch('/relances/{id}/a-rappeler', function (Request $request, string $id
 
 Route::patch('/relances/{id}/inline', function (Request $request, string $id) {
     $data = $request->validate([
-        'field' => ['required', 'string', 'in:telephone,nom_complet,titre_projet,description,budget,a_rappeler,ville'],
+        'field' => ['required', 'string', 'in:telephone,nom_complet,titre_projet,description,a_rappeler,ville,date,vendeur,commercial'],
         'value' => ['nullable'],
     ]);
 
     $field = $data['field'];
     $value = $data['value'];
 
-    if ($field === 'budget') {
-        $value = is_numeric($value) ? (float) $value : null;
-        if ($value === null || $value < 0) {
-            return response()->json(['ok' => false, 'message' => 'Budget invalide'], 422);
+    if ($field === 'date') {
+        $value = trim((string) ($value ?? ''));
+        if (! preg_match('/^\d{2}\/\d{2}\/\d{4}$/', $value)) {
+            return response()->json(['ok' => false, 'message' => 'Date invalide'], 422);
         }
+    } elseif ($field === 'vendeur' || $field === 'commercial') {
+        $value = trim((string) ($value ?? ''));
+        if (mb_strlen($value) > 255) {
+            return response()->json(['ok' => false, 'message' => 'Trop long'], 422);
+        }
+        $field = 'vendeur';
     } elseif ($field === 'a_rappeler') {
         $value = (string) $value;
         if (! in_array($value, ['oui', 'non'], true)) {

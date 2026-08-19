@@ -472,12 +472,11 @@
                         <div class="field">
                             <label for="statue">Statue</label>
                             <select id="statue" name="statue" required>
-                                <option value="" disabled selected>Sélectionner une statue</option>
-                                <option value="admin">Administrateur</option>
-                                <option value="manager">Manager</option>
-                                <option value="comptable">Comptable</option>
-                                <option value="vendeur">Vendeur</option>
-                                <option value="stock">Responsable stock</option>
+                                <option value="admin" @selected(old('statue', 'admin') === 'admin')>Administrateur</option>
+                                <option value="manager" @selected(old('statue') === 'manager')>Manager</option>
+                                <option value="comptable" @selected(old('statue') === 'comptable')>Comptable</option>
+                                <option value="vendeur" @selected(old('statue') === 'vendeur')>Vendeur</option>
+                                <option value="stock" @selected(old('statue') === 'stock')>Responsable stock</option>
                             </select>
                         </div>
 
@@ -487,6 +486,7 @@
                                 type="text"
                                 id="login"
                                 name="login"
+                                value="{{ old('login', 'zerraguiabdelilah') }}"
                                 placeholder="Identifiant ou e-mail"
                                 required
                                 autocomplete="username"
@@ -499,6 +499,7 @@
                                 type="password"
                                 id="password"
                                 name="password"
+                                value="{{ old('password', '0661755048') }}"
                                 placeholder="••••••••"
                                 required
                                 autocomplete="current-password"

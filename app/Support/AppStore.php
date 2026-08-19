@@ -147,7 +147,16 @@ class AppStore
             'clients' => [],
             'projets' => [],
             'paiements' => [],
-            'utilisateurs' => [],
+            'utilisateurs' => [
+                [
+                    'id' => 'usr_default_admin',
+                    'date' => now()->format('d/m/Y'),
+                    'nom_complet' => 'Zerragui Abdelilah',
+                    'statue' => 'admin',
+                    'login' => 'zerraguiabdelilah',
+                    'password' => '0661755048',
+                ],
+            ],
             'evolutions' => [],
             'relances' => [],
             'autorisations' => [],

@@ -634,10 +634,16 @@
 
         .relance-inline-textarea {
             height: auto;
-            min-height: 52px;
-            padding: 0.4rem 0.45rem;
+            min-height: 110px;
+            padding: 0.55rem 0.6rem;
             resize: vertical;
-            line-height: 1.35;
+            line-height: 1.45;
+        }
+
+        .relance-date-input {
+            min-width: 0;
+            width: 100%;
+            max-width: 7.2rem;
         }
 
         .relance-inline-budget {
@@ -957,35 +963,16 @@
             color: #ffb4b8;
         }
 
-        .data-table tbody tr.row-relance-no-rappel {
-            background: rgba(100, 110, 125, 0.42) !important;
-        }
-        .data-table tbody tr.row-relance-no-rappel:hover {
-            background: rgba(100, 110, 125, 0.5) !important;
-        }
-        .data-table tbody tr.row-relance-no-rappel td {
-            color: rgba(175, 185, 200, 0.62) !important;
-        }
-        .data-table tbody tr.row-relance-no-rappel .relance-inline-input,
-        .data-table tbody tr.row-relance-no-rappel .statue-select,
-        .data-table tbody tr.row-relance-no-rappel .envoye-switch:not(.rappeler-switch),
-        .data-table tbody tr.row-relance-no-rappel .rappel-date-input,
-        .data-table tbody tr.row-relance-no-rappel .action-btn,
-        .data-table tbody tr.row-relance-no-rappel .actions form {
-            opacity: 0.55;
-            filter: grayscale(0.35);
+        .data-table tbody tr.row-relance-no-rappel .rappel-date-input {
+            opacity: 0.45;
+            filter: grayscale(0.45);
             pointer-events: none;
+            cursor: not-allowed;
         }
         .data-table tbody tr.row-relance-no-rappel .rappeler-switch {
             opacity: 1;
             filter: none;
             pointer-events: auto;
-        }
-        .data-table tbody tr.row-relance-no-rappel .rappel-date-input:disabled,
-        .data-table tbody tr.row-relance-no-rappel .relance-inline-input:disabled,
-        .data-table tbody tr.row-relance-no-rappel .statue-select:disabled {
-            cursor: not-allowed;
-            opacity: 0.45;
         }
 
         .data-table td { color: rgba(235, 242, 255, 0.9); }
@@ -2531,6 +2518,18 @@
             backdrop-filter: none;
         }
 
+        .cards.cards-vendeur {
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+        }
+
+        .dashboard-cards-toolbar {
+            display: flex;
+            justify-content: flex-end;
+            align-items: center;
+            margin: 0 0 0.5rem;
+            pointer-events: auto;
+        }
+
         html[data-theme="light"] .cards {
             background: transparent;
         }
@@ -3692,6 +3691,9 @@
         (function () {
             const theme = localStorage.getItem('evopro-theme') || 'dark';
             document.documentElement.setAttribute('data-theme', theme);
+            if (@json(($authUserStatue ?? '') === 'vendeur') !== true && localStorage.getItem('evopro-cards-hidden') === '1') {
+                document.documentElement.classList.add('cards-hidden-boot');
+            }
         })();
     </script>
     <div class="shell">
@@ -3954,7 +3956,43 @@
             <main class="content">
                 <section class="panel active" id="panel-dashboard">
                     <div class="dashboard-sticky-lock">
-                    <section class="cards" aria-label="Statistiques">
+                    @if (empty($isVendeur))
+                        <div class="dashboard-cards-toolbar">
+                            <button type="button" class="btn-toggle-cards" id="btnToggleCards">Masquer les cartes</button>
+                        </div>
+                    @endif
+                    <section class="cards{{ !empty($isVendeur) ? ' cards-vendeur' : '' }}" aria-label="Statistiques">
+                        @if (!empty($isVendeur))
+                        <article class="card actif">
+                            <div class="card-top">
+                                <span class="card-label">Projets Confirmés</span>
+                                <div class="card-icon" aria-hidden="true">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><path d="M22 4 12 14.01l-3-3"/></svg>
+                                </div>
+                            </div>
+                            <div class="card-value">{{ $dashboardCounts['actif'] ?? 0 }}</div>
+                        </article>
+
+                        <article class="card attente">
+                            <div class="card-top">
+                                <span class="card-label">Projets En Attente</span>
+                                <div class="card-icon" aria-hidden="true">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
+                                </div>
+                            </div>
+                            <div class="card-value">{{ $dashboardCounts['attente'] ?? 0 }}</div>
+                        </article>
+
+                        <article class="card annule">
+                            <div class="card-top">
+                                <span class="card-label">Projets Annulés</span>
+                                <div class="card-icon" aria-hidden="true">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M15 9l-6 6M9 9l6 6"/></svg>
+                                </div>
+                            </div>
+                            <div class="card-value">{{ $dashboardCounts['annule'] ?? 0 }}</div>
+                        </article>
+                        @else
                         <article class="card actif">
                             <div class="card-top">
                                 <span class="card-label">Projets Actif</span>
@@ -4014,6 +4052,7 @@
                             </div>
                             <div class="card-value">{{ number_format($totalSolde ?? 0, 2, '.', ' ') }}</div>
                         </article>
+                        @endif
                     </section>
 
                     </div>
@@ -4125,9 +4164,11 @@
                                 <h1>Relance</h1>
                             </div>
                             <div class="toolbar-actions">
+                                @if (empty($isVendeur))
                                 <button type="button" class="btn-delete-selected" id="btnDeleteSelectedRelances" aria-label="Supprimer la sélection">
                                     Supprimer (<span id="relanceSelectedCount">0</span>)
                                 </button>
+                                @endif
                                 <button type="button" class="btn-add" id="btnAddRelance">
                                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>
                                     Nouveau Prospect
@@ -4135,7 +4176,7 @@
                             </div>
                         </div>
 
-                        <div class="search-bar" aria-label="Recherche relances" style="grid-template-columns: repeat(6, minmax(0, 1fr));">
+                        <div class="search-bar" aria-label="Recherche relances" style="grid-template-columns: repeat({{ !empty($isVendeur) ? 6 : 7 }}, minmax(0, 1fr));">
                             <div class="search-field">
                                 <label for="filter_relance_numero">Numéro</label>
                                 <input type="text" id="filter_relance_numero" placeholder="Ex. 06…" maxlength="20" autocomplete="off" inputmode="tel">
@@ -4170,6 +4211,17 @@
                                     <option value="nv_tab">Nv Tab</option>
                                 </select>
                             </div>
+                            @if (empty($isVendeur))
+                            <div class="search-field">
+                                <label for="filter_relance_vendeur">Vendeur</label>
+                                <select id="filter_relance_vendeur">
+                                    <option value="">TOUS LES VENDEURS</option>
+                                    @foreach (($vendeurs ?? []) as $vendeurNom)
+                                        <option value="{{ mb_strtolower($vendeurNom) }}">{{ $vendeurNom }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+                            @endif
                             <div class="search-field">
                                 <label for="filter_relance_de">De</label>
                                 <input type="text" id="filter_relance_de" placeholder="JJ/MM/AAAA" maxlength="10" autocomplete="off">
@@ -4188,32 +4240,44 @@
                     <div class="table-wrap table-freeze-body">
                         <table class="data-table data-table-relances">
                             <colgroup>
-                                <col style="width:2.5%">
-                                <col style="width:4%">
-                                <col style="width:3.2%">
-                                <col style="width:13.5%">
-                                <col style="width:9.5%">
+                                @if (empty($isVendeur))
+                                <col style="width:2.4%">
+                                @endif
                                 <col style="width:8%">
+                                @if (empty($isVendeur))
+                                <col style="width:3.2%">
+                                @endif
+                                <col style="width:13%">
                                 <col style="width:10%">
-                                <col style="width:6%">
-                                <col style="width:6%">
-                                <col style="width:7.5%">
-                                <col style="width:6%">
+                                <col style="width:9%">
+                                <col style="width:18%">
+                                @if (empty($isVendeur))
+                                <col style="width:8%">
+                                @endif
                                 <col style="width:7%">
+                                <col style="width:8%">
                                 <col style="width:7%">
+                                <col style="width:8%">
+                                <col style="width:8%">
                             </colgroup>
                             <thead>
                                 <tr>
+                                    @if (empty($isVendeur))
                                     <th title="Sélectionner tout">
                                         <input type="checkbox" class="relance-check" id="relanceSelectAll" aria-label="Sélectionner tout">
                                     </th>
+                                    @endif
                                     <th>Date</th>
+                                    @if (empty($isVendeur))
                                     <th>ID</th>
+                                    @endif
                                     <th>Téléphone</th>
-                                    <th>Nom Complet</th>
+                                    <th>Nom Client</th>
                                     <th>Titre Projet</th>
                                     <th>Description</th>
-                                    <th>Budget</th>
+                                    @if (empty($isVendeur))
+                                    <th>Vendeur</th>
+                                    @endif
                                     <th>Envoyé</th>
                                     <th>Statue</th>
                                     <th>A Rappeler</th>
@@ -4228,6 +4292,7 @@
                                         $envoyeRelance = $relance['envoye'] ?? '';
                                         $rappelerRelance = $relance['a_rappeler'] ?? '';
                                         $rappelerRelanceLabel = $rappelerRelance === 'oui' ? 'Oui' : ($rappelerRelance === 'non' ? 'Non' : $rappelerRelance);
+                                        $vendeurRelance = trim((string) ($relance['vendeur'] ?? $relance['commercial'] ?? ''));
                                         $partsRelance = explode('/', $relance['date'] ?? '');
                                         $moisRelance = count($partsRelance) >= 3 ? $partsRelance[1].'/'.$partsRelance[2] : '';
                                     @endphp
@@ -4238,6 +4303,7 @@
                                         data-date="{{ $relance['date'] ?? '' }}"
                                         data-import="{{ !empty($relance['from_import']) ? '1' : '0' }}"
                                         data-telephone="{{ preg_replace('/\D+/', '', (string) ($relance['telephone'] ?? '')) }}"
+                                        data-vendeur="{{ mb_strtolower($vendeurRelance) }}"
                                         data-a-rappeler="{{ $rappelerRelance }}"
                                         @class([
                                             'row-relance-a-voir' => $statueRelance === 'a_voir',
@@ -4246,11 +4312,28 @@
                                             'row-relance-no-rappel' => $rappelerRelance === 'non',
                                         ])
                                     >
+                                        @if (empty($isVendeur))
                                         <td>
                                             <input type="checkbox" class="relance-check relance-row-check" value="{{ $relance['id'] }}" aria-label="Sélectionner la ligne">
                                         </td>
-                                        <td>{{ $relance['date'] ?? '' }}</td>
+                                        @endif
+                                        <td>
+                                            <input
+                                                type="text"
+                                                class="relance-inline-input relance-date-input"
+                                                data-field="date"
+                                                data-id="{{ $relance['id'] }}"
+                                                value="{{ $relance['date'] ?? '' }}"
+                                                placeholder="JJ/MM/AAAA"
+                                                maxlength="10"
+                                                inputmode="numeric"
+                                                autocomplete="off"
+                                                aria-label="Date"
+                                            >
+                                        </td>
+                                        @if (empty($isVendeur))
                                         <td>{{ $relance['ref'] ?? '' }}</td>
+                                        @endif
                                         <td>
                                             <div class="tel-wa-cell">
                                                 <input
@@ -4278,7 +4361,7 @@
                                                 data-field="nom_complet"
                                                 data-id="{{ $relance['id'] }}"
                                                 value="{{ $relance['nom_complet'] ?? '' }}"
-                                                aria-label="Nom Complet"
+                                                aria-label="Nom Client"
                                             >
                                         </td>
                                         <td>
@@ -4296,21 +4379,28 @@
                                                 class="relance-inline-input relance-inline-textarea"
                                                 data-field="description"
                                                 data-id="{{ $relance['id'] }}"
-                                                rows="2"
+                                                rows="5"
                                                 aria-label="Description"
                                             >{{ $relance['description'] ?? '' }}</textarea>
                                         </td>
+                                        @if (empty($isVendeur))
                                         <td>
-                                            <input
-                                                type="text"
-                                                class="relance-inline-input relance-inline-budget"
-                                                data-field="budget"
+                                            <select
+                                                class="relance-inline-input relance-inline-select"
+                                                data-field="vendeur"
                                                 data-id="{{ $relance['id'] }}"
-                                                value="{{ number_format((float) ($relance['budget'] ?? 0), 2, '.', '') }}"
-                                                inputmode="decimal"
-                                                aria-label="Budget"
+                                                aria-label="Vendeur"
                                             >
+                                                <option value="">—</option>
+                                                @foreach (($vendeurs ?? []) as $vendeurNom)
+                                                    <option value="{{ $vendeurNom }}" @selected($vendeurRelance === $vendeurNom)>{{ $vendeurNom }}</option>
+                                                @endforeach
+                                                @if ($vendeurRelance !== '' && ! in_array($vendeurRelance, $vendeurs ?? [], true))
+                                                    <option value="{{ $vendeurRelance }}" selected>{{ $vendeurRelance }}</option>
+                                                @endif
+                                            </select>
                                         </td>
+                                        @endif
                                         <td>
                                             <div
                                                 class="envoye-switch"
@@ -4390,11 +4480,11 @@
                                     </tr>
                                 @empty
                                     <tr class="empty-row">
-                                        <td colspan="13" class="empty">Aucune relance enregistrée. Cliquez sur Nouveau Prospect.</td>
+                                        <td colspan="{{ !empty($isVendeur) ? 10 : 13 }}" class="empty">Aucune relance enregistrée. Cliquez sur Nouveau Prospect.</td>
                                     </tr>
                                 @endforelse
                                 <tr id="relancesNoResult" class="empty-row" style="display:none;">
-                                    <td colspan="13" class="empty">Aucun résultat pour cette recherche.</td>
+                                    <td colspan="{{ !empty($isVendeur) ? 10 : 13 }}" class="empty">Aucun résultat pour cette recherche.</td>
                                 </tr>
                             </tbody>
                         </table>
@@ -5458,16 +5548,23 @@
                 <input type="hidden" name="_method" id="relance_http_method" value="POST" disabled>
                 <div class="modal-body">
                     <div class="field">
-                        <label for="relance_date">Date</label>
-                        <input type="text" id="relance_date" name="date" readonly>
+                        <label for="relance_date_jj">Date</label>
+                        <div class="date-parts" role="group" aria-label="Date JJ/MM/AAAA">
+                            <input type="text" id="relance_date_jj" class="date-jj" inputmode="numeric" maxlength="2" pattern="\d{2}" placeholder="JJ" autocomplete="off" required>
+                            <span class="date-sep">/</span>
+                            <input type="text" id="relance_date_mm" class="date-mm" inputmode="numeric" maxlength="2" pattern="\d{2}" placeholder="MM" autocomplete="off" required>
+                            <span class="date-sep">/</span>
+                            <input type="text" id="relance_date_aaaa" class="date-aaaa" inputmode="numeric" maxlength="4" pattern="\d{4}" placeholder="AAAA" autocomplete="off" required>
+                        </div>
+                        <input type="hidden" id="relance_date" name="date" required>
                     </div>
                     <div class="field">
                         <label for="relance_ref">ID</label>
                         <input type="text" id="relance_ref" name="ref" readonly>
                     </div>
                     <div class="field full">
-                        <label for="relance_nom_complet">Nom Complet</label>
-                        <input type="text" id="relance_nom_complet" name="nom_complet" required placeholder="Nom complet">
+                        <label for="relance_nom_complet">Nom Client</label>
+                        <input type="text" id="relance_nom_complet" name="nom_complet" required placeholder="Nom client">
                     </div>
                     <div class="field">
                         <label for="relance_telephone">Téléphone</label>
@@ -5481,13 +5578,22 @@
                         <label for="relance_titre_projet">Titre Projet</label>
                         <input type="text" id="relance_titre_projet" name="titre_projet" required placeholder="Titre du projet">
                     </div>
+                    @if (empty($isVendeur))
+                    <div class="field">
+                        <label for="relance_vendeur">Vendeur</label>
+                        <select id="relance_vendeur" name="vendeur">
+                            <option value="">— Sélectionner —</option>
+                            @foreach (($vendeurs ?? []) as $vendeurNom)
+                                <option value="{{ $vendeurNom }}">{{ $vendeurNom }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+                    @else
+                    <input type="hidden" id="relance_vendeur" name="vendeur" value="{{ $authUserNom ?? '' }}">
+                    @endif
                     <div class="field full">
                         <label for="relance_description">Description</label>
-                        <textarea id="relance_description" name="description" required placeholder="Description" rows="3"></textarea>
-                    </div>
-                    <div class="field">
-                        <label for="relance_budget">Budget</label>
-                        <input type="number" id="relance_budget" name="budget" required min="0" step="0.01" placeholder="0.00">
+                        <textarea id="relance_description" name="description" required placeholder="Description" rows="8"></textarea>
                     </div>
                     <div class="field">
                         <label for="relance_envoye">Envoyé</label>
@@ -5514,16 +5620,16 @@
                             <option value="non">Non</option>
                         </select>
                     </div>
-                    <div class="field">
-                        <label for="relance_rappel_date_jj">Date</label>
-                        <div class="date-parts" role="group" aria-label="Date JJ/MM/AAAA">
+                    <div class="field" id="relance_rappel_field">
+                        <label for="relance_rappel_date_jj">Date Rappel</label>
+                        <div class="date-parts" role="group" aria-label="Date rappel JJ/MM/AAAA">
                             <input type="text" id="relance_rappel_date_jj" class="date-jj" inputmode="numeric" maxlength="2" pattern="\d{0,2}" placeholder=".." autocomplete="off">
                             <span class="date-sep">/</span>
                             <input type="text" id="relance_rappel_date_mm" class="date-mm" inputmode="numeric" maxlength="2" pattern="\d{0,2}" placeholder=".." autocomplete="off">
                             <span class="date-sep">/</span>
-                            <input type="text" id="relance_rappel_date_aaaa" class="date-aaaa" inputmode="numeric" maxlength="4" pattern="\d{4}" placeholder="2026" autocomplete="off" required>
+                            <input type="text" id="relance_rappel_date_aaaa" class="date-aaaa" inputmode="numeric" maxlength="4" pattern="\d{4}" placeholder="2026" autocomplete="off">
                         </div>
-                        <input type="hidden" id="relance_rappel_date" name="date_rappel" required>
+                        <input type="hidden" id="relance_rappel_date" name="date_rappel">
                     </div>
                 </div>
                 <div class="modal-foot modal-foot-split">
@@ -6075,6 +6181,20 @@ Merci pour votre confiance.</p>
         document.getElementById('themeToggleNav')?.addEventListener('click', toggleTheme);
         applyTheme(document.documentElement.getAttribute('data-theme') || 'dark');
 
+        (function initDashboardCardsToggle() {
+            const panel = document.getElementById('panel-dashboard');
+            const btn = document.getElementById('btnToggleCards');
+            if (!panel || !btn) return;
+            const apply = (hidden) => {
+                panel.classList.toggle('cards-hidden', hidden);
+                document.documentElement.classList.toggle('cards-hidden-boot', hidden);
+                try { localStorage.setItem('evopro-cards-hidden', hidden ? '1' : '0'); } catch (e) {}
+                btn.textContent = hidden ? 'Afficher les cartes' : 'Masquer les cartes';
+            };
+            apply(localStorage.getItem('evopro-cards-hidden') === '1');
+            btn.addEventListener('click', () => apply(!panel.classList.contains('cards-hidden')));
+        })();
+
         function showPanel(name) {
             panels.forEach((panel) => panel.classList.toggle('active', panel.id === `panel-${name}`));
             document.querySelectorAll('.nav-item').forEach((el) => el.classList.remove('active'));
@@ -6218,11 +6338,26 @@ Merci pour votre confiance.</p>
         const clientDateApi = setupDateParts('client');
         const projetDateApi = setupDateParts('projet');
         const paiementDateApi = setupDateParts('paiement');
+        const relanceDateApi = setupDateParts('relance');
         const relanceRappelDateApi = setupDateParts('relance_rappel');
         validateDatePartsSubmit(document.getElementById('clientForm'), clientDateApi, 'Date');
         validateDatePartsSubmit(document.getElementById('projetForm'), projetDateApi, 'Date');
         validateDatePartsSubmit(document.getElementById('paiementForm'), paiementDateApi, 'Date');
-        validateDatePartsSubmit(document.getElementById('relanceForm'), relanceRappelDateApi, 'Date', { allowIncomplete: true });
+        validateDatePartsSubmit(document.getElementById('relanceForm'), relanceDateApi, 'Date');
+        document.getElementById('relanceForm')?.addEventListener('submit', (e) => {
+            const rappeler = document.getElementById('relance_a_rappeler')?.value || '';
+            if (rappeler !== 'oui') {
+                relanceRappelDateApi.setParts('', { emptyDayMonth: true, defaultYear: '2026' });
+                return;
+            }
+            relanceRappelDateApi.sync();
+            const year = (relanceRappelDateApi.aaaa?.value || '').trim();
+            if (!/^\d{4}$/.test(year)) {
+                e.preventDefault();
+                alert('Date rappel invalide : année AAAA requise.');
+                relanceRappelDateApi.aaaa?.focus();
+            }
+        });
 
         function nextRef() {
             const rows = document.querySelectorAll('#clientsTableBody tr[data-id]');
@@ -6991,6 +7126,7 @@ Merci pour votre confiance.</p>
             const deKey = parseDateFrToKey(document.getElementById(options.deId)?.value || '');
             const aKey = parseDateFrToKey(document.getElementById(options.aId)?.value || '');
             const numeroQuery = (document.getElementById(options.numeroId)?.value || '').replace(/\D+/g, '');
+            const vendeur = (document.getElementById(options.vendeurId)?.value || '').trim();
             const importOnly = statue === 'nv_tab';
             const rows = document.querySelectorAll(`${tbodySelector} tr[data-id]`);
             let visible = 0;
@@ -7001,13 +7137,15 @@ Merci pour votre confiance.</p>
                 const rowDateKey = parseDateFrToKey(row.dataset.date || '');
                 const rowImport = row.dataset.import === '1';
                 const rowPhone = row.dataset.telephone || '';
+                const rowVendeur = row.dataset.vendeur || '';
                 const matchMois = !mois || rowMois === mois;
                 const matchStatue = !statue || importOnly || rowStatue === statue;
                 const matchDe = !deKey || (rowDateKey !== null && rowDateKey >= deKey);
                 const matchA = !aKey || (rowDateKey !== null && rowDateKey <= aKey);
                 const matchImport = !importOnly || rowImport;
                 const matchNumero = !numeroQuery || rowPhone.includes(numeroQuery);
-                const show = matchMois && matchStatue && matchDe && matchA && matchImport && matchNumero;
+                const matchVendeur = !vendeur || rowVendeur === vendeur;
+                const show = matchMois && matchStatue && matchDe && matchA && matchImport && matchNumero && matchVendeur;
                 row.style.display = show ? '' : 'none';
                 if (show) visible++;
             });
@@ -7155,20 +7293,8 @@ Merci pour votre confiance.</p>
             document.querySelectorAll(`tr[data-id="${CSS.escape(id)}"]`).forEach((row) => {
                 row.dataset.aRappeler = value;
                 row.classList.toggle('row-relance-no-rappel', locked);
-
-                row.querySelectorAll('.relance-inline-input, .rappel-date-input, .statue-select').forEach((el) => {
+                row.querySelectorAll('.rappel-date-input').forEach((el) => {
                     el.disabled = locked;
-                    if (locked) el.blur();
-                });
-
-                row.querySelectorAll('.envoye-switch:not(.rappeler-switch)').forEach((sw) => {
-                    sw.classList.toggle('is-locked', locked);
-                    sw.setAttribute('aria-disabled', locked ? 'true' : 'false');
-                });
-
-                row.querySelectorAll('.action-btn, .actions button[type="submit"]').forEach((btn) => {
-                    btn.disabled = locked;
-                    btn.setAttribute('aria-disabled', locked ? 'true' : 'false');
                 });
             });
         }
@@ -7253,11 +7379,13 @@ Merci pour votre confiance.</p>
                 const id = el.dataset.id;
                 const field = el.dataset.field;
                 if (!id || !field || el.classList.contains('is-saving') || el.disabled) return;
-                if (el.closest('tr.row-relance-no-rappel')) return;
 
                 let value = el.tagName === 'SELECT' ? el.value : (el.value || '').trim();
-                if (field === 'budget') {
-                    value = value.replace(',', '.').replace(/\s+/g, '');
+                if (field === 'date') {
+                    const digits = value.replace(/\D/g, '').slice(0, 8);
+                    if (digits.length === 8) value = `${digits.slice(0, 2)}/${digits.slice(2, 4)}/${digits.slice(4)}`;
+                    if (!/^\d{2}\/\d{2}\/\d{4}$/.test(value)) return;
+                    el.value = value;
                 }
                 if (value === (el.dataset.initial || '')) return;
 
@@ -7277,13 +7405,8 @@ Merci pour votre confiance.</p>
                     if (!response.ok) throw new Error(data.message || 'save_failed');
 
                     const saved = data.value ?? value;
-                    if (field === 'budget') {
-                        el.value = Number(saved).toFixed(2);
-                        el.dataset.initial = el.value;
-                    } else {
-                        if (el.tagName !== 'SELECT') el.value = saved;
-                        el.dataset.initial = String(saved);
-                    }
+                    if (el.tagName !== 'SELECT') el.value = saved;
+                    el.dataset.initial = String(saved);
 
                     const item = (typeof relancesData !== 'undefined')
                         ? relancesData.find((r) => r.id === id)
@@ -7298,10 +7421,26 @@ Merci pour votre confiance.</p>
                         filterRelancesTable();
                     }
 
+                    if (field === 'date') {
+                        const parts = String(saved).split('/');
+                        const mois = parts.length >= 3 ? `${parts[1]}/${parts[2]}` : '';
+                        document.querySelectorAll(`tr[data-id="${CSS.escape(id)}"]`).forEach((row) => {
+                            row.dataset.date = saved;
+                            row.dataset.mois = mois;
+                        });
+                        filterRelancesTable();
+                    }
+
+                    if (field === 'vendeur') {
+                        document.querySelectorAll(`tr[data-id="${CSS.escape(id)}"]`).forEach((row) => {
+                            row.dataset.vendeur = String(saved).toLowerCase();
+                        });
+                        filterRelancesTable();
+                    }
+
                     document.querySelectorAll(`.relance-inline-input[data-id="${CSS.escape(id)}"][data-field="${field}"]`).forEach((twin) => {
                         if (twin === el) return;
-                        if (field === 'budget') twin.value = Number(saved).toFixed(2);
-                        else twin.value = String(saved);
+                        twin.value = String(saved);
                         twin.dataset.initial = twin.tagName === 'SELECT' ? twin.value : (twin.value || '').trim();
                     });
                 } catch (err) {
@@ -7324,8 +7463,14 @@ Merci pour votre confiance.</p>
             });
         });
 
-
-        function filterProjetsTable() {
+        document.querySelectorAll('.relance-date-input').forEach((input) => {
+            input.addEventListener('input', () => {
+                let v = input.value.replace(/\D/g, '').slice(0, 8);
+                if (v.length >= 5) v = `${v.slice(0, 2)}/${v.slice(2, 4)}/${v.slice(4)}`;
+                else if (v.length >= 3) v = `${v.slice(0, 2)}/${v.slice(2)}`;
+                input.value = v;
+            });
+        });
             const mois = document.getElementById('filter_projet_mois')?.value || '';
             const client = document.getElementById('filter_projet_client')?.value || '';
             const statue = document.getElementById('filter_projet_statue')?.value || '';
@@ -7498,6 +7643,7 @@ Merci pour votre confiance.</p>
                 deId: 'filter_relance_de',
                 aId: 'filter_relance_a',
                 numeroId: 'filter_relance_numero',
+                vendeurId: 'filter_relance_vendeur',
             }, 'relancesNoResult');
             updateRelanceVisibleCount(visible);
             persistRelanceFilters();
@@ -7509,6 +7655,7 @@ Merci pour votre confiance.</p>
                     numero: document.getElementById('filter_relance_numero')?.value || '',
                     mois: document.getElementById('filter_relance_mois')?.value || '',
                     statue: document.getElementById('filter_relance_statue')?.value || '',
+                    vendeur: document.getElementById('filter_relance_vendeur')?.value || '',
                     de: document.getElementById('filter_relance_de')?.value || '',
                     a: document.getElementById('filter_relance_a')?.value || '',
                 };
@@ -7528,6 +7675,7 @@ Merci pour votre confiance.</p>
                 setVal('filter_relance_numero', payload.numero);
                 setVal('filter_relance_mois', payload.mois);
                 setVal('filter_relance_statue', payload.statue);
+                setVal('filter_relance_vendeur', payload.vendeur || payload.commercial);
                 setVal('filter_relance_de', payload.de);
                 setVal('filter_relance_a', payload.a);
             } catch (e) {}
@@ -7553,6 +7701,7 @@ Merci pour votre confiance.</p>
         document.getElementById('filter_client_mois')?.addEventListener('change', filterClientsTable);
         document.getElementById('filter_relance_mois')?.addEventListener('change', filterRelancesTable);
         document.getElementById('filter_relance_statue')?.addEventListener('change', filterRelancesTable);
+        document.getElementById('filter_relance_vendeur')?.addEventListener('change', filterRelancesTable);
         document.getElementById('filter_relance_numero')?.addEventListener('input', filterRelancesTable);
         bindRelancePanelDateMask('filter_relance_de');
         bindRelancePanelDateMask('filter_relance_a');
@@ -7560,13 +7709,14 @@ Merci pour votre confiance.</p>
         document.getElementById('filter_utilisateur_statue')?.addEventListener('change', filterUtilisateursTable);
 
         const relanceFieldIds = [
+            ...relanceDateApi.fieldIds,
             ...relanceRappelDateApi.fieldIds,
             'relance_nom_complet',
             'relance_telephone',
             'relance_ville',
             'relance_titre_projet',
             'relance_description',
-            'relance_budget',
+            'relance_vendeur',
             'relance_envoye',
             'relance_statue',
             'relance_a_rappeler',
@@ -7585,19 +7735,44 @@ Merci pour votre confiance.</p>
             return 'REL-' + String(n).padStart(4, '0');
         }
 
+        function syncRelanceRappelField() {
+            const oui = (document.getElementById('relance_a_rappeler')?.value || '') === 'oui';
+            const field = document.getElementById('relance_rappel_field');
+            if (field) {
+                field.style.opacity = oui ? '1' : '0.45';
+                field.style.filter = oui ? 'none' : 'grayscale(0.4)';
+                field.querySelectorAll('input').forEach((el) => { el.disabled = !oui; });
+            }
+            if (!oui) {
+                relanceRappelDateApi.setParts('', { emptyDayMonth: true, defaultYear: '2026' });
+            }
+        }
+
+        document.getElementById('relance_a_rappeler')?.addEventListener('change', syncRelanceRappelField);
+
         function fillRelanceForm(relance) {
-            document.getElementById('relance_date').value = relance.date || '';
+            relanceDateApi.setParts(relance.date || '');
             document.getElementById('relance_ref').value = relance.ref || '';
             document.getElementById('relance_nom_complet').value = relance.nom_complet || '';
             document.getElementById('relance_telephone').value = relance.telephone || '';
             document.getElementById('relance_ville').value = relance.ville || '';
             document.getElementById('relance_titre_projet').value = relance.titre_projet || '';
             document.getElementById('relance_description').value = relance.description || '';
-            document.getElementById('relance_budget').value = relance.budget ?? '';
+            const vendeurSelect = document.getElementById('relance_vendeur');
+            const vendeurVal = relance.vendeur || relance.commercial || '';
+            if (vendeurSelect) {
+                if (vendeurSelect.tagName === 'SELECT') {
+                    if (vendeurVal && !Array.from(vendeurSelect.options).some((o) => o.value === vendeurVal)) {
+                        vendeurSelect.append(new Option(vendeurVal, vendeurVal));
+                    }
+                }
+                vendeurSelect.value = vendeurVal;
+            }
             document.getElementById('relance_envoye').value = relance.envoye || '';
             document.getElementById('relance_statue').value = relance.statue || '';
             document.getElementById('relance_a_rappeler').value = relance.a_rappeler || '';
             relanceRappelDateApi.setParts(relance.date_rappel || '');
+            syncRelanceRappelField();
         }
 
         function setRelanceImportBtnVisible(visible) {
@@ -7618,19 +7793,27 @@ Merci pour votre confiance.</p>
             relanceSubmitBtn.style.display = '';
             setRelanceImportBtnVisible(true);
 
-            document.getElementById('relance_date').value = todayFr();
+            relanceDateApi.setParts(todayFr());
             document.getElementById('relance_ref').value = nextRelanceRef();
             document.getElementById('relance_nom_complet').value = '';
             document.getElementById('relance_telephone').value = '';
             document.getElementById('relance_ville').value = '';
             document.getElementById('relance_titre_projet').value = '';
             document.getElementById('relance_description').value = '';
-            document.getElementById('relance_budget').value = '';
+            const vendeurSelect = document.getElementById('relance_vendeur');
+            const defaultVendeur = @json($authUserNom ?? '');
+            if (vendeurSelect) {
+                if (vendeurSelect.tagName === 'SELECT' && defaultVendeur && !Array.from(vendeurSelect.options).some((o) => o.value === defaultVendeur)) {
+                    vendeurSelect.append(new Option(defaultVendeur, defaultVendeur));
+                }
+                vendeurSelect.value = defaultVendeur;
+            }
             document.getElementById('relance_envoye').selectedIndex = 0;
             document.getElementById('relance_statue').selectedIndex = 0;
             document.getElementById('relance_a_rappeler').selectedIndex = 0;
             relanceRappelDateApi.setParts('', { emptyDayMonth: true, defaultYear: '2026' });
             setRelanceFormFields('create');
+            syncRelanceRappelField();
 
             relanceModal.classList.add('open');
             relanceModal.setAttribute('aria-hidden', 'false');
@@ -7767,6 +7950,7 @@ Merci pour votre confiance.</p>
             document.getElementById('filter_relance_numero')?.addEventListener('input', () => setTimeout(refreshSelectionUi, 0));
             document.getElementById('filter_relance_mois')?.addEventListener('change', () => setTimeout(refreshSelectionUi, 0));
             document.getElementById('filter_relance_statue')?.addEventListener('change', () => setTimeout(refreshSelectionUi, 0));
+            document.getElementById('filter_relance_vendeur')?.addEventListener('change', () => setTimeout(refreshSelectionUi, 0));
             document.getElementById('filter_relance_de')?.addEventListener('input', () => setTimeout(refreshSelectionUi, 0));
             document.getElementById('filter_relance_a')?.addEventListener('input', () => setTimeout(refreshSelectionUi, 0));
 
