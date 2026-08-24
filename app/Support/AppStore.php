@@ -6,12 +6,12 @@ use Illuminate\Support\Facades\File;
 
 class AppStore
 {
-    private const LIST_KEYS = ['clients', 'projets', 'paiements', 'utilisateurs', 'evolutions', 'relances', 'autorisations', 'whatsapp_messages'];
+    private const LIST_KEYS = ['clients', 'projets', 'paiements', 'utilisateurs', 'evolutions', 'relances', 'autorisations', 'whatsapp_messages', 'charges', 'prospections'];
 
-    private const CONFIG_KEYS = ['whatsapp'];
+    private const CONFIG_KEYS = ['whatsapp', 'fiche_ste'];
 
     private const KEYS = [
-        'clients', 'projets', 'paiements', 'utilisateurs', 'evolutions', 'relances', 'autorisations', 'whatsapp', 'whatsapp_messages',
+        'clients', 'projets', 'paiements', 'utilisateurs', 'evolutions', 'relances', 'autorisations', 'whatsapp', 'whatsapp_messages', 'charges', 'prospections', 'fiche_ste',
     ];
 
     public static function path(): string
@@ -150,18 +150,31 @@ class AppStore
             'utilisateurs' => [
                 [
                     'id' => 'usr_default_admin',
+                    'ref' => 'USR-0001',
                     'date' => now()->format('d/m/Y'),
                     'nom_complet' => 'Zerragui Abdelilah',
-                    'statue' => 'admin',
+                    'ville' => '',
+                    'statue' => 'administrateur',
                     'login' => 'zerraguiabdelilah',
                     'password' => '0661755048',
+                    'suspendu' => false,
                 ],
             ],
             'evolutions' => [],
             'relances' => [],
             'autorisations' => [],
+            'charges' => [],
+            'prospections' => [],
             'whatsapp' => WhatsApp::defaults(),
             'whatsapp_messages' => [],
+            'fiche_ste' => [
+                'nom_societe' => '',
+                'nom_gerant' => '',
+                'contact' => '',
+                'ville' => '',
+                'whatsapp' => '',
+                'email' => '',
+            ],
         ];
     }
 

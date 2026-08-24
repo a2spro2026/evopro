@@ -472,11 +472,9 @@
                         <div class="field">
                             <label for="statue">Statue</label>
                             <select id="statue" name="statue" required>
-                                <option value="admin" @selected(old('statue', 'admin') === 'admin')>Administrateur</option>
-                                <option value="manager" @selected(old('statue') === 'manager')>Manager</option>
-                                <option value="comptable" @selected(old('statue') === 'comptable')>Comptable</option>
-                                <option value="vendeur" @selected(old('statue') === 'vendeur')>Vendeur</option>
-                                <option value="stock" @selected(old('statue') === 'stock')>Responsable stock</option>
+                                @foreach (\App\Support\UtilisateurHelper::statueLabels() as $value => $label)
+                                    <option value="{{ $value }}" @selected(old('statue', 'administrateur') === $value)>{{ $label }}</option>
+                                @endforeach
                             </select>
                         </div>
 

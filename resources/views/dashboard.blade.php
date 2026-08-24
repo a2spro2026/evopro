@@ -11,7 +11,6 @@
     <style>
         :root {
             --bg: #07111f;
-            --bg-soft: #0b182b;
             --sidebar: #091525;
             --panel: rgba(14, 28, 48, 0.88);
             --line: rgba(110, 168, 255, 0.18);
@@ -19,220 +18,255 @@
             --accent-soft: #7ec4ff;
             --text: #f4f8ff;
             --muted: rgba(210, 224, 245, 0.68);
-            --green: #3dcf8a;
-            --amber: #f0b429;
-            --rose: #f07178;
-            --cyan: #4dd4ea;
-            --violet: #9b7bff;
-        }
-
-        html[data-theme="light"] {
-            --bg: #f4f8ff;
-            --bg-soft: #eef4fc;
-            --sidebar: #e8f0fb;
-            --panel: rgba(255, 255, 255, 0.94);
-            --line: rgba(30, 90, 180, 0.16);
-            --accent: #1e6fd9;
-            --accent-soft: #3b9eff;
-            --text: #0a1628;
-            --muted: rgba(20, 40, 70, 0.62);
-        }
-
-        html[data-theme="light"] body {
-            background:
-                radial-gradient(ellipse 60% 45% at 10% 0%, rgba(59, 158, 255, 0.12), transparent 60%),
-                radial-gradient(ellipse 50% 40% at 90% 100%, rgba(30, 111, 217, 0.08), transparent 55%),
-                linear-gradient(160deg, #f8fbff 0%, #eef4fc 45%, #f4f8ff 100%);
         }
 
         * { box-sizing: border-box; margin: 0; padding: 0; }
-
-        html {
-            font-size: 15px;
-            -webkit-text-size-adjust: 100%;
-            text-size-adjust: 100%;
-        }
 
         body {
             min-height: 100vh;
             font-family: 'Outfit', sans-serif;
             color: var(--text);
+            background: var(--bg);
             text-transform: uppercase;
-            background:
-                radial-gradient(ellipse 60% 45% at 10% 0%, rgba(40, 120, 255, 0.22), transparent 60%),
-                radial-gradient(ellipse 50% 40% at 90% 100%, rgba(20, 90, 180, 0.18), transparent 55%),
-                linear-gradient(160deg, #050d18 0%, #0a1628 45%, #07111f 100%);
-            overflow-x: hidden;
         }
 
-        a { color: inherit; text-decoration: none; }
+        input, textarea, select, button {
+            text-transform: uppercase;
+        }
+
+        input::placeholder, textarea::placeholder {
+            text-transform: uppercase;
+        }
 
         .shell {
+            min-height: 100vh;
             display: grid;
             grid-template-columns: 260px 1fr;
-            min-height: 100vh;
-            transition: grid-template-columns 0.28s ease;
         }
 
-        /* Sidebar */
         .sidebar {
-            position: sticky;
-            top: 0;
-            height: 100vh;
-            padding: 1.4rem 1rem;
-            background: linear-gradient(180deg, rgba(8, 18, 34, 0.98), rgba(6, 14, 26, 0.96));
+            display: flex;
+            flex-direction: column;
             border-right: 1px solid var(--line);
-            display: flex;
-            flex-direction: column;
-            gap: 1.5rem;
-            transition: opacity 0.22s ease, border-color 0.22s ease;
-            min-width: 0;
+            background: linear-gradient(180deg, rgba(9, 21, 37, 0.98), rgba(7, 17, 31, 0.98));
         }
 
-        .side-brand {
-            display: flex;
-            align-items: center;
-            gap: 0.75rem;
-            padding: 0.35rem 0.55rem 1rem;
-            border-bottom: 1px solid var(--line);
-        }
-
-        .side-brand .mark {
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            display: grid;
-            place-items: center;
-            background: linear-gradient(145deg, #1e6fd9, #4eb3ff);
-            box-shadow: 0 0 20px rgba(59, 158, 255, 0.45);
-            flex-shrink: 0;
-        }
-
-        .side-brand .mark svg { width: 22px; height: 22px; }
-
-        .nav-list {
-            display: flex;
-            flex-direction: column;
-            gap: 0.35rem;
-            flex: 1;
-        }
-
-        .dashboard-nav-btn {
-            display: flex;
-            align-items: center;
-            gap: 0.85rem;
-            width: 100%;
-            padding: 0.95rem 1rem;
-            margin-bottom: 0.65rem;
-            border-radius: 14px;
-            border: 1px solid rgba(126, 196, 255, 0.35);
-            background: linear-gradient(135deg, rgba(30, 111, 217, 0.45) 0%, rgba(59, 158, 255, 0.22) 50%, rgba(126, 196, 255, 0.12) 100%);
-            box-shadow:
-                0 0 0 1px rgba(126, 196, 255, 0.15) inset,
-                0 8px 24px rgba(30, 111, 217, 0.25),
-                0 0 28px rgba(59, 158, 255, 0.15);
-            color: #fff;
-            text-decoration: none;
-            transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+        .sidebar-brand {
             position: relative;
+            padding: 1rem 0.75rem 0.9rem;
+            border-bottom: 1px solid var(--line);
+            display: flex;
+            justify-content: center;
+            align-items: center;
             overflow: hidden;
         }
 
-        .dashboard-nav-btn::before {
+        .sidebar-brand::before {
             content: '';
             position: absolute;
             inset: 0;
-            background: linear-gradient(110deg, transparent 30%, rgba(255, 255, 255, 0.12) 50%, transparent 70%);
-            transform: translateX(-120%);
-            transition: transform 0.6s ease;
+            background:
+                radial-gradient(ellipse 90% 70% at 50% 35%, rgba(59, 158, 255, 0.2), transparent 68%),
+                radial-gradient(circle at 20% 80%, rgba(155, 123, 255, 0.08), transparent 45%);
+            pointer-events: none;
         }
 
-        .dashboard-nav-btn:hover::before {
-            transform: translateX(120%);
-        }
-
-        .dashboard-nav-btn:hover {
-            transform: translateY(-2px);
-            border-color: rgba(174, 214, 255, 0.55);
+        .logo-stage {
+            position: relative;
+            width: 100%;
+            max-width: 220px;
+            padding: 0.7rem 0.55rem 0.65rem;
+            border-radius: 18px;
+            background:
+                linear-gradient(155deg, rgba(18, 42, 78, 0.85) 0%, rgba(10, 24, 48, 0.92) 55%, rgba(14, 32, 62, 0.88) 100%);
+            border: 1px solid rgba(126, 196, 255, 0.32);
             box-shadow:
-                0 0 0 1px rgba(174, 214, 255, 0.25) inset,
-                0 12px 32px rgba(30, 111, 217, 0.35),
-                0 0 36px rgba(59, 158, 255, 0.25);
+                0 0 0 1px rgba(255, 255, 255, 0.04) inset,
+                0 0 28px rgba(59, 158, 255, 0.28),
+                0 0 56px rgba(59, 158, 255, 0.12),
+                0 10px 28px rgba(0, 0, 0, 0.35);
+            overflow: hidden;
+            isolation: isolate;
+            transition: box-shadow 0.35s ease, transform 0.35s ease, border-color 0.35s ease;
         }
 
-        .dashboard-nav-btn.active {
-            border-color: rgba(174, 214, 255, 0.65);
-            background: linear-gradient(135deg, rgba(30, 111, 217, 0.65) 0%, rgba(59, 158, 255, 0.38) 100%);
+        .logo-stage:hover {
+            transform: translateY(-1px);
+            border-color: rgba(158, 210, 255, 0.5);
             box-shadow:
-                0 0 0 1px rgba(200, 230, 255, 0.3) inset,
-                0 10px 28px rgba(30, 111, 217, 0.4),
-                0 0 32px rgba(59, 158, 255, 0.3);
+                0 0 0 1px rgba(255, 255, 255, 0.06) inset,
+                0 0 36px rgba(94, 176, 255, 0.42),
+                0 0 72px rgba(59, 158, 255, 0.2),
+                0 14px 32px rgba(0, 0, 0, 0.38);
         }
 
-        .dashboard-nav-icon {
-            width: 42px;
-            height: 42px;
-            border-radius: 12px;
-            display: grid;
-            place-items: center;
-            background: linear-gradient(145deg, #1e6fd9, #5eb8ff);
-            box-shadow: 0 0 18px rgba(59, 158, 255, 0.45);
-            flex-shrink: 0;
+        .logo-glow {
+            position: absolute;
+            inset: -25%;
+            z-index: 0;
+            background:
+                radial-gradient(circle at 50% 28%, rgba(126, 196, 255, 0.55), transparent 52%),
+                radial-gradient(circle at 72% 78%, rgba(155, 123, 255, 0.22), transparent 40%);
+            filter: blur(8px);
+            animation: logoPulse 4.5s ease-in-out infinite;
+            pointer-events: none;
         }
 
-        .dashboard-nav-icon svg {
-            width: 22px;
-            height: 22px;
-            color: #fff;
+        .logo-stage img {
+            position: relative;
+            z-index: 1;
+            display: block;
+            width: 100%;
+            height: auto;
+            margin: 0;
+            padding: 0;
+            object-fit: contain;
+            filter:
+                brightness(1.18)
+                contrast(1.1)
+                saturate(1.35)
+                drop-shadow(0 0 10px rgba(126, 196, 255, 0.75))
+                drop-shadow(0 0 22px rgba(59, 158, 255, 0.45))
+                drop-shadow(0 4px 14px rgba(0, 0, 0, 0.35));
+            transition: transform 0.35s ease, filter 0.35s ease;
         }
 
-        .dashboard-nav-text {
-            display: flex;
-            flex-direction: column;
-            gap: 0.1rem;
-            line-height: 1.2;
+        .logo-stage:hover img {
+            transform: scale(1.03);
+            filter:
+                brightness(1.28)
+                contrast(1.12)
+                saturate(1.45)
+                drop-shadow(0 0 14px rgba(158, 220, 255, 0.9))
+                drop-shadow(0 0 32px rgba(94, 176, 255, 0.6))
+                drop-shadow(0 6px 18px rgba(0, 0, 0, 0.4));
         }
 
-        .dashboard-nav-text strong {
-            font-size: 0.95rem;
-            font-weight: 700;
-            letter-spacing: -0.01em;
-            background: linear-gradient(100deg, #ffffff, #c8e7ff);
-            -webkit-background-clip: text;
-            background-clip: text;
-            color: transparent;
+        .logo-shine {
+            position: absolute;
+            top: -60%;
+            left: -70%;
+            z-index: 2;
+            width: 42%;
+            height: 220%;
+            background: linear-gradient(
+                105deg,
+                transparent 0%,
+                rgba(255, 255, 255, 0.03) 35%,
+                rgba(255, 255, 255, 0.28) 50%,
+                rgba(255, 255, 255, 0.03) 65%,
+                transparent 100%
+            );
+            transform: rotate(22deg);
+            animation: logoShine 6s ease-in-out infinite;
+            pointer-events: none;
         }
 
-        .dashboard-nav-text small {
-            font-size: 0.72rem;
-            color: rgba(210, 230, 255, 0.75);
-            font-weight: 400;
+        @keyframes logoPulse {
+            0%, 100% { opacity: 0.72; transform: scale(1); }
+            50% { opacity: 1; transform: scale(1.06); }
         }
 
-        .nav-sections {
-            display: flex;
-            flex-direction: column;
-            gap: 0.35rem;
+        @keyframes logoShine {
+            0%, 72%, 100% { left: -70%; opacity: 0; }
+            38% { opacity: 1; }
+            58% { left: 130%; opacity: 0.85; }
+        }
+
+        .nav-list {
             flex: 1;
+            padding: 0.85rem 0.75rem;
+            display: flex;
+            flex-direction: column;
+            gap: 0.25rem;
         }
 
         .nav-item {
             display: flex;
             align-items: center;
-            gap: 0.75rem;
+            gap: 0.7rem;
+            width: 100%;
             padding: 0.78rem 0.9rem;
+            border: none;
             border-radius: 12px;
+            background: transparent;
             color: var(--muted);
-            font-size: 0.95rem;
+            font-family: inherit;
+            font-size: 0.92rem;
             font-weight: 500;
+            text-align: left;
+            cursor: pointer;
             transition: background 0.2s ease, color 0.2s ease, transform 0.2s ease;
         }
 
-        .nav-item svg {
+        .nav-item-text { flex: 1; min-width: 0; }
+
+        .nav-chevron {
             width: 18px;
             height: 18px;
             flex-shrink: 0;
-            opacity: 1;
+            opacity: 0.55;
+            transition: transform 0.2s ease, opacity 0.2s ease;
+        }
+
+        .nav-group.expanded > .nav-item .nav-chevron {
+            transform: rotate(180deg);
+            opacity: 0.85;
+        }
+
+        .nav-item:hover {
+            background: rgba(59, 158, 255, 0.1);
+            color: var(--text);
+        }
+
+        .nav-item.active {
+            background: rgba(59, 158, 255, 0.16);
+            color: #fff;
+            box-shadow: inset 0 0 0 1px rgba(110, 168, 255, 0.22);
+        }
+
+        .nav-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.2rem;
+        }
+
+        .nav-sublist {
+            display: none;
+            flex-direction: column;
+            gap: 0.2rem;
+            padding: 0 0 0.15rem 0.35rem;
+        }
+
+        .nav-group.expanded .nav-sublist { display: flex; }
+
+        .nav-subitem {
+            display: flex;
+            align-items: center;
+            gap: 0.55rem;
+            width: 100%;
+            padding: 0.62rem 0.85rem 0.62rem 1.1rem;
+            border: none;
+            border-radius: 10px;
+            background: transparent;
+            color: var(--muted);
+            font-family: inherit;
+            font-size: 0.82rem;
+            font-weight: 600;
+            text-align: left;
+            cursor: pointer;
+            transition: background 0.2s ease, color 0.2s ease;
+        }
+
+        .nav-subitem:hover {
+            background: rgba(59, 158, 255, 0.08);
+            color: var(--text);
+        }
+
+        .nav-subitem.active {
+            background: rgba(59, 158, 255, 0.14);
+            color: #fff;
+            box-shadow: inset 0 0 0 1px rgba(110, 168, 255, 0.2);
         }
 
         .nav-icon {
@@ -243,262 +277,213 @@
             place-items: center;
             flex-shrink: 0;
             border: 1px solid transparent;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.18);
         }
 
-        .nav-icon svg {
-            width: 16px;
-            height: 16px;
-            opacity: 1;
-        }
+        .nav-icon svg { width: 16px; height: 16px; }
 
-        .nav-icon.clients {
-            background: linear-gradient(145deg, rgba(126, 196, 255, 0.28), rgba(59, 158, 255, 0.12));
-            border-color: rgba(126, 196, 255, 0.35);
-            color: #9ad4ff;
-        }
-
-        .nav-icon.projets {
-            background: linear-gradient(145deg, rgba(155, 123, 255, 0.3), rgba(123, 92, 255, 0.12));
-            border-color: rgba(155, 123, 255, 0.35);
-            color: #c4b0ff;
-        }
-
-        .nav-icon.paiements {
-            background: linear-gradient(145deg, rgba(61, 207, 138, 0.28), rgba(47, 158, 95, 0.12));
-            border-color: rgba(61, 207, 138, 0.35);
-            color: #7ee8b0;
-        }
-
-        .nav-icon.charges {
-            background: linear-gradient(145deg, rgba(240, 180, 41, 0.28), rgba(200, 140, 20, 0.12));
-            border-color: rgba(240, 180, 41, 0.35);
-            color: #ffc857;
-        }
-
-        .nav-icon.suivie {
-            background: linear-gradient(145deg, rgba(77, 212, 234, 0.28), rgba(27, 184, 212, 0.12));
-            border-color: rgba(77, 212, 234, 0.35);
-            color: #7ee8f5;
-        }
-
-        .nav-icon.rapports {
-            background: linear-gradient(145deg, rgba(240, 113, 120, 0.28), rgba(200, 60, 80, 0.12));
-            border-color: rgba(240, 113, 120, 0.35);
-            color: #ff9aa0;
-        }
-
-        .nav-icon.config {
-            background: linear-gradient(145deg, rgba(90, 140, 220, 0.3), rgba(40, 90, 180, 0.14));
-            border-color: rgba(126, 196, 255, 0.32);
-            color: #b8d9ff;
-        }
-
-        .submenu-icon {
+        .nav-subicon {
             width: 24px;
             height: 24px;
             border-radius: 7px;
             display: grid;
             place-items: center;
             flex-shrink: 0;
-            background: rgba(59, 158, 255, 0.12);
-            border: 1px solid rgba(126, 196, 255, 0.22);
-            color: var(--accent-soft);
+            border: 1px solid transparent;
         }
 
-        .submenu-icon svg {
-            width: 13px;
-            height: 13px;
-        }
+        .nav-subicon svg { width: 13px; height: 13px; }
 
-        .nav-item:hover {
-            background: rgba(59, 158, 255, 0.1);
-            color: var(--text);
-            transform: translateX(2px);
-        }
+        .nav-subicon.relance { background: rgba(240, 180, 41, 0.12); color: #ffc857; border-color: rgba(240, 180, 41, 0.22); }
+        .nav-subicon.commercial { background: rgba(61, 207, 138, 0.12); color: #7ee8b0; border-color: rgba(61, 207, 138, 0.22); }
+        .nav-subicon.utilisateur { background: rgba(126, 196, 255, 0.12); color: #9ad4ff; border-color: rgba(126, 196, 255, 0.22); }
+        .nav-subicon.fiche-ste { background: rgba(155, 123, 255, 0.12); color: #c4b0ff; border-color: rgba(155, 123, 255, 0.22); }
 
-        .nav-item.active {
-            background: linear-gradient(135deg, rgba(30, 111, 217, 0.35), rgba(59, 158, 255, 0.18));
-            color: #fff;
-            box-shadow: inset 0 0 0 1px rgba(126, 196, 255, 0.25);
-        }
+        .nav-icon.dashboard { background: rgba(59, 158, 255, 0.14); color: #9ad4ff; border-color: rgba(126, 196, 255, 0.25); }
+        .nav-icon.prospection { background: rgba(240, 180, 41, 0.14); color: #ffc857; border-color: rgba(240, 180, 41, 0.25); }
+        .nav-icon.client { background: rgba(126, 196, 255, 0.14); color: #9ad4ff; border-color: rgba(126, 196, 255, 0.25); }
+        .nav-icon.projet { background: rgba(155, 123, 255, 0.14); color: #c4b0ff; border-color: rgba(155, 123, 255, 0.25); }
+        .nav-icon.paiement { background: rgba(61, 207, 138, 0.14); color: #7ee8b0; border-color: rgba(61, 207, 138, 0.25); }
+        .nav-icon.charge { background: rgba(240, 113, 120, 0.14); color: #ff9aa0; border-color: rgba(240, 113, 120, 0.25); }
+        .nav-icon.config { background: rgba(77, 212, 234, 0.14); color: #7ee8f5; border-color: rgba(77, 212, 234, 0.25); }
 
-        .nav-item.active svg { opacity: 1; color: var(--accent-soft); }
-
-        .nav-group { display: flex; flex-direction: column; gap: 0.2rem; }
-
-        .nav-parent {
-            width: 100%;
-            border: none;
-            background: transparent;
-            cursor: pointer;
-            font: inherit;
-            text-align: left;
-            justify-content: space-between;
-        }
-
-        .nav-parent .chevron {
-            width: 14px;
-            height: 14px;
-            transition: transform 0.2s ease;
-            opacity: 0.7;
-        }
-
-        .nav-group.open .nav-parent .chevron { transform: rotate(180deg); }
-
-        .nav-parent .nav-left {
-            display: flex;
-            align-items: center;
-            gap: 0.75rem;
-        }
-
-        .submenu {
-            display: none;
-            flex-direction: column;
-            gap: 0.15rem;
-            padding: 0.15rem 0 0.35rem 0.55rem;
-            margin-left: 0.85rem;
-            border-left: 1px solid rgba(110, 168, 255, 0.2);
-        }
-
-        .nav-group.open .submenu { display: flex; }
-
-        .submenu a {
-            display: flex;
-            align-items: center;
-            gap: 0.65rem;
-            padding: 0.55rem 0.75rem;
-            border-radius: 8px;
-            color: var(--muted);
-            font-size: 0.86rem;
-            font-weight: 500;
-            transition: background 0.2s ease, color 0.2s ease, transform 0.2s ease;
-        }
-
-        .submenu a:hover,
-        .submenu a.active {
-            background: rgba(59, 158, 255, 0.12);
-            color: #fff;
-            transform: translateX(2px);
-        }
-
-        .side-foot {
-            padding: 0.8rem 0.9rem;
+        .sidebar-foot {
+            padding: 0.85rem 0.75rem 1rem;
             border-top: 1px solid var(--line);
-            font-size: 0.78rem;
-            color: var(--muted);
         }
 
-        .sidebar-header {
-            display: flex;
-            align-items: flex-start;
-            justify-content: space-between;
-            gap: 0.5rem;
-        }
-
-        .sidebar-header .side-brand {
-            flex: 1;
-            min-width: 0;
-        }
-
-        .sidebar-close {
-            display: none;
-            width: 36px;
-            height: 36px;
-            flex-shrink: 0;
-            border: 1px solid var(--line);
-            border-radius: 10px;
-            background: rgba(59, 158, 255, 0.08);
-            color: var(--text);
-            cursor: pointer;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .sidebar-close svg { width: 18px; height: 18px; }
-
-        .sidebar-backdrop {
-            display: none;
-            position: fixed;
-            inset: 0;
-            z-index: 35;
-            background: rgba(4, 10, 20, 0.55);
-            opacity: 0;
-            pointer-events: none;
-            transition: opacity 0.25s ease;
-        }
-
-        .sidebar-backdrop.open {
-            opacity: 1;
-            pointer-events: auto;
-        }
-
-        .sidebar-footer {
-            display: flex;
-            flex-direction: column;
-            gap: 0.65rem;
-            margin-top: auto;
-            padding-top: 0.5rem;
-        }
-
-        .btn-theme-toggle {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 0.55rem;
+        .btn-logout {
             width: 100%;
-            padding: 0.65rem 0.85rem;
-            border-radius: 12px;
-            border: 1px solid var(--line);
-            background: rgba(59, 158, 255, 0.08);
-            color: var(--text);
-            font-size: 0.76rem;
+            appearance: none;
+            border: 1px solid rgba(240, 113, 120, 0.35);
+            background: rgba(240, 113, 120, 0.12);
+            color: #ffb3b8;
+            border-radius: 10px;
+            padding: 0.65rem 0.9rem;
+            font-family: inherit;
+            font-size: 0.85rem;
             font-weight: 600;
             cursor: pointer;
-            transition: background 0.2s ease, border-color 0.2s ease;
         }
 
-        .btn-theme-toggle:hover {
-            background: rgba(59, 158, 255, 0.14);
-            border-color: rgba(126, 196, 255, 0.35);
+        .main {
+            min-width: 0;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
         }
 
-        .btn-theme-toggle svg { width: 18px; height: 18px; flex-shrink: 0; }
-
-        .btn-sidebar-logout {
-            width: 100%;
-            justify-content: center;
-            border-radius: 12px;
-            padding: 0.65rem 0.85rem;
-        }
-
-        .toolbar-actions {
+        .topbar {
             display: flex;
             align-items: center;
+            justify-content: space-between;
+            gap: 1rem;
+            padding: 1rem 1.75rem;
+            border-bottom: 1px solid var(--line);
+            background: rgba(9, 21, 37, 0.92);
+            backdrop-filter: blur(12px);
+        }
+
+        .welcome {
+            display: flex;
+            flex-direction: column;
+            gap: 0.15rem;
+        }
+
+        .welcome small {
+            color: var(--muted);
+            font-size: 0.78rem;
+            letter-spacing: 0.04em;
+            text-transform: uppercase;
+        }
+
+        .welcome strong {
+            font-size: 1.15rem;
+            font-weight: 600;
+            letter-spacing: -0.02em;
+        }
+
+        .user-badge {
+            padding: 0.45rem 0.75rem;
+            border-radius: 999px;
+            border: 1px solid var(--line);
+            background: rgba(255, 255, 255, 0.04);
+            font-size: 0.82rem;
+            color: var(--muted);
+            text-transform: uppercase;
+        }
+
+        .content {
+            flex: 1;
+            padding: 1.75rem;
+        }
+
+        .panel { display: none; animation: fadeIn 0.3s ease both; }
+        .panel.active { display: block; }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(6px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .content-head {
+            margin-bottom: 1.25rem;
+        }
+
+        .content-head h1 {
+            font-size: 1.2rem;
+            font-weight: 600;
+            letter-spacing: -0.02em;
+        }
+
+        .content-head p {
+            margin-top: 0.35rem;
+            color: var(--muted);
+            font-size: 0.92rem;
+        }
+
+        .cards {
+            display: grid;
+            grid-template-columns: repeat(4, minmax(0, 1fr));
+            gap: 0.85rem;
+        }
+
+        .card-stat {
+            padding: 1rem 1.05rem;
+            min-height: 96px;
+            border-radius: 14px;
+            border: 1px solid rgba(110, 168, 255, 0.2);
+            background: linear-gradient(165deg, rgba(16, 32, 54, 0.92), rgba(10, 22, 40, 0.88));
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.18);
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .card-stat small {
+            color: var(--muted);
+            font-size: 0.78rem;
+            font-weight: 500;
+        }
+
+        .card-stat strong {
+            font-size: 1.55rem;
+            font-weight: 700;
+            letter-spacing: -0.03em;
+        }
+
+        .card-stat.confirme strong { color: #7ee8b0; }
+        .card-stat.attente strong { color: #ffc857; }
+        .card-stat.annule strong { color: #ff9aa0; }
+        .card-stat.charges strong { color: #c4b0ff; }
+        .card-stat.nombre-projet {
+            border-color: rgba(61, 207, 138, 0.28);
+            background: linear-gradient(165deg, rgba(16, 42, 34, 0.92), rgba(10, 28, 22, 0.88));
+        }
+        .card-stat.nombre-projet strong { color: #7ee8b0; }
+        .card-stat.total-budgets {
+            border-color: rgba(255, 159, 67, 0.28);
+            background: linear-gradient(165deg, rgba(42, 30, 16, 0.92), rgba(28, 20, 10, 0.88));
+        }
+        .card-stat.total-budgets strong { color: #ffb366; }
+
+        .client-cards {
+            grid-template-columns: repeat(2, minmax(130px, 160px));
             gap: 0.65rem;
+            margin-bottom: 0;
+        }
+
+        .client-cards .card-stat {
+            min-height: 78px;
+            padding: 0.75rem 0.85rem;
+        }
+
+        .client-cards .card-stat strong {
+            font-size: 1.25rem;
+        }
+
+        .client-head-row {
+            display: flex;
+            align-items: stretch;
+            gap: 0.75rem;
+            margin-bottom: 1rem;
             flex-wrap: wrap;
         }
 
-        .shell.sidebar-collapsed {
-            grid-template-columns: 0 1fr;
+        #panel-client .client-search-bar {
+            flex: 1 1 420px;
+            min-width: min(100%, 320px);
+            margin-bottom: 0;
+            grid-template-columns: repeat(4, minmax(0, 1fr));
         }
 
-        .shell.sidebar-collapsed .sidebar {
-            opacity: 0;
-            pointer-events: none;
-            border-right-color: transparent;
-            overflow: hidden;
-        }
-
-        .panel { display: none; }
-        .panel.active {
-            display: block;
-            animation: fadeInPanel 0.35s ease both;
-        }
-
-        @keyframes fadeInPanel {
-            from { opacity: 0; }
-            to { opacity: 1; }
+        .placeholder {
+            margin-top: 1.5rem;
+            padding: 2rem;
+            border-radius: 16px;
+            border: 1px dashed rgba(110, 168, 255, 0.22);
+            background: rgba(10, 20, 36, 0.55);
+            color: var(--muted);
+            text-align: center;
         }
 
         .section-toolbar {
@@ -512,7 +497,7 @@
 
         .search-bar {
             display: grid;
-            grid-template-columns: repeat(4, minmax(0, 1fr));
+            grid-template-columns: repeat(5, minmax(0, 1fr));
             gap: 0.75rem;
             margin-bottom: 1rem;
             padding: 0.9rem 1rem;
@@ -526,8 +511,6 @@
             flex-direction: column;
             gap: 0.35rem;
             min-width: 0;
-            position: relative;
-            z-index: 2;
         }
 
         .search-field label {
@@ -535,6 +518,7 @@
             font-weight: 600;
             color: var(--accent-soft);
             letter-spacing: 0.04em;
+            text-transform: uppercase;
         }
 
         .search-field input,
@@ -547,7 +531,6 @@
             color: var(--text);
             font-family: inherit;
             font-size: 0.85rem;
-            text-transform: uppercase;
             outline: none;
             width: 100%;
             appearance: none;
@@ -561,122 +544,6 @@
             cursor: pointer;
         }
 
-        .search-field input:focus,
-        .search-field select:focus {
-            border-color: var(--accent);
-            box-shadow: 0 0 0 3px rgba(59, 158, 255, 0.15);
-        }
-
-        .relance-count {
-            display: none;
-            align-items: center;
-            height: 38px;
-            padding: 0 0.85rem;
-            border-radius: 10px;
-            border: 1px solid rgba(59, 158, 255, 0.35);
-            background: rgba(59, 158, 255, 0.14);
-            color: var(--accent-soft);
-            font-size: 0.82rem;
-            font-weight: 650;
-            white-space: nowrap;
-            text-transform: none;
-        }
-
-        .relance-count.is-visible {
-            display: inline-flex;
-        }
-
-        @media (max-width: 768px) {
-            .search-bar { grid-template-columns: 1fr; }
-        }
-
-        .btn-add {
-            display: inline-flex;
-            align-items: center;
-            gap: 0.45rem;
-            height: 38px;
-            padding: 0 0.95rem;
-            border: none;
-            border-radius: 10px;
-            background: linear-gradient(135deg, #1e6fd9, #3b9eff);
-            color: #fff;
-            font-family: inherit;
-            font-size: 0.88rem;
-            font-weight: 600;
-            cursor: pointer;
-            box-shadow: 0 8px 18px rgba(30, 111, 217, 0.3);
-            transition: transform 0.2s ease, filter 0.2s ease;
-        }
-
-        .btn-add:hover { transform: translateY(-1px); filter: brightness(1.05); }
-        .btn-add svg { width: 16px; height: 16px; }
-
-        .relance-inline-input {
-            width: 100%;
-            min-width: 0;
-            height: 32px;
-            padding: 0 0.45rem;
-            border-radius: 8px;
-            border: 1px solid rgba(110, 168, 255, 0.22);
-            background: rgba(6, 14, 26, 0.55);
-            color: var(--text);
-            font-family: inherit;
-            font-size: 0.78rem;
-            box-sizing: border-box;
-        }
-
-        .relance-inline-input:focus {
-            outline: none;
-            border-color: rgba(94, 176, 255, 0.65);
-            box-shadow: 0 0 0 2px rgba(59, 158, 255, 0.14);
-        }
-
-        .relance-inline-input.is-saving {
-            opacity: 0.7;
-        }
-
-        .relance-inline-textarea {
-            display: block;
-            height: auto;
-            min-height: 110px;
-            max-width: 100%;
-            min-width: 0;
-            padding: 0.55rem 0.6rem;
-            resize: vertical;
-            line-height: 1.45;
-        }
-
-        .relance-date-input {
-            min-width: 0;
-            width: 100%;
-            max-width: 7.2rem;
-        }
-
-        .relance-inline-budget {
-            font-variant-numeric: tabular-nums;
-            text-align: right;
-        }
-
-        .relance-inline-select {
-            cursor: pointer;
-            pointer-events: auto;
-            position: relative;
-            z-index: 3;
-            appearance: none;
-            -webkit-appearance: none;
-            padding-right: 1.35rem;
-            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='10' viewBox='0 0 24 24' fill='none' stroke='%237ec4ff' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
-            background-repeat: no-repeat;
-            background-position: right 0.4rem center;
-            background-size: 10px;
-        }
-
-        html[data-theme="light"] .relance-inline-input {
-            background: rgba(255, 255, 255, 0.9);
-            border-color: rgba(30, 111, 217, 0.2);
-            color: #12233d;
-        }
-
         .table-wrap {
             overflow: auto;
             border-radius: 14px;
@@ -685,427 +552,62 @@
             box-shadow: 0 8px 28px rgba(0, 0, 0, 0.18);
         }
 
-        table.data-table {
+        .data-table {
             width: 100%;
             border-collapse: collapse;
             min-width: 1100px;
         }
 
-        /* Relances: tout visible dans la largeur, rien coupé hors écran */
-        table.data-table.data-table-relances {
-            min-width: 0;
-            width: 100%;
-            table-layout: fixed;
-        }
-
-        table.data-table.data-table-relances th,
-        table.data-table.data-table-relances td {
-            padding: 0.45rem 0.35rem;
-            font-size: 0.72rem;
-            white-space: normal;
-            overflow: visible;
-            overflow-wrap: anywhere;
-            word-break: break-word;
-            line-height: 1.25;
-            vertical-align: middle;
-        }
-
-        /* Checkbox + Date + ID resserrés pour laisser la place au téléphone */
-        table.data-table.data-table-relances th:nth-child(1),
-        table.data-table.data-table-relances td:nth-child(1) {
-            padding-left: 0.2rem;
-            padding-right: 0.15rem;
-            text-align: center;
-            white-space: nowrap;
-        }
-
-        table.data-table.data-table-relances th:nth-child(2),
-        table.data-table.data-table-relances td:nth-child(2) {
-            padding-left: 0.25rem;
-            padding-right: 0.15rem;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-        }
-
-        table.data-table.data-table-relances th:nth-child(3),
-        table.data-table.data-table-relances td:nth-child(3) {
-            padding-left: 0.1rem;
-            padding-right: 0.2rem;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-        }
-
-        table.data-table.data-table-relances th:nth-child(4),
-        table.data-table.data-table-relances td:nth-child(4) {
-            overflow: visible;
-            overflow-wrap: normal;
-            word-break: normal;
-        }
-
-        .relance-check {
-            width: 15px;
-            height: 15px;
-            accent-color: #3b9eff;
-            cursor: pointer;
-            vertical-align: middle;
-        }
-
-        .btn-delete-selected {
-            display: none;
-            align-items: center;
-            gap: 0.4rem;
-            height: 38px;
-            padding: 0 0.9rem;
-            border: 1px solid rgba(240, 113, 120, 0.4);
-            border-radius: 10px;
-            background: rgba(240, 113, 120, 0.14);
-            color: #ffb3b8;
-            font-family: inherit;
-            font-size: 0.82rem;
-            font-weight: 600;
-            cursor: pointer;
-            text-transform: none;
-        }
-
-        .btn-delete-selected.is-visible {
-            display: inline-flex;
-        }
-
-        .btn-delete-selected:hover {
-            background: rgba(240, 113, 120, 0.22);
-        }
-
-        table.data-table.data-table-relances .tel-wa-cell .relance-inline-input {
-            min-width: 0;
-            flex: 1 1 auto;
-            font-size: 0.7rem;
-        }
-
-        table.data-table.data-table-relances .wa-row-actions .action-btn {
-            width: 26px;
-            height: 26px;
-        }
-
-        table.data-table.data-table-relances .wa-row-actions .action-btn svg {
-            width: 12px;
-            height: 12px;
-        }
-
-        table.data-table.data-table-relances th {
-            font-size: 0.68rem;
-            letter-spacing: 0.02em;
-            white-space: normal;
-        }
-
-        table.data-table.data-table-relances td.cell-wrap {
-            white-space: normal;
-            min-width: 0;
-            max-width: 0;
-            overflow: hidden;
-        }
-
-        table.data-table.data-table-relances td:has(> .relance-inline-select) {
-            overflow: visible;
-            position: relative;
-            z-index: 4;
-        }
-
-        table.data-table.data-table-relances .statue-select {
-            max-width: 100%;
-            font-size: 0.62rem;
-            padding: 0.22rem 1.1rem 0.22rem 0.35rem;
-            white-space: nowrap;
-        }
-
-        table.data-table.data-table-relances .actions {
-            flex-wrap: wrap;
-            justify-content: center;
-            gap: 0.25rem;
-        }
-
-        #panel-dashboard .balance-section-body .table-wrap.table-freeze-body {
-            max-height: calc(100vh - 17.5rem);
-            overflow: auto;
-            -webkit-overflow-scrolling: touch;
-        }
-
-        #panel-dashboard .balance-section-body .table-wrap {
-            overflow: auto;
-        }
-
-        .dashboard-sticky-lock {
-            position: sticky;
-            top: 3.85rem;
-            z-index: 18;
-            margin: 0 0 0.75rem;
-            padding: 0.15rem 0 0.15rem;
-            background:
-                linear-gradient(180deg, rgba(7, 17, 31, 0.995) 0%, rgba(7, 17, 31, 0.98) 88%, rgba(7, 17, 31, 0.94) 100%);
-            backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
-        }
-
-        html[data-theme="light"] .dashboard-sticky-lock {
-            background:
-                linear-gradient(180deg, rgba(244, 248, 255, 0.995) 0%, rgba(244, 248, 255, 0.98) 88%, rgba(244, 248, 255, 0.94) 100%);
-        }
-
-        .dashboard-sticky-lock .cards {
-            margin-bottom: 0.55rem;
-            position: relative;
-            top: auto;
-            z-index: 1;
-        }
-
-        .dashboard-sticky-lock .balance-section-head {
-            margin: 0;
-            padding: 0.75rem 1.15rem 0.85rem;
-            border-radius: 16px;
-            box-shadow: none;
-            animation: none;
-        }
-
-        .dashboard-sticky-lock .panel-freeze {
-            position: relative;
-            top: auto;
-            z-index: 1;
-            margin: 0;
-            padding: 0;
-            background: transparent;
-            backdrop-filter: none;
-            -webkit-backdrop-filter: none;
-        }
-
-        .balance-section-body {
-            margin-top: 0;
-        }
-
-        .balance-section-body .table-wrap.table-freeze-body {
-            max-height: calc(100vh - 17.5rem);
-        }
-
-        #panel-fiche-relance.active {
-            display: flex;
-            flex-direction: column;
-            height: calc(100vh - 5.6rem);
-            max-height: calc(100vh - 5.6rem);
-            min-height: 0;
-            overflow: hidden;
-            animation: fadeInPanel 0.35s ease both;
-        }
-
-        #panel-fiche-relance .panel-freeze {
-            position: relative;
-            top: auto;
-            flex: 0 0 auto;
-            z-index: 8;
-            margin: 0 0 0.65rem;
-            padding: 0.15rem 0 0.65rem;
-        }
-
-        #panel-fiche-relance .table-wrap.table-freeze-body {
-            flex: 1 1 auto;
-            min-height: 0;
-            max-height: none;
-            overflow: auto;
-            -webkit-overflow-scrolling: touch;
-        }
-
-        #panel-fiche-relance .table-wrap.table-freeze-body .data-table thead th {
-            position: sticky;
-            top: 0;
-            z-index: 6;
-        }
-
-        .data-table th,
-        .data-table td {
-            padding: 0.75rem 0.85rem;
+        /* Tous les onglets : en-têtes et données centrés */
+        .panel .data-table th,
+        .panel .data-table td {
+            padding: 0.72rem 0.8rem;
             text-align: center !important;
             vertical-align: middle;
             border-bottom: 1px solid rgba(110, 168, 255, 0.1);
             font-size: 0.84rem;
-            white-space: nowrap;
         }
 
-        .data-table th {
+        .panel .data-table th {
+            position: sticky;
+            top: 0;
+            z-index: 2;
+            background: rgba(14, 30, 54, 0.98);
             color: var(--accent-soft);
             font-weight: 600;
             font-size: 0.75rem;
             letter-spacing: 0.04em;
-            background: rgba(20, 40, 70, 0.55);
-            text-align: center !important;
+            text-transform: uppercase;
+            white-space: nowrap;
         }
 
-        .data-table td.cell-wrap {
+        .panel .data-table tbody tr:hover {
+            background: rgba(59, 158, 255, 0.06);
+        }
+
+        .panel .data-table td.cell-wrap {
             white-space: normal;
-            max-width: 280px;
+            max-width: 220px;
+            word-break: break-word;
         }
 
-        .data-table .empty {
+        .panel .data-table .empty {
+            color: var(--muted);
+            padding: 2rem 1rem;
             text-align: center !important;
         }
 
-        .data-table tbody tr:hover { background: rgba(59, 158, 255, 0.06); }
-        .data-table tbody tr.row-execute {
-            background: rgba(61, 207, 138, 0.18);
-        }
-        .data-table tbody tr.row-execute:hover {
-            background: rgba(61, 207, 138, 0.26);
-        }
-        .data-table tbody tr.row-execute td {
-            color: #c8f5dc;
-        }
-        .data-table tbody tr.row-relance-a-voir {
-            background: rgba(240, 180, 41, 0.24);
-        }
-        .data-table tbody tr.row-relance-a-voir:hover {
-            background: rgba(240, 180, 41, 0.34);
-        }
-        .data-table tbody tr.row-relance-a-voir td {
-            color: #ffe7a8;
-        }
-        .data-table tbody tr.row-relance-confirme {
-            background: rgba(120, 130, 150, 0.28);
-            opacity: 0.7;
-        }
-        .data-table tbody tr.row-relance-confirme:hover {
-            background: rgba(120, 130, 150, 0.36);
-        }
-        .data-table tbody tr.row-relance-confirme td {
-            color: rgba(190, 200, 215, 0.72);
-        }
-        .data-table tbody tr.row-relance-inj {
-            background: rgba(220, 60, 70, 0.28);
-        }
-        .data-table tbody tr.row-relance-inj:hover {
-            background: rgba(220, 60, 70, 0.38);
-        }
-        .data-table tbody tr.row-relance-inj td {
-            color: #ffb4b8;
-        }
-
-        .data-table tbody tr.row-relance-no-rappel .rappel-date-input {
-            opacity: 0.45;
-            filter: grayscale(0.45);
-            pointer-events: none;
-            cursor: not-allowed;
-        }
-        .data-table tbody tr.row-relance-no-rappel .rappeler-switch {
-            opacity: 1;
-            filter: none;
-            pointer-events: auto;
-        }
-
-        .data-table td { color: rgba(235, 242, 255, 0.9); }
-        .data-table td.solde-cell {
-            color: #ff6b78;
-            font-weight: 700;
-            text-shadow: 0 0 12px rgba(255, 90, 100, 0.25);
-        }
-
-        #projet_solde {
-            color: #ff6b78;
-            font-weight: 700;
-        }
-
-        #paiement_solde {
-            color: #ff6b78;
-            font-weight: 700;
-        }
-
-        .statue-badge {
-            display: inline-block;
-            padding: 0.28rem 0.6rem;
-            border-radius: 999px;
-            font-size: 0.7rem;
-            font-weight: 700;
-            letter-spacing: 0.03em;
-            line-height: 1.2;
-        }
-
-        .statue-badge.actif {
-            color: #7ec4ff;
-            background: rgba(59, 158, 255, 0.16);
-            border: 1px solid rgba(126, 196, 255, 0.4);
-            box-shadow: 0 0 10px rgba(59, 158, 255, 0.12);
-        }
-
-        .statue-badge.attente {
-            color: #ffc857;
-            background: rgba(240, 180, 41, 0.16);
-            border: 1px solid rgba(240, 180, 41, 0.4);
-            box-shadow: 0 0 10px rgba(240, 180, 41, 0.12);
-        }
-
-        .statue-badge.annule {
-            color: #ff9aa0;
-            background: rgba(240, 113, 120, 0.16);
-            border: 1px solid rgba(240, 113, 120, 0.4);
-            box-shadow: 0 0 10px rgba(240, 113, 120, 0.12);
-        }
-
-        .statue-badge.execute {
-            color: #7ee8b0;
-            background: rgba(61, 207, 138, 0.16);
-            border: 1px solid rgba(61, 207, 138, 0.4);
-            box-shadow: 0 0 10px rgba(61, 207, 138, 0.12);
-        }
-
-        #projet_statut option[value="actif"] { color: #7ec4ff; }
-        #projet_statut option[value="attente"] { color: #ffc857; }
-        #projet_statut option[value="annule"] { color: #ff9aa0; }
-        #projet_statut option[value="execute"] { color: #7ee8b0; }
-
-        #projet_statut.statue-actif { color: #7ec4ff; border-color: rgba(126, 196, 255, 0.45); }
-        #projet_statut.statue-attente { color: #ffc857; border-color: rgba(240, 180, 41, 0.45); }
-        #projet_statut.statue-annule { color: #ff9aa0; border-color: rgba(240, 113, 120, 0.45); }
-        #projet_statut.statue-execute { color: #7ee8b0; border-color: rgba(61, 207, 138, 0.45); }
-
-        .statue-form {
-            display: inline-block;
-        }
-
-        .rappel-date-form {
-            display: inline-flex;
-            width: 100%;
+        .panel .data-table td .statue-form {
+            display: flex;
             justify-content: center;
-        }
-
-        .rappel-date-input {
-            width: 100%;
-            max-width: 7.2rem;
-            height: 30px;
-            padding: 0.2rem 0.35rem;
-            border-radius: 8px;
-            border: 1px solid rgba(110, 168, 255, 0.28);
-            background: rgba(8, 18, 34, 0.65);
-            color: inherit;
-            font-family: inherit;
-            font-size: 0.72rem;
-            text-align: center;
-            letter-spacing: 0.02em;
-        }
-
-        .rappel-date-input:focus {
-            outline: none;
-            border-color: rgba(94, 176, 255, 0.7);
-            box-shadow: 0 0 0 2px rgba(59, 158, 255, 0.18);
-        }
-
-        html[data-theme="light"] .rappel-date-input {
-            background: rgba(255, 255, 255, 0.92);
-            border-color: rgba(30, 111, 217, 0.28);
-            color: #0a1628;
+            align-items: center;
         }
 
         .statue-select {
             appearance: none;
-            -webkit-appearance: none;
-            padding: 0.28rem 1.4rem 0.28rem 0.6rem;
+            padding: 0.32rem 1.35rem 0.32rem 0.65rem;
             border-radius: 999px;
-            font-size: 0.7rem;
+            font-size: 0.72rem;
             font-weight: 700;
             letter-spacing: 0.03em;
             line-height: 1.2;
@@ -1116,2988 +618,1028 @@
             background-repeat: no-repeat;
             background-position: right 0.45rem center;
             background-size: 10px;
-            transition: border-color 0.2s ease, box-shadow 0.2s ease;
+            border: 1px solid transparent;
         }
 
-        .statue-select:hover,
-        .statue-select:focus {
-            outline: none;
-            box-shadow: 0 0 12px rgba(126, 196, 255, 0.2);
+        .statue-select.valide {
+            color: #7ee8b0;
+            background-color: rgba(61, 207, 138, 0.16);
+            border-color: rgba(61, 207, 138, 0.4);
         }
 
-        .statue-select.actif {
-            color: #7ec4ff;
-            background-color: rgba(59, 158, 255, 0.16);
-            border: 1px solid rgba(126, 196, 255, 0.4);
-        }
-
-        .statue-select.attente {
+        .statue-select.en_attente {
             color: #ffc857;
             background-color: rgba(240, 180, 41, 0.16);
-            border: 1px solid rgba(240, 180, 41, 0.4);
+            border-color: rgba(240, 180, 41, 0.4);
         }
 
         .statue-select.annule {
             color: #ff9aa0;
             background-color: rgba(240, 113, 120, 0.16);
-            border: 1px solid rgba(240, 113, 120, 0.4);
+            border-color: rgba(240, 113, 120, 0.4);
         }
 
-        .statue-select.execute {
-            color: #7ee8b0;
-            background-color: rgba(61, 207, 138, 0.16);
-            border: 1px solid rgba(61, 207, 138, 0.4);
+        .statue-select.reporte {
+            color: #c4b0ff;
+            background-color: rgba(155, 123, 255, 0.16);
+            border-color: rgba(155, 123, 255, 0.4);
         }
 
-        .statue-select.a_voir {
-            color: #ffc857;
-            background-color: rgba(240, 180, 41, 0.16);
-            border: 1px solid rgba(240, 180, 41, 0.4);
+        #panel-prospection .table-wrap {
+            max-height: calc(100vh - 17rem);
         }
 
-        .statue-select.confirme {
-            color: #b8c4d4;
-            background-color: rgba(120, 130, 150, 0.22);
-            border: 1px solid rgba(140, 150, 165, 0.45);
+        #panel-prospection .data-table th:nth-child(7),
+        #panel-prospection .data-table td.cell-remarque {
+            width: 18%;
+            min-width: 160px;
+            max-width: none;
         }
 
-        .statue-select.inj {
-            color: #ff9aa0;
-            background-color: rgba(220, 60, 70, 0.18);
-            border: 1px solid rgba(220, 60, 70, 0.45);
-        }
-
-        .statue-select.lien {
-            color: #7ec4ff;
-            background-color: rgba(59, 158, 255, 0.16);
-            border: 1px solid rgba(126, 196, 255, 0.4);
-        }
-
-        .statue-select.conception {
-            color: #ffc857;
-            background-color: rgba(240, 180, 41, 0.16);
-            border: 1px solid rgba(240, 180, 41, 0.4);
-        }
-
-        .envoye-switch {
-            display: inline-flex;
-            align-items: stretch;
+        .remarque-input {
             width: 100%;
-            max-width: 11.5rem;
-            padding: 2px;
-            border-radius: 999px;
-            background: rgba(8, 18, 34, 0.55);
-            border: 1px solid rgba(110, 168, 255, 0.22);
-            box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.04);
-            gap: 2px;
-        }
-
-        .envoye-switch .envoye-opt {
-            flex: 1 1 0;
-            appearance: none;
+            min-height: 2.6rem;
+            padding: 0;
+            margin: 0;
             border: none;
-            cursor: pointer;
-            font-family: inherit;
-            font-size: 0.62rem;
-            font-weight: 700;
-            letter-spacing: 0.04em;
-            text-transform: uppercase;
-            line-height: 1;
-            padding: 0.42rem 0.35rem;
-            border-radius: 999px;
-            color: rgba(210, 224, 245, 0.55);
+            border-radius: 0;
             background: transparent;
-            transition: background 0.18s ease, color 0.18s ease, box-shadow 0.18s ease, transform 0.18s ease;
+            color: var(--text);
+            font-family: inherit;
+            font-size: 0.84rem;
+            line-height: 1.45;
+            resize: vertical;
+            text-align: center;
+            box-sizing: border-box;
+            box-shadow: none;
+            outline: none;
         }
 
-        .envoye-switch .envoye-opt:hover:not(.is-active) {
-            color: rgba(235, 242, 255, 0.88);
+        .remarque-input:focus {
+            outline: none;
+            border: none;
+            box-shadow: none;
+        }
+
+        .remarque-input.is-saving { opacity: 0.65; }
+
+        .prospection-date-input {
+            width: 100%;
+            max-width: 6.5rem;
+            padding: 0;
+            margin: 0 auto;
+            border: none;
+            background: transparent;
+            color: var(--text);
+            font-family: inherit;
+            font-size: 0.84rem;
+            text-align: center;
+            outline: none;
+            box-shadow: none;
+        }
+
+        .prospection-date-input.is-saving { opacity: 0.65; }
+
+        .prospection-text-input {
+            width: 100%;
+            min-width: 88px;
+            border: 1px solid transparent;
+            border-radius: 8px;
+            background: rgba(255, 255, 255, 0.03);
+            color: var(--text);
+            font-family: inherit;
+            font-size: 0.82rem;
+            padding: 0.45rem 0.55rem;
+            transition: border-color 0.2s ease, background 0.2s ease, opacity 0.2s ease;
+        }
+
+        .prospection-text-input:hover,
+        .prospection-text-input:focus {
+            outline: none;
+            border-color: rgba(110, 168, 255, 0.35);
             background: rgba(59, 158, 255, 0.08);
         }
 
-        .envoye-switch .envoye-opt.is-active[data-value="lien"] {
-            color: #d9efff;
-            background: linear-gradient(135deg, rgba(59, 158, 255, 0.42), rgba(30, 111, 217, 0.55));
-            box-shadow: 0 4px 12px rgba(59, 158, 255, 0.28);
-        }
+        .prospection-text-input.is-saving { opacity: 0.65; }
 
-        .envoye-switch .envoye-opt.is-active[data-value="conception"] {
-            color: #fff1c9;
-            background: linear-gradient(135deg, rgba(240, 180, 41, 0.42), rgba(210, 140, 20, 0.55));
-            box-shadow: 0 4px 12px rgba(240, 180, 41, 0.25);
-        }
-
-        .rappeler-switch .envoye-opt.is-active[data-value="oui"] {
-            color: #d8ffe8;
-            background: linear-gradient(135deg, rgba(46, 180, 110, 0.45), rgba(28, 140, 85, 0.58));
-            box-shadow: 0 4px 12px rgba(46, 180, 110, 0.28);
-        }
-
-        .rappeler-switch .envoye-opt.is-active[data-value="non"] {
-            color: #ffd6da;
-            background: linear-gradient(135deg, rgba(230, 90, 105, 0.42), rgba(190, 55, 70, 0.55));
-            box-shadow: 0 4px 12px rgba(230, 90, 105, 0.25);
-        }
-
-        .envoye-switch.is-saving {
-            opacity: 0.72;
-            pointer-events: none;
-        }
-
-        html[data-theme="light"] .envoye-switch {
-            background: rgba(255, 255, 255, 0.9);
-            border-color: rgba(30, 111, 217, 0.2);
-        }
-
-        html[data-theme="light"] .envoye-switch .envoye-opt {
-            color: rgba(20, 40, 70, 0.48);
-        }
-
-        html[data-theme="light"] .envoye-switch .envoye-opt:hover:not(.is-active) {
-            color: rgba(10, 22, 40, 0.85);
-            background: rgba(30, 111, 217, 0.08);
-        }
-
-        html.cards-hidden-boot #panel-dashboard .cards,
-        html.cards-hidden-boot #panel-dashboard .balance-section-head .search-bar {
-            display: none !important;
-        }
-
-        .pull-select {
-            appearance: none;
-            -webkit-appearance: none;
-            padding: 0.28rem 1.4rem 0.28rem 0.6rem;
-            border-radius: 999px;
-            font-size: 0.7rem;
-            font-weight: 700;
-            letter-spacing: 0.03em;
-            line-height: 1.2;
-            cursor: pointer;
-            font-family: inherit;
-            text-transform: uppercase;
-            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='10' viewBox='0 0 24 24' fill='none' stroke='%23b8c9e0' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
-            background-repeat: no-repeat;
-            background-position: right 0.45rem center;
-            background-size: 10px;
-        }
-
-        .pull-select.oui {
-            color: #7ee8b0;
-            background-color: rgba(61, 207, 138, 0.16);
-            border: 1px solid rgba(61, 207, 138, 0.4);
-        }
-
-        .pull-select.non {
-            color: #ff9aa0;
-            background-color: rgba(240, 113, 120, 0.16);
-            border: 1px solid rgba(240, 113, 120, 0.4);
-        }
-
-        .data-table .empty { color: var(--muted); padding: 2rem; }
-
-        .actions {
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            gap: 0.35rem;
-        }
-
-        .action-btn {
-            width: 30px;
-            height: 30px;
-            border-radius: 8px;
-            border: 1px solid transparent;
-            display: inline-grid;
-            place-items: center;
-            background: rgba(255, 255, 255, 0.04);
-            color: var(--muted);
-            cursor: pointer;
-            transition: background 0.15s ease, color 0.15s ease, border-color 0.15s ease;
-        }
-
-        .action-btn svg { width: 14px; height: 14px; }
-        .action-btn.voir:hover { color: #7ec4ff; border-color: rgba(126, 196, 255, 0.35); background: rgba(59, 158, 255, 0.12); }
-        .action-btn.modifier:hover { color: #ffc857; border-color: rgba(240, 180, 41, 0.35); background: rgba(240, 180, 41, 0.12); }
-        .action-btn.supprimer:hover { color: #ff9aa0; border-color: rgba(240, 113, 120, 0.35); background: rgba(240, 113, 120, 0.12); }
-        .action-btn.pdf:hover { color: #ff8f7a; border-color: rgba(255, 120, 90, 0.35); background: rgba(255, 120, 90, 0.12); }
-        .action-btn.wa-msg:hover { color: #6fe3a1; border-color: rgba(37, 211, 102, 0.4); background: rgba(37, 211, 102, 0.14); }
-        .action-btn.wa-call:hover { color: #7ec4ff; border-color: rgba(59, 158, 255, 0.4); background: rgba(59, 158, 255, 0.14); }
-
-        .tel-wa-cell {
-            display: flex;
-            align-items: center;
-            gap: 0.35rem;
-            min-width: 0;
-        }
-
-        .tel-wa-cell .relance-inline-input {
-            flex: 1;
-            min-width: 0;
-        }
-
-        .wa-row-actions {
-            display: inline-flex;
-            align-items: center;
-            gap: 0.2rem;
-            flex-shrink: 0;
-        }
-
-        .btn-notif-wa {
-            width: 40px;
-            height: 40px;
-            border-radius: 12px;
-            border: 1px solid rgba(37, 211, 102, 0.35);
-            background: rgba(37, 211, 102, 0.12);
-            color: #6fe3a1;
-            display: inline-grid;
-            place-items: center;
-            cursor: pointer;
-            position: relative;
-            transition: background 0.15s ease, border-color 0.15s ease, color 0.15s ease;
-        }
-
-        .btn-notif-wa:hover,
-        .btn-notif-wa.is-open {
-            background: rgba(37, 211, 102, 0.22);
-            border-color: rgba(37, 211, 102, 0.55);
-            color: #9ff0c0;
-        }
-
-        .btn-notif-wa svg { width: 18px; height: 18px; }
-
-        .btn-notif-wa .wa-dot {
-            position: absolute;
-            top: 6px;
-            right: 6px;
-            width: 8px;
-            height: 8px;
-            border-radius: 50%;
-            background: #25d366;
-            box-shadow: 0 0 0 2px rgba(8, 18, 32, 0.9);
-        }
-
-        .btn-notif-wa .wa-dot.is-off {
-            background: #6b7c90;
-        }
-
-        .btn-notif-wa .wa-dot.has-badge {
-            display: none;
-        }
-
-        .btn-notif-wa .notif-badge {
-            position: absolute;
-            top: -5px;
-            right: -5px;
-            min-width: 18px;
-            height: 18px;
-            padding: 0 5px;
-            border-radius: 999px;
-            background: linear-gradient(135deg, #25d366, #128c7e);
-            color: #fff;
-            font-size: 0.65rem;
-            font-weight: 700;
-            line-height: 18px;
-            text-align: center;
-            box-shadow: 0 4px 10px rgba(37, 211, 102, 0.35);
-        }
-
-        .btn-notif-wa .notif-badge.is-empty {
-            display: none;
-        }
-
-        .wa-panel {
-            position: absolute;
-            top: calc(100% + 0.55rem);
-            right: 0;
-            width: min(360px, calc(100vw - 1.5rem));
-            max-height: min(460px, 75vh);
-            border-radius: 14px;
-            border: 1px solid rgba(37, 211, 102, 0.28);
-            background: linear-gradient(165deg, #122038, #0b1728);
-            box-shadow: 0 18px 40px rgba(0, 0, 0, 0.45);
-            display: none;
-            flex-direction: column;
-            z-index: 70;
-            overflow: hidden;
-        }
-
-        .wa-panel.open { display: flex; }
-
-        .wa-panel-head {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            gap: 0.75rem;
-            padding: 0.85rem 1rem;
-            border-bottom: 1px solid rgba(126, 196, 255, 0.12);
-            flex-shrink: 0;
-        }
-
-        .wa-panel-head h3 {
-            margin: 0;
-            font-size: 0.95rem;
-            color: var(--text);
-        }
-
-        .wa-panel-head span {
-            font-size: 0.75rem;
-            color: var(--muted);
-        }
-
-        .wa-panel-body {
-            padding: 0.75rem 1rem 0.35rem;
-            display: grid;
-            gap: 0.55rem;
-            flex-shrink: 0;
-        }
-
-        .wa-panel-status {
-            font-size: 0.8rem;
-            color: var(--muted);
-            line-height: 1.4;
-        }
-
-        .wa-panel-actions {
-            display: grid;
-            gap: 0.45rem;
-        }
-
-        .wa-panel-list {
-            list-style: none;
-            margin: 0;
-            padding: 0.35rem 0.45rem 0.55rem;
-            overflow: auto;
-            display: flex;
-            flex-direction: column;
-            gap: 0.35rem;
-            border-top: 1px solid rgba(37, 211, 102, 0.14);
-            min-height: 0;
-        }
-
-        .wa-msg-item {
-            display: grid;
-            grid-template-columns: 1fr auto;
-            gap: 0.2rem 0.65rem;
-            padding: 0.65rem 0.75rem;
-            border-radius: 10px;
-            border: 1px solid rgba(37, 211, 102, 0.16);
-            background: rgba(37, 211, 102, 0.06);
-            cursor: pointer;
-            text-align: left;
-            font-family: inherit;
-            color: inherit;
-            width: 100%;
-        }
-
-        .wa-msg-item:hover {
-            background: rgba(37, 211, 102, 0.12);
-            border-color: rgba(37, 211, 102, 0.32);
-        }
-
-        .wa-msg-item.is-unread {
-            border-color: rgba(37, 211, 102, 0.45);
-            background: rgba(37, 211, 102, 0.14);
-        }
-
-        .wa-msg-item-name {
-            font-size: 0.86rem;
-            font-weight: 650;
-            color: var(--text);
-        }
-
-        .wa-msg-item-date {
-            font-size: 0.72rem;
-            color: #6fe3a1;
-            justify-self: end;
-        }
-
-        .wa-msg-item-phone,
-        .wa-msg-item-preview {
-            grid-column: 1 / -1;
-            font-size: 0.74rem;
-            color: var(--muted);
-            line-height: 1.35;
-        }
-
-        .wa-msg-item-preview {
+        .commercial-relance-table .cell-remarque-preview {
+            max-width: 180px;
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
         }
 
-        .wa-panel-actions .btn-primary,
-        .wa-panel-actions .btn-ghost {
-            width: 100%;
-            justify-content: center;
+        #prospectionsTableBody tr.row-prospection-valide td {
+            background: rgba(61, 207, 138, 0.14);
+            color: rgba(210, 245, 224, 0.88);
         }
 
-        .wa-choice-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 0.75rem;
-            padding: 0.25rem 0 0.35rem;
+        #prospectionsTableBody tr.row-prospection-valide {
+            opacity: 0.82;
         }
 
-        .wa-choice-btn {
-            display: flex;
-            flex-direction: column;
-            align-items: flex-start;
-            gap: 0.35rem;
-            padding: 1rem 0.95rem;
-            border-radius: 14px;
-            border: 1px solid rgba(37, 211, 102, 0.28);
-            background: rgba(37, 211, 102, 0.08);
-            color: var(--text);
-            font-family: inherit;
-            text-align: left;
-            cursor: pointer;
-            transition: background 0.15s ease, border-color 0.15s ease, transform 0.15s ease;
+        #prospectionsTableBody tr.row-prospection-annule td {
+            background: rgba(240, 113, 120, 0.16);
+            color: rgba(255, 210, 214, 0.82);
         }
 
-        .wa-choice-btn:hover {
-            background: rgba(37, 211, 102, 0.16);
-            border-color: rgba(37, 211, 102, 0.5);
-            transform: translateY(-1px);
+        #prospectionsTableBody tr.row-prospection-annule {
+            opacity: 0.62;
+            filter: grayscale(0.25);
         }
 
-        .wa-choice-btn strong {
-            font-size: 0.95rem;
-            font-weight: 650;
-            text-transform: none;
+        #prospectionsTableBody tr.row-prospection-reporte td {
+            background: rgba(155, 123, 255, 0.2);
+            color: rgba(228, 214, 255, 0.95);
         }
 
-        .wa-choice-btn span {
-            font-size: 0.74rem;
-            color: var(--muted);
-            text-transform: none;
-            line-height: 1.35;
+        #prospectionsTableBody tr.row-prospection-rappel-du .prospection-date-input,
+        #prospectionsTableBody tr.row-prospection-rappel-du td.cell-rappel {
+            background: rgba(255, 200, 87, 0.28) !important;
+            color: #ffe8a3 !important;
+            box-shadow: inset 0 0 0 1px rgba(255, 200, 87, 0.45);
+            border-radius: 6px;
         }
 
-        .wa-choice-btn.is-devis {
-            border-color: rgba(59, 158, 255, 0.3);
-            background: rgba(59, 158, 255, 0.08);
+        #prospectionsTableBody tr.row-prospection-rappel-du .prospection-date-input {
+            font-weight: 600;
         }
 
-        .wa-choice-btn.is-devis:hover {
-            background: rgba(59, 158, 255, 0.16);
-            border-color: rgba(59, 158, 255, 0.5);
-        }
+        .toolbar-actions { display: flex; gap: 0.55rem; align-items: center; flex-wrap: wrap; }
 
-        .devis-nb-box {
-            grid-column: 1 / -1;
-            border-radius: 12px;
-            border: 1px solid rgba(110, 168, 255, 0.22);
-            background: rgba(59, 158, 255, 0.07);
-            padding: 0.85rem 0.95rem;
-            display: grid;
-            gap: 0.45rem;
-        }
-
-        .devis-nb-box strong {
-            font-size: 0.78rem;
-            color: var(--accent-soft);
-            text-transform: none;
-        }
-
-        .devis-nb-box p {
-            margin: 0;
-            font-size: 0.74rem;
-            line-height: 1.45;
-            color: var(--muted);
-            text-transform: none;
-            white-space: pre-line;
-        }
-
-        #whatsappDevisModal .modal {
-            width: min(640px, 100%);
-            max-height: min(92vh, 820px);
-            display: flex;
-            flex-direction: column;
-        }
-
-        #whatsappDevisModal .modal form {
-            display: flex;
-            flex-direction: column;
-            min-height: 0;
-            flex: 1;
-        }
-
-        #whatsappDevisModal .modal-body {
-            overflow: auto;
-        }
-
-        .whatsapp-settings-card {
-            max-width: 820px;
-            border-radius: 16px;
-            border: 1px solid rgba(126, 196, 255, 0.18);
-            background: linear-gradient(165deg, rgba(18, 32, 56, 0.92), rgba(11, 23, 40, 0.95));
-            padding: 1.15rem 1.2rem 1.25rem;
-        }
-
-        .whatsapp-settings-grid {
-            display: grid;
-            grid-template-columns: repeat(2, minmax(0, 1fr));
-            gap: 0.9rem 1rem;
-        }
-
-        .whatsapp-settings-grid .field.full { grid-column: 1 / -1; }
-
-        .whatsapp-hint {
-            margin: 0 0 1rem;
-            font-size: 0.84rem;
-            color: var(--muted);
-            line-height: 1.45;
-        }
-
-        .whatsapp-guide {
-            margin: 0 0 1.1rem;
-            padding: 0.85rem 1rem;
-            border-radius: 12px;
-            border: 1px solid rgba(37, 211, 102, 0.22);
-            background: rgba(37, 211, 102, 0.07);
-            font-size: 0.84rem;
-            color: var(--text);
-            line-height: 1.45;
-        }
-
-        .whatsapp-guide ol {
-            margin: 0.55rem 0 0;
-            padding-left: 1.2rem;
-        }
-
-        .whatsapp-guide li { margin: 0.25rem 0; }
-
-        .whatsapp-guide a {
-            color: #6fe3a1;
-            text-decoration: underline;
-        }
-
-        .whatsapp-guide code {
-            font-size: 0.78rem;
-            padding: 0.05rem 0.3rem;
-            border-radius: 4px;
-            background: rgba(255, 255, 255, 0.06);
-        }
-
-        .whatsapp-switch-row {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 0.75rem 1.25rem;
-            align-items: center;
-        }
-
-        .whatsapp-switch-row label {
+        .btn-add {
             display: inline-flex;
             align-items: center;
             gap: 0.45rem;
-            font-size: 0.86rem;
+            padding: 0.55rem 0.9rem;
+            border-radius: 10px;
+            border: 1px solid rgba(126, 196, 255, 0.35);
+            background: linear-gradient(135deg, rgba(59, 158, 255, 0.22), rgba(59, 158, 255, 0.08));
             color: var(--text);
+            font-family: inherit;
+            font-size: 0.84rem;
+            font-weight: 600;
             cursor: pointer;
         }
 
-        .whatsapp-settings-actions {
-            margin-top: 1.1rem;
+        .btn-add svg { width: 16px; height: 16px; }
+
+        .actions {
+            display: flex;
+            justify-content: center;
+            gap: 0.35rem;
+            flex-wrap: wrap;
+        }
+
+        .action-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 30px;
+            height: 30px;
+            border-radius: 8px;
+            border: 1px solid rgba(110, 168, 255, 0.18);
+            background: rgba(255, 255, 255, 0.03);
+            color: var(--muted);
+            cursor: pointer;
+            padding: 0;
+            font: inherit;
+        }
+
+        .action-btn svg { width: 14px; height: 14px; pointer-events: none; }
+
+        .action-btn.voir:hover { color: #7ec4ff; border-color: rgba(126, 196, 255, 0.35); background: rgba(59, 158, 255, 0.12); }
+        .action-btn.modifier:hover { color: #ffc857; border-color: rgba(240, 180, 41, 0.35); background: rgba(240, 180, 41, 0.12); }
+        .action-btn.supprimer:hover { color: #ff9aa0; border-color: rgba(240, 113, 120, 0.35); background: rgba(240, 113, 120, 0.12); }
+        .action-btn.imprimer:hover { color: #ff8f7a; border-color: rgba(255, 120, 90, 0.35); background: rgba(255, 120, 90, 0.12); }
+        .action-btn.suspendre:hover { color: #c9a0ff; border-color: rgba(155, 123, 255, 0.35); background: rgba(155, 123, 255, 0.12); }
+
+        .config-section { display: none; }
+        .config-section.active { display: block; }
+
+        .config-form-panel {
+            max-width: 560px;
+            padding: 1.1rem 1.15rem 1rem;
+            border-radius: 14px;
+            border: 1px solid rgba(126, 196, 255, 0.22);
+            background: rgba(255, 255, 255, 0.03);
+        }
+
+        .config-form-foot {
             display: flex;
             justify-content: flex-end;
             gap: 0.55rem;
+            margin-top: 0.35rem;
+            padding-top: 0.85rem;
+            border-top: 1px solid var(--line);
         }
 
-        html[data-theme="light"] .btn-notif-wa {
-            background: rgba(37, 211, 102, 0.1);
-            border-color: rgba(37, 211, 102, 0.35);
-            color: #128c4a;
+        .prospection-view { display: none; }
+        .prospection-view.active { display: block; }
+
+        .commercial-picker {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+            gap: 0.65rem;
+            margin-bottom: 1rem;
         }
 
-        html[data-theme="light"] .wa-panel,
-        html[data-theme="light"] .whatsapp-settings-card {
-            background: #fff;
-            border-color: rgba(18, 140, 74, 0.2);
-            box-shadow: 0 12px 28px rgba(15, 35, 55, 0.1);
+        .commercial-pick-btn {
+            appearance: none;
+            border: 1px solid rgba(110, 168, 255, 0.18);
+            background: rgba(255, 255, 255, 0.03);
+            color: var(--text);
+            border-radius: 12px;
+            padding: 0.85rem 1rem;
+            font-family: inherit;
+            font-size: 0.86rem;
+            font-weight: 600;
+            cursor: pointer;
+            text-align: left;
         }
 
-        html[data-theme="light"] .wa-msg-item {
-            background: rgba(37, 211, 102, 0.06);
-            border-color: rgba(18, 140, 74, 0.18);
+        .commercial-pick-btn:hover,
+        .commercial-pick-btn.active {
+            border-color: rgba(61, 207, 138, 0.35);
+            background: rgba(61, 207, 138, 0.12);
         }
 
-        html[data-theme="light"] .wa-msg-item.is-unread {
-            background: rgba(37, 211, 102, 0.12);
-            border-color: rgba(18, 140, 74, 0.35);
+        #commercialImportStatus {
+            margin: 0.75rem 0 0;
+            font-size: 0.82rem;
+            color: var(--muted);
         }
 
-        @media (max-width: 760px) {
-            .whatsapp-settings-grid { grid-template-columns: 1fr; }
-            .tel-wa-cell { flex-wrap: wrap; }
+        #commercialImportStatus.is-error { color: #ffb3b8; }
+        #commercialImportStatus.is-success { color: #9ef0c4; }
+
+        .user-statue-badge {
+            display: inline-flex;
+            align-items: center;
+            padding: 0.22rem 0.55rem;
+            border-radius: 999px;
+            font-size: 0.72rem;
+            font-weight: 700;
+            letter-spacing: 0.03em;
+            border: 1px solid rgba(110, 168, 255, 0.18);
+            background: rgba(255, 255, 255, 0.04);
+        }
+
+        .user-statue-badge.administrateur { color: #7ec4ff; border-color: rgba(126, 196, 255, 0.35); }
+        .user-statue-badge.assistante { color: #ffc857; border-color: rgba(240, 180, 41, 0.35); }
+        .user-statue-badge.commercial { color: #3dcf8a; border-color: rgba(61, 207, 138, 0.35); }
+
+        #utilisateursTableBody tr.is-suspended td {
+            opacity: 0.55;
+            background: rgba(240, 113, 120, 0.08);
+        }
+
+        .side-panel-backdrop {
+            display: none;
+            position: fixed;
+            inset: 0;
+            z-index: 110;
+            background: rgba(3, 8, 18, 0.55);
+            backdrop-filter: blur(2px);
+        }
+
+        .side-panel-backdrop.open { display: block; }
+
+        .side-panel {
+            position: fixed;
+            top: 0;
+            right: 0;
+            z-index: 111;
+            width: min(420px, 100%);
+            height: 100%;
+            transform: translateX(100%);
+            transition: transform 0.28s ease;
+            border-left: 1px solid rgba(126, 196, 255, 0.25);
+            background: linear-gradient(180deg, rgba(14, 28, 48, 0.98), rgba(9, 18, 34, 0.98));
+            box-shadow: -20px 0 50px rgba(0, 0, 0, 0.35);
+            display: flex;
+            flex-direction: column;
+        }
+
+        .side-panel-backdrop.open .side-panel { transform: translateX(0); }
+
+        .side-panel-head {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 0.75rem;
+            padding: 1rem 1.1rem;
+            border-bottom: 1px solid var(--line);
+        }
+
+        .side-panel-head h2 { font-size: 1.02rem; font-weight: 600; }
+
+        .side-panel-body {
+            flex: 1;
+            overflow: auto;
+            padding: 1rem 1.1rem;
+        }
+
+        .side-panel-foot {
+            display: flex;
+            justify-content: flex-end;
+            gap: 0.55rem;
+            padding: 0.85rem 1.1rem 1rem;
+            border-top: 1px solid var(--line);
+        }
+
+        .field select {
+            width: 100%;
+            padding: 0.62rem 0.72rem;
+            border-radius: 10px;
+            border: 1px solid rgba(110, 168, 255, 0.18);
+            background: rgba(255, 255, 255, 0.04);
+            color: var(--text);
+            font-family: inherit;
+            font-size: 0.88rem;
+        }
+
+        .btn-close-toolbar {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.45rem;
+            padding: 0.55rem 0.9rem;
+            border-radius: 10px;
+            border: 1px solid rgba(110, 168, 255, 0.18);
+            background: transparent;
+            color: var(--muted);
+            font-family: inherit;
+            font-size: 0.84rem;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        @media (max-width: 900px) {
+            .commercial-picker { grid-template-columns: 1fr; }
         }
 
         .modal-backdrop {
+            display: none;
             position: fixed;
             inset: 0;
-            z-index: 80;
-            display: none;
+            z-index: 100;
+            background: rgba(3, 8, 18, 0.72);
+            backdrop-filter: blur(4px);
             align-items: center;
             justify-content: center;
             padding: 1rem;
-            background: rgba(3, 8, 18, 0.72);
-            backdrop-filter: blur(6px);
         }
 
         .modal-backdrop.open { display: flex; }
 
         .modal {
             width: min(520px, 100%);
+            max-height: 90vh;
+            overflow: auto;
             border-radius: 16px;
-            background: linear-gradient(165deg, #122038, #0b1728);
             border: 1px solid rgba(126, 196, 255, 0.25);
-            box-shadow: 0 24px 60px rgba(0, 0, 0, 0.45), 0 0 30px rgba(59, 158, 255, 0.12);
-            overflow: hidden;
-            animation: fadeUp 0.3s ease both;
+            background: linear-gradient(180deg, rgba(14, 28, 48, 0.98), rgba(9, 18, 34, 0.98));
+            box-shadow: 0 24px 60px rgba(0, 0, 0, 0.45);
         }
 
         .modal-head {
             display: flex;
             align-items: center;
             justify-content: space-between;
-            padding: 1rem 1.15rem;
+            gap: 0.75rem;
+            padding: 1rem 1.1rem;
             border-bottom: 1px solid var(--line);
         }
 
-        .modal-head h2 {
-            font-size: 1.05rem;
-            font-weight: 600;
-        }
+        .modal-head h2 { font-size: 1.05rem; font-weight: 600; }
 
         .modal-close {
-            width: 32px;
-            height: 32px;
-            border: none;
-            border-radius: 8px;
-            background: rgba(255, 255, 255, 0.06);
-            color: var(--text);
-            cursor: pointer;
-            font-size: 1.1rem;
-            line-height: 1;
-        }
-
-        .modal-body {
-            padding: 1.15rem;
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 0.85rem;
-        }
-
-        .modal-body .field { display: flex; flex-direction: column; gap: 0.35rem; }
-        .modal-body .field.full { grid-column: 1 / -1; }
-
-        .modal-body label {
-            font-size: 0.78rem;
-            font-weight: 600;
-            color: var(--accent-soft);
-        }
-
-        .modal-body input,
-        .modal-body select,
-        .modal-body textarea {
-            height: 40px;
-            padding: 0 0.75rem;
-            border-radius: 10px;
-            border: 1px solid rgba(110, 168, 255, 0.22);
-            background: rgba(6, 14, 26, 0.75);
-            color: var(--text);
-            font-family: inherit;
-            font-size: 0.9rem;
-            text-transform: uppercase;
-            outline: none;
-            width: 100%;
             appearance: none;
+            border: none;
+            background: transparent;
+            color: var(--muted);
+            font-size: 1.5rem;
+            line-height: 1;
             cursor: pointer;
         }
 
-        .modal-body textarea {
-            height: auto;
-            min-height: 96px;
-            padding: 0.7rem 0.75rem;
-            resize: vertical;
-            line-height: 1.45;
-            cursor: text;
-        }
-
-        .modal-body select {
-            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%237ec4ff' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");
-            background-repeat: no-repeat;
-            background-position: right 0.75rem center;
-            padding-right: 2.25rem;
-        }
-
-        .auth-sections {
-            display: flex;
-            flex-direction: column;
-            gap: 0.85rem;
-            grid-column: 1 / -1;
-        }
-
-        .auth-section {
-            border: 1px solid rgba(110, 168, 255, 0.18);
-            border-radius: 12px;
-            padding: 0.75rem 0.9rem;
-            background: rgba(6, 14, 26, 0.45);
-        }
-
-        .auth-section-title {
-            font-size: 0.82rem;
-            font-weight: 700;
-            color: var(--accent-soft);
-            margin-bottom: 0.55rem;
-            text-transform: uppercase;
-        }
-
-        .auth-checks {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 0.45rem 1.1rem;
-        }
-
-        .auth-check {
-            display: inline-flex;
-            align-items: center;
-            gap: 0.45rem;
-            font-size: 0.86rem;
-            color: var(--text);
-            cursor: pointer;
-            text-transform: uppercase;
-            user-select: none;
-        }
-
-        .auth-check input[type="checkbox"] {
-            width: 16px;
-            height: 16px;
-            margin: 0;
-            accent-color: #3d8bfd;
-            cursor: pointer;
-            appearance: auto;
-            flex-shrink: 0;
-        }
-
-        .nav-hidden {
-            display: none !important;
-        }
-
-        .client-select-field select {
-            height: 44px;
-            border-color: rgba(126, 196, 255, 0.35);
-            background-color: rgba(12, 28, 52, 0.85);
-            box-shadow: 0 0 0 1px rgba(59, 158, 255, 0.08) inset;
-        }
-
-        .client-select-field select:focus {
-            border-color: var(--accent);
-            box-shadow: 0 0 0 3px rgba(59, 158, 255, 0.18);
-        }
-
-        .client-select-hint {
-            font-size: 0.7rem;
-            color: var(--muted);
-            margin-top: 0.25rem;
-        }
-
-        .modal-body input:focus,
-        .modal-body select:focus {
-            border-color: var(--accent);
-            box-shadow: 0 0 0 3px rgba(59, 158, 255, 0.15);
-        }
-
-        .date-parts {
-            display: flex;
-            align-items: center;
-            gap: 0.35rem;
-        }
-
-        .date-parts input {
-            text-align: center;
-            font-variant-numeric: tabular-nums;
-            letter-spacing: 0.04em;
-        }
-
-        .date-parts .date-jj,
-        .date-parts .date-mm {
-            width: 3.2rem;
-            flex: 0 0 3.2rem;
-        }
-
-        .date-parts .date-aaaa {
-            width: 4.6rem;
-            flex: 0 0 4.6rem;
-        }
-
-        .date-parts .date-sep {
-            color: var(--muted);
-            font-weight: 700;
-            user-select: none;
-        }
-
-        .modal-body input[readonly] {
-            color: var(--muted);
-            background: rgba(6, 14, 26, 0.45);
-        }
+        .modal-body { padding: 1rem 1.1rem; }
 
         .modal-foot {
             display: flex;
             justify-content: flex-end;
-            gap: 0.6rem;
-            padding: 0 1.15rem 1.15rem;
+            gap: 0.55rem;
+            padding: 0.85rem 1.1rem 1rem;
+            border-top: 1px solid var(--line);
         }
 
-        .modal-foot-split {
-            justify-content: space-between;
-            align-items: center;
-        }
+        .field { display: flex; flex-direction: column; gap: 0.35rem; margin-bottom: 0.85rem; }
 
-        .modal-foot-actions {
-            display: flex;
-            gap: 0.6rem;
-            align-items: center;
-        }
-
-        .modal.modal-import {
-            width: min(560px, 94vw);
-        }
-
-        .modal-body-import {
-            display: flex;
-            flex-direction: column;
-            gap: 1rem;
-        }
-
-        .import-dropzone {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            gap: 0.45rem;
-            min-height: 170px;
-            padding: 1.25rem 1rem;
-            border-radius: 14px;
-            border: 1.5px dashed rgba(110, 168, 255, 0.35);
-            background:
-                linear-gradient(160deg, rgba(59, 158, 255, 0.08), rgba(10, 22, 40, 0.35));
-            cursor: pointer;
-            text-align: center;
-            transition: border-color 0.2s ease, background 0.2s ease, box-shadow 0.2s ease;
-        }
-
-        .import-dropzone:hover,
-        .import-dropzone.is-dragover {
-            border-color: rgba(94, 176, 255, 0.7);
-            box-shadow: 0 0 0 3px rgba(59, 158, 255, 0.12);
-            background:
-                linear-gradient(160deg, rgba(59, 158, 255, 0.14), rgba(10, 22, 40, 0.4));
-        }
-
-        .import-dropzone-icon {
-            width: 42px;
-            height: 42px;
-            border-radius: 12px;
-            display: grid;
-            place-items: center;
-            color: var(--accent-soft);
-            background: rgba(59, 158, 255, 0.14);
-            border: 1px solid rgba(110, 168, 255, 0.25);
-            margin-bottom: 0.25rem;
-        }
-
-        .import-dropzone-icon svg {
-            width: 22px;
-            height: 22px;
-        }
-
-        .import-dropzone-title {
-            font-size: 0.92rem;
-            font-weight: 650;
-            color: var(--text);
-            text-transform: none;
-        }
-
-        .import-dropzone-hint,
-        .import-dropzone-file {
-            font-size: 0.78rem;
-            color: var(--muted);
-            text-transform: none;
-        }
-
-        .import-dropzone-file:not(:empty) {
-            color: var(--accent-soft);
+        .field label {
+            font-size: 0.72rem;
             font-weight: 600;
-        }
-
-        .import-status {
-            font-size: 0.82rem;
-            color: var(--muted);
-            text-transform: none;
-            padding: 0.65rem 0.8rem;
-            border-radius: 10px;
-            background: rgba(59, 158, 255, 0.08);
-            border: 1px solid rgba(110, 168, 255, 0.18);
-        }
-
-        .import-status.is-error {
-            color: #ffb3b8;
-            background: rgba(240, 113, 120, 0.1);
-            border-color: rgba(240, 113, 120, 0.28);
-        }
-
-        .import-status.is-ok {
-            color: #9be7b5;
-            background: rgba(46, 160, 110, 0.12);
-            border-color: rgba(46, 160, 110, 0.28);
-        }
-
-        .import-phones-head {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            gap: 0.75rem;
-            margin-bottom: 0.55rem;
-            font-size: 0.8rem;
-            font-weight: 650;
-            color: var(--accent-soft);
-            text-transform: none;
-        }
-
-        .import-phones-clear {
-            height: 30px;
-            padding: 0 0.7rem;
-            font-size: 0.72rem;
-        }
-
-        .import-phones-list {
-            list-style: none;
-            margin: 0;
-            padding: 0;
-            max-height: 220px;
-            overflow: auto;
-            display: flex;
-            flex-direction: column;
-            gap: 0.4rem;
-        }
-
-        .import-phones-list li {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            gap: 0.75rem;
-            padding: 0.55rem 0.7rem;
-            border-radius: 10px;
-            background: rgba(8, 18, 34, 0.55);
-            border: 1px solid rgba(110, 168, 255, 0.16);
-            font-size: 0.86rem;
-            font-variant-numeric: tabular-nums;
-            text-transform: none;
-        }
-
-        .import-phones-list li button {
-            border: none;
-            background: transparent;
-            color: #ff9aa0;
-            cursor: pointer;
-            font-family: inherit;
-            font-size: 0.72rem;
-            font-weight: 700;
+            letter-spacing: 0.04em;
             text-transform: uppercase;
-            letter-spacing: 0.03em;
+            color: var(--muted);
         }
 
-        html[data-theme="light"] .import-dropzone {
-            background: linear-gradient(160deg, rgba(30, 111, 217, 0.06), rgba(255, 255, 255, 0.7));
-        }
-
-        html[data-theme="light"] .import-phones-list li {
-            background: rgba(255, 255, 255, 0.85);
-            border-color: rgba(30, 111, 217, 0.14);
-        }
-
-        .btn-ghost,
-        .btn-primary {
-            height: 38px;
-            padding: 0 0.95rem;
+        .field input, .field textarea {
+            width: 100%;
+            padding: 0.62rem 0.72rem;
             border-radius: 10px;
+            border: 1px solid rgba(110, 168, 255, 0.18);
+            background: rgba(255, 255, 255, 0.04);
+            color: var(--text);
             font-family: inherit;
             font-size: 0.88rem;
+        }
+
+        .field input:read-only { opacity: 0.85; }
+
+        .btn-primary, .btn-ghost {
+            padding: 0.58rem 0.95rem;
+            border-radius: 10px;
+            font-family: inherit;
+            font-size: 0.84rem;
             font-weight: 600;
             cursor: pointer;
+        }
+
+        .btn-primary {
+            border: 1px solid rgba(126, 196, 255, 0.35);
+            background: linear-gradient(135deg, rgba(59, 158, 255, 0.35), rgba(59, 158, 255, 0.15));
+            color: var(--text);
         }
 
         .btn-ghost {
-            border: 1px solid var(--line);
+            border: 1px solid rgba(110, 168, 255, 0.18);
             background: transparent;
             color: var(--muted);
         }
 
-        .btn-primary {
-            border: none;
-            background: linear-gradient(135deg, #1e6fd9, #3b9eff);
-            color: #fff;
-        }
-
-        @media (max-width: 620px) {
-            .modal-body { grid-template-columns: 1fr; }
-        }
-
-        /* Main */
-        .main {
-            display: flex;
-            flex-direction: column;
-            min-width: 0;
-        }
-
-        .navbar {
-            position: sticky;
-            top: 0;
-            z-index: 20;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            gap: 1rem;
-            padding: 1.1rem 2rem;
-            background: rgba(7, 17, 31, 0.72);
-            backdrop-filter: blur(14px);
-            border-bottom: 1px solid var(--line);
-        }
-
-        .navbar-brand {
-            display: flex;
-            flex-direction: column;
-            gap: 0.15rem;
-        }
-
-        .navbar-logo {
-            display: none;
-        }
-
-        .brand-glow {
-            font-size: clamp(1.15rem, 1.4vw, 1.45rem);
-            font-weight: 700;
-            letter-spacing: -0.03em;
-            line-height: 1;
-            background: linear-gradient(100deg, #9ad4ff 0%, #ffffff 35%, #5eb0ff 65%, #c8e7ff 100%);
-            background-size: 200% auto;
-            -webkit-background-clip: text;
-            background-clip: text;
-            color: transparent;
-            filter: drop-shadow(0 0 10px rgba(94, 176, 255, 0.55)) drop-shadow(0 0 28px rgba(59, 158, 255, 0.35));
-            animation: brandShine 4.5s ease-in-out infinite;
-        }
-
-        .brand-tagline {
-            display: block;
-            font-size: 0.72rem;
-            font-weight: 500;
-            letter-spacing: 0.06em;
-            text-transform: uppercase;
-            color: rgba(174, 214, 255, 0.85);
-            text-shadow: 0 0 12px rgba(59, 158, 255, 0.35);
-        }
-
-        .brand-glow span {
-            background: linear-gradient(100deg, #4eb3ff, #a8dbff, #ffffff);
-            -webkit-background-clip: text;
-            background-clip: text;
-            color: transparent;
-        }
-
-        @keyframes brandShine {
-            0%, 100% { background-position: 0% center; filter: drop-shadow(0 0 10px rgba(94, 176, 255, 0.5)) drop-shadow(0 0 24px rgba(59, 158, 255, 0.3)); }
-            50% { background-position: 100% center; filter: drop-shadow(0 0 16px rgba(126, 196, 255, 0.75)) drop-shadow(0 0 36px rgba(59, 158, 255, 0.45)); }
-        }
-
-        .nav-right {
-            display: flex;
-            align-items: center;
-            gap: 1rem;
-            color: var(--muted);
-            font-size: 0.9rem;
-        }
-
-        .notif-wrap {
-            position: relative;
-        }
-
-        .btn-notif-cal {
-            position: relative;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            width: 40px;
-            height: 40px;
-            border-radius: 12px;
-            border: 1px solid rgba(110, 168, 255, 0.28);
-            background: rgba(59, 158, 255, 0.12);
-            color: var(--accent-soft);
-            cursor: pointer;
-            transition: background 0.15s ease, border-color 0.15s ease;
-        }
-
-        .btn-notif-cal:hover,
-        .btn-notif-cal.is-open {
-            background: rgba(59, 158, 255, 0.22);
-            border-color: rgba(94, 176, 255, 0.5);
-        }
-
-        .btn-notif-cal svg {
-            width: 20px;
-            height: 20px;
-        }
-
-        .btn-notif-cal .notif-badge {
-            position: absolute;
-            top: -5px;
-            right: -5px;
-            min-width: 18px;
-            height: 18px;
-            padding: 0 5px;
-            border-radius: 999px;
-            background: linear-gradient(135deg, #f07178, #d12b3a);
-            color: #fff;
-            font-size: 0.65rem;
-            font-weight: 700;
-            line-height: 18px;
-            text-align: center;
-            box-shadow: 0 4px 10px rgba(209, 43, 58, 0.35);
-        }
-
-        .btn-notif-cal .notif-badge.is-empty {
-            display: none;
-        }
-
-        .notif-panel {
-            position: absolute;
-            top: calc(100% + 0.55rem);
-            right: 0;
-            width: min(360px, calc(100vw - 1.5rem));
-            max-height: min(420px, 70vh);
-            display: none;
-            flex-direction: column;
-            border-radius: 14px;
-            border: 1px solid rgba(110, 168, 255, 0.22);
-            background: linear-gradient(165deg, rgba(12, 24, 42, 0.98), rgba(8, 16, 30, 0.98));
-            box-shadow: 0 18px 48px rgba(0, 0, 0, 0.35);
-            overflow: hidden;
-            z-index: 40;
-        }
-
-        .notif-panel.open {
-            display: flex;
-        }
-
-        .notif-panel-head {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            gap: 0.75rem;
-            padding: 0.85rem 1rem;
-            border-bottom: 1px solid rgba(110, 168, 255, 0.16);
-        }
-
-        .notif-panel-head h3 {
-            margin: 0;
-            font-size: 0.88rem;
-            font-weight: 650;
-            color: var(--text);
-            text-transform: none;
-        }
-
-        .notif-panel-head span {
-            font-size: 0.72rem;
-            color: var(--muted);
-            text-transform: none;
-        }
-
-        .notif-panel-list {
-            list-style: none;
-            margin: 0;
-            padding: 0.45rem;
-            overflow: auto;
-            display: flex;
-            flex-direction: column;
-            gap: 0.35rem;
-        }
-
-        .notif-item {
-            display: grid;
-            grid-template-columns: 1fr auto;
-            gap: 0.25rem 0.75rem;
-            padding: 0.7rem 0.8rem;
-            border-radius: 10px;
-            border: 1px solid rgba(110, 168, 255, 0.14);
-            background: rgba(59, 158, 255, 0.06);
-            cursor: pointer;
-            text-align: left;
-            font-family: inherit;
-            color: inherit;
-            width: 100%;
-        }
-
-        .notif-item:hover {
-            background: rgba(59, 158, 255, 0.12);
-            border-color: rgba(94, 176, 255, 0.28);
-        }
-
-        .notif-item.is-today {
-            border-color: rgba(240, 180, 41, 0.4);
-            background: rgba(240, 180, 41, 0.12);
-        }
-
-        .notif-item.is-overdue {
-            border-color: rgba(240, 113, 120, 0.4);
-            background: rgba(240, 113, 120, 0.1);
-        }
-
-        .notif-item-phone {
-            font-size: 0.9rem;
-            font-weight: 650;
-            font-variant-numeric: tabular-nums;
-            color: var(--text);
-            text-transform: none;
-        }
-
-        .notif-item-date {
-            font-size: 0.75rem;
-            color: var(--accent-soft);
-            text-transform: none;
-            justify-self: end;
-        }
-
-        .notif-item-days {
-            grid-column: 1 / -1;
-            font-size: 0.72rem;
-            color: var(--muted);
-            text-transform: none;
-        }
-
-        .notif-item.is-today .notif-item-days {
-            color: #ffd978;
-        }
-
-        .notif-item.is-overdue .notif-item-days {
-            color: #ffb3b8;
-        }
-
-        .notif-empty {
-            padding: 1.4rem 1rem;
-            text-align: center;
-            color: var(--muted);
-            font-size: 0.82rem;
-            text-transform: none;
-        }
-
-        html[data-theme="light"] .btn-notif-cal {
-            background: rgba(30, 111, 217, 0.08);
-            border-color: rgba(30, 111, 217, 0.22);
-            color: #1e6fd9;
-        }
-
-        html[data-theme="light"] .notif-panel {
-            background: linear-gradient(165deg, #ffffff, #eef4fc);
-            border-color: rgba(30, 111, 217, 0.18);
-            box-shadow: 0 18px 48px rgba(30, 90, 180, 0.16);
-        }
-
-        html[data-theme="light"] .notif-item {
-            background: rgba(30, 111, 217, 0.04);
-            border-color: rgba(30, 111, 217, 0.12);
-        }
-
-        html[data-theme="light"] .notif-item.is-today {
-            background: rgba(240, 180, 41, 0.12);
-        }
-
-        html[data-theme="light"] .notif-item.is-overdue {
-            background: rgba(240, 113, 120, 0.1);
-        }
-
-        .user-chip {
-            display: inline-flex;
-            align-items: center;
-            gap: 0.55rem;
-            padding: 0.45rem 0.8rem 0.45rem 0.45rem;
-            border-radius: 999px;
-            background: rgba(59, 158, 255, 0.1);
-            border: 1px solid rgba(126, 196, 255, 0.22);
-        }
-
-        .user-chip .avatar {
-            width: 32px;
-            height: 32px;
-            border-radius: 50%;
-            display: block;
-            object-fit: cover;
-            object-position: center top;
-            background: linear-gradient(145deg, #1e6fd9, #4eb3ff);
-            border: 1px solid rgba(126, 196, 255, 0.35);
-        }
-
-        .btn-logout {
-            position: relative;
-            display: inline-flex;
-            align-items: center;
-            gap: 0.55rem;
-            padding: 0.48rem 1rem 0.48rem 0.75rem;
-            border-radius: 999px;
-            border: 1px solid rgba(240, 113, 120, 0.38);
-            background:
-                linear-gradient(135deg, rgba(240, 113, 120, 0.18), rgba(220, 60, 80, 0.08)),
-                rgba(12, 22, 38, 0.65);
-            color: #ffb3b8;
-            font-size: 0.76rem;
-            font-weight: 600;
-            letter-spacing: 0.04em;
-            cursor: pointer;
-            overflow: hidden;
-            transition: transform 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease, color 0.2s ease;
-            box-shadow: 0 4px 14px rgba(240, 113, 120, 0.12);
-        }
-
-        .btn-logout::before {
-            content: '';
-            position: absolute;
-            inset: 0;
-            background: linear-gradient(120deg, transparent 25%, rgba(255, 180, 188, 0.16) 50%, transparent 75%);
-            transform: translateX(-120%);
-            transition: transform 0.45s ease;
-        }
-
-        .btn-logout:hover {
-            transform: translateY(-1px);
-            border-color: rgba(255, 154, 160, 0.55);
-            color: #ffd4d7;
-            box-shadow: 0 6px 20px rgba(240, 113, 120, 0.28), 0 0 18px rgba(240, 113, 120, 0.15);
-        }
-
-        .btn-logout:hover::before {
-            transform: translateX(120%);
-        }
-
-        .btn-logout:active {
-            transform: translateY(0);
-        }
-
-        .btn-logout-icon {
-            width: 30px;
-            height: 30px;
-            border-radius: 50%;
-            display: grid;
-            place-items: center;
-            flex-shrink: 0;
-            background: linear-gradient(145deg, rgba(240, 113, 120, 0.35), rgba(200, 50, 70, 0.25));
-            border: 1px solid rgba(255, 180, 188, 0.35);
-            box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.12);
-        }
-
-        .btn-logout-icon svg {
-            width: 15px;
-            height: 15px;
-        }
-
-        .btn-logout-text {
-            line-height: 1;
-        }
-
-        @media (max-width: 720px) {
-            .btn-logout-text {
-                display: none;
-            }
-
-            .btn-logout {
-                padding: 0.48rem;
-            }
-        }
-
-        .content {
-            padding: 1.75rem 2rem 2.5rem;
-        }
-
-        .content-head {
-            margin-bottom: 1.1rem;
-            animation: fadeUp 0.5s ease both;
-        }
-
-        .content-head h1 {
-            font-size: 1.15rem;
-            font-weight: 600;
-            letter-spacing: -0.02em;
-        }
-
-        .cards {
-            display: grid;
-            grid-template-columns: repeat(6, minmax(0, 1fr));
-            gap: 0.75rem;
-            width: 100%;
-            position: relative;
-            z-index: 1;
-            padding: 0;
-            margin: 0 0 0.55rem;
-            pointer-events: none;
-            user-select: none;
-            background: transparent;
-            backdrop-filter: none;
-        }
-
-        .cards.cards-vendeur {
-            grid-template-columns: repeat(3, minmax(0, 1fr));
-        }
-
-        .dashboard-cards-toolbar {
-            display: flex;
-            justify-content: flex-end;
-            align-items: center;
-            margin: 0 0 0.5rem;
-            pointer-events: auto;
-        }
-
-        html[data-theme="light"] .cards {
-            background: transparent;
-        }
-
-        .card {
-            position: relative;
-            overflow: hidden;
-            padding: 0.7rem 0.85rem 0.65rem;
-            min-height: 86px;
-            height: 86px;
-            border-radius: 12px;
-            background: linear-gradient(165deg, rgba(16, 32, 54, 0.92), rgba(10, 22, 40, 0.88));
-            border: 1px solid rgba(110, 168, 255, 0.2);
-            box-shadow: 0 6px 18px rgba(0, 0, 0, 0.18);
-            transition: border-color 0.2s ease, box-shadow 0.2s ease;
-            animation: fadeUp 0.45s ease both;
-            cursor: default;
-            pointer-events: none;
-            user-select: none;
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
-        }
-
-        .card:nth-child(1) { animation-delay: 0.05s; }
-        .card:nth-child(2) { animation-delay: 0.1s; }
-        .card:nth-child(3) { animation-delay: 0.15s; }
-        .card:nth-child(4) { animation-delay: 0.2s; }
-        .card:nth-child(5) { animation-delay: 0.25s; }
-        .card:nth-child(6) { animation-delay: 0.3s; }
-
-        .card::after {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 2px;
-            opacity: 0.9;
-        }
-
-        .card.actif::after { background: linear-gradient(90deg, var(--green), transparent); }
-        .card.attente::after { background: linear-gradient(90deg, var(--amber), transparent); }
-        .card.annule::after { background: linear-gradient(90deg, var(--rose), transparent); }
-        .card.execute::after { background: linear-gradient(90deg, var(--green), transparent); }
-        .card.revenu::after { background: linear-gradient(90deg, var(--cyan), transparent); }
-        .card.brahim::after { background: linear-gradient(90deg, var(--amber), transparent); }
-        .card.solde::after { background: linear-gradient(90deg, var(--violet), transparent); }
-
-        .card:hover {
-            border-color: rgba(126, 196, 255, 0.28);
-            box-shadow: 0 6px 18px rgba(0, 0, 0, 0.2), 0 0 12px rgba(59, 158, 255, 0.08);
-        }
-
-        .card-top {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            gap: 0.5rem;
-            margin-bottom: 0.25rem;
-        }
-
-        .card-label {
-            font-size: 0.72rem;
-            font-weight: 500;
-            color: var(--muted);
-            line-height: 1.25;
-        }
-
-        .card-icon {
-            width: 30px;
-            height: 30px;
-            border-radius: 8px;
-            display: grid;
-            place-items: center;
-            flex-shrink: 0;
-        }
-
-        .card.actif .card-icon { background: rgba(61, 207, 138, 0.12); color: var(--green); }
-        .card.attente .card-icon { background: rgba(240, 180, 41, 0.12); color: var(--amber); }
-        .card.annule .card-icon { background: rgba(240, 113, 120, 0.12); color: var(--rose); }
-        .card.execute .card-icon { background: rgba(61, 207, 138, 0.12); color: var(--green); }
-        .card.revenu .card-icon { background: rgba(77, 212, 234, 0.12); color: var(--cyan); }
-        .card.brahim .card-icon { background: rgba(240, 180, 41, 0.12); color: var(--amber); }
-        .card.solde .card-icon { background: rgba(155, 123, 255, 0.12); color: var(--violet); }
-
-        .card-icon svg { width: 15px; height: 15px; }
-
-        .card-value {
-            font-size: 1.45rem;
-            font-weight: 700;
-            letter-spacing: -0.03em;
-            line-height: 1.1;
-            flex: 0 0 auto;
-        }
-
-        .card.actif .card-value { color: #7ee8b0; }
-        .card.attente .card-value { color: #ffc857; }
-        .card.annule .card-value { color: #ff9aa0; }
-        .card.execute .card-value { color: #7ee8b0; }
-        .card.revenu .card-value { color: #7ee8f5; }
-        .card.brahim .card-value { color: #ffc857; }
-        .card.solde .card-value { color: #c4b0ff; }
-
-        /* Bloc figé (toolbar / cartes / recherche) + en-têtes tableau — toutes fiches */
-        .panel-freeze {
-            position: sticky;
-            top: 3.85rem;
-            z-index: 19;
-            margin: -0.35rem 0 0.75rem;
-            padding: 0.35rem 0 0.7rem;
-            background:
-                linear-gradient(180deg, rgba(7, 17, 31, 0.995) 0%, rgba(7, 17, 31, 0.98) 85%, rgba(7, 17, 31, 0.92) 100%);
-            backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
-        }
-
-        html[data-theme="light"] .panel-freeze {
-            background:
-                linear-gradient(180deg, rgba(244, 248, 255, 0.995) 0%, rgba(244, 248, 255, 0.98) 85%, rgba(244, 248, 255, 0.92) 100%);
-        }
-
-        .panel-freeze .section-toolbar {
-            margin-bottom: 0.55rem;
-            pointer-events: auto;
-        }
-
-        .panel-freeze .search-bar {
-            margin-bottom: 0;
-            pointer-events: auto;
-            user-select: auto;
-        }
-
-        .panel-freeze .paiement-cards {
-            margin-bottom: 0.65rem;
-            pointer-events: none;
-            user-select: none;
-        }
-
-        .panel-freeze .paiement-card {
-            min-height: 92px;
-            padding: 0.8rem 0.95rem 0.75rem;
-        }
-
-        .panel-freeze .paiement-card .card-value {
-            font-size: 1.4rem;
-        }
-
-        .table-wrap.table-freeze-body {
-            max-height: calc(100vh - 14.5rem);
-            overflow: auto;
-            -webkit-overflow-scrolling: touch;
-        }
-
-        .table-wrap.table-freeze-body .data-table thead th {
-            position: sticky;
-            top: 0;
-            z-index: 6;
-            background: rgba(14, 30, 54, 0.98);
-            box-shadow: 0 1px 0 rgba(110, 168, 255, 0.18);
-        }
-
-        html[data-theme="light"] .table-wrap.table-freeze-body .data-table thead th {
-            background: rgba(248, 251, 255, 0.98);
-            box-shadow: 0 1px 0 rgba(30, 90, 180, 0.14);
-        }
-
-        .balance-section .panel-freeze {
-            position: relative;
-            top: auto;
-            z-index: 1;
-            margin: 0 0 0.75rem;
-            padding: 0 0 0.55rem;
-            background: transparent;
-            backdrop-filter: none;
-            -webkit-backdrop-filter: none;
-        }
-
-        html[data-theme="light"] .balance-section .panel-freeze {
-            background: transparent;
-        }
-
-        .balance-section .table-wrap.table-freeze-body {
-            max-height: calc(100vh - 17.5rem);
-            overflow: auto;
-        }
-
-        .paiement-sticky-lock {
-            position: sticky;
-            top: 3.85rem;
-            z-index: 19;
-            margin: 0 0 1.15rem;
-            padding: 0.65rem 0 0.85rem;
-            pointer-events: none;
-            user-select: none;
-            touch-action: none;
-            background:
-                linear-gradient(180deg, rgba(7, 17, 31, 0.99) 0%, rgba(7, 17, 31, 0.97) 78%, rgba(7, 17, 31, 0.9) 100%);
-            backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
-        }
-
-        html[data-theme="light"] .paiement-sticky-lock {
-            background:
-                linear-gradient(180deg, rgba(244, 248, 255, 0.99) 0%, rgba(244, 248, 255, 0.97) 78%, rgba(244, 248, 255, 0.9) 100%);
-        }
-
-        .paiement-cards {
-            display: grid;
-            grid-template-columns: repeat(3, minmax(0, 1fr));
-            gap: 0.85rem;
-            margin: 0;
-            pointer-events: none;
-            user-select: none;
-        }
-
-        .paiement-card {
-            position: relative;
-            overflow: hidden;
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
-            min-height: 108px;
-            padding: 1rem 1.1rem 0.95rem;
-            border-radius: 14px;
-            border: 1px solid transparent;
-            box-shadow: 0 10px 28px rgba(0, 0, 0, 0.22);
-            pointer-events: none;
-            cursor: default;
-            user-select: none;
-        }
-
-        .paiement-card::before {
-            content: '';
-            position: absolute;
-            inset: 0;
-            background:
-                radial-gradient(circle at 100% 0%, rgba(255, 255, 255, 0.14), transparent 42%),
-                radial-gradient(circle at 0% 100%, rgba(0, 0, 0, 0.18), transparent 50%);
-            pointer-events: none;
-        }
-
-        .paiement-card::after {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 3px;
-        }
-
-        .paiement-card.budget {
-            background: linear-gradient(145deg, rgba(18, 48, 92, 0.95), rgba(12, 28, 54, 0.92));
-            border-color: rgba(126, 196, 255, 0.35);
-        }
-        .paiement-card.budget::after { background: linear-gradient(90deg, #5aa8ff, transparent); }
-
-        .paiement-card.paye {
-            background: linear-gradient(145deg, rgba(14, 58, 42, 0.95), rgba(10, 32, 28, 0.92));
-            border-color: rgba(61, 207, 138, 0.35);
-        }
-        .paiement-card.paye::after { background: linear-gradient(90deg, #3dcf8a, transparent); }
-
-        .paiement-card.soldes {
-            background: linear-gradient(145deg, rgba(62, 22, 40, 0.95), rgba(36, 14, 28, 0.92));
-            border-color: rgba(240, 113, 120, 0.35);
-        }
-        .paiement-card.soldes::after { background: linear-gradient(90deg, #ff6b78, transparent); }
-
-        .paiement-card:hover {
-            transform: none;
-            box-shadow: 0 10px 28px rgba(0, 0, 0, 0.22);
-        }
-
-        .paiement-card .card-top {
-            position: relative;
-            z-index: 1;
-        }
-
-        .paiement-card .card-label {
-            font-size: 0.78rem;
-            font-weight: 600;
-            letter-spacing: 0.02em;
-            text-transform: uppercase;
-            color: rgba(235, 242, 255, 0.78);
-        }
-
-        .paiement-card .card-icon {
-            width: 36px;
-            height: 36px;
-            border-radius: 10px;
-        }
-
-        .paiement-card.budget .card-icon {
-            background: rgba(90, 168, 255, 0.18);
-            color: #8ec5ff;
-        }
-        .paiement-card.paye .card-icon {
-            background: rgba(61, 207, 138, 0.18);
-            color: #7ee8b0;
-        }
-        .paiement-card.soldes .card-icon {
-            background: rgba(255, 107, 120, 0.18);
-            color: #ff9aa0;
-        }
-
-        .paiement-card .card-value {
-            position: relative;
-            z-index: 1;
-            font-size: 1.55rem;
-            font-weight: 800;
-            letter-spacing: -0.03em;
-        }
-
-        .paiement-card.budget .card-value { color: #9fd0ff; }
-        .paiement-card.paye .card-value { color: #7ee8b0; }
-        .paiement-card.soldes .card-value { color: #ff8a94; }
-
-        html[data-theme="light"] .paiement-card.budget {
-            background: linear-gradient(145deg, #eaf3ff, #d7e8ff);
-            border-color: rgba(30, 111, 217, 0.28);
-        }
-        html[data-theme="light"] .paiement-card.paye {
-            background: linear-gradient(145deg, #e8f8f0, #d4f0e2);
-            border-color: rgba(20, 150, 92, 0.28);
-        }
-        html[data-theme="light"] .paiement-card.soldes {
-            background: linear-gradient(145deg, #ffecee, #ffd8dc);
-            border-color: rgba(209, 43, 58, 0.25);
-        }
-
-        html[data-theme="light"] .paiement-card .card-label { color: #3a4f6a; }
-        html[data-theme="light"] .paiement-card.budget .card-value { color: #1565c0; }
-        html[data-theme="light"] .paiement-card.paye .card-value { color: #14965c; }
-        html[data-theme="light"] .paiement-card.soldes .card-value { color: #d12b3a; }
-
-        .balance-section {
-            margin-top: 0;
-            margin-bottom: 0;
-            padding: 0.85rem 1.15rem 1rem;
-            border-radius: 16px;
-            background: linear-gradient(165deg, rgba(16, 32, 54, 0.92), rgba(10, 22, 40, 0.88));
-            border: 1px solid rgba(110, 168, 255, 0.2);
-            box-shadow: 0 10px 28px rgba(0, 0, 0, 0.22);
-            animation: fadeUp 0.5s ease 0.15s both;
-        }
-
-        html[data-theme="light"] .balance-section {
-            background: linear-gradient(165deg, rgba(255, 255, 255, 0.96), rgba(238, 244, 252, 0.92));
-        }
-
-        .balance-toolbar {
-            display: flex;
-            align-items: end;
-            justify-content: space-between;
-            gap: 1rem;
-            flex-wrap: wrap;
-        }
-
-        .balance-head {
-            margin-bottom: 0;
-            flex: 0 0 auto;
-            display: flex;
-            align-items: center;
-            gap: 0.75rem;
-            flex-wrap: wrap;
-        }
-
-        .balance-head h2 {
-            font-size: 0.95rem;
-            font-weight: 600;
-            letter-spacing: 0.02em;
-        }
-
-        .balance-head-numero {
-            display: flex;
-            align-items: center;
-            gap: 0.45rem;
-            margin-left: 0.15rem;
-        }
-
-        .balance-head-numero label {
-            font-size: 0.7rem;
-            font-weight: 650;
-            color: var(--accent-soft);
-            letter-spacing: 0.04em;
-            white-space: nowrap;
-        }
-
-        .balance-head-numero input {
-            width: 9.5rem;
-            height: 34px;
-            padding: 0 0.7rem;
-            border-radius: 10px;
-            border: 1px solid rgba(110, 168, 255, 0.28);
-            background: rgba(6, 14, 26, 0.75);
-            color: var(--text);
-            font-family: inherit;
-            font-size: 0.82rem;
-            box-sizing: border-box;
-        }
-
-        .balance-head-numero input:focus {
-            outline: none;
-            border-color: rgba(94, 176, 255, 0.65);
-            box-shadow: 0 0 0 2px rgba(59, 158, 255, 0.14);
-        }
-
-        html[data-theme="light"] .balance-head-numero input {
-            background: rgba(255, 255, 255, 0.95);
-            border-color: rgba(30, 111, 217, 0.22);
-            color: #12233d;
-        }
-
-        .btn-toggle-cards {
-            height: 34px;
-            padding: 0 0.85rem;
-            border-radius: 10px;
-            border: 1px solid rgba(110, 168, 255, 0.28);
-            background: rgba(59, 158, 255, 0.12);
-            color: var(--accent-soft);
-            font-family: inherit;
-            font-size: 0.75rem;
-            font-weight: 700;
-            letter-spacing: 0.04em;
-            text-transform: uppercase;
-            cursor: pointer;
-            white-space: nowrap;
-        }
-
-        .btn-toggle-cards:hover {
-            background: rgba(59, 158, 255, 0.2);
-        }
-
-        .balance-section .search-bar {
-            margin: 0;
-            padding: 0;
-            border: none;
-            border-radius: 0;
-            background: transparent;
-            box-shadow: none;
-            flex: 1 1 420px;
-            max-width: 760px;
-        }
-
-        html[data-theme="light"] .balance-section .search-bar {
-            background: transparent;
-            border: none;
-        }
-
-        .balance-section .table-wrap {
-            margin: 0.75rem 0 0;
-            border: 1px solid rgba(110, 168, 255, 0.14);
-            background: rgba(6, 14, 26, 0.35);
-        }
-
-        html[data-theme="light"] .balance-section .table-wrap {
-            background: rgba(255, 255, 255, 0.55);
-            border-color: rgba(30, 90, 180, 0.12);
-        }
-
-        #panel-dashboard.cards-hidden .cards {
-            display: none !important;
-        }
-
-        #panel-dashboard.cards-hidden .balance-section-head .search-bar {
-            display: none !important;
-        }
-
-        #panel-dashboard.active.cards-hidden {
-            display: flex;
-            flex-direction: column;
-            min-height: calc(100vh - 5.5rem);
-        }
-
-        #panel-dashboard.active.cards-hidden .dashboard-sticky-lock {
-            flex: 0 0 auto;
-            position: sticky;
-            top: 3.85rem;
-            z-index: 18;
-            margin-bottom: 0.55rem;
-        }
-
-        #panel-dashboard.active.cards-hidden .balance-section-body {
-            margin-top: 0;
-            margin-bottom: 0;
-            flex: 1 1 auto;
-            display: flex;
-            flex-direction: column;
-            min-height: 0;
-            overflow: hidden;
-        }
-
-        #panel-dashboard.active.cards-hidden .balance-section-body .table-wrap.table-freeze-body {
-            flex: 1 1 auto;
-            max-height: none;
-            height: auto;
-            min-height: 0;
-            overflow: auto;
-        }
-
-        html[data-theme="light"] .btn-toggle-cards {
-            background: rgba(30, 111, 217, 0.08);
-            border-color: rgba(30, 111, 217, 0.22);
-            color: #1e6fd9;
-        }
-
-        .statue-badge {
-            display: inline-flex;
-            align-items: center;
-            padding: 0.28rem 0.55rem;
-            border-radius: 999px;
-            font-size: 0.72rem;
-            font-weight: 600;
-            letter-spacing: 0.02em;
-            border: 1px solid transparent;
-        }
-
-        .statue-badge.actif {
-            color: #7ee8b0;
-            background: rgba(61, 207, 138, 0.14);
-            border-color: rgba(61, 207, 138, 0.35);
-        }
-
-        .statue-badge.attente {
-            color: #ffc857;
-            background: rgba(240, 180, 41, 0.14);
-            border-color: rgba(240, 180, 41, 0.35);
-        }
-
-        .statue-badge.annule {
-            color: #ff9aa0;
-            background: rgba(240, 113, 120, 0.14);
-            border-color: rgba(240, 113, 120, 0.35);
-        }
-
-        .statue-badge.execute {
-            color: #7ee8b0;
-            background: rgba(61, 207, 138, 0.14);
-            border-color: rgba(61, 207, 138, 0.35);
-        }
-
-        .card-hint {
-            font-size: 0.65rem;
-            color: rgba(210, 224, 245, 0.55);
-            font-weight: 400;
-            margin-top: 0.15rem;
-        }
-
-        /* —— Mode clair : surfaces & textes —— */
-        html[data-theme="light"] .sidebar {
-            background: linear-gradient(180deg, #eef4fc 0%, #e4eef9 100%);
-            box-shadow: 4px 0 24px rgba(30, 90, 180, 0.06);
-        }
-
-        html[data-theme="light"] .nav-item {
-            color: rgba(15, 35, 65, 0.78);
-        }
-
-        html[data-theme="light"] .nav-item:hover,
-        html[data-theme="light"] .nav-item.active,
-        html[data-theme="light"] .nav-parent.active {
-            background: rgba(30, 111, 217, 0.1);
-            color: #0a1628;
-        }
-
-        html[data-theme="light"] .submenu a {
-            color: rgba(20, 45, 80, 0.7);
-        }
-
-        html[data-theme="light"] .submenu a:hover,
-        html[data-theme="light"] .submenu a.active {
-            background: rgba(30, 111, 217, 0.1);
-            color: #0a1628;
-        }
-
-        html[data-theme="light"] .side-foot {
-            color: rgba(20, 40, 70, 0.55);
-        }
-
-        html[data-theme="light"] .navbar {
-            background: rgba(244, 248, 255, 0.88);
-        }
-
-        html[data-theme="light"] .brand-tagline {
-            color: rgba(20, 55, 110, 0.65);
-            text-shadow: none;
-        }
-
-        html[data-theme="light"] .brand-glow {
-            background: linear-gradient(100deg, #1e6fd9 0%, #0a1628 40%, #3b9eff 70%, #1e6fd9 100%);
-            -webkit-background-clip: text;
-            background-clip: text;
-            filter: none;
-        }
-
-        html[data-theme="light"] .submenu-icon {
-            background: rgba(30, 111, 217, 0.08);
-            border-color: rgba(30, 111, 217, 0.2);
-            color: #1e6fd9;
-        }
-
-        html[data-theme="light"] .user-chip {
-            background: rgba(30, 111, 217, 0.08);
-            border-color: rgba(30, 111, 217, 0.2);
-            color: #0a1628;
-        }
-
-        html[data-theme="light"] .btn-theme-toggle {
-            background: rgba(30, 111, 217, 0.08);
-            border-color: rgba(30, 111, 217, 0.2);
-            color: #0a1628;
-        }
-
-        html[data-theme="light"] .sidebar-close {
-            background: rgba(30, 111, 217, 0.08);
-            border-color: rgba(30, 111, 217, 0.2);
-            color: #0a1628;
-        }
-
-        html[data-theme="light"] .card {
-            background: linear-gradient(165deg, #ffffff 0%, #f3f7fd 100%);
-            border-color: rgba(30, 90, 180, 0.14);
-            box-shadow: 0 8px 24px rgba(30, 90, 180, 0.08);
-        }
-
-        html[data-theme="light"] .card:hover {
-            border-color: rgba(30, 111, 217, 0.28);
-            box-shadow: 0 10px 28px rgba(30, 90, 180, 0.12);
-        }
-
-        html[data-theme="light"] .card.actif .card-value { color: #14965c; }
-        html[data-theme="light"] .card.attente .card-value { color: #b8860b; }
-        html[data-theme="light"] .card.annule .card-value { color: #c9434d; }
-        html[data-theme="light"] .card.execute .card-value { color: #14965c; }
-        html[data-theme="light"] .card.revenu .card-value { color: #0f8fa8; }
-        html[data-theme="light"] .card.brahim .card-value { color: #b8860b; }
-        html[data-theme="light"] .card.solde .card-value { color: #6b4fd6; }
-
-        html[data-theme="light"] .card-hint {
-            color: rgba(20, 40, 70, 0.5);
-        }
-
-        html[data-theme="light"] .balance-section {
-            background: linear-gradient(165deg, #ffffff 0%, #f3f7fd 100%);
-            border-color: rgba(30, 90, 180, 0.14);
-            box-shadow: 0 8px 24px rgba(30, 90, 180, 0.08);
-        }
-
-        html[data-theme="light"] .table-wrap {
-            background: #ffffff;
-            border-color: rgba(30, 90, 180, 0.14);
-            box-shadow: 0 6px 20px rgba(30, 90, 180, 0.07);
-        }
-
-        html[data-theme="light"] .data-table th {
-            background: #eaf1fb;
-            color: #1e6fd9;
-            border-bottom-color: rgba(30, 90, 180, 0.12);
-        }
-
-        html[data-theme="light"] .data-table td {
-            color: #15263f;
-            border-bottom-color: rgba(30, 90, 180, 0.1);
-        }
-
-        html[data-theme="light"] .data-table tbody tr:hover {
-            background: rgba(30, 111, 217, 0.05);
-        }
-
-        html[data-theme="light"] .data-table tbody tr.row-execute {
-            background: rgba(20, 150, 92, 0.16);
-        }
-
-        html[data-theme="light"] .data-table tbody tr.row-execute:hover {
-            background: rgba(20, 150, 92, 0.24);
-        }
-
-        html[data-theme="light"] .data-table tbody tr.row-execute td {
-            color: #0f5132;
-        }
-
-        html[data-theme="light"] .data-table tbody tr.row-relance-a-voir {
-            background: rgba(240, 180, 41, 0.28);
-        }
-
-        html[data-theme="light"] .data-table tbody tr.row-relance-a-voir:hover {
-            background: rgba(240, 180, 41, 0.38);
-        }
-
-        html[data-theme="light"] .data-table tbody tr.row-relance-a-voir td {
-            color: #7a5a00;
-        }
-
-        html[data-theme="light"] .data-table tbody tr.row-relance-confirme {
-            background: rgba(140, 148, 160, 0.28);
-            opacity: 0.72;
-        }
-
-        html[data-theme="light"] .data-table tbody tr.row-relance-confirme:hover {
-            background: rgba(140, 148, 160, 0.36);
-        }
-
-        html[data-theme="light"] .data-table tbody tr.row-relance-confirme td {
-            color: #6b7280;
-        }
-
-        html[data-theme="light"] .data-table tbody tr.row-relance-inj {
-            background: rgba(220, 53, 69, 0.22);
-        }
-
-        html[data-theme="light"] .data-table tbody tr.row-relance-inj:hover {
-            background: rgba(220, 53, 69, 0.32);
-        }
-
-        html[data-theme="light"] .data-table tbody tr.row-relance-inj td {
-            color: #842029;
-        }
-
-        html[data-theme="light"] .data-table tbody tr.row-relance-no-rappel {
-            background: rgba(148, 163, 184, 0.32) !important;
-        }
-        html[data-theme="light"] .data-table tbody tr.row-relance-no-rappel:hover {
-            background: rgba(148, 163, 184, 0.4) !important;
-        }
-        html[data-theme="light"] .data-table tbody tr.row-relance-no-rappel td {
-            color: #6b7280 !important;
-        }
-
-        html[data-theme="light"] .data-table td.solde-cell {
-            color: #d12b3a;
-            text-shadow: none;
-        }
-
-        html[data-theme="light"] .search-bar {
-            background: #ffffff;
-            border-color: rgba(30, 90, 180, 0.14);
-        }
-
-        html[data-theme="light"] .relance-count {
-            background: rgba(30, 111, 217, 0.1);
-            border-color: rgba(30, 111, 217, 0.28);
-            color: #1a5fad;
-        }
-
-        html[data-theme="light"] .search-field input,
-        html[data-theme="light"] .search-field select {
-            background: #f4f8ff;
-            border-color: rgba(30, 90, 180, 0.2);
-            color: #0a1628;
-        }
-
-        html[data-theme="light"] .action-btn {
-            background: rgba(30, 111, 217, 0.05);
-            border-color: rgba(30, 90, 180, 0.16);
-            color: #3a5578;
-        }
-
-        html[data-theme="light"] .btn-ghost {
-            background: #eef4fc;
-            border-color: rgba(30, 90, 180, 0.2);
-            color: #0a1628;
-        }
-
-        html[data-theme="light"] .modal {
-            background: linear-gradient(165deg, #ffffff, #eef4fc);
-            border-color: rgba(30, 90, 180, 0.18);
-            box-shadow: 0 24px 60px rgba(30, 90, 180, 0.18);
-        }
-
-        html[data-theme="light"] .modal-backdrop {
-            background: rgba(20, 40, 70, 0.35);
-        }
-
-        html[data-theme="light"] .modal-close {
-            background: rgba(30, 111, 217, 0.08);
-            color: #0a1628;
-        }
-
-        html[data-theme="light"] .modal-body input,
-        html[data-theme="light"] .modal-body select,
-        html[data-theme="light"] .modal-body textarea {
-            background: #f4f8ff;
-            border-color: rgba(30, 90, 180, 0.2);
-            color: #0a1628;
-        }
-
-        html[data-theme="light"] .modal-body input[readonly] {
-            background: #e8eef7;
-            color: rgba(15, 35, 65, 0.7);
-        }
+        .print-sheet { color: #111; background: #fff; padding: 1.25rem; border-radius: 8px; }
+        .print-sheet h3 { margin-bottom: 0.75rem; }
+        .print-sheet dl { display: grid; grid-template-columns: 140px 1fr; gap: 0.45rem 0.75rem; }
+        .print-sheet dt { font-weight: 600; }
+        .print-sheet dd { margin: 0; }
 
-        html[data-theme="light"] .btn-logout {
-            background:
-                linear-gradient(135deg, rgba(240, 113, 120, 0.12), rgba(220, 60, 80, 0.06)),
-                #ffffff;
-            color: #c9434d;
+        @media print {
+            body * { visibility: hidden; }
+            #clientPrintArea, #clientPrintArea * { visibility: visible; }
+            #clientPrintArea { position: absolute; inset: 0; padding: 1rem; background: #fff; color: #111; }
         }
 
-        html[data-theme="light"] .sidebar-backdrop {
-            background: rgba(20, 40, 70, 0.35);
+        @media (max-width: 1100px) {
+            .search-bar { grid-template-columns: repeat(2, minmax(0, 1fr)); }
         }
 
-        @keyframes fadeUp {
-            from { opacity: 0; transform: translateY(12px); }
-            to { opacity: 1; transform: translateY(0); }
+        @media (max-width: 560px) {
+            .search-bar { grid-template-columns: 1fr; }
         }
 
         .menu-toggle {
-            display: inline-flex;
-            position: relative;
-            width: 42px;
-            height: 42px;
-            border: 1px solid rgba(126, 196, 255, 0.28);
-            border-radius: 12px;
-            background:
-                linear-gradient(145deg, rgba(30, 111, 217, 0.22), rgba(14, 40, 72, 0.55));
-            color: #9fd0ff;
+            display: none;
+            appearance: none;
+            border: 1px solid var(--line);
+            background: rgba(255, 255, 255, 0.04);
+            color: var(--text);
+            border-radius: 10px;
+            width: 40px;
+            height: 40px;
             cursor: pointer;
-            align-items: center;
-            justify-content: center;
-            box-shadow:
-                0 0 0 1px rgba(59, 158, 255, 0.08),
-                0 8px 20px rgba(0, 0, 0, 0.22),
-                inset 0 1px 0 rgba(255, 255, 255, 0.06);
-            transition: transform 0.18s ease, border-color 0.18s ease, background 0.18s ease, color 0.18s ease, box-shadow 0.18s ease;
         }
 
-        .menu-toggle:hover {
-            transform: translateY(-1px);
-            color: #d7ecff;
-            border-color: rgba(126, 196, 255, 0.5);
-            background:
-                linear-gradient(145deg, rgba(59, 158, 255, 0.32), rgba(20, 70, 130, 0.55));
-            box-shadow:
-                0 0 0 1px rgba(59, 158, 255, 0.16),
-                0 10px 24px rgba(20, 90, 180, 0.28),
-                inset 0 1px 0 rgba(255, 255, 255, 0.08);
+        @media (max-width: 1100px) {
+            .cards { grid-template-columns: repeat(2, minmax(0, 1fr)); }
         }
 
-        .menu-toggle:active {
-            transform: translateY(0);
-        }
-
-        .menu-toggle.is-open {
-            color: #ffb4b8;
-            border-color: rgba(240, 113, 120, 0.4);
-            background:
-                linear-gradient(145deg, rgba(240, 113, 120, 0.2), rgba(40, 18, 28, 0.55));
-        }
-
-        .menu-toggle-bars {
-            position: relative;
-            width: 18px;
-            height: 14px;
-            display: block;
-        }
-
-        .menu-toggle-bars span {
-            position: absolute;
-            left: 0;
-            width: 100%;
-            height: 2px;
-            border-radius: 99px;
-            background: currentColor;
-            transition: transform 0.28s ease, opacity 0.2s ease, top 0.28s ease, width 0.28s ease;
-            box-shadow: 0 0 8px rgba(159, 208, 255, 0.35);
-        }
-
-        .menu-toggle-bars span:nth-child(1) { top: 0; width: 100%; }
-        .menu-toggle-bars span:nth-child(2) { top: 6px; width: 72%; }
-        .menu-toggle-bars span:nth-child(3) { top: 12px; width: 88%; }
-
-        .menu-toggle.is-open .menu-toggle-bars span:nth-child(1) {
-            top: 6px;
-            width: 100%;
-            transform: rotate(45deg);
-        }
-
-        .menu-toggle.is-open .menu-toggle-bars span:nth-child(2) {
-            opacity: 0;
-            width: 0;
-        }
-
-        .menu-toggle.is-open .menu-toggle-bars span:nth-child(3) {
-            top: 6px;
-            width: 100%;
-            transform: rotate(-45deg);
-        }
-
-        .menu-toggle svg { width: 20px; height: 20px; display: none; }
-
-        html[data-theme="light"] .menu-toggle {
-            color: #1a5fad;
-            border-color: rgba(30, 90, 180, 0.25);
-            background: linear-gradient(145deg, rgba(59, 158, 255, 0.14), rgba(255, 255, 255, 0.9));
-            box-shadow: 0 6px 16px rgba(30, 70, 140, 0.12);
-        }
-
-        html[data-theme="light"] .menu-toggle.is-open {
-            color: #c0394a;
-            border-color: rgba(200, 70, 90, 0.3);
-            background: linear-gradient(145deg, rgba(240, 113, 120, 0.12), rgba(255, 255, 255, 0.95));
-        }
-
-        @media (max-width: 1440px) {
-            html { font-size: 14px; }
-
-            .shell { grid-template-columns: 220px 1fr; }
-
-            .sidebar {
-                padding: 1.1rem 0.85rem;
-                gap: 1.15rem;
-            }
-
-            .navbar {
-                padding: 0.85rem 1.35rem;
-            }
-
-            .content {
-                padding: 1.25rem 1.35rem 1.85rem;
-            }
-
-            .cards {
-                grid-template-columns: repeat(3, minmax(0, 1fr));
-                gap: 0.65rem;
-            }
-
-            .card {
-                min-height: 76px;
-                height: 76px;
-                padding: 0.6rem 0.75rem 0.55rem;
-            }
-
-            .card-value { font-size: 1.28rem; }
-            .card-icon { width: 28px; height: 28px; }
-            .card-icon svg { width: 14px; height: 14px; }
-
-            .search-bar {
-                grid-template-columns: repeat(2, minmax(0, 1fr));
-                gap: 0.65rem;
-                padding: 0.75rem 0.85rem;
-            }
-
-            .panel-freeze { top: 3.55rem; }
-            .dashboard-sticky-lock { top: 3.55rem; }
-        }
-
-        @media (max-width: 1200px) {
-            html { font-size: 13.5px; }
-
+        @media (max-width: 900px) {
             .shell { grid-template-columns: 1fr; }
-
             .sidebar {
                 position: fixed;
-                left: 0;
-                top: 0;
+                inset: 0 auto 0 0;
                 z-index: 40;
-                width: min(260px, 84vw);
+                width: min(280px, 86vw);
                 transform: translateX(-105%);
                 transition: transform 0.25s ease;
-                box-shadow: 20px 0 50px rgba(0, 0, 0, 0.4);
             }
-
             .sidebar.open { transform: translateX(0); }
-
-            .sidebar-close { display: inline-flex; }
-
-            .sidebar-backdrop { display: block; }
-
-            .shell.sidebar-collapsed {
-                grid-template-columns: 1fr;
-            }
-
-            .shell.sidebar-collapsed .sidebar {
-                opacity: 1;
-                pointer-events: auto;
-            }
-
-            .cards {
-                grid-template-columns: repeat(3, minmax(0, 1fr));
-                position: relative;
-                top: auto;
-            }
-
-            .paiement-cards {
-                grid-template-columns: 1fr;
-            }
-
-            .panel-freeze {
-                top: 3.4rem;
-            }
-
-            .dashboard-sticky-lock {
-                top: 3.4rem;
-            }
-
-            .table-wrap.table-freeze-body {
-                max-height: calc(100vh - 15rem);
-            }
-
-            #panel-fiche-relance.active {
-                height: calc(100vh - 5rem);
-                max-height: calc(100vh - 5rem);
-            }
-
-            #panel-fiche-relance .table-wrap.table-freeze-body {
-                max-height: none;
-                overflow: auto;
-            }
-
-            #panel-fiche-paiement .table-wrap.table-freeze-body {
-                max-height: calc(100vh - 20rem);
-            }
-
-            .paiement-sticky-lock {
-                position: sticky;
-                top: 3.4rem;
-                margin-bottom: 0.85rem;
-            }
-
-            .card {
-                min-height: 72px;
-                height: 72px;
-            }
-            .card-value { font-size: 1.18rem; }
-
-            .table-wrap {
-                -webkit-overflow-scrolling: touch;
-            }
-
-            .navbar, .content {
-                padding-left: 1rem;
-                padding-right: 1rem;
-            }
-
-            .navbar {
-                padding-top: 0.75rem;
-                padding-bottom: 0.75rem;
-                gap: 0.65rem;
-            }
-
-            .content {
-                padding-top: 1rem;
-                padding-bottom: 1.5rem;
-            }
-
-            .nav-right { gap: 0.55rem; }
-
-            .btn-notif-wa,
-            .btn-notif-cal,
-            .menu-toggle {
-                width: 36px;
-                height: 36px;
-            }
-
-            .modal {
-                width: min(560px, calc(100vw - 1.25rem));
-            }
-        }
-
-        @media (max-width: 768px) {
-            html { font-size: 13px; }
-
-            .cards {
-                grid-template-columns: repeat(2, minmax(0, 1fr));
-                gap: 0.5rem;
-            }
-
-            .card {
-                min-height: 68px;
-                height: auto;
-            }
-
-            .card-label { font-size: 0.66rem; }
-            .card-value { font-size: 1.1rem; }
-
-            .brand-tagline { display: none; }
-
-            .navbar-brand .brand-glow {
-                font-size: 1.1rem;
-            }
-
-            .content-head h1 {
-                font-size: 1rem;
-            }
-
-            .search-bar {
-                grid-template-columns: 1fr;
-                padding: 0.65rem 0.7rem;
-            }
-
-            .wa-panel,
-            .notif-panel {
-                width: min(100vw - 1rem, 360px);
-                right: -0.35rem;
-            }
-
-            table.data-table:not(.data-table-relances) {
-                min-width: 920px;
-            }
-        }
-
-        @media (max-width: 480px) {
-            html { font-size: 12.5px; }
-
-            .navbar, .content {
-                padding-left: 0.7rem;
-                padding-right: 0.7rem;
-            }
-
-            .cards {
-                grid-template-columns: 1fr 1fr;
-                gap: 0.4rem;
-            }
-
-            .card {
-                padding: 0.5rem 0.55rem;
-                border-radius: 10px;
-            }
-
-            .card-icon { display: none; }
-
-            .btn-add {
-                width: 100%;
-                justify-content: center;
-            }
-
-            .user-chip span {
+            .menu-toggle { display: inline-grid; place-items: center; }
+            .sidebar-backdrop {
                 display: none;
+                position: fixed;
+                inset: 0;
+                z-index: 35;
+                background: rgba(4, 10, 20, 0.55);
             }
-
-            .btn-theme-toggle {
-                padding: 0.45rem !important;
-                width: 36px;
-            }
+            .sidebar-backdrop.open { display: block; }
         }
 
-        @media (max-height: 820px) and (min-width: 769px) {
-            .card {
-                min-height: 68px;
-                height: 68px;
-            }
-
-            .content {
-                padding-top: 0.95rem;
-                padding-bottom: 1.25rem;
-            }
-
-            .dashboard-nav-btn {
-                padding: 0.7rem 0.85rem;
-                margin-bottom: 0.4rem;
-            }
+        @media (max-width: 560px) {
+            .cards { grid-template-columns: 1fr; }
+            .content { padding: 1.25rem; }
+            .topbar { padding: 0.85rem 1rem; }
         }
     </style>
 </head>
 <body>
-    <script>
-        (function () {
-            const theme = localStorage.getItem('evopro-theme') || 'dark';
-            document.documentElement.setAttribute('data-theme', theme);
-            if (@json(($authUserStatue ?? '') === 'vendeur') !== true && localStorage.getItem('evopro-cards-hidden') === '1') {
-                document.documentElement.classList.add('cards-hidden-boot');
-            }
-        })();
-    </script>
+    <div class="sidebar-backdrop" id="sidebarBackdrop" aria-hidden="true"></div>
+
     <div class="shell">
-        <aside class="sidebar" id="sidebar">
-            <div class="sidebar-header">
-                <div class="side-brand">
-                    <div class="mark" aria-hidden="true">
-                        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                            <path d="M7 7h8.5a3.5 3.5 0 0 1 0 7H11" stroke="#fff" stroke-width="2.2" stroke-linecap="round"/>
-                            <path d="M7 12h6.5a3 3 0 0 1 0 6H7" stroke="#fff" stroke-width="2.2" stroke-linecap="round"/>
-                            <path d="M15 17l3 0 0-3" stroke="#b8e0ff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                        </svg>
-                    </div>
-                    <div class="brand-glow" style="font-size:1.25rem;">Evo<span>Pro</span></div>
+        <aside class="sidebar" id="sidebar" aria-label="Navigation principale">
+            <div class="sidebar-brand">
+                <div class="logo-stage">
+                    <div class="logo-glow" aria-hidden="true"></div>
+                    <div class="logo-shine" aria-hidden="true"></div>
+                    <img src="{{ asset('images/evopro-logo.png') }}" alt="EvoPro — Prospection. Convertir. Gagner." width="210" height="205">
                 </div>
-                <button type="button" class="sidebar-close" id="sidebarClose" aria-label="Fermer le menu">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M18 6L6 18M6 6l12 12"/></svg>
-                </button>
             </div>
 
-            <nav class="nav-list" aria-label="Navigation principale">
-                @php
-                    $can = fn (string $key): bool => in_array($key, $userPermissions ?? [], true);
-                @endphp
-                <a href="#dashboard" class="dashboard-nav-btn active{{ $can('dashboard') ? '' : ' nav-hidden' }}" data-panel="dashboard" data-auth="dashboard" id="dashboardNavBtn">
-                    <span class="dashboard-nav-icon" aria-hidden="true">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                            <rect x="3" y="3" width="7" height="7" rx="1"/>
-                            <rect x="14" y="3" width="7" height="7" rx="1"/>
-                            <rect x="14" y="14" width="7" height="7" rx="1"/>
-                            <rect x="3" y="14" width="7" height="7" rx="1"/>
-                        </svg>
+            <nav class="nav-list">
+                @if ($isAdministrateur ?? false)
+                <button type="button" class="nav-item {{ ($defaultPanel ?? 'dashboard') === 'dashboard' ? 'active' : '' }}" data-panel="dashboard">
+                    <span class="nav-icon dashboard" aria-hidden="true">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/></svg>
                     </span>
-                    <span class="dashboard-nav-text">
-                        <strong>Tableau de Bord</strong>
-                        <small>Interface principale</small>
-                    </span>
-                </a>
+                    Tableau de Bord
+                </button>
+                @endif
 
-                <div class="nav-sections">
-                <div class="nav-group{{ ($can('fiche-client') || $can('fiche-relance')) ? '' : ' nav-hidden' }}" id="clientGroup">
-                    <button type="button" class="nav-item nav-parent" id="clientToggle">
-                        <span class="nav-left">
-                            <span class="nav-icon clients" aria-hidden="true">
-                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
-                            </span>
-                            Client
+                @if ($isCommercialRole ?? false)
+                <button type="button" class="nav-item {{ ($defaultPanel ?? '') === 'prospection' ? 'active' : '' }}" data-panel="prospection">
+                    <span class="nav-icon prospection" aria-hidden="true">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+                    </span>
+                    <span class="nav-item-text">Relance</span>
+                </button>
+                @else
+                <div class="nav-group {{ ($defaultPanel ?? '') === 'prospection' ? 'expanded' : '' }}" data-nav-group="prospection">
+                    <button type="button" class="nav-item has-sublist {{ ($defaultPanel ?? '') === 'prospection' ? 'active' : '' }}" data-panel="prospection" data-toggle-group="prospection">
+                        <span class="nav-icon prospection" aria-hidden="true">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
                         </span>
-                        <svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>
+                        <span class="nav-item-text">Prospection</span>
+                        <span class="nav-chevron" aria-hidden="true">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>
+                        </span>
                     </button>
-                    <div class="submenu">
-                        <a href="#fiche-client" class="submenu-link{{ $can('fiche-client') ? '' : ' nav-hidden' }}" data-panel="fiche-client" data-auth="fiche-client">
-                            <span class="submenu-icon" aria-hidden="true">
-                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/><circle cx="10" cy="13" r="2"/><path d="M14 17a4 4 0 0 0-8 0"/></svg>
-                            </span>
-                            Fiche Client
-                        </a>
-                        <a href="#fiche-relance" class="submenu-link{{ $can('fiche-relance') ? '' : ' nav-hidden' }}" data-panel="fiche-relance" data-auth="fiche-relance">
-                            <span class="submenu-icon" aria-hidden="true">
-                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/><path d="M8 9h8"/><path d="M8 13h5"/></svg>
+                    <div class="nav-sublist" aria-label="Sous-menu prospection">
+                        <button type="button" class="nav-subitem {{ ($defaultPanel ?? '') === 'prospection' ? 'active' : '' }}" data-panel="prospection" data-prospection="liste">
+                            <span class="nav-subicon relance" aria-hidden="true">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
                             </span>
                             Relance
-                        </a>
+                        </button>
+                        @if ($canManageProspectionCommercial ?? false)
+                            <button type="button" class="nav-subitem" data-panel="prospection" data-prospection="commercial">
+                                <span class="nav-subicon commercial" aria-hidden="true">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M19 8v6"/><path d="M22 11h-6"/></svg>
+                                </span>
+                                Commercial
+                            </button>
+                        @endif
                     </div>
                 </div>
-                <div class="nav-group{{ ($can('fiche-projet') || $can('fiche-evolution')) ? '' : ' nav-hidden' }}" id="projetGroup">
-                    <button type="button" class="nav-item nav-parent" id="projetToggle">
-                        <span class="nav-left">
-                            <span class="nav-icon projets" aria-hidden="true">
-                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7h18"/><path d="M3 12h18"/><path d="M3 17h18"/><path d="M8 7v10"/><path d="M16 7v10"/></svg>
-                            </span>
-                            Projets
-                        </span>
-                        <svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>
-                    </button>
-                    <div class="submenu">
-                        <a href="#fiche-projet" class="submenu-link{{ $can('fiche-projet') ? '' : ' nav-hidden' }}" data-panel="fiche-projet" data-auth="fiche-projet">
-                            <span class="submenu-icon" aria-hidden="true">
-                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
-                            </span>
-                            Fiche Projet
-                        </a>
-                        <a href="#fiche-evolution" class="submenu-link{{ $can('fiche-evolution') ? '' : ' nav-hidden' }}" data-panel="fiche-evolution" data-auth="fiche-evolution">
-                            <span class="submenu-icon" aria-hidden="true">
-                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 17l6-6 4 4 8-8"/><path d="M14 7h7v7"/></svg>
-                            </span>
-                            Evolution Travaux
-                        </a>
-                    </div>
-                </div>
-                <div class="nav-group{{ $can('fiche-paiement') ? '' : ' nav-hidden' }}" id="paiementGroup">
-                    <button type="button" class="nav-item nav-parent" id="paiementToggle">
-                        <span class="nav-left">
-                            <span class="nav-icon paiements" aria-hidden="true">
-                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="5" width="20" height="14" rx="2"/><path d="M2 10h20"/></svg>
-                            </span>
-                            Paiement
-                        </span>
-                        <svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>
-                    </button>
-                    <div class="submenu">
-                        <a href="#fiche-paiement" class="submenu-link{{ $can('fiche-paiement') ? '' : ' nav-hidden' }}" data-panel="fiche-paiement" data-auth="fiche-paiement">
-                            <span class="submenu-icon" aria-hidden="true">
-                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 1v22"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
-                            </span>
-                            Fiche Paiement
-                        </a>
-                    </div>
-                </div>
-                <a href="#charges" class="nav-item{{ $can('charges') ? '' : ' nav-hidden' }}" data-panel="dashboard" data-auth="charges">
-                    <span class="nav-icon charges" aria-hidden="true">
+                @endif
+
+                @if ($isAdministrateur ?? false)
+                <button type="button" class="nav-item" data-panel="client">
+                    <span class="nav-icon client" aria-hidden="true">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>
+                    </span>
+                    Client
+                </button>
+                <button type="button" class="nav-item" data-panel="projet">
+                    <span class="nav-icon projet" aria-hidden="true">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7h18"/><path d="M3 12h18"/><path d="M8 7v10"/><path d="M16 7v10"/></svg>
+                    </span>
+                    Projet
+                </button>
+                <button type="button" class="nav-item" data-panel="paiement">
+                    <span class="nav-icon paiement" aria-hidden="true">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="5" width="20" height="14" rx="2"/><path d="M2 10h20"/></svg>
+                    </span>
+                    Paiement
+                </button>
+                <button type="button" class="nav-item" data-panel="charge">
+                    <span class="nav-icon charge" aria-hidden="true">
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 8v8"/><path d="M8 12h8"/></svg>
                     </span>
-                    Charges
-                </a>
-                <a href="#suivie" class="nav-item{{ $can('suivie') ? '' : ' nav-hidden' }}" data-panel="dashboard" data-auth="suivie">
-                    <span class="nav-icon suivie" aria-hidden="true">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><path d="M7 14l4-4 3 3 5-6"/></svg>
-                    </span>
-                    Suivie Monétaire
-                </a>
-                <a href="#rapports" class="nav-item{{ $can('rapports') ? '' : ' nav-hidden' }}" data-panel="dashboard" data-auth="rapports">
-                    <span class="nav-icon rapports" aria-hidden="true">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/><path d="M8 13h8"/><path d="M8 17h6"/></svg>
-                    </span>
-                    Rapports
-                </a>
-                <div class="nav-group{{ ($can('fiche-utilisateur') || $can('fiche-autorisation') || $can('fiche-whatsapp')) ? '' : ' nav-hidden' }}" id="configGroup">
-                    <button type="button" class="nav-item nav-parent" id="configToggle">
-                        <span class="nav-left">
-                            <span class="nav-icon config" aria-hidden="true">
-                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9c.3.6.9 1 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg>
-                            </span>
-                            Configuration
+                    Charge
+                </button>
+                <div class="nav-group" data-nav-group="configuration">
+                    <button type="button" class="nav-item has-sublist" data-panel="configuration" data-toggle-group="configuration">
+                        <span class="nav-icon config" aria-hidden="true">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9c.3.6.9 1 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg>
                         </span>
-                        <svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>
+                        <span class="nav-item-text">Configuration</span>
+                        <span class="nav-chevron" aria-hidden="true">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>
+                        </span>
                     </button>
-                    <div class="submenu">
-                        <a href="#fiche-utilisateur" class="submenu-link{{ $can('fiche-utilisateur') ? '' : ' nav-hidden' }}" data-panel="fiche-utilisateur" data-auth="fiche-utilisateur">
-                            <span class="submenu-icon" aria-hidden="true">
-                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                    <div class="nav-sublist" aria-label="Sous-menu configuration">
+                        <button type="button" class="nav-subitem" data-panel="configuration" data-config="utilisateur">
+                            <span class="nav-subicon utilisateur" aria-hidden="true">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>
                             </span>
                             Utilisateur
-                        </a>
-                        <a href="#fiche-autorisation" class="submenu-link{{ $can('fiche-autorisation') ? '' : ' nav-hidden' }}" data-panel="fiche-autorisation" data-auth="fiche-autorisation">
-                            <span class="submenu-icon" aria-hidden="true">
-                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+                        </button>
+                        <button type="button" class="nav-subitem" data-panel="configuration" data-config="fiche-ste">
+                            <span class="nav-subicon fiche-ste" aria-hidden="true">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21h18"/><path d="M5 21V7l8-4v18"/><path d="M19 21V11l-6-4"/><path d="M9 9v.01"/><path d="M9 12v.01"/><path d="M9 15v.01"/><path d="M9 18v.01"/></svg>
                             </span>
-                            Autorisation
-                        </a>
-                        <a href="#fiche-whatsapp" class="submenu-link{{ $can('fiche-whatsapp') ? '' : ' nav-hidden' }}" data-panel="fiche-whatsapp" data-auth="fiche-whatsapp">
-                            <span class="submenu-icon" aria-hidden="true">
-                                <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12.04 2C6.58 2 2.15 6.43 2.15 11.89c0 1.96.52 3.81 1.43 5.42L2 22l4.85-1.55a9.84 9.84 0 0 0 5.19 1.44h.01c5.46 0 9.89-4.43 9.89-9.89C21.94 6.43 17.5 2 12.04 2zm5.76 14.01c-.24.68-1.4 1.25-1.93 1.33-.5.07-1.13.1-1.82-.11-.42-.13-.96-.31-1.65-.61-2.9-1.26-4.79-4.2-4.94-4.39-.14-.19-1.18-1.57-1.18-3 0-1.42.74-2.12 1-2.41.26-.29.57-.36.76-.36h.55c.18 0 .42-.07.65.5.24.59.81 2.04.88 2.19.07.15.12.32.02.52-.1.2-.15.32-.29.5-.14.17-.3.39-.43.52-.14.14-.29.29-.12.57.16.28.73 1.2 1.56 1.94 1.07.96 1.97 1.26 2.25 1.4.28.14.44.12.61-.07.17-.19.71-.83.9-1.11.19-.28.38-.23.64-.14.26.1 1.66.78 1.95.93.28.14.47.22.54.34.07.12.07.7-.17 1.38z"/></svg>
-                            </span>
-                            WhatsApp
-                        </a>
+                            Fiche Ste
+                        </button>
                     </div>
                 </div>
-                </div>
+                @endif
             </nav>
 
-            <div class="sidebar-footer">
+            <div class="sidebar-foot">
                 <form method="post" action="{{ route('logout') }}">
                     @csrf
-                    <button type="submit" class="btn-logout btn-sidebar-logout" aria-label="Se déconnecter">
-                        <span class="btn-logout-icon" aria-hidden="true">
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
-                                <polyline points="16 17 21 12 16 7"/>
-                                <line x1="21" y1="12" x2="9" y2="12"/>
-                            </svg>
-                        </span>
-                        <span class="btn-logout-text">Se Déconnecter</span>
-                    </button>
+                    <button type="submit" class="btn-logout">Se déconnecter</button>
                 </form>
-                <div class="side-foot">EvoPro — Système de Gestion</div>
             </div>
         </aside>
 
-        <div class="sidebar-backdrop" id="sidebarBackdrop" aria-hidden="true"></div>
-
         <div class="main">
-            <header class="navbar">
-                <div style="display:flex;align-items:center;gap:0.85rem;">
-                    <button class="menu-toggle is-open" type="button" id="menuToggle" aria-label="Fermer le menu" aria-expanded="true" aria-controls="sidebar" title="Ouvrir / fermer le menu">
-                        <span class="menu-toggle-bars" aria-hidden="true">
-                            <span></span>
-                            <span></span>
-                            <span></span>
-                        </span>
-                    </button>
-                    <div class="navbar-brand">
-                        <div class="brand-glow">Evo<span>Pro</span></div>
-                        <span class="brand-tagline">La Solution qui Gère</span>
+            <header class="topbar">
+                <div style="display:flex;align-items:center;gap:0.75rem;">
+                    <button type="button" class="menu-toggle" id="menuToggle" aria-label="Ouvrir le menu">☰</button>
+                    <div class="welcome">
+                        <strong>Bienvenu {{ $welcomeName }}</strong>
                     </div>
                 </div>
-
-                <div class="nav-right">
-                    <div class="notif-wrap" id="whatsappNotifWrap">
-                        @php
-                            $waUnreadCount = collect($whatsappMessages ?? [])->where('unread', true)->count();
-                        @endphp
-                        <button type="button" class="btn-notif-wa" id="btnWhatsappNav" aria-label="WhatsApp" aria-expanded="false" aria-controls="whatsappNavPanel">
-                            <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12.04 2C6.58 2 2.15 6.43 2.15 11.89c0 1.96.52 3.81 1.43 5.42L2 22l4.85-1.55a9.84 9.84 0 0 0 5.19 1.44h.01c5.46 0 9.89-4.43 9.89-9.89C21.94 6.43 17.5 2 12.04 2zm5.76 14.01c-.24.68-1.4 1.25-1.93 1.33-.5.07-1.13.1-1.82-.11-.42-.13-.96-.31-1.65-.61-2.9-1.26-4.79-4.2-4.94-4.39-.14-.19-1.18-1.57-1.18-3 0-1.42.74-2.12 1-2.41.26-.29.57-.36.76-.36h.55c.18 0 .42-.07.65.5.24.59.81 2.04.88 2.19.07.15.12.32.02.52-.1.2-.15.32-.29.5-.14.17-.3.39-.43.52-.14.14-.29.29-.12.57.16.28.73 1.2 1.56 1.94 1.07.96 1.97 1.26 2.25 1.4.28.14.44.12.61-.07.17-.19.71-.83.9-1.11.19-.28.38-.23.64-.14.26.1 1.66.78 1.95.93.28.14.47.22.54.34.07.12.07.7-.17 1.38z"/></svg>
-                            <span class="wa-dot{{ !empty($whatsappConfig['actif']) ? '' : ' is-off' }}{{ $waUnreadCount > 0 ? ' has-badge' : '' }}" id="whatsappNavDot" title="{{ !empty($whatsappConfig['actif']) ? 'Actif' : 'Inactif' }}"></span>
-                            <span class="notif-badge{{ $waUnreadCount > 0 ? '' : ' is-empty' }}" id="whatsappNavBadge">{{ $waUnreadCount }}</span>
-                        </button>
-                        <div class="wa-panel" id="whatsappNavPanel" role="dialog" aria-label="WhatsApp" aria-hidden="true">
-                            <div class="wa-panel-head">
-                                <h3>WhatsApp</h3>
-                                <span id="whatsappNavCountLabel">{{ $waUnreadCount }} non lu{{ $waUnreadCount > 1 ? 's' : '' }}</span>
-                            </div>
-                            <div class="wa-panel-body">
-                                <p class="wa-panel-status" id="whatsappNavStatusText">
-                                    Clients contactés par WhatsApp depuis Relance.
-                                </p>
-                                <div class="wa-panel-actions">
-                                    <button type="button" class="btn-primary" id="btnWhatsappQuickMsg">Nouveau message</button>
-                                    <button type="button" class="btn-ghost" id="btnWhatsappOpenWeb">Ouvrir WhatsApp Web</button>
-                                    @if ($can('fiche-whatsapp'))
-                                        <button type="button" class="btn-ghost" id="btnWhatsappOpenConfig">Configuration</button>
-                                    @endif
-                                </div>
-                            </div>
-                            <ul class="wa-panel-list" id="whatsappNavList"></ul>
-                        </div>
-                    </div>
-                    <div class="notif-wrap" id="relanceNotifWrap">
-                        <button type="button" class="btn-notif-cal" id="btnRelanceNotif" aria-label="Notifications de relance" aria-expanded="false" aria-controls="relanceNotifPanel">
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                                <rect x="3" y="5" width="18" height="16" rx="2"/>
-                                <path d="M8 3v4M16 3v4M3 10h18"/>
-                                <path d="M8 14h.01M12 14h.01M16 14h.01M8 18h.01M12 18h.01"/>
-                            </svg>
-                            <span class="notif-badge is-empty" id="relanceNotifBadge">0</span>
-                        </button>
-                        <div class="notif-panel" id="relanceNotifPanel" role="dialog" aria-label="Numéros à relancer" aria-hidden="true">
-                            <div class="notif-panel-head">
-                                <h3>À relancer</h3>
-                                <span id="relanceNotifCountLabel">0 numéro</span>
-                            </div>
-                            <ul class="notif-panel-list" id="relanceNotifList"></ul>
-                        </div>
-                    </div>
-                    <button type="button" class="btn-theme-toggle" id="themeToggleNav" aria-label="Changer le thème" style="width:auto;padding:0.48rem 0.85rem;">
-                        <span class="theme-icon-dark-nav" aria-hidden="true">
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
-                        </span>
-                        <span class="theme-icon-light-nav" aria-hidden="true" style="display:none;">
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>
-                        </span>
-                    </button>
-                    <div class="user-chip">
-                        <img class="avatar" src="{{ asset('images/profile-zerragui.png') }}" alt="Zerragui Abdelilah" width="28" height="28">
-                        <span>Zerragui Abdelilah</span>
-                    </div>
-                </div>
+                <div class="user-badge">{{ strtoupper($authUserStatue ?: '—') }}</div>
             </header>
 
             <main class="content">
-                <section class="panel active" id="panel-dashboard">
-                    <div class="dashboard-sticky-lock">
-                    <section class="cards{{ !empty($isVendeur) ? ' cards-vendeur' : '' }}" aria-label="Statistiques">
-                        @if (!empty($isVendeur))
-                        <article class="card actif">
-                            <div class="card-top">
-                                <span class="card-label">Projets Confirmés</span>
-                                <div class="card-icon" aria-hidden="true">
-                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><path d="M22 4 12 14.01l-3-3"/></svg>
-                                </div>
-                            </div>
-                            <div class="card-value">{{ $dashboardCounts['actif'] ?? 0 }}</div>
-                        </article>
-
-                        <article class="card attente">
-                            <div class="card-top">
-                                <span class="card-label">Projets En Attente</span>
-                                <div class="card-icon" aria-hidden="true">
-                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
-                                </div>
-                            </div>
-                            <div class="card-value">{{ $dashboardCounts['attente'] ?? 0 }}</div>
-                        </article>
-
-                        <article class="card annule">
-                            <div class="card-top">
-                                <span class="card-label">Projets Annulés</span>
-                                <div class="card-icon" aria-hidden="true">
-                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M15 9l-6 6M9 9l6 6"/></svg>
-                                </div>
-                            </div>
-                            <div class="card-value">{{ $dashboardCounts['annule'] ?? 0 }}</div>
-                        </article>
-                        @else
-                        <article class="card actif">
-                            <div class="card-top">
-                                <span class="card-label">Projets Actif</span>
-                                <div class="card-icon" aria-hidden="true">
-                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><path d="M22 4 12 14.01l-3-3"/></svg>
-                                </div>
-                            </div>
-                            <div class="card-value">{{ $dashboardCounts['actif'] ?? 0 }}</div>
-                        </article>
-
-                        <article class="card attente">
-                            <div class="card-top">
-                                <span class="card-label">Projets en Attente</span>
-                                <div class="card-icon" aria-hidden="true">
-                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
-                                </div>
-                            </div>
-                            <div class="card-value">{{ $dashboardCounts['attente'] ?? 0 }}</div>
-                        </article>
-
-                        <article class="card execute">
-                            <div class="card-top">
-                                <span class="card-label">Projets Exécutés</span>
-                                <div class="card-icon" aria-hidden="true">
-                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><path d="M22 4 12 14.01l-3-3"/></svg>
-                                </div>
-                            </div>
-                            <div class="card-value">{{ $dashboardCounts['execute'] ?? 0 }}</div>
-                        </article>
-
-                        <article class="card revenu ayda">
-                            <div class="card-top">
-                                <span class="card-label">Revenu Ayda</span>
-                                <div class="card-icon" aria-hidden="true">
-                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v20"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
-                                </div>
-                            </div>
-                            <div class="card-value">{{ number_format($revenuAyda ?? 0, 2, '.', ' ') }}</div>
-                        </article>
-
-                        <article class="card revenu brahim">
-                            <div class="card-top">
-                                <span class="card-label">Revenue Brahim</span>
-                                <div class="card-icon" aria-hidden="true">
-                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v20"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
-                                </div>
-                            </div>
-                            <div class="card-value">{{ number_format($revenuBrahim ?? 0, 2, '.', ' ') }}</div>
-                        </article>
-
-                        <article class="card solde">
-                            <div class="card-top">
-                                <span class="card-label">Total Solde</span>
-                                <div class="card-icon" aria-hidden="true">
-                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="5" width="20" height="14" rx="2"/><path d="M2 10h20"/></svg>
-                                </div>
-                            </div>
-                            <div class="card-value">{{ number_format($totalSolde ?? 0, 2, '.', ' ') }}</div>
-                        </article>
-                        @endif
-                    </section>
-
+                <section class="panel {{ ($defaultPanel ?? 'dashboard') === 'dashboard' ? 'active' : '' }}" id="panel-dashboard">
+                    <div class="content-head">
+                        <h1>Tableau de Bord</h1>
+                        <p>Vue d’ensemble des projets et charges.</p>
                     </div>
 
+                    <div class="cards" aria-label="Statistiques">
+                        <article class="card-stat confirme">
+                            <small>Projets Confirmé</small>
+                            <strong>{{ $dashboardCounts['confirme'] ?? 0 }}</strong>
+                        </article>
+                        <article class="card-stat attente">
+                            <small>Projets En Attente</small>
+                            <strong>{{ $dashboardCounts['attente'] ?? 0 }}</strong>
+                        </article>
+                        <article class="card-stat annule">
+                            <small>Projet Annulés</small>
+                            <strong>{{ $dashboardCounts['annule'] ?? 0 }}</strong>
+                        </article>
+                        <article class="card-stat charges">
+                            <small>Total Charges</small>
+                            <strong>{{ number_format($totalCharges ?? 0, 2, '.', ' ') }}</strong>
+                        </article>
+                    </div>
                 </section>
 
-                <section class="panel" id="panel-fiche-client">
-                    <div class="panel-freeze">
-                        <div class="section-toolbar">
+                <section class="panel {{ ($defaultPanel ?? 'dashboard') === 'prospection' ? 'active' : '' }}" id="panel-prospection">
+                    <div class="content-head">
+                        <h1>{{ ($isCommercialRole ?? false) || ($isAssistante ?? false) ? 'Tableau de relance' : 'Prospection' }}</h1>
+                        <p>
+                            @if ($isCommercialRole ?? false)
+                                Complétez les numéros importés pour vous (nom, ville, projet, remarque, statue, rappel).
+                            @elseif (($isAdministrateur ?? false) || ($isAssistante ?? false))
+                                Vue en direct de toutes les relances remplies par les commerciaux.
+                            @else
+                                Suivi des prospects et des contacts commerciaux.
+                            @endif
+                        </p>
+                    </div>
+
+                    <div class="prospection-view active" id="prospection-liste">
+                    @php $relanceColspan = ($isCommercialRole ?? false) ? 8 : 9; @endphp
+
+                    <div class="search-bar" aria-label="Recherche prospection" style="grid-template-columns: repeat({{ ($isCommercialRole ?? false) ? 5 : 6 }}, minmax(0, 1fr));">
+                        <div class="search-field">
+                            <label for="filter_prospection_num">Num</label>
+                            <input type="text" id="filter_prospection_num" placeholder="Ex. 06…" maxlength="20" autocomplete="off" inputmode="tel">
+                        </div>
+                        <div class="search-field">
+                            <label for="filter_prospection_mois">Mois</label>
+                            <select id="filter_prospection_mois">
+                                <option value="">TOUS LES MOIS</option>
+                                @php
+                                    $moisProspections = collect($prospections ?? [])
+                                        ->map(function ($row) {
+                                            $parts = explode('/', $row['date'] ?? '');
+                                            return count($parts) >= 3 ? $parts[1].'/'.$parts[2] : null;
+                                        })
+                                        ->filter()
+                                        ->unique()
+                                        ->sort()
+                                        ->values();
+                                @endphp
+                                @foreach ($moisProspections as $mois)
+                                    <option value="{{ $mois }}">{{ $mois }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+                        <div class="search-field">
+                            <label for="filter_prospection_de">De</label>
+                            <input type="text" id="filter_prospection_de" placeholder="JJ/MM/AAAA" maxlength="10" autocomplete="off">
+                        </div>
+                        <div class="search-field">
+                            <label for="filter_prospection_a">A</label>
+                            <input type="text" id="filter_prospection_a" placeholder="JJ/MM/AAAA" maxlength="10" autocomplete="off">
+                        </div>
+                        @if (! ($isCommercialRole ?? false))
+                        <div class="search-field">
+                            <label for="filter_prospection_commercial">Commercial</label>
+                            <select id="filter_prospection_commercial">
+                                <option value="">TOUS LES COMMERCIAUX</option>
+                                @foreach (($commerciaux ?? []) as $commercial)
+                                    <option value="{{ mb_strtolower($commercial) }}">{{ $commercial }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+                        @endif
+                        <div class="search-field">
+                            <label for="filter_prospection_statue">Statue</label>
+                            <select id="filter_prospection_statue">
+                                <option value="">TOUTES LES STATUES</option>
+                                <option value="valide">Validé</option>
+                                <option value="en_attente">En Attente</option>
+                                <option value="annule">Annulé</option>
+                                <option value="reporte">Reporté</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="table-wrap">
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>Date</th>
+                                    @if (! ($isCommercialRole ?? false))
+                                        <th>Commercial</th>
+                                    @endif
+                                    <th>Numéro Téléphone</th>
+                                    <th>Nom Prospect</th>
+                                    <th>Ville</th>
+                                    <th>Titre Projet</th>
+                                    <th>Remarque</th>
+                                    <th>Statue</th>
+                                    <th>Date Rappel</th>
+                                </tr>
+                            </thead>
+                            <tbody id="prospectionsTableBody">
+                                @forelse (($prospections ?? []) as $row)
+                                    @php
+                                        $statue = $row['statue'] ?? 'en_attente';
+                                        $parts = explode('/', $row['date'] ?? '');
+                                        $mois = count($parts) >= 3 ? $parts[1].'/'.$parts[2] : '';
+                                        $dateRappel = trim((string) ($row['date_rappel'] ?? ''));
+                                        $rappelDu = \App\Support\ContactsArchive::isDateRappelDue($dateRappel);
+                                        $rowClasses = collect([
+                                            match ($statue) {
+                                                'valide' => 'row-prospection-valide',
+                                                'annule' => 'row-prospection-annule',
+                                                'reporte' => 'row-prospection-reporte',
+                                                default => '',
+                                            },
+                                            $rappelDu && in_array($statue, ['en_attente', 'reporte'], true) ? 'row-prospection-rappel-du' : '',
+                                        ])->filter()->implode(' ');
+                                    @endphp
+                                    <tr
+                                        data-id="{{ $row['id'] }}"
+                                        data-mois="{{ $mois }}"
+                                        data-date="{{ $row['date'] ?? '' }}"
+                                        data-commercial="{{ mb_strtolower(trim((string) ($row['commercial'] ?? ''))) }}"
+                                        data-statue="{{ $statue }}"
+                                        data-telephone="{{ preg_replace('/\D+/', '', (string) ($row['telephone'] ?? '')) }}"
+                                        data-date-rappel="{{ $dateRappel }}"
+                                        @if ($rowClasses !== '') class="{{ $rowClasses }}" @endif
+                                    >
+                                        <td>{{ $row['date'] ?? '' }}</td>
+                                        @if (! ($isCommercialRole ?? false))
+                                            <td>{{ $row['commercial'] ?? '' }}</td>
+                                        @endif
+                                        <td>{{ $row['telephone'] ?? '' }}</td>
+                                        <td>
+                                            <input
+                                                type="text"
+                                                class="prospection-text-input prospection-inline"
+                                                data-field="nom_prospect"
+                                                data-id="{{ $row['id'] }}"
+                                                value="{{ $row['nom_prospect'] ?? '' }}"
+                                                maxlength="255"
+                                                placeholder="Nom prospect"
+                                                aria-label="Nom prospect"
+                                            >
+                                        </td>
+                                        <td>
+                                            <input
+                                                type="text"
+                                                class="prospection-text-input prospection-inline"
+                                                data-field="ville"
+                                                data-id="{{ $row['id'] }}"
+                                                value="{{ $row['ville'] ?? '' }}"
+                                                maxlength="255"
+                                                placeholder="Ville"
+                                                aria-label="Ville"
+                                            >
+                                        </td>
+                                        <td>
+                                            <input
+                                                type="text"
+                                                class="prospection-text-input prospection-inline"
+                                                data-field="projet"
+                                                data-id="{{ $row['id'] }}"
+                                                value="{{ $row['projet'] ?? '' }}"
+                                                maxlength="255"
+                                                placeholder="Titre projet"
+                                                aria-label="Titre projet"
+                                            >
+                                        </td>
+                                        <td class="cell-remarque">
+                                            <textarea
+                                                class="remarque-input prospection-inline"
+                                                data-field="remarque"
+                                                data-id="{{ $row['id'] }}"
+                                                rows="2"
+                                                placeholder="Note d'appel avec le client…"
+                                                aria-label="Remarque"
+                                            >{{ $row['remarque'] ?? '' }}</textarea>
+                                        </td>
+                                        <td>
+                                            <form method="post" action="{{ url('/prospections/'.$row['id'].'/statue') }}" class="statue-form">
+                                                @csrf
+                                                @method('PATCH')
+                                                <select
+                                                    name="statue"
+                                                    class="statue-select {{ $statue }}"
+                                                    aria-label="Statue prospection"
+                                                    onchange="this.form.submit()"
+                                                >
+                                                    <option value="valide" @selected($statue === 'valide')>Validé</option>
+                                                    <option value="en_attente" @selected($statue === 'en_attente')>En Attente</option>
+                                                    <option value="annule" @selected($statue === 'annule')>Annulé</option>
+                                                    <option value="reporte" @selected($statue === 'reporte')>Reporté</option>
+                                                </select>
+                                            </form>
+                                        </td>
+                                        <td class="cell-rappel">
+                                            <input
+                                                type="text"
+                                                class="prospection-date-input prospection-inline{{ $rappelDu && in_array($statue, ['en_attente', 'reporte'], true) ? ' is-rappel-du' : '' }}"
+                                                data-field="date_rappel"
+                                                data-id="{{ $row['id'] }}"
+                                                value="{{ $row['date_rappel'] ?? '' }}"
+                                                placeholder="JJ/MM/AAAA"
+                                                maxlength="10"
+                                                inputmode="numeric"
+                                                autocomplete="off"
+                                                aria-label="Date Rappel"
+                                            >
+                                        </td>
+                                    </tr>
+                                @empty
+                                    <tr class="empty-row">
+                                        <td colspan="{{ $relanceColspan }}" class="empty">
+                                            {{ ($isCommercialRole ?? false) ? 'Aucun numéro importé pour vous pour le moment.' : 'Aucune prospection enregistrée.' }}
+                                        </td>
+                                    </tr>
+                                @endforelse
+                                <tr class="empty-row" id="prospectionsNoResult" style="display:none;">
+                                    <td colspan="{{ $relanceColspan }}" class="empty">Aucun résultat pour cette recherche.</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    </div>
+
+                    @if ($canManageProspectionCommercial ?? false)
+                    <div class="prospection-view" id="prospection-commercial">
+                        <div class="section-toolbar" style="margin-bottom:1rem;">
                             <div class="content-head" style="margin-bottom:0;">
-                                <h1>Fiche Client</h1>
+                                <h2 style="font-size:1.05rem;">Commercial</h2>
+                                <p>Gestion des numéros par commercial.</p>
                             </div>
+                            <div class="toolbar-actions">
+                                <button type="button" class="btn-add" id="btnCommercialAjouter">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>
+                                    Ajouter
+                                </button>
+                                <button type="button" class="btn-add" id="btnCommercialImporter">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><path d="M7 10l5 5 5-5"/><path d="M12 15V3"/></svg>
+                                    Importer
+                                </button>
+                                <button type="button" class="btn-close-toolbar" id="btnCommercialFermer">Fermer</button>
+                            </div>
+                        </div>
+
+                        <div class="search-bar" aria-label="Recherche commercial" style="grid-template-columns: repeat(4, minmax(0, 1fr)); margin-bottom:1rem;">
+                            <div class="search-field">
+                                <label for="filter_commercial_mois">Mois</label>
+                                <select id="filter_commercial_mois">
+                                    <option value="">TOUS LES MOIS</option>
+                                    @php
+                                        $moisCommercial = collect($prospectionsAll ?? $prospections ?? [])
+                                            ->filter(fn ($row) => trim((string) ($row['commercial'] ?? '')) !== '')
+                                            ->map(function ($row) {
+                                                $parts = explode('/', $row['date'] ?? '');
+                                                return count($parts) >= 3 ? $parts[1].'/'.$parts[2] : null;
+                                            })
+                                            ->filter()
+                                            ->unique()
+                                            ->sort()
+                                            ->values();
+                                    @endphp
+                                    @foreach ($moisCommercial as $mois)
+                                        <option value="{{ $mois }}">{{ $mois }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+                            <div class="search-field">
+                                <label for="filter_commercial_de">De</label>
+                                <input type="text" id="filter_commercial_de" placeholder="JJ/MM/AAAA" maxlength="10" autocomplete="off">
+                            </div>
+                            <div class="search-field">
+                                <label for="filter_commercial_a">A</label>
+                                <input type="text" id="filter_commercial_a" placeholder="JJ/MM/AAAA" maxlength="10" autocomplete="off">
+                            </div>
+                            <div class="search-field">
+                                <label for="filter_commercial_commercial">Commercial</label>
+                                <select id="filter_commercial_commercial">
+                                    <option value="">TOUS LES COMMERCIAUX</option>
+                                    @foreach (($commerciauxUsers ?? []) as $commercialUser)
+                                        <option value="{{ mb_strtolower($commercialUser) }}">{{ $commercialUser }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="table-wrap">
+                            <table class="data-table commercial-relance-table">
+                                <thead>
+                                    <tr>
+                                        <th>Date</th>
+                                        <th>Num</th>
+                                        <th>Commercial</th>
+                                        <th>Nom Prospect</th>
+                                        <th>Ville</th>
+                                        <th>Titre Projet</th>
+                                        <th>Remarque</th>
+                                        <th>Statue</th>
+                                        <th>Date Rappel</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="commercialNumerosBody">
+                                    <tr class="empty-row" id="commercialNumerosEmpty">
+                                        <td colspan="9" class="empty">Aucun numéro commercial.</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <p id="commercialImportStatus" aria-live="polite"></p>
+                    </div>
+                    @endif
+                </section>
+
+                <section class="panel" id="panel-client">
+                    <div class="section-toolbar">
+                        <div class="content-head" style="margin-bottom:0;">
+                            <h1>Fiche Clients</h1>
+                            <p>Fiches clients et projets associés.</p>
+                        </div>
+                        <div class="toolbar-actions">
                             <button type="button" class="btn-add" id="btnAddClient">
                                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>
                                 Ajouter
                             </button>
                         </div>
+                    </div>
 
-                        <div class="search-bar" aria-label="Recherche clients" style="grid-template-columns: repeat(1, minmax(0, 1fr)); max-width: 280px;">
+                    <div class="client-head-row">
+                        <div class="cards client-cards" aria-label="Statistiques clients">
+                            <article class="card-stat nombre-projet">
+                                <small>Nombre Projet</small>
+                                <strong>{{ $clientStats['nombre_projets'] ?? 0 }}</strong>
+                            </article>
+                            <article class="card-stat total-budgets">
+                                <small>Total Budgets</small>
+                                <strong>{{ number_format($clientStats['total_budgets'] ?? 0, 2, '.', ' ') }}</strong>
+                            </article>
+                        </div>
+
+                        <div class="search-bar client-search-bar" aria-label="Recherche clients">
                             <div class="search-field">
                                 <label for="filter_client_mois">Mois</label>
                                 <select id="filter_client_mois">
                                     <option value="">TOUS LES MOIS</option>
                                     @php
                                         $moisClients = collect($clients ?? [])
-                                            ->map(function ($c) {
-                                                $parts = explode('/', $c['date'] ?? '');
+                                            ->map(function ($row) {
+                                                $parts = explode('/', $row['date'] ?? '');
                                                 return count($parts) >= 3 ? $parts[1].'/'.$parts[2] : null;
                                             })
                                             ->filter()
@@ -4110,21 +1652,33 @@
                                     @endforeach
                                 </select>
                             </div>
+                            <div class="search-field">
+                                <label for="filter_client_nom">Nom Client</label>
+                                <input type="text" id="filter_client_nom" placeholder="Rechercher un client…" maxlength="80" autocomplete="off">
+                            </div>
+                            <div class="search-field">
+                                <label for="filter_client_num">Num</label>
+                                <input type="text" id="filter_client_num" placeholder="Ex. 06…" maxlength="20" autocomplete="off" inputmode="tel">
+                            </div>
+                            <div class="search-field">
+                                <label for="filter_client_titre">Titre Projet</label>
+                                <input type="text" id="filter_client_titre" placeholder="Rechercher un projet…" maxlength="80" autocomplete="off">
+                            </div>
                         </div>
                     </div>
 
-                    <div class="table-wrap table-freeze-body">
+                    <div class="table-wrap">
                         <table class="data-table">
                             <thead>
                                 <tr>
                                     <th>Date</th>
-                                    <th>Réf</th>
                                     <th>Nom Client</th>
+                                    <th>Numéro</th>
                                     <th>Ville</th>
-                                    <th>Activité</th>
-                                    <th>Contact</th>
-                                    <th>Solde</th>
-                                    <th>Action</th>
+                                    <th>Titre Projet</th>
+                                    <th>Délai travail</th>
+                                    <th>Budget</th>
+                                    <th>Actions</th>
                                 </tr>
                             </thead>
                             <tbody id="clientsTableBody">
@@ -4132,15 +1686,22 @@
                                     @php
                                         $partsClient = explode('/', $client['date'] ?? '');
                                         $moisClient = count($partsClient) >= 3 ? $partsClient[1].'/'.$partsClient[2] : '';
+                                        $titreProjet = trim((string) ($client['titre_projet'] ?? $client['activite'] ?? ''));
                                     @endphp
-                                    <tr data-id="{{ $client['id'] }}" data-mois="{{ $moisClient }}">
-                                        <td>{{ $client['date'] }}</td>
-                                        <td>{{ $client['ref'] }}</td>
-                                        <td>{{ $client['nom'] }}</td>
-                                        <td>{{ $client['ville'] }}</td>
-                                        <td>{{ $client['activite'] }}</td>
-                                        <td>{{ $client['contact'] }}</td>
-                                        <td class="solde-cell">{{ number_format($client['solde'], 2, '.', ' ') }}</td>
+                                    <tr
+                                        data-id="{{ $client['id'] }}"
+                                        data-mois="{{ $moisClient }}"
+                                        data-nom="{{ mb_strtolower(trim((string) ($client['nom'] ?? ''))) }}"
+                                        data-titre="{{ mb_strtolower($titreProjet) }}"
+                                        data-numero="{{ preg_replace('/\D+/', '', (string) ($client['contact'] ?? '')) }}"
+                                    >
+                                        <td>{{ $client['date'] ?? '' }}</td>
+                                        <td>{{ $client['nom'] ?? '' }}</td>
+                                        <td>{{ $client['contact'] ?? '' }}</td>
+                                        <td>{{ $client['ville'] ?? '' }}</td>
+                                        <td>{{ $titreProjet }}</td>
+                                        <td>{{ \App\Support\ContactsArchive::formatDelaiTravail($client['delai_travail'] ?? '') }}</td>
+                                        <td>{{ number_format((float) ($client['budget'] ?? 0), 2, '.', ' ') }}</td>
                                         <td>
                                             <div class="actions">
                                                 <button type="button" class="action-btn voir" title="Voir" aria-label="Voir">
@@ -4149,25 +1710,21 @@
                                                 <button type="button" class="action-btn modifier" title="Modifier" aria-label="Modifier">
                                                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4 12.5-12.5z"/></svg>
                                                 </button>
-                                                <form method="post" action="{{ url('/clients/'.$client['id']) }}" style="display:inline;" onsubmit="return confirm('Supprimer ce client ?');">
-                                                    @csrf
-                                                    @method('DELETE')
-                                                    <button type="submit" class="action-btn supprimer" title="Supprimer" aria-label="Supprimer">
-                                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18"/><path d="M8 6V4h8v2"/><path d="M19 6l-1 14H6L5 6"/></svg>
-                                                    </button>
-                                                </form>
-                                                <button type="button" class="action-btn pdf" title="PDF" aria-label="PDF">
-                                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/><path d="M9 13h6"/><path d="M9 17h4"/></svg>
+                                                <button type="button" class="action-btn supprimer" title="Supprimer" aria-label="Supprimer">
+                                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18"/><path d="M8 6V4h8v2"/><path d="M19 6l-1 14H6L5 6"/></svg>
+                                                </button>
+                                                <button type="button" class="action-btn imprimer" title="Imprimer" aria-label="Imprimer">
+                                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9V2h12v7"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><path d="M6 14h12v8H6z"/></svg>
                                                 </button>
                                             </div>
                                         </td>
                                     </tr>
                                 @empty
                                     <tr class="empty-row">
-                                        <td colspan="8" class="empty">Aucun client enregistré. Cliquez sur Ajouter.</td>
+                                        <td colspan="8" class="empty">Aucun client enregistré.</td>
                                     </tr>
                                 @endforelse
-                                <tr id="clientsNoResult" class="empty-row" style="display:none;">
+                                <tr class="empty-row" id="clientsNoResult" style="display:none;">
                                     <td colspan="8" class="empty">Aucun résultat pour cette recherche.</td>
                                 </tr>
                             </tbody>
@@ -4175,1286 +1732,274 @@
                     </div>
                 </section>
 
-                <section class="panel" id="panel-fiche-relance">
-                    <div class="panel-freeze">
-                        <div class="section-toolbar">
-                            <div class="content-head" style="margin-bottom:0;">
-                                <h1>Relance</h1>
-                            </div>
-                            <div class="toolbar-actions">
-                                @if (empty($isVendeur))
-                                <button type="button" class="btn-delete-selected" id="btnDeleteSelectedRelances" aria-label="Supprimer la sélection">
-                                    Supprimer (<span id="relanceSelectedCount">0</span>)
-                                </button>
-                                @endif
-                                <button type="button" class="btn-add" id="btnAddRelance">
-                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>
-                                    Nouveau Prospect
-                                </button>
-                            </div>
-                        </div>
-
-                        <div class="search-bar" aria-label="Recherche relances" style="grid-template-columns: repeat({{ !empty($isVendeur) ? 6 : 7 }}, minmax(0, 1fr));">
-                            <div class="search-field">
-                                <label for="filter_relance_numero">Numéro</label>
-                                <input type="text" id="filter_relance_numero" placeholder="Ex. 06…" maxlength="20" autocomplete="off" inputmode="tel">
-                            </div>
-                            <div class="search-field">
-                                <label for="filter_relance_mois">Mois</label>
-                                <select id="filter_relance_mois">
-                                    <option value="">TOUS LES MOIS</option>
-                                    @php
-                                        $moisRelances = collect($relances ?? [])
-                                            ->map(function ($r) {
-                                                $parts = explode('/', $r['date'] ?? '');
-                                                return count($parts) >= 3 ? $parts[1].'/'.$parts[2] : null;
-                                            })
-                                            ->filter()
-                                            ->unique()
-                                            ->sort()
-                                            ->values();
-                                    @endphp
-                                    @foreach ($moisRelances as $mois)
-                                        <option value="{{ $mois }}">{{ $mois }}</option>
-                                    @endforeach
-                                </select>
-                            </div>
-                            <div class="search-field">
-                                <label for="filter_relance_statue">Statue</label>
-                                <select id="filter_relance_statue">
-                                    <option value="">TOUTES LES STATUES</option>
-                                    <option value="a_voir">A VOIR</option>
-                                    <option value="confirme">CONFIRME</option>
-                                    <option value="inj">INJ</option>
-                                    <option value="nv_tab">Nv Tab</option>
-                                </select>
-                            </div>
-                            @if (empty($isVendeur))
-                            <div class="search-field">
-                                <label for="filter_relance_vendeur">Vendeur</label>
-                                <select id="filter_relance_vendeur">
-                                    <option value="">TOUS LES VENDEURS</option>
-                                    @foreach (($vendeurs ?? []) as $vendeurNom)
-                                        <option value="{{ $vendeurNom }}">{{ $vendeurNom }}</option>
-                                    @endforeach
-                                </select>
-                            </div>
-                            @endif
-                            <div class="search-field">
-                                <label for="filter_relance_de">De</label>
-                                <input type="text" id="filter_relance_de" placeholder="JJ/MM/AAAA" maxlength="10" autocomplete="off">
-                            </div>
-                            <div class="search-field">
-                                <label for="filter_relance_a">A</label>
-                                <input type="text" id="filter_relance_a" placeholder="JJ/MM/AAAA" maxlength="10" autocomplete="off">
-                            </div>
-                            <div class="search-field" style="justify-content:flex-end;">
-                                <label for="relanceVisibleCount">&nbsp;</label>
-                                <span class="relance-count" id="relanceVisibleCount">0 numéro</span>
-                            </div>
-                        </div>
+                <section class="panel" id="panel-projet">
+                    <div class="content-head">
+                        <h1>Projet</h1>
+                        <p>Module en cours de construction.</p>
                     </div>
-
-                    <div class="table-wrap table-freeze-body">
-                        <table class="data-table data-table-relances">
-                            <colgroup>
-                                @if (empty($isVendeur))
-                                <col style="width:2.4%">
-                                @endif
-                                <col style="width:8%">
-                                @if (empty($isVendeur))
-                                <col style="width:3.2%">
-                                @endif
-                                <col style="width:13%">
-                                <col style="width:10%">
-                                <col style="width:9%">
-                                <col style="width:18%">
-                                @if (empty($isVendeur))
-                                <col style="width:8%">
-                                @endif
-                                <col style="width:7%">
-                                <col style="width:8%">
-                                <col style="width:7%">
-                                <col style="width:8%">
-                                <col style="width:8%">
-                            </colgroup>
-                            <thead>
-                                <tr>
-                                    @if (empty($isVendeur))
-                                    <th title="Sélectionner tout">
-                                        <input type="checkbox" class="relance-check" id="relanceSelectAll" aria-label="Sélectionner tout">
-                                    </th>
-                                    @endif
-                                    <th>Date</th>
-                                    @if (empty($isVendeur))
-                                    <th>ID</th>
-                                    @endif
-                                    <th>Téléphone</th>
-                                    <th>Nom Client</th>
-                                    <th>Titre Projet</th>
-                                    <th>Description</th>
-                                    @if (empty($isVendeur))
-                                    <th>Vendeur</th>
-                                    @endif
-                                    <th>Envoyé</th>
-                                    <th>Statue</th>
-                                    <th>A Rappeler</th>
-                                    <th>Date Rappel</th>
-                                    <th>Action</th>
-                                </tr>
-                            </thead>
-                            <tbody id="relancesTableBody">
-                                @forelse (($relances ?? []) as $relance)
-                                    @php
-                                        $statueRelance = $relance['statue'] ?? '';
-                                        $envoyeRelance = $relance['envoye'] ?? '';
-                                        $rappelerRelance = $relance['a_rappeler'] ?? '';
-                                        $rappelerRelanceLabel = $rappelerRelance === 'oui' ? 'Oui' : ($rappelerRelance === 'non' ? 'Non' : $rappelerRelance);
-                                        $vendeurRelance = trim((string) ($relance['vendeur'] ?? $relance['commercial'] ?? ''));
-                                        $partsRelance = explode('/', $relance['date'] ?? '');
-                                        $moisRelance = count($partsRelance) >= 3 ? $partsRelance[1].'/'.$partsRelance[2] : '';
-                                    @endphp
-                                    <tr
-                                        data-id="{{ $relance['id'] }}"
-                                        data-mois="{{ $moisRelance }}"
-                                        data-statue="{{ $statueRelance }}"
-                                        data-date="{{ $relance['date'] ?? '' }}"
-                                        data-import="{{ !empty($relance['from_import']) ? '1' : '0' }}"
-                                        data-telephone="{{ preg_replace('/\D+/', '', (string) ($relance['telephone'] ?? '')) }}"
-                                        data-vendeur="{{ mb_strtolower($vendeurRelance) }}"
-                                        data-a-rappeler="{{ $rappelerRelance }}"
-                                        @class([
-                                            'row-relance-a-voir' => $statueRelance === 'a_voir',
-                                            'row-relance-confirme' => $statueRelance === 'confirme',
-                                            'row-relance-inj' => $statueRelance === 'inj',
-                                            'row-relance-no-rappel' => $rappelerRelance === 'non',
-                                        ])
-                                    >
-                                        @if (empty($isVendeur))
-                                        <td>
-                                            <input type="checkbox" class="relance-check relance-row-check" value="{{ $relance['id'] }}" aria-label="Sélectionner la ligne">
-                                        </td>
-                                        @endif
-                                        <td>
-                                            <input
-                                                type="text"
-                                                class="relance-inline-input relance-date-input"
-                                                data-field="date"
-                                                data-id="{{ $relance['id'] }}"
-                                                value="{{ $relance['date'] ?? '' }}"
-                                                placeholder="JJ/MM/AAAA"
-                                                maxlength="10"
-                                                inputmode="numeric"
-                                                autocomplete="off"
-                                                aria-label="Date"
-                                            >
-                                        </td>
-                                        @if (empty($isVendeur))
-                                        <td>{{ $relance['ref'] ?? '' }}</td>
-                                        @endif
-                                        <td>
-                                            <div class="tel-wa-cell">
-                                                <input
-                                                    type="text"
-                                                    class="relance-inline-input"
-                                                    data-field="telephone"
-                                                    data-id="{{ $relance['id'] }}"
-                                                    value="{{ $relance['telephone'] ?? '' }}"
-                                                    aria-label="Téléphone"
-                                                >
-                                                <div class="wa-row-actions">
-                                                    <button type="button" class="action-btn wa-msg" title="WhatsApp : Message ou Devis" aria-label="WhatsApp Message ou Devis" data-wa-action="choose">
-                                                        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12.04 2C6.58 2 2.15 6.43 2.15 11.89c0 1.96.52 3.81 1.43 5.42L2 22l4.85-1.55a9.84 9.84 0 0 0 5.19 1.44h.01c5.46 0 9.89-4.43 9.89-9.89C21.94 6.43 17.5 2 12.04 2zm5.76 14.01c-.24.68-1.4 1.25-1.93 1.33-.5.07-1.13.1-1.82-.11-.42-.13-.96-.31-1.65-.61-2.9-1.26-4.79-4.2-4.94-4.39-.14-.19-1.18-1.57-1.18-3 0-1.42.74-2.12 1-2.41.26-.29.57-.36.76-.36h.55c.18 0 .42-.07.65.5.24.59.81 2.04.88 2.19.07.15.12.32.02.52-.1.2-.15.32-.29.5-.14.17-.3.39-.43.52-.14.14-.29.29-.12.57.16.28.73 1.2 1.56 1.94 1.07.96 1.97 1.26 2.25 1.4.28.14.44.12.61-.07.17-.19.71-.83.9-1.11.19-.28.38-.23.64-.14.26.1 1.66.78 1.95.93.28.14.47.22.54.34.07.12.07.7-.17 1.38z"/></svg>
-                                                    </button>
-                                                    <button type="button" class="action-btn wa-call" title="Appel WhatsApp" aria-label="Appel WhatsApp" data-wa-action="call">
-                                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.8 19.8 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.8 19.8 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.13.81.36 1.6.68 2.34a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.74.32 1.53.55 2.34.68A2 2 0 0 1 22 16.92z"/></svg>
-                                                    </button>
-                                                </div>
-                                            </div>
-                                        </td>
-                                        <td>
-                                            <input
-                                                type="text"
-                                                class="relance-inline-input"
-                                                data-field="nom_complet"
-                                                data-id="{{ $relance['id'] }}"
-                                                value="{{ $relance['nom_complet'] ?? '' }}"
-                                                aria-label="Nom Client"
-                                            >
-                                        </td>
-                                        <td>
-                                            <input
-                                                type="text"
-                                                class="relance-inline-input"
-                                                data-field="titre_projet"
-                                                data-id="{{ $relance['id'] }}"
-                                                value="{{ $relance['titre_projet'] ?? '' }}"
-                                                aria-label="Titre Projet"
-                                            >
-                                        </td>
-                                        <td class="cell-wrap">
-                                            <textarea
-                                                class="relance-inline-input relance-inline-textarea"
-                                                data-field="description"
-                                                data-id="{{ $relance['id'] }}"
-                                                rows="5"
-                                                cols="1"
-                                                aria-label="Description"
-                                            >{{ $relance['description'] ?? '' }}</textarea>
-                                        </td>
-                                        @if (empty($isVendeur))
-                                        <td>
-                                            <select
-                                                class="relance-inline-input relance-inline-select"
-                                                data-field="vendeur"
-                                                data-id="{{ $relance['id'] }}"
-                                                aria-label="Vendeur"
-                                            >
-                                                <option value="">—</option>
-                                                @foreach (($vendeurs ?? []) as $vendeurNom)
-                                                    <option value="{{ $vendeurNom }}" @selected(mb_strtolower($vendeurRelance) === mb_strtolower($vendeurNom))>{{ $vendeurNom }}</option>
-                                                @endforeach
-                                                @if ($vendeurRelance !== '' && ! collect($vendeurs ?? [])->contains(fn ($n) => mb_strtolower($n) === mb_strtolower($vendeurRelance)))
-                                                    <option value="{{ $vendeurRelance }}" selected>{{ $vendeurRelance }}</option>
-                                                @endif
-                                            </select>
-                                        </td>
-                                        @endif
-                                        <td>
-                                            <div
-                                                class="envoye-switch"
-                                                data-id="{{ $relance['id'] }}"
-                                                data-value="{{ $envoyeRelance }}"
-                                                role="group"
-                                                aria-label="Envoyé"
-                                            >
-                                                <button type="button" class="envoye-opt{{ $envoyeRelance === 'lien' ? ' is-active' : '' }}" data-value="lien">Lien</button>
-                                                <button type="button" class="envoye-opt{{ $envoyeRelance === 'conception' ? ' is-active' : '' }}" data-value="conception">Concep</button>
-                                            </div>
-                                        </td>
-                                        <td>
-                                            <form method="post" action="{{ url('/relances/'.$relance['id'].'/statue') }}" class="statue-form">
-                                                @csrf
-                                                @method('PATCH')
-                                                <select
-                                                    name="statue"
-                                                    class="statue-select {{ $statueRelance }}"
-                                                    aria-label="Choisir la statue de la relance"
-                                                    onchange="this.form.submit()"
-                                                >
-                                                    <option value="a_voir" @selected($statueRelance === 'a_voir')>A VOIR</option>
-                                                    <option value="confirme" @selected($statueRelance === 'confirme')>CONFIRME</option>
-                                                    <option value="inj" @selected($statueRelance === 'inj')>INJ</option>
-                                                </select>
-                                            </form>
-                                        </td>
-                                        <td>
-                                            <div
-                                                class="envoye-switch rappeler-switch"
-                                                data-id="{{ $relance['id'] }}"
-                                                data-value="{{ $rappelerRelance }}"
-                                                data-endpoint="a-rappeler"
-                                                role="group"
-                                                aria-label="A Rappeler"
-                                            >
-                                                <button type="button" class="envoye-opt{{ $rappelerRelance === 'oui' ? ' is-active' : '' }}" data-value="oui">Oui</button>
-                                                <button type="button" class="envoye-opt{{ $rappelerRelance === 'non' ? ' is-active' : '' }}" data-value="non">Non</button>
-                                            </div>
-                                        </td>
-                                        <td>
-                                            <form method="post" action="{{ url('/relances/'.$relance['id'].'/date-rappel') }}" class="rappel-date-form">
-                                                @csrf
-                                                @method('PATCH')
-                                                <input
-                                                    type="text"
-                                                    name="date_rappel"
-                                                    class="rappel-date-input"
-                                                    value="{{ ($relance['date_rappel'] ?? '') !== '' ? ($relance['date_rappel'] ?? '') : '../../2026' }}"
-                                                    placeholder="../../2026"
-                                                    maxlength="10"
-                                                    inputmode="numeric"
-                                                    autocomplete="off"
-                                                    aria-label="Modifier la date de rappel"
-                                                    @disabled($rappelerRelance === 'non')
-                                                >
-                                            </form>
-                                        </td>
-                                        <td>
-                                            <div class="actions">
-                                                <button type="button" class="action-btn voir" title="Voir" aria-label="Voir">
-                                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8S1 12 1 12z"/><circle cx="12" cy="12" r="3"/></svg>
-                                                </button>
-                                                <button type="button" class="action-btn modifier" title="Modifier" aria-label="Modifier">
-                                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4 12.5-12.5z"/></svg>
-                                                </button>
-                                                <form method="post" action="{{ url('/relances/'.$relance['id']) }}" style="display:inline;" onsubmit="return confirm('Supprimer cette relance ?');">
-                                                    @csrf
-                                                    @method('DELETE')
-                                                    <button type="submit" class="action-btn supprimer" title="Supprimer" aria-label="Supprimer">
-                                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18"/><path d="M8 6V4h8v2"/><path d="M19 6l-1 14H6L5 6"/></svg>
-                                                    </button>
-                                                </form>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                @empty
-                                    <tr class="empty-row">
-                                        <td colspan="{{ !empty($isVendeur) ? 10 : 13 }}" class="empty">Aucune relance enregistrée. Cliquez sur Nouveau Prospect.</td>
-                                    </tr>
-                                @endforelse
-                                <tr id="relancesNoResult" class="empty-row" style="display:none;">
-                                    <td colspan="{{ !empty($isVendeur) ? 10 : 13 }}" class="empty">Aucun résultat pour cette recherche.</td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
+                    <div class="placeholder">Contenu Projet à venir.</div>
                 </section>
 
-                <section class="panel" id="panel-fiche-projet">
-                    <div class="panel-freeze">
-                        <div class="section-toolbar">
-                            <div class="content-head" style="margin-bottom:0;">
-                                <h1>Fiche Projet</h1>
-                            </div>
-                            <button type="button" class="btn-add" id="btnAddProjet">
-                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>
-                                Nouveau Projet
-                            </button>
-                        </div>
-
-                        <div class="search-bar" aria-label="Recherche projets" style="grid-template-columns: repeat(3, minmax(0, 1fr));">
-                        <div class="search-field">
-                            <label for="filter_projet_mois">Mois</label>
-                            <select id="filter_projet_mois">
-                                <option value="">TOUS LES MOIS</option>
-                                @php
-                                    $moisProjets = collect($projets ?? [])
-                                        ->map(function ($p) {
-                                            $parts = explode('/', $p['date'] ?? '');
-                                            return count($parts) >= 3 ? $parts[1].'/'.$parts[2] : null;
-                                        })
-                                        ->filter()
-                                        ->unique()
-                                        ->sort()
-                                        ->values();
-                                @endphp
-                                @foreach ($moisProjets as $mois)
-                                    <option value="{{ $mois }}">{{ $mois }}</option>
-                                @endforeach
-                            </select>
-                        </div>
-                        <div class="search-field">
-                            <label for="filter_projet_client">Client</label>
-                            <select id="filter_projet_client">
-                                <option value="">TOUS LES CLIENTS</option>
-                                @php
-                                    $clientsProjetFilter = collect($clients ?? [])
-                                        ->pluck('nom')
-                                        ->merge(collect($projets ?? [])->pluck('client'))
-                                        ->filter()
-                                        ->unique()
-                                        ->sort()
-                                        ->values();
-                                @endphp
-                                @foreach ($clientsProjetFilter as $clientNom)
-                                    <option value="{{ mb_strtolower($clientNom) }}">{{ $clientNom }}</option>
-                                @endforeach
-                            </select>
-                        </div>
-                        <div class="search-field">
-                            <label for="filter_projet_statue">Statue</label>
-                            <select id="filter_projet_statue">
-                                <option value="">TOUTES LES STATUES</option>
-                                <option value="actif">EN COURS</option>
-                                <option value="attente">EN ATTENTE</option>
-                                <option value="annule">ANNULÉ</option>
-                                <option value="execute">EXÉCUTÉ</option>
-                            </select>
-                        </div>
+                <section class="panel" id="panel-paiement">
+                    <div class="content-head">
+                        <h1>Paiement</h1>
+                        <p>Module en cours de construction.</p>
                     </div>
-                    </div>
-
-                    <div class="table-wrap table-freeze-body">
-                        <table class="data-table">
-                            <thead>
-                                <tr>
-                                    <th>Date</th>
-                                    <th>Réf</th>
-                                    <th>Nom Projet</th>
-                                    <th>Désignation</th>
-                                    <th>Client</th>
-                                    <th>Budget</th>
-                                    <th>Montant payé</th>
-                                    <th>Solde</th>
-                                    <th>Statue</th>
-                                    <th>Action</th>
-                                </tr>
-                            </thead>
-                            <tbody id="projetsTableBody">
-                                @forelse (($projets ?? []) as $projet)
-                                    @php
-                                        $statueKey = $projet['statut'] ?? 'attente';
-                                        $dateParts = explode('/', $projet['date'] ?? '');
-                                        $moisKey = count($dateParts) >= 3 ? $dateParts[1].'/'.$dateParts[2] : '';
-                                    @endphp
-                                    <tr
-                                        data-id="{{ $projet['id'] }}"
-                                        data-mois="{{ $moisKey }}"
-                                        data-client="{{ mb_strtolower($projet['client'] ?? '') }}"
-                                        data-statue="{{ $statueKey }}"
-                                        @class(['row-execute' => $statueKey === 'execute'])
-                                    >
-                                        <td>{{ $projet['date'] }}</td>
-                                        <td>{{ $projet['ref'] }}</td>
-                                        <td>{{ $projet['nom'] }}</td>
-                                        <td>{{ $projet['designation'] }}</td>
-                                        <td>{{ $projet['client'] }}</td>
-                                        <td>{{ number_format($projet['budget'], 2, '.', ' ') }}</td>
-                                        <td>{{ number_format($projet['montant_paye'], 2, '.', ' ') }}</td>
-                                        <td class="solde-cell">{{ number_format($projet['solde'], 2, '.', ' ') }}</td>
-                                        <td>
-                                            <form method="post" action="{{ url('/projets/'.$projet['id'].'/statut') }}" class="statue-form">
-                                                @csrf
-                                                @method('PATCH')
-                                                <select
-                                                    name="statut"
-                                                    class="statue-select {{ $statueKey }}"
-                                                    aria-label="Choisir la statue du projet"
-                                                    onchange="this.form.submit()"
-                                                >
-                                                    <option value="actif" @selected($statueKey === 'actif')>EN COURS</option>
-                                                    <option value="attente" @selected($statueKey === 'attente')>EN ATTENTE</option>
-                                                    <option value="annule" @selected($statueKey === 'annule')>ANNULÉ</option>
-                                                    <option value="execute" @selected($statueKey === 'execute')>EXÉCUTÉ</option>
-                                                </select>
-                                            </form>
-                                        </td>
-                                        <td>
-                                            <div class="actions">
-                                                <button type="button" class="action-btn voir" data-action="voir" title="Voir" aria-label="Voir">
-                                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8S1 12 1 12z"/><circle cx="12" cy="12" r="3"/></svg>
-                                                </button>
-                                                <button type="button" class="action-btn modifier" data-action="modifier" title="Modifier" aria-label="Modifier">
-                                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4 12.5-12.5z"/></svg>
-                                                </button>
-                                                <form method="post" action="{{ url('/projets/'.$projet['id']) }}" style="display:inline;" onsubmit="return confirm('Supprimer ce projet ?');">
-                                                    @csrf
-                                                    @method('DELETE')
-                                                    <button type="submit" class="action-btn supprimer" title="Supprimer" aria-label="Supprimer">
-                                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18"/><path d="M8 6V4h8v2"/><path d="M19 6l-1 14H6L5 6"/></svg>
-                                                    </button>
-                                                </form>
-                                                <button type="button" class="action-btn pdf" title="PDF" aria-label="PDF">
-                                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/><path d="M9 13h6"/><path d="M9 17h4"/></svg>
-                                                </button>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                @empty
-                                    <tr class="empty-row">
-                                        <td colspan="10" class="empty">Aucun projet enregistré. Cliquez sur Nouveau Projet.</td>
-                                    </tr>
-                                @endforelse
-                                <tr id="projetsNoResult" class="empty-row" style="display:none;">
-                                    <td colspan="10" class="empty">Aucun projet ne correspond à la recherche.</td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
+                    <div class="placeholder">Contenu Paiement à venir.</div>
                 </section>
 
-                <section class="panel" id="panel-fiche-evolution">
-                    <div class="panel-freeze">
-                        <div class="section-toolbar">
-                            <div class="content-head" style="margin-bottom:0;">
-                                <h1>Evolution Travaux</h1>
-                            </div>
-                            <div class="toolbar-actions">
-                                <button type="button" class="btn-add" id="btnAddEvolution">
-                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>
-                                    Ajouter
-                                </button>
-                                <button type="button" class="btn-ghost" id="btnCloseEvolution">Fermer</button>
-                            </div>
-                        </div>
-
-                        <div class="search-bar" aria-label="Recherche évolutions" style="grid-template-columns: repeat(2, minmax(0, 1fr));">
-                        <div class="search-field">
-                            <label for="filter_evolution_mois">Mois</label>
-                            <select id="filter_evolution_mois">
-                                <option value="">TOUS LES MOIS</option>
-                                @php
-                                    $moisEvolutions = collect($evolutions ?? [])
-                                        ->map(function ($e) {
-                                            $parts = explode('/', $e['date'] ?? '');
-                                            return count($parts) >= 3 ? $parts[1].'/'.$parts[2] : null;
-                                        })
-                                        ->filter()
-                                        ->unique()
-                                        ->sort()
-                                        ->values();
-                                @endphp
-                                @foreach ($moisEvolutions as $mois)
-                                    <option value="{{ $mois }}">{{ $mois }}</option>
-                                @endforeach
-                            </select>
-                        </div>
-                        <div class="search-field">
-                            <label for="filter_evolution_projet">Titre Projet</label>
-                            <select id="filter_evolution_projet">
-                                <option value="">TOUS LES PROJETS</option>
-                                @php
-                                    $projetsEvolutionFilter = collect($projets ?? [])
-                                        ->pluck('nom')
-                                        ->merge(collect($evolutions ?? [])->pluck('titre_projet'))
-                                        ->filter()
-                                        ->unique()
-                                        ->sort()
-                                        ->values();
-                                @endphp
-                                @foreach ($projetsEvolutionFilter as $titre)
-                                    <option value="{{ mb_strtolower($titre) }}">{{ $titre }}</option>
-                                @endforeach
-                            </select>
-                        </div>
+                <section class="panel" id="panel-charge">
+                    <div class="content-head">
+                        <h1>Charge</h1>
+                        <p>Module en cours de construction.</p>
                     </div>
-                    </div>
-
-                    <div class="table-wrap table-freeze-body">
-                        <table class="data-table">
-                            <thead>
-                                <tr>
-                                    <th>Date</th>
-                                    <th>Titre Projet</th>
-                                    <th>Description</th>
-                                    <th>Pull</th>
-                                    <th>Action</th>
-                                </tr>
-                            </thead>
-                            <tbody id="evolutionsTableBody">
-                                @forelse (($evolutions ?? []) as $evolution)
-                                    @php
-                                        $pullKey = $evolution['pull'] ?? 'non';
-                                        $dateParts = explode('/', $evolution['date'] ?? '');
-                                        $moisKey = count($dateParts) >= 3 ? $dateParts[1].'/'.$dateParts[2] : '';
-                                    @endphp
-                                    <tr
-                                        data-id="{{ $evolution['id'] }}"
-                                        data-mois="{{ $moisKey }}"
-                                        data-projet="{{ mb_strtolower($evolution['titre_projet'] ?? '') }}"
-                                    >
-                                        <td>{{ $evolution['date'] }}</td>
-                                        <td>{{ $evolution['titre_projet'] }}</td>
-                                        <td class="cell-wrap">{{ $evolution['description'] }}</td>
-                                        <td>
-                                            <form method="post" action="{{ url('/evolutions/'.$evolution['id'].'/pull') }}" class="statue-form">
-                                                @csrf
-                                                @method('PATCH')
-                                                <select
-                                                    name="pull"
-                                                    class="pull-select {{ $pullKey }}"
-                                                    aria-label="Pull"
-                                                    onchange="this.form.submit()"
-                                                >
-                                                    <option value="oui" @selected($pullKey === 'oui')>OUI</option>
-                                                    <option value="non" @selected($pullKey === 'non')>NON</option>
-                                                </select>
-                                            </form>
-                                        </td>
-                                        <td>
-                                            <div class="actions">
-                                                <button type="button" class="action-btn voir" title="Voir" aria-label="Voir">
-                                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8S1 12 1 12z"/><circle cx="12" cy="12" r="3"/></svg>
-                                                </button>
-                                                <button type="button" class="action-btn modifier" title="Modifier" aria-label="Modifier">
-                                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4 12.5-12.5z"/></svg>
-                                                </button>
-                                                <form method="post" action="{{ url('/evolutions/'.$evolution['id']) }}" style="display:inline;" onsubmit="return confirm('Supprimer cette évolution ?');">
-                                                    @csrf
-                                                    @method('DELETE')
-                                                    <button type="submit" class="action-btn supprimer" title="Supprimer" aria-label="Supprimer">
-                                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18"/><path d="M8 6V4h8v2"/><path d="M19 6l-1 14H6L5 6"/></svg>
-                                                    </button>
-                                                </form>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                @empty
-                                    <tr class="empty-row">
-                                        <td colspan="5" class="empty">Aucune évolution enregistrée. Cliquez sur Ajouter.</td>
-                                    </tr>
-                                @endforelse
-                                <tr id="evolutionsNoResult" class="empty-row" style="display:none;">
-                                    <td colspan="5" class="empty">AUCUN RÉSULTAT POUR CETTE RECHERCHE.</td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
+                    <div class="placeholder">Contenu Charge à venir.</div>
                 </section>
 
-                <section class="panel" id="panel-fiche-paiement">
-                    <div class="panel-freeze">
-                        <div class="section-toolbar">
-                            <div class="content-head" style="margin-bottom:0;">
-                                <h1>Fiche Paiement</h1>
-                            </div>
-                            <button type="button" class="btn-add" id="btnAddPaiement">
-                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>
-                                Nouveau Paiement
-                            </button>
-                        </div>
+                <section class="panel" id="panel-configuration">
+                    <div class="content-head">
+                        <h1>Configuration</h1>
+                        <p>Paramètres, utilisateurs et fiche société.</p>
+                    </div>
 
-                        <section class="paiement-cards" aria-label="Totaux paiements">
-                            <article class="paiement-card budget">
-                                <div class="card-top">
-                                    <span class="card-label">Total des Budgets</span>
-                                    <div class="card-icon" aria-hidden="true">
-                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/><path d="M12 12v4"/><path d="M10 14h4"/></svg>
+                    <div class="config-content">
+                        <section class="config-section active" id="config-utilisateur">
+                                <div class="section-toolbar" style="margin-bottom:1rem;">
+                                    <div class="content-head" style="margin-bottom:0;">
+                                        <h1 style="font-size:1.15rem;">Utilisateur</h1>
+                                        <p>Comptes, accès et rôles.</p>
+                                    </div>
+                                    <div class="toolbar-actions">
+                                        <button type="button" class="btn-add" id="btnAddUtilisateur">
+                                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>
+                                            Ajouter
+                                        </button>
+                                        <button type="button" class="btn-close-toolbar" id="btnCloseUtilisateurPanel">Fermer</button>
                                     </div>
                                 </div>
-                                <div class="card-value">{{ number_format($paiementTotalBudgets ?? 0, 2, '.', ' ') }}</div>
-                            </article>
 
-                            <article class="paiement-card paye">
-                                <div class="card-top">
-                                    <span class="card-label">Total Montant Payés</span>
-                                    <div class="card-icon" aria-hidden="true">
-                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v20"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+                                @if ($errors->has('utilisateur_login') || $errors->has('utilisateur_suspend'))
+                                    <div style="margin-bottom:0.85rem;padding:0.75rem 0.9rem;border-radius:10px;border:1px solid rgba(240,113,120,0.35);background:rgba(240,113,120,0.12);color:#ffd2d6;font-size:0.84rem;">
+                                        {{ $errors->first('utilisateur_login') ?: $errors->first('utilisateur_suspend') }}
                                     </div>
-                                </div>
-                                <div class="card-value">{{ number_format($paiementTotalMontants ?? 0, 2, '.', ' ') }}</div>
-                            </article>
+                                @endif
 
-                            <article class="paiement-card soldes">
-                                <div class="card-top">
-                                    <span class="card-label">Total Soldes</span>
-                                    <div class="card-icon" aria-hidden="true">
-                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><path d="M7 14l4-4 4 3 5-6"/></svg>
-                                    </div>
+                                <div class="table-wrap">
+                                    <table class="data-table">
+                                        <thead>
+                                            <tr>
+                                                <th>Date</th>
+                                                <th>ID</th>
+                                                <th>Nom Complet</th>
+                                                <th>Ville</th>
+                                                <th>Statue</th>
+                                                <th>Login</th>
+                                                <th>Mot de Passe</th>
+                                                <th>Actions</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="utilisateursTableBody">
+                                            @forelse (($utilisateurs ?? []) as $utilisateur)
+                                                @php
+                                                    $userStatue = \App\Support\UtilisateurHelper::normalizeStatue($utilisateur['statue'] ?? '');
+                                                @endphp
+                                                <tr
+                                                    data-id="{{ $utilisateur['id'] }}"
+                                                    @if ($utilisateur['suspendu'] ?? false) class="is-suspended" @endif
+                                                >
+                                                    <td>{{ $utilisateur['date'] ?? '' }}</td>
+                                                    <td>{{ $utilisateur['ref'] ?? $utilisateur['id'] }}</td>
+                                                    <td>{{ $utilisateur['nom_complet'] ?? '' }}</td>
+                                                    <td>{{ $utilisateur['ville'] ?? '' }}</td>
+                                                    <td>
+                                                        <span class="user-statue-badge {{ $userStatue }}">
+                                                            {{ \App\Support\UtilisateurHelper::statueLabel($userStatue) }}
+                                                        </span>
+                                                    </td>
+                                                    <td>{{ $utilisateur['login'] ?? '' }}</td>
+                                                    <td>{{ $utilisateur['password'] ?? '' }}</td>
+                                                    <td>
+                                                        <div class="actions">
+                                                            <button type="button" class="action-btn voir" title="Voir" aria-label="Voir">
+                                                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8S1 12 1 12z"/><circle cx="12" cy="12" r="3"/></svg>
+                                                            </button>
+                                                            <button type="button" class="action-btn modifier" title="Modifier" aria-label="Modifier">
+                                                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4 12.5-12.5z"/></svg>
+                                                            </button>
+                                                            <button
+                                                                type="button"
+                                                                class="action-btn suspendre"
+                                                                title="{{ ($utilisateur['suspendu'] ?? false) ? 'Réactiver' : 'Suspendre' }}"
+                                                                aria-label="{{ ($utilisateur['suspendu'] ?? false) ? 'Réactiver' : 'Suspendre' }}"
+                                                                data-suspended="{{ ($utilisateur['suspendu'] ?? false) ? '1' : '0' }}"
+                                                            >
+                                                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M10 15V9"/><path d="M14 15V9"/></svg>
+                                                            </button>
+                                                        </div>
+                                                    </td>
+                                                </tr>
+                                            @empty
+                                                <tr class="empty-row">
+                                                    <td colspan="8" class="empty">Aucun utilisateur enregistré.</td>
+                                                </tr>
+                                            @endforelse
+                                        </tbody>
+                                    </table>
                                 </div>
-                                <div class="card-value">{{ number_format($paiementTotalSoldes ?? 0, 2, '.', ' ') }}</div>
-                            </article>
-                        </section>
+                            </section>
 
-                        <div class="search-bar" aria-label="Recherche paiements">
-                            <div class="search-field">
-                                <label for="filter_paiement_mois">Mois</label>
-                                <select id="filter_paiement_mois">
-                                    <option value="">TOUS LES MOIS</option>
-                                    @php
-                                        $moisPaiements = collect($paiements ?? [])
-                                            ->map(function ($p) {
-                                                $parts = explode('/', $p['date'] ?? '');
-                                                return count($parts) >= 3 ? $parts[1].'/'.$parts[2] : null;
-                                            })
-                                            ->filter()
-                                            ->unique()
-                                            ->sort()
-                                            ->values();
-                                    @endphp
-                                    @foreach ($moisPaiements as $mois)
-                                        <option value="{{ $mois }}">{{ $mois }}</option>
-                                    @endforeach
-                                </select>
-                            </div>
-                            <div class="search-field">
-                                <label for="filter_paiement_client">Nom Client</label>
-                                <select id="filter_paiement_client">
-                                    <option value="">TOUS LES CLIENTS</option>
-                                    @php
-                                        $clientsFilter = collect($clients ?? [])
-                                            ->pluck('nom')
-                                            ->merge(collect($paiements ?? [])->pluck('client'))
-                                            ->filter()
-                                            ->unique()
-                                            ->sort()
-                                            ->values();
-                                    @endphp
-                                    @foreach ($clientsFilter as $clientNom)
-                                        <option value="{{ mb_strtolower($clientNom) }}">{{ $clientNom }}</option>
-                                    @endforeach
-                                </select>
-                            </div>
-                            <div class="search-field">
-                                <label for="filter_paiement_budget">Budget</label>
-                                <input type="text" id="filter_paiement_budget" placeholder="Rechercher un budget">
-                            </div>
-                            <div class="search-field">
-                                <label for="filter_paiement_tresorerie">Trésorerie</label>
-                                <select id="filter_paiement_tresorerie">
-                                    <option value="">TOUTES LES TRÉSORERIES</option>
-                                    @php
-                                        $tresoreriesFilter = collect($paiements ?? [])
-                                            ->pluck('tresorerie')
-                                            ->filter()
-                                            ->unique()
-                                            ->sort()
-                                            ->values();
-                                    @endphp
-                                    @foreach ($tresoreriesFilter as $tresorerie)
-                                        <option value="{{ mb_strtolower($tresorerie) }}">{{ $tresorerie }}</option>
-                                    @endforeach
-                                </select>
-                            </div>
-                        </div>
-                    </div>
+                            <section class="config-section" id="config-fiche-ste">
+                                <div class="content-head" style="margin-bottom:1rem;">
+                                    <h1 style="font-size:1.15rem;">Fiche Ste</h1>
+                                    <p>Informations de la société.</p>
+                                </div>
 
-                    <div class="table-wrap table-freeze-body">
-                        <table class="data-table">
-                            <thead>
-                                <tr>
-                                    <th>Date</th>
-                                    <th>Titre Projet</th>
-                                    <th>Nom Client</th>
-                                    <th>Budget</th>
-                                    <th>Montant payé</th>
-                                    <th>Trésorerie</th>
-                                    <th>Solde</th>
-                                    <th>Action</th>
-                                </tr>
-                            </thead>
-                            <tbody id="paiementsTableBody">
-                                @forelse (($paiements ?? []) as $paiement)
-                                    @php
-                                        $dateParts = explode('/', $paiement['date'] ?? '');
-                                        $moisKey = count($dateParts) >= 3 ? $dateParts[1].'/'.$dateParts[2] : '';
-                                    @endphp
-                                    <tr
-                                        data-id="{{ $paiement['id'] }}"
-                                        data-mois="{{ $moisKey }}"
-                                        data-client="{{ mb_strtolower($paiement['client']) }}"
-                                        data-budget="{{ $paiement['budget'] }}"
-                                        data-tresorerie="{{ mb_strtolower($paiement['tresorerie']) }}"
-                                    >
-                                        <td>{{ $paiement['date'] }}</td>
-                                        <td>{{ $paiement['titre_projet'] }}</td>
-                                        <td>{{ $paiement['client'] }}</td>
-                                        <td>{{ number_format($paiement['budget'], 2, '.', ' ') }}</td>
-                                        <td>{{ number_format((float) ($paiement['increment_paye'] ?? $paiement['montant_paye'] ?? 0), 2, '.', ' ') }}</td>
-                                        <td>{{ $paiement['tresorerie'] }}</td>
-                                        <td class="solde-cell">{{ number_format($paiement['solde'], 2, '.', ' ') }}</td>
-                                        <td>
-                                            <div class="actions">
-                                                <button type="button" class="action-btn voir" title="Voir" aria-label="Voir">
-                                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8S1 12 1 12z"/><circle cx="12" cy="12" r="3"/></svg>
-                                                </button>
-                                                <button type="button" class="action-btn modifier" title="Modifier" aria-label="Modifier">
-                                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4 12.5-12.5z"/></svg>
-                                                </button>
-                                                <form method="post" action="{{ url('/paiements/'.$paiement['id']) }}" style="display:inline;" onsubmit="return confirm('Supprimer ce paiement ?');">
-                                                    @csrf
-                                                    @method('DELETE')
-                                                    <button type="submit" class="action-btn supprimer" title="Supprimer" aria-label="Supprimer">
-                                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18"/><path d="M8 6V4h8v2"/><path d="M19 6l-1 14H6L5 6"/></svg>
-                                                    </button>
-                                                </form>
-                                                <button type="button" class="action-btn pdf" title="PDF" aria-label="PDF">
-                                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/><path d="M9 13h6"/><path d="M9 17h4"/></svg>
-                                                </button>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                @empty
-                                    <tr class="empty-row">
-                                        <td colspan="8" class="empty">Aucun paiement enregistré. Cliquez sur Nouveau Paiement.</td>
-                                    </tr>
-                                @endforelse
-                                <tr id="paiementsNoResult" class="empty-row" style="display:none;">
-                                    <td colspan="8" class="empty">AUCUN RÉSULTAT POUR CETTE RECHERCHE.</td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
-                </section>
-
-                <section class="panel" id="panel-fiche-utilisateur">
-                    <div class="panel-freeze">
-                        <div class="section-toolbar">
-                            <div class="content-head" style="margin-bottom:0;">
-                                <h1>Utilisateur</h1>
-                            </div>
-                            <div class="toolbar-actions">
-                                <button type="button" class="btn-add" id="btnAddUtilisateur">
-                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>
-                                    Ajouter
-                                </button>
-                                <button type="button" class="btn-ghost" id="btnCloseUtilisateur">Fermer</button>
-                            </div>
-                        </div>
-
-                        <div class="search-bar" aria-label="Recherche utilisateurs" style="grid-template-columns: repeat(2, minmax(0, 1fr));">
-                            <div class="search-field">
-                                <label for="filter_utilisateur_mois">Mois</label>
-                                <select id="filter_utilisateur_mois">
-                                    <option value="">TOUS LES MOIS</option>
-                                    @php
-                                        $moisUtilisateurs = collect($utilisateurs ?? [])
-                                            ->map(function ($u) {
-                                                $parts = explode('/', $u['date'] ?? '');
-                                                return count($parts) >= 3 ? $parts[1].'/'.$parts[2] : null;
-                                            })
-                                            ->filter()
-                                            ->unique()
-                                            ->sort()
-                                            ->values();
-                                    @endphp
-                                    @foreach ($moisUtilisateurs as $mois)
-                                        <option value="{{ $mois }}">{{ $mois }}</option>
-                                    @endforeach
-                                </select>
-                            </div>
-                            <div class="search-field">
-                                <label for="filter_utilisateur_statue">Statue</label>
-                                <select id="filter_utilisateur_statue">
-                                    <option value="">TOUTES LES STATUES</option>
-                                    <option value="admin">Administrateur</option>
-                                    <option value="manager">Manager</option>
-                                    <option value="comptable">Comptable</option>
-                                    <option value="vendeur">Vendeur</option>
-                                    <option value="stock">Responsable stock</option>
-                                </select>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="table-wrap table-freeze-body">
-                        <table class="data-table">
-                            <thead>
-                                <tr>
-                                    <th>Date</th>
-                                    <th>Nom Complet</th>
-                                    <th>Statue</th>
-                                    <th>Login</th>
-                                    <th>Mot de Passe</th>
-                                    <th>Action</th>
-                                </tr>
-                            </thead>
-                            <tbody id="utilisateursTableBody">
-                                @php
-                                    $userStatueLabels = [
-                                        'admin' => 'Administrateur',
-                                        'manager' => 'Manager',
-                                        'comptable' => 'Comptable',
-                                        'vendeur' => 'Vendeur',
-                                        'stock' => 'Responsable stock',
-                                    ];
-                                @endphp
-                                @forelse (($utilisateurs ?? []) as $utilisateur)
-                                    @php
-                                        $partsUser = explode('/', $utilisateur['date'] ?? '');
-                                        $moisUser = count($partsUser) >= 3 ? $partsUser[1].'/'.$partsUser[2] : '';
-                                    @endphp
-                                    <tr data-id="{{ $utilisateur['id'] }}" data-mois="{{ $moisUser }}" data-statue="{{ $utilisateur['statue'] ?? '' }}">
-                                        <td>{{ $utilisateur['date'] }}</td>
-                                        <td>{{ $utilisateur['nom_complet'] }}</td>
-                                        <td>{{ $userStatueLabels[$utilisateur['statue']] ?? strtoupper($utilisateur['statue']) }}</td>
-                                        <td>{{ $utilisateur['login'] }}</td>
-                                        <td>••••••••</td>
-                                        <td>
-                                            <div class="actions">
-                                                <button type="button" class="action-btn voir" title="Voir" aria-label="Voir">
-                                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8S1 12 1 12z"/><circle cx="12" cy="12" r="3"/></svg>
-                                                </button>
-                                                <button type="button" class="action-btn modifier" title="Modifier" aria-label="Modifier">
-                                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4 12.5-12.5z"/></svg>
-                                                </button>
-                                                <form method="post" action="{{ url('/utilisateurs/'.$utilisateur['id']) }}" style="display:inline;" onsubmit="return confirm('Supprimer cet utilisateur ?');">
-                                                    @csrf
-                                                    @method('DELETE')
-                                                    <button type="submit" class="action-btn supprimer" title="Supprimer" aria-label="Supprimer">
-                                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18"/><path d="M8 6V4h8v2"/><path d="M19 6l-1 14H6L5 6"/></svg>
-                                                    </button>
-                                                </form>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                @empty
-                                    <tr class="empty-row">
-                                        <td colspan="6" class="empty">Aucun utilisateur enregistré. Cliquez sur Ajouter.</td>
-                                    </tr>
-                                @endforelse
-                                <tr id="utilisateursNoResult" class="empty-row" style="display:none;">
-                                    <td colspan="6" class="empty">Aucun résultat pour cette recherche.</td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
-                </section>
-
-                <section class="panel" id="panel-fiche-autorisation">
-                    <div class="panel-freeze">
-                        <div class="section-toolbar">
-                            <div class="content-head" style="margin-bottom:0;">
-                                <h1>Autorisation</h1>
-                            </div>
-                            <div class="toolbar-actions">
-                                <button type="button" class="btn-add" id="btnAddAutorisation">
-                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>
-                                    Ajouter
-                                </button>
-                                <button type="button" class="btn-ghost" id="btnCloseAutorisation">Fermer</button>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="table-wrap table-freeze-body">
-                        <table class="data-table">
-                            <thead>
-                                <tr>
-                                    <th>Utilisateur</th>
-                                    <th>Sections</th>
-                                    <th>Autorisations</th>
-                                    <th>Action</th>
-                                </tr>
-                            </thead>
-                            <tbody id="autorisationsTableBody">
-                                @php
-                                    $permissionLabels = collect($menuSections ?? [])
-                                        ->flatMap(fn ($section) => collect($section['items'])->mapWithKeys(
-                                            fn ($item) => [$item['key'] => $item['label']]
-                                        ))
-                                        ->all();
-                                    $sectionByPermission = [];
-                                    foreach (($menuSections ?? []) as $section) {
-                                        foreach ($section['items'] as $item) {
-                                            $sectionByPermission[$item['key']] = $section['label'];
-                                        }
-                                    }
-                                @endphp
-                                @forelse (($autorisations ?? []) as $autorisation)
-                                    @php
-                                        $perms = $autorisation['permissions'] ?? [];
-                                        $sectionsLabels = collect($perms)
-                                            ->map(fn ($p) => $sectionByPermission[$p] ?? null)
-                                            ->filter()
-                                            ->unique()
-                                            ->values()
-                                            ->implode(', ');
-                                        $authLabels = collect($perms)
-                                            ->map(fn ($p) => $permissionLabels[$p] ?? $p)
-                                            ->filter()
-                                            ->implode(', ');
-                                    @endphp
-                                    <tr data-id="{{ $autorisation['id'] }}">
-                                        <td>{{ $autorisation['utilisateur_nom'] ?? '' }}{{ !empty($autorisation['utilisateur_login']) ? ' ('.$autorisation['utilisateur_login'].')' : '' }}</td>
-                                        <td class="cell-wrap">{{ $sectionsLabels !== '' ? $sectionsLabels : '—' }}</td>
-                                        <td class="cell-wrap">{{ $authLabels !== '' ? $authLabels : 'Aucune' }}</td>
-                                        <td>
-                                            <div class="actions">
-                                                <button type="button" class="action-btn voir" title="Voir" aria-label="Voir">
-                                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8S1 12 1 12z"/><circle cx="12" cy="12" r="3"/></svg>
-                                                </button>
-                                                <button type="button" class="action-btn modifier" title="Modifier" aria-label="Modifier">
-                                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4 12.5-12.5z"/></svg>
-                                                </button>
-                                                <form method="post" action="{{ url('/autorisations/'.$autorisation['id']) }}" style="display:inline;" onsubmit="return confirm('Supprimer cette autorisation ?');">
-                                                    @csrf
-                                                    @method('DELETE')
-                                                    <button type="submit" class="action-btn supprimer" title="Supprimer" aria-label="Supprimer">
-                                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18"/><path d="M8 6V4h8v2"/><path d="M19 6l-1 14H6L5 6"/></svg>
-                                                    </button>
-                                                </form>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                @empty
-                                    <tr class="empty-row">
-                                        <td colspan="4" class="empty">Aucune autorisation enregistrée. Cliquez sur Ajouter.</td>
-                                    </tr>
-                                @endforelse
-                            </tbody>
-                        </table>
-                    </div>
-                </section>
-
-                <section class="panel" id="panel-fiche-whatsapp">
-                    @php $wa = $whatsappConfig ?? []; @endphp
-                    <div class="panel-freeze">
-                        <div class="section-toolbar">
-                            <div class="content-head" style="margin-bottom:0;">
-                                <h1>WhatsApp</h1>
-                            </div>
-                            <div class="toolbar-actions">
-                                <button type="button" class="btn-ghost" id="btnCloseWhatsapp">Fermer</button>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="whatsapp-settings-card">
-                        <p class="whatsapp-hint" style="color:#6fe3a1;">
-                            Pour envoyer le devis PDF automatiquement au client (1 clic), configurez l’API WhatsApp ci-dessous.
-                        </p>
-                        @if (session('whatsapp_saved'))
-                            <p class="whatsapp-hint" style="color:#6fe3a1;">Configuration enregistrée.</p>
-                        @endif
-                        @if (!empty($wa['api_ready']))
-                            <p class="whatsapp-hint" style="color:#6fe3a1;">Envoi automatique : prêt.</p>
-                        @else
-                            <p class="whatsapp-hint">Envoi automatique : incomplet — renseignez Token + Phone Number ID.</p>
-                        @endif
-                        <form method="post" action="{{ route('whatsapp.settings.update') }}" id="whatsappSettingsForm">
-                            @csrf
-                            @method('PUT')
-                            <input type="hidden" name="mode" value="{{ !empty($wa['api_ready']) ? 'api' : 'lien' }}">
-                            <div class="whatsapp-settings-grid">
-                                <div class="field full">
-                                    <label>Activation</label>
-                                    <div class="whatsapp-switch-row">
-                                        <label><input type="checkbox" name="actif" value="1" {{ !empty($wa['actif']) ? 'checked' : '' }}> WhatsApp actif</label>
-                                        <label><input type="checkbox" name="messages_actifs" value="1" {{ !empty($wa['messages_actifs']) ? 'checked' : '' }}> Messages</label>
-                                        <label><input type="checkbox" name="appels_actifs" value="1" {{ !empty($wa['appels_actifs']) ? 'checked' : '' }}> Appels</label>
-                                    </div>
+                                <div class="config-form-panel">
+                                    <form method="post" action="{{ url('/configuration/fiche-ste') }}" id="ficheSteForm" novalidate>
+                                        @csrf
+                                        @method('PUT')
+                                        <div class="field">
+                                            <label for="fiche_ste_nom_societe">Nom Société</label>
+                                            <input type="text" id="fiche_ste_nom_societe" name="nom_societe" maxlength="255" value="{{ $ficheSte['nom_societe'] ?? '' }}">
+                                        </div>
+                                        <div class="field">
+                                            <label for="fiche_ste_nom_gerant">Nom Gérant</label>
+                                            <input type="text" id="fiche_ste_nom_gerant" name="nom_gerant" maxlength="255" value="{{ $ficheSte['nom_gerant'] ?? '' }}">
+                                        </div>
+                                        <div class="field">
+                                            <label for="fiche_ste_contact">Contact</label>
+                                            <input type="text" id="fiche_ste_contact" name="contact" maxlength="255" value="{{ $ficheSte['contact'] ?? '' }}" inputmode="tel" autocomplete="off">
+                                        </div>
+                                        <div class="field">
+                                            <label for="fiche_ste_ville">Ville</label>
+                                            <input type="text" id="fiche_ste_ville" name="ville" maxlength="255" value="{{ $ficheSte['ville'] ?? '' }}">
+                                        </div>
+                                        <div class="field">
+                                            <label for="fiche_ste_whatsapp">WhatsApp</label>
+                                            <input type="text" id="fiche_ste_whatsapp" name="whatsapp" maxlength="255" value="{{ $ficheSte['whatsapp'] ?? '' }}" inputmode="tel" autocomplete="off">
+                                        </div>
+                                        <div class="field">
+                                            <label for="fiche_ste_email">E-mail</label>
+                                            <input type="text" id="fiche_ste_email" name="email" maxlength="255" value="{{ $ficheSte['email'] ?? '' }}" autocomplete="off">
+                                        </div>
+                                        <div class="config-form-foot">
+                                            <button type="button" class="btn-primary" id="btnFicheSteFermer">Fermer</button>
+                                        </div>
+                                    </form>
                                 </div>
-                                <div class="field">
-                                    <label for="wa_indicatif">Indicatif pays</label>
-                                    <input type="text" id="wa_indicatif" name="indicatif" value="{{ $wa['indicatif'] ?? '212' }}" placeholder="212" inputmode="numeric" required>
-                                </div>
-                                <div class="field">
-                                    <label for="wa_numero_business">Votre n° WhatsApp Business</label>
-                                    <input type="text" id="wa_numero_business" name="numero_business" value="{{ $wa['numero_business'] ?? '' }}" placeholder="Ex: 0612345678" inputmode="tel">
-                                </div>
-                                <div class="field full">
-                                    <label for="wa_message_defaut">Message prérempli (pour Message simple)</label>
-                                    <textarea id="wa_message_defaut" name="message_defaut" rows="3" placeholder="Ce texte s’affiche déjà dans WhatsApp">{{ $wa['message_defaut'] ?? '' }}</textarea>
-                                </div>
-                                <div class="field full">
-                                    <label for="wa_access_token">Token d’accès Meta (obligatoire pour envoyer le devis)</label>
-                                    <input type="password" id="wa_access_token" name="access_token" value="{{ !empty($wa['has_token']) ? '********' : '' }}" placeholder="Collez le token ici" autocomplete="off">
-                                </div>
-                                <div class="field full">
-                                    <label for="wa_phone_number_id">Phone Number ID Meta</label>
-                                    <input type="text" id="wa_phone_number_id" name="phone_number_id" value="{{ $wa['phone_number_id'] ?? '' }}" placeholder="Ex: 123456789012345" inputmode="numeric">
-                                </div>
-                                <div class="field">
-                                    <label for="wa_template_name">Template (optionnel)</label>
-                                    <input type="text" id="wa_template_name" name="template_name" value="{{ $wa['template_name'] ?? '' }}" placeholder="nom_du_modele">
-                                </div>
-                                <div class="field">
-                                    <label for="wa_template_lang">Langue template</label>
-                                    <input type="text" id="wa_template_lang" name="template_lang" value="{{ $wa['template_lang'] ?? 'fr' }}" placeholder="fr">
-                                </div>
-                                <div class="field full whatsapp-guide">
-                                    <strong>En 3 étapes :</strong>
-                                    <ol>
-                                        <li>Ouvrez <a href="https://developers.facebook.com/apps/" target="_blank" rel="noopener">Meta for Developers</a> → créez une app → WhatsApp → API Setup.</li>
-                                        <li>Copiez <code>Phone number ID</code> et un <code>Temporary access token</code> (ou token permanent).</li>
-                                        <li>Collez-les ici → Enregistrer → testez un devis vers votre numéro.</li>
-                                    </ol>
-                                </div>
-                            </div>
-                            <div class="whatsapp-settings-actions">
-                                <button type="submit" class="btn-primary">Enregistrer</button>
-                            </div>
-                        </form>
+                            </section>
                     </div>
                 </section>
             </main>
         </div>
     </div>
 
-    <div class="modal-backdrop" id="autorisationModal" aria-hidden="true">
-        <div class="modal" role="dialog" aria-modal="true" aria-labelledby="autorisationModalTitle" style="max-width:720px;">
+    <div class="modal-backdrop" id="commercialNumeroModal" aria-hidden="true">
+        <div class="modal" role="dialog" aria-modal="true" aria-labelledby="commercialNumeroModalTitle">
             <div class="modal-head">
-                <h2 id="autorisationModalTitle">Ajouter Autorisation</h2>
-                <button type="button" class="modal-close" id="closeAutorisationModal" aria-label="Fermer">×</button>
+                <h2 id="commercialNumeroModalTitle">Ajouter un numéro</h2>
+                <button type="button" class="modal-close" id="closeCommercialNumeroModal" aria-label="Fermer">×</button>
             </div>
-            <form method="post" action="{{ url('/autorisations') }}" id="autorisationForm">
-                @csrf
-                <input type="hidden" name="_method" id="autorisation_http_method" value="POST" disabled>
+            <form id="commercialNumeroForm">
                 <div class="modal-body">
-                    <div class="field full">
-                        <label for="autorisation_utilisateur_id">Utilisateur</label>
-                        <select id="autorisation_utilisateur_id" name="utilisateur_id" required>
-                            <option value="" disabled selected>Sélectionner un utilisateur</option>
-                            @foreach (($utilisateurs ?? []) as $utilisateur)
-                                <option value="{{ $utilisateur['id'] }}">{{ $utilisateur['nom_complet'] }} ({{ $utilisateur['login'] }})</option>
+                    <div class="field">
+                        <label for="commercial_numero_commercial">Commercial</label>
+                        <select id="commercial_numero_commercial" name="commercial" required>
+                            <option value="">Choisir un commercial…</option>
+                            @foreach (($commerciauxUsers ?? []) as $commercialUser)
+                                <option value="{{ $commercialUser }}">{{ $commercialUser }}</option>
                             @endforeach
                         </select>
                     </div>
-                    <div class="auth-sections" id="autorisationSections">
-                        @foreach (($menuSections ?? []) as $section)
-                            <div class="auth-section" data-section="{{ $section['key'] }}">
-                                <div class="auth-section-title">{{ $section['label'] }}</div>
-                                <div class="auth-checks">
-                                    @foreach ($section['items'] as $item)
-                                        <label class="auth-check">
-                                            <input type="checkbox" name="permissions[]" value="{{ $item['key'] }}" class="auth-permission" data-section="{{ $section['key'] }}">
-                                            <span>{{ $item['label'] }}</span>
-                                        </label>
-                                    @endforeach
-                                </div>
-                            </div>
-                        @endforeach
+                    <div class="field">
+                        <label for="commercial_numero_date">Date</label>
+                        <input type="text" id="commercial_numero_date" name="date" placeholder="JJ/MM/AAAA" maxlength="10" inputmode="numeric" autocomplete="off" required>
+                    </div>
+                    <div class="field">
+                        <label for="commercial_numero_telephone">Numéro</label>
+                        <input type="text" id="commercial_numero_telephone" name="telephone" maxlength="255" placeholder="Ex. 06…" inputmode="tel" autocomplete="off" required>
                     </div>
                 </div>
                 <div class="modal-foot">
-                    <button type="button" class="btn-ghost" id="cancelAutorisationModal">Fermer</button>
-                    <button type="submit" class="btn-primary" id="autorisationSubmitBtn">Valider</button>
+                    <button type="button" class="btn-ghost" id="cancelCommercialNumeroModal">Annuler</button>
+                    <button type="submit" class="btn-primary">Valider</button>
                 </div>
             </form>
         </div>
     </div>
 
-    <div class="modal-backdrop" id="paiementModal" aria-hidden="true">
-        <div class="modal" role="dialog" aria-modal="true" aria-labelledby="paiementModalTitle">
+    <div class="modal-backdrop" id="commercialImportModal" aria-hidden="true">
+        <div class="modal" role="dialog" aria-modal="true" aria-labelledby="commercialImportModalTitle">
             <div class="modal-head">
-                <h2 id="paiementModalTitle">Nouveau Paiement</h2>
-                <button type="button" class="modal-close" id="closePaiementModal" aria-label="Fermer">×</button>
+                <h2 id="commercialImportModalTitle">Importer des numéros</h2>
+                <button type="button" class="modal-close" id="closeCommercialImportModal" aria-label="Fermer">×</button>
             </div>
-            <form method="post" action="{{ url('/paiements') }}" id="paiementForm">
-                @csrf
-                <input type="hidden" name="_method" id="paiement_http_method" value="POST" disabled>
-                <input type="hidden" id="paiement_projet_id" name="projet_id">
-                <input type="hidden" id="paiement_titre" name="titre_projet">
+            <form id="commercialImportForm">
                 <div class="modal-body">
                     <div class="field">
-                        <label for="paiement_date_jj">Date</label>
-                        <div class="date-parts" role="group" aria-label="Date JJ/MM/AAAA">
-                            <input type="text" id="paiement_date_jj" class="date-jj" inputmode="numeric" maxlength="2" pattern="\d{2}" placeholder="JJ" autocomplete="off" required>
-                            <span class="date-sep">/</span>
-                            <input type="text" id="paiement_date_mm" class="date-mm" inputmode="numeric" maxlength="2" pattern="\d{2}" placeholder="MM" autocomplete="off" required>
-                            <span class="date-sep">/</span>
-                            <input type="text" id="paiement_date_aaaa" class="date-aaaa" inputmode="numeric" maxlength="4" pattern="\d{4}" placeholder="AAAA" autocomplete="off" required>
-                        </div>
-                        <input type="hidden" id="paiement_date" name="date" required>
-                    </div>
-                    <div class="field">
-                        <label for="paiement_ref">Réf</label>
-                        <input type="text" id="paiement_ref" name="ref" readonly>
-                    </div>
-                    <div class="field full client-select-field">
-                        <label for="paiement_client">Nom Client (liste)</label>
-                        <select id="paiement_client" name="client" required>
-                            <option value="" disabled selected>— SÉLECTIONNER UN CLIENT —</option>
-                            @forelse (($clients ?? []) as $client)
-                                <option value="{{ $client['nom'] }}">{{ $client['ref'] }} — {{ $client['nom'] }}</option>
-                            @empty
-                                <option value="" disabled>AUCUN CLIENT DISPONIBLE</option>
-                            @endforelse
-                        </select>
-                    </div>
-                    <div class="field full">
-                        <label for="paiement_titre_display">Titre Projet</label>
-                        <input type="text" id="paiement_titre_display" readonly placeholder="—">
-                    </div>
-                    <div class="field">
-                        <label for="paiement_budget_display">Solde restant</label>
-                        <input type="text" id="paiement_budget_display" readonly>
-                        <input type="hidden" id="paiement_budget" name="budget">
-                        <input type="hidden" id="paiement_solde_actuel" value="0">
-                    </div>
-                    <div class="field">
-                        <label for="paiement_montant_paye">Montant payé</label>
-                        <input type="number" id="paiement_montant_paye" name="montant_paye" min="0" step="0.01" required placeholder="0.00">
-                    </div>
-                    <div class="field">
-                        <label for="paiement_type_reg">Type Règ</label>
-                        <select id="paiement_type_reg" name="type_reg" required>
-                            <option value="" disabled selected>— TYPE —</option>
-                            <option value="ESPECES">ESPÈCES</option>
-                            <option value="CHEQUE">CHÈQUE</option>
-                            <option value="VIREMENT">VIREMENT</option>
-                            <option value="CARTE">CARTE BANCAIRE</option>
+                        <label for="commercial_import_commercial">Commercial</label>
+                        <select id="commercial_import_commercial" name="commercial" required>
+                            <option value="">Choisir un commercial…</option>
+                            @foreach (($commerciauxUsers ?? []) as $commercialUser)
+                                <option value="{{ $commercialUser }}">{{ $commercialUser }}</option>
+                            @endforeach
                         </select>
                     </div>
                     <div class="field">
-                        <label for="paiement_bnq">Bnq</label>
-                        <input type="text" id="paiement_bnq" name="bnq" required placeholder="Banque">
+                        <label for="commercialImportFile">Capture / Image</label>
+                        <input type="file" id="commercialImportFile" name="image" accept="image/*" required>
                     </div>
-                    <div class="field">
-                        <label for="paiement_tresorerie">Trésorerie</label>
-                        <input type="text" id="paiement_tresorerie" name="tresorerie" required placeholder="Trésorerie">
-                    </div>
-                    <div class="field">
-                        <label for="paiement_solde">Solde</label>
-                        <input type="text" id="paiement_solde" readonly>
-                    </div>
+                    <p id="commercialImportModalStatus" aria-live="polite" style="font-size:0.82rem;color:var(--muted);margin:0;"></p>
                 </div>
                 <div class="modal-foot">
-                    <button type="button" class="btn-ghost" id="cancelPaiementModal">Fermer</button>
-                    <button type="submit" class="btn-primary" id="paiementSubmitBtn">Valider</button>
+                    <button type="button" class="btn-ghost" id="cancelCommercialImportModal">Annuler</button>
+                    <button type="submit" class="btn-primary" id="submitCommercialImport">Importer</button>
                 </div>
             </form>
         </div>
     </div>
 
-    <div class="modal-backdrop" id="projetModal" aria-hidden="true">
-        <div class="modal" role="dialog" aria-modal="true" aria-labelledby="projetModalTitle">
-            <div class="modal-head">
-                <h2 id="projetModalTitle">Nouveau Projet</h2>
-                <button type="button" class="modal-close" id="closeProjetModal" aria-label="Fermer">×</button>
+    <div class="side-panel-backdrop" id="utilisateurSidePanel" aria-hidden="true">
+        <div class="side-panel" role="dialog" aria-modal="true" aria-labelledby="utilisateurSidePanelTitle">
+            <div class="side-panel-head">
+                <h2 id="utilisateurSidePanelTitle">Ajouter un utilisateur</h2>
+                <button type="button" class="modal-close" id="closeUtilisateurSidePanel" aria-label="Fermer">×</button>
             </div>
-            <form method="post" action="{{ url('/projets') }}" id="projetForm">
+            <form method="post" action="{{ url('/utilisateurs') }}" id="utilisateurForm">
                 @csrf
-                <input type="hidden" name="_method" id="projet_http_method" value="POST" disabled>
-                <div class="modal-body">
+                <div class="side-panel-body">
                     <div class="field">
-                        <label for="projet_date_jj">Date</label>
-                        <div class="date-parts" role="group" aria-label="Date JJ/MM/AAAA">
-                            <input type="text" id="projet_date_jj" class="date-jj" inputmode="numeric" maxlength="2" pattern="\d{2}" placeholder="JJ" autocomplete="off" required>
-                            <span class="date-sep">/</span>
-                            <input type="text" id="projet_date_mm" class="date-mm" inputmode="numeric" maxlength="2" pattern="\d{2}" placeholder="MM" autocomplete="off" required>
-                            <span class="date-sep">/</span>
-                            <input type="text" id="projet_date_aaaa" class="date-aaaa" inputmode="numeric" maxlength="4" pattern="\d{4}" placeholder="AAAA" autocomplete="off" required>
-                        </div>
-                        <input type="hidden" id="projet_date" name="date" required>
+                        <label for="utilisateur_date">Date</label>
+                        <input type="text" id="utilisateur_date" name="date" placeholder="JJ/MM/AAAA" maxlength="10" inputmode="numeric" autocomplete="off" required>
                     </div>
                     <div class="field">
-                        <label for="projet_ref">Réf</label>
-                        <input type="text" id="projet_ref" name="ref" readonly>
-                    </div>
-                    <div class="field full">
-                        <label for="projet_nom">Nom Projet</label>
-                        <input type="text" id="projet_nom" name="nom" required placeholder="Nom du projet">
-                    </div>
-                    <div class="field full">
-                        <label for="projet_designation">Désignation</label>
-                        <input type="text" id="projet_designation" name="designation" required placeholder="Désignation">
-                    </div>
-                    <div class="field full client-select-field">
-                        <label for="projet_client">Client (liste)</label>
-                        <select id="projet_client" name="client" required>
-                            <option value="" disabled selected>— SÉLECTIONNER UN CLIENT —</option>
-                            @forelse (($clients ?? []) as $client)
-                                <option value="{{ $client['nom'] }}">{{ $client['ref'] }} — {{ $client['nom'] }} ({{ $client['ville'] }})</option>
-                            @empty
-                                <option value="" disabled>AUCUN CLIENT DISPONIBLE — AJOUTEZ UN CLIENT</option>
-                            @endforelse
-                        </select>
-                        @if (empty($clients))
-                            <p class="client-select-hint">Ajoutez d’abord un client dans Fiche Client.</p>
-                        @endif
+                        <label for="utilisateur_nom_complet">Nom Complet</label>
+                        <input type="text" id="utilisateur_nom_complet" name="nom_complet" maxlength="255" required>
                     </div>
                     <div class="field">
-                        <label for="projet_delai">Délai</label>
-                        <input type="text" id="projet_delai" name="delai" required placeholder="Ex: 30 jours">
+                        <label for="utilisateur_ville">Ville</label>
+                        <input type="text" id="utilisateur_ville" name="ville" maxlength="255">
                     </div>
                     <div class="field">
-                        <label for="projet_statut">Statue (liste)</label>
-                        <select id="projet_statut" name="statut" required>
-                            <option value="" disabled selected>— CHOISIR LA STATUE —</option>
-                            <option value="actif">EN COURS</option>
-                            <option value="attente">EN ATTENTE</option>
-                            <option value="annule">ANNULÉ</option>
-                            <option value="execute">EXÉCUTÉ</option>
+                        <label for="utilisateur_statue">Statue</label>
+                        <select id="utilisateur_statue" name="statue" required>
+                            <option value="administrateur">Administrateur</option>
+                            <option value="assistante">Assistante</option>
+                            <option value="commercial">Commercial</option>
                         </select>
                     </div>
                     <div class="field">
-                        <label for="projet_budget">Budget</label>
-                        <input type="number" id="projet_budget" name="budget" min="0" step="0.01" required placeholder="0.00">
-                    </div>
-                    <div class="field" id="projet_avance_field">
-                        <label for="projet_avance" id="projet_avance_label">Avance</label>
-                        <input type="number" id="projet_avance" name="avance" min="0" step="0.01" value="0" placeholder="0.00">
+                        <label for="utilisateur_login">Login</label>
+                        <input type="text" id="utilisateur_login" name="login" maxlength="255" required autocomplete="off">
                     </div>
                     <div class="field">
-                        <label for="projet_solde">Solde</label>
-                        <input type="text" id="projet_solde" readonly>
+                        <label for="utilisateur_password">Mot de Passe</label>
+                        <input type="text" id="utilisateur_password" name="password" maxlength="255" required autocomplete="off">
                     </div>
                 </div>
-                <div class="modal-foot">
-                    <button type="button" class="btn-ghost" id="cancelProjetModal">Fermer</button>
-                    <button type="submit" class="btn-primary" id="projetSubmitBtn">Valider</button>
+                <div class="side-panel-foot" id="utilisateurFormActions">
+                    <button type="button" class="btn-ghost" id="cancelUtilisateurSidePanel">Fermer</button>
+                    <button type="submit" class="btn-primary" id="saveUtilisateurSidePanel">Valider</button>
                 </div>
             </form>
         </div>
@@ -5468,1669 +2013,180 @@
             </div>
             <form method="post" action="{{ url('/clients') }}" id="clientForm">
                 @csrf
-                <input type="hidden" name="_method" id="client_http_method" value="POST" disabled>
                 <div class="modal-body">
                     <div class="field">
-                        <label for="client_date_jj">Date</label>
-                        <div class="date-parts" role="group" aria-label="Date JJ/MM/AAAA">
-                            <input type="text" id="client_date_jj" class="date-jj" inputmode="numeric" maxlength="2" pattern="\d{2}" placeholder="JJ" autocomplete="off" required>
-                            <span class="date-sep">/</span>
-                            <input type="text" id="client_date_mm" class="date-mm" inputmode="numeric" maxlength="2" pattern="\d{2}" placeholder="MM" autocomplete="off" required>
-                            <span class="date-sep">/</span>
-                            <input type="text" id="client_date_aaaa" class="date-aaaa" inputmode="numeric" maxlength="4" pattern="\d{4}" placeholder="AAAA" autocomplete="off" required>
-                        </div>
-                        <input type="hidden" id="client_date" name="date" required>
+                        <label for="client_date">Date</label>
+                        <input type="text" id="client_date" name="date" placeholder="JJ/MM/AAAA" maxlength="10" inputmode="numeric" autocomplete="off" required>
                     </div>
                     <div class="field">
-                        <label for="client_ref">Réf</label>
-                        <input type="text" id="client_ref" name="ref" readonly>
-                    </div>
-                    <div class="field full">
                         <label for="client_nom">Nom Client</label>
-                        <input type="text" id="client_nom" name="nom" required placeholder="Nom du client">
+                        <input type="text" id="client_nom" name="nom" maxlength="255" required>
                     </div>
                     <div class="field">
                         <label for="client_ville">Ville</label>
-                        <input type="text" id="client_ville" name="ville" required placeholder="Ville">
+                        <input type="text" id="client_ville" name="ville" maxlength="255">
                     </div>
                     <div class="field">
-                        <label for="client_contact">Contact</label>
-                        <input type="text" id="client_contact" name="contact" required placeholder="Téléphone / email">
+                        <label for="client_contact">Numéro</label>
+                        <input type="text" id="client_contact" name="contact" maxlength="255" placeholder="Ex. 06…" inputmode="tel" autocomplete="off">
                     </div>
-                    <div class="field full">
-                        <label for="client_activite">Activité</label>
-                        <input type="text" id="client_activite" name="activite" required placeholder="Activité">
+                    <div class="field">
+                        <label for="client_titre_projet">Titre Projet</label>
+                        <input type="text" id="client_titre_projet" name="titre_projet" maxlength="255" required>
+                    </div>
+                    <div class="field">
+                        <label for="client_delai_travail">Délai travail</label>
+                        <input type="text" id="client_delai_travail" name="delai_travail" maxlength="255" placeholder="Ex. 30 JRS">
+                    </div>
+                    <div class="field">
+                        <label for="client_budget">Budget</label>
+                        <input type="number" id="client_budget" name="budget" min="0" step="0.01" value="0">
                     </div>
                 </div>
-                <div class="modal-foot">
+                <div class="modal-foot" id="clientFormActions">
                     <button type="button" class="btn-ghost" id="cancelClientModal">Annuler</button>
-                    <button type="submit" class="btn-primary" id="clientSubmitBtn">Enregistrer</button>
+                    <button type="submit" class="btn-primary" id="saveClientModal">Enregistrer</button>
                 </div>
             </form>
         </div>
     </div>
 
-    <div class="modal-backdrop" id="utilisateurModal" aria-hidden="true">
-        <div class="modal" role="dialog" aria-modal="true" aria-labelledby="utilisateurModalTitle">
+    <div class="modal-backdrop" id="clientPrintModal" aria-hidden="true">
+        <div class="modal" role="dialog" aria-modal="true" aria-labelledby="clientPrintTitle">
             <div class="modal-head">
-                <h2 id="utilisateurModalTitle">Ajouter Utilisateur</h2>
-                <button type="button" class="modal-close" id="closeUtilisateurModal" aria-label="Fermer">×</button>
+                <h2 id="clientPrintTitle">Fiche client</h2>
+                <button type="button" class="modal-close" id="closeClientPrintModal" aria-label="Fermer">×</button>
             </div>
-            <form method="post" action="{{ url('/utilisateurs') }}" id="utilisateurForm">
-                @csrf
-                <input type="hidden" name="_method" id="utilisateur_http_method" value="POST" disabled>
-                <div class="modal-body">
-                    <div class="field">
-                        <label for="utilisateur_date">Date</label>
-                        <input type="text" id="utilisateur_date" name="date" readonly>
-                    </div>
-                    <div class="field full">
-                        <label for="utilisateur_nom_complet">Nom Complet</label>
-                        <input type="text" id="utilisateur_nom_complet" name="nom_complet" required placeholder="Nom complet">
-                    </div>
-                    <div class="field full">
-                        <label for="utilisateur_statue">Statue</label>
-                        <select id="utilisateur_statue" name="statue" required>
-                            <option value="" disabled selected>Sélectionner une statue</option>
-                            <option value="admin">Administrateur</option>
-                            <option value="manager">Manager</option>
-                            <option value="comptable">Comptable</option>
-                            <option value="vendeur">Vendeur</option>
-                            <option value="stock">Responsable stock</option>
-                        </select>
-                    </div>
-                    <div class="field">
-                        <label for="utilisateur_login">Login</label>
-                        <input type="text" id="utilisateur_login" name="login" required placeholder="Identifiant" autocomplete="username">
-                    </div>
-                    <div class="field">
-                        <label for="utilisateur_password">Mot de Passe</label>
-                        <input type="password" id="utilisateur_password" name="password" placeholder="Mot de passe" autocomplete="new-password">
-                    </div>
-                </div>
-                <div class="modal-foot">
-                    <button type="button" class="btn-ghost" id="cancelUtilisateurModal">Fermer</button>
-                    <button type="submit" class="btn-primary" id="utilisateurSubmitBtn">Valider</button>
-                </div>
-            </form>
-        </div>
-    </div>
-
-    <div class="modal-backdrop" id="relanceModal" aria-hidden="true">
-        <div class="modal" role="dialog" aria-modal="true" aria-labelledby="relanceModalTitle">
-            <div class="modal-head">
-                <h2 id="relanceModalTitle">Nouveau Prospect</h2>
-                <button type="button" class="modal-close" id="closeRelanceModal" aria-label="Fermer">×</button>
-            </div>
-            <form method="post" action="{{ url('/relances') }}" id="relanceForm">
-                @csrf
-                <input type="hidden" name="_method" id="relance_http_method" value="POST" disabled>
-                <div class="modal-body">
-                    <div class="field">
-                        <label for="relance_date_jj">Date</label>
-                        <div class="date-parts" role="group" aria-label="Date JJ/MM/AAAA">
-                            <input type="text" id="relance_date_jj" class="date-jj" inputmode="numeric" maxlength="2" pattern="\d{2}" placeholder="JJ" autocomplete="off" required>
-                            <span class="date-sep">/</span>
-                            <input type="text" id="relance_date_mm" class="date-mm" inputmode="numeric" maxlength="2" pattern="\d{2}" placeholder="MM" autocomplete="off" required>
-                            <span class="date-sep">/</span>
-                            <input type="text" id="relance_date_aaaa" class="date-aaaa" inputmode="numeric" maxlength="4" pattern="\d{4}" placeholder="AAAA" autocomplete="off" required>
-                        </div>
-                        <input type="hidden" id="relance_date" name="date" required>
-                    </div>
-                    <div class="field">
-                        <label for="relance_ref">ID</label>
-                        <input type="text" id="relance_ref" name="ref" readonly>
-                    </div>
-                    <div class="field full">
-                        <label for="relance_nom_complet">Nom Client</label>
-                        <input type="text" id="relance_nom_complet" name="nom_complet" required placeholder="Nom client">
-                    </div>
-                    <div class="field">
-                        <label for="relance_telephone">Téléphone</label>
-                        <input type="text" id="relance_telephone" name="telephone" required placeholder="Téléphone" inputmode="tel">
-                    </div>
-                    <div class="field">
-                        <label for="relance_ville">Ville</label>
-                        <input type="text" id="relance_ville" name="ville" required placeholder="Ville">
-                    </div>
-                    <div class="field">
-                        <label for="relance_titre_projet">Titre Projet</label>
-                        <input type="text" id="relance_titre_projet" name="titre_projet" required placeholder="Titre du projet">
-                    </div>
-                    @if (empty($isVendeur))
-                    <div class="field">
-                        <label for="relance_vendeur">Vendeur</label>
-                        <select id="relance_vendeur" name="vendeur">
-                            <option value="">— Sélectionner —</option>
-                            @foreach (($vendeurs ?? []) as $vendeurNom)
-                                <option value="{{ $vendeurNom }}">{{ $vendeurNom }}</option>
-                            @endforeach
-                        </select>
-                    </div>
-                    @else
-                    <input type="hidden" id="relance_vendeur" name="vendeur" value="{{ $authUserNom ?? '' }}">
-                    @endif
-                    <div class="field full">
-                        <label for="relance_description">Description</label>
-                        <textarea id="relance_description" name="description" required placeholder="Description" rows="8"></textarea>
-                    </div>
-                    <div class="field">
-                        <label for="relance_envoye">Envoyé</label>
-                        <select id="relance_envoye" name="envoye" required>
-                            <option value="" disabled selected>Sélectionner</option>
-                            <option value="lien">Lien</option>
-                            <option value="conception">Concep</option>
-                        </select>
-                    </div>
-                    <div class="field">
-                        <label for="relance_statue">Statue</label>
-                        <select id="relance_statue" name="statue" required>
-                            <option value="" disabled selected>Sélectionner</option>
-                            <option value="a_voir">A VOIR</option>
-                            <option value="confirme">CONFIRME</option>
-                            <option value="inj">INJ</option>
-                        </select>
-                    </div>
-                    <div class="field">
-                        <label for="relance_a_rappeler">A Rappeler</label>
-                        <select id="relance_a_rappeler" name="a_rappeler" required>
-                            <option value="" disabled selected>Sélectionner</option>
-                            <option value="oui">Oui</option>
-                            <option value="non">Non</option>
-                        </select>
-                    </div>
-                    <div class="field" id="relance_rappel_field">
-                        <label for="relance_rappel_date_jj">Date Rappel</label>
-                        <div class="date-parts" role="group" aria-label="Date rappel JJ/MM/AAAA">
-                            <input type="text" id="relance_rappel_date_jj" class="date-jj" inputmode="numeric" maxlength="2" pattern="\d{0,2}" placeholder=".." autocomplete="off">
-                            <span class="date-sep">/</span>
-                            <input type="text" id="relance_rappel_date_mm" class="date-mm" inputmode="numeric" maxlength="2" pattern="\d{0,2}" placeholder=".." autocomplete="off">
-                            <span class="date-sep">/</span>
-                            <input type="text" id="relance_rappel_date_aaaa" class="date-aaaa" inputmode="numeric" maxlength="4" pattern="\d{4}" placeholder="2026" autocomplete="off">
-                        </div>
-                        <input type="hidden" id="relance_rappel_date" name="date_rappel">
-                    </div>
-                </div>
-                <div class="modal-foot modal-foot-split">
-                    <button type="button" class="btn-ghost" id="btnOpenRelanceImport">Importer</button>
-                    <div class="modal-foot-actions">
-                        <button type="button" class="btn-ghost" id="cancelRelanceModal">Fermer</button>
-                        <button type="submit" class="btn-primary" id="relanceSubmitBtn">Valider</button>
-                    </div>
-                </div>
-            </form>
-        </div>
-    </div>
-
-    <div class="modal-backdrop" id="relanceImportModal" aria-hidden="true">
-        <div class="modal modal-import" role="dialog" aria-modal="true" aria-labelledby="relanceImportModalTitle">
-            <div class="modal-head">
-                <h2 id="relanceImportModalTitle">Importer des numéros</h2>
-                <button type="button" class="modal-close" id="closeRelanceImportModal" aria-label="Fermer">×</button>
-            </div>
-            <div class="modal-body modal-body-import">
-                <div class="import-dropzone" id="relanceImportDropzone" tabindex="0" role="button" aria-label="Choisir une photo ou un PDF">
-                    <input type="file" id="relanceImportFile" accept="image/*,application/pdf,.pdf" hidden>
-                    <div class="import-dropzone-icon" aria-hidden="true">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><path d="M17 8l-5-5-5 5"/><path d="M12 3v12"/></svg>
-                    </div>
-                    <p class="import-dropzone-title">Photo ou PDF de numéros</p>
-                    <p class="import-dropzone-hint">Glisser-déposer ici, ou cliquer pour choisir un fichier</p>
-                    <p class="import-dropzone-file" id="relanceImportFileName"></p>
-                </div>
-                <div class="import-status" id="relanceImportStatus" hidden></div>
-                <div class="import-phones" id="relanceImportPhonesWrap" hidden>
-                    <div class="import-phones-head">
-                        <span id="relanceImportPhonesCount">0 numéro détecté</span>
-                        <button type="button" class="btn-ghost import-phones-clear" id="btnClearRelanceImportPhones">Tout retirer</button>
-                    </div>
-                    <ul class="import-phones-list" id="relanceImportPhoneList"></ul>
-                </div>
+            <div class="modal-body">
+                <div class="print-sheet" id="clientPrintArea"></div>
             </div>
             <div class="modal-foot">
-                <button type="button" class="btn-ghost" id="cancelRelanceImportModal">Fermer</button>
-                <button type="button" class="btn-primary" id="btnConfirmRelanceImport" disabled>Classer dans le tableau</button>
+                <button type="button" class="btn-ghost" id="closeClientPrintBtn">Fermer</button>
+                <button type="button" class="btn-primary" id="printClientBtn">Imprimer</button>
             </div>
         </div>
     </div>
 
-    <div class="modal-backdrop" id="evolutionModal" aria-hidden="true">
-        <div class="modal" role="dialog" aria-modal="true" aria-labelledby="evolutionModalTitle">
-            <div class="modal-head">
-                <h2 id="evolutionModalTitle">Ajouter Evolution Travaux</h2>
-                <button type="button" class="modal-close" id="closeEvolutionModal" aria-label="Fermer">×</button>
-            </div>
-            <form method="post" action="{{ url('/evolutions') }}" id="evolutionForm">
-                @csrf
-                <input type="hidden" name="_method" id="evolution_http_method" value="POST" disabled>
-                <input type="hidden" name="pull" id="evolution_pull_hidden" value="non">
-                <div class="modal-body">
-                    <div class="field">
-                        <label for="evolution_date">Date</label>
-                        <input type="text" id="evolution_date" name="date" required placeholder="JJ/MM/AAAA">
-                    </div>
-                    <div class="field full">
-                        <label for="evolution_titre_projet">Titre Projet (liste)</label>
-                        <select id="evolution_titre_projet" name="titre_projet" required>
-                            <option value="" disabled selected>Sélectionner un projet</option>
-                            @foreach (($projets ?? []) as $projet)
-                                <option value="{{ $projet['nom'] }}">{{ $projet['nom'] }}</option>
-                            @endforeach
-                        </select>
-                    </div>
-                    <div class="field full">
-                        <label for="evolution_description">Description</label>
-                        <textarea id="evolution_description" name="description" required placeholder="Description des travaux" rows="4"></textarea>
-                    </div>
-                </div>
-                <div class="modal-foot">
-                    <button type="button" class="btn-ghost" id="cancelEvolutionModal">Fermer</button>
-                    <button type="submit" class="btn-primary" id="evolutionSubmitBtn">Valider</button>
-                </div>
-            </form>
-        </div>
-    </div>
-
-    <div class="modal-backdrop" id="whatsappMessageModal" aria-hidden="true">
-        <div class="modal" role="dialog" aria-modal="true" aria-labelledby="whatsappMessageModalTitle">
-            <div class="modal-head">
-                <h2 id="whatsappMessageModalTitle">Message WhatsApp</h2>
-                <button type="button" class="modal-close" id="closeWhatsappMessageModal" aria-label="Fermer">×</button>
-            </div>
-            <form id="whatsappMessageForm">
-                <div class="modal-body">
-                    <div class="field full">
-                        <label for="wa_msg_telephone">Téléphone</label>
-                        <input type="text" id="wa_msg_telephone" name="telephone" required placeholder="Téléphone" inputmode="tel">
-                    </div>
-                    <div class="field full">
-                        <label for="wa_msg_body">Message</label>
-                        <textarea id="wa_msg_body" name="message" rows="4" placeholder="Votre message"></textarea>
-                    </div>
-                    <p class="whatsapp-hint" id="wa_msg_hint" style="margin:0;"></p>
-                </div>
-                <div class="modal-foot">
-                    <button type="button" class="btn-ghost" id="cancelWhatsappMessageModal">Fermer</button>
-                    <button type="submit" class="btn-primary" id="whatsappMessageSubmitBtn">Envoyer</button>
-                </div>
-            </form>
-        </div>
-    </div>
-
-    <div class="modal-backdrop" id="whatsappChoiceModal" aria-hidden="true">
-        <div class="modal" role="dialog" aria-modal="true" aria-labelledby="whatsappChoiceModalTitle" style="width:min(420px,100%);">
-            <div class="modal-head">
-                <h2 id="whatsappChoiceModalTitle">WhatsApp</h2>
-                <button type="button" class="modal-close" id="closeWhatsappChoiceModal" aria-label="Fermer">×</button>
-            </div>
-            <div class="modal-body" style="grid-template-columns:1fr;">
-                <p class="whatsapp-hint" id="whatsappChoiceHint" style="margin:0;">Choisissez une action pour ce client.</p>
-                <div class="wa-choice-grid">
-                    <button type="button" class="wa-choice-btn" id="btnWaChoiceMessage">
-                        <strong>Message</strong>
-                        <span>Envoyer un message WhatsApp</span>
-                    </button>
-                    <button type="button" class="wa-choice-btn is-devis" id="btnWaChoiceDevis">
-                        <strong>Devis</strong>
-                        <span>Créer et télécharger un devis PDF</span>
-                    </button>
-                </div>
-            </div>
-            <div class="modal-foot">
-                <button type="button" class="btn-ghost" id="cancelWhatsappChoiceModal">Fermer</button>
-            </div>
-        </div>
-    </div>
-
-    <div class="modal-backdrop" id="whatsappDevisModal" aria-hidden="true">
-        <div class="modal" role="dialog" aria-modal="true" aria-labelledby="whatsappDevisModalTitle">
-            <div class="modal-head">
-                <h2 id="whatsappDevisModalTitle">Devis PDF</h2>
-                <button type="button" class="modal-close" id="closeWhatsappDevisModal" aria-label="Fermer">×</button>
-            </div>
-            <form id="whatsappDevisForm">
-                <div class="modal-body">
-                    <div class="field">
-                        <label for="wa_devis_date">Date</label>
-                        <input type="text" id="wa_devis_date" name="date" readonly>
-                    </div>
-                    <div class="field">
-                        <label for="wa_devis_telephone">Téléphone</label>
-                        <input type="text" id="wa_devis_telephone" name="telephone" readonly>
-                    </div>
-                    <div class="field full">
-                        <label for="wa_devis_nom">Nom Complet</label>
-                        <input type="text" id="wa_devis_nom" name="nom_complet" readonly>
-                    </div>
-                    <div class="field full">
-                        <label for="wa_devis_titre">Titre de projet</label>
-                        <input type="text" id="wa_devis_titre" name="titre" required placeholder="Titre du projet">
-                    </div>
-                    <div class="field full">
-                        <label for="wa_devis_description">Description</label>
-                        <textarea id="wa_devis_description" name="description" rows="3" required placeholder="Description du projet"></textarea>
-                    </div>
-                    <div class="field">
-                        <label for="wa_devis_montant">Montant</label>
-                        <input type="number" id="wa_devis_montant" name="montant" required min="0" step="0.01" placeholder="0.00" inputmode="decimal">
-                    </div>
-                    <div class="field">
-                        <label for="wa_devis_delai">Délai de travail</label>
-                        <input type="text" id="wa_devis_delai" name="delai" required placeholder="Ex: 15 jours">
-                    </div>
-                    <div class="devis-nb-box">
-                        <strong>NB :</strong>
-                        <p id="wa_devis_nb_text">Concernant les modalités de paiement, le montant total du projet sera réparti en 3 tranches :
-
-• 30 % à la commande : acompte pour le lancement du projet et le début des travaux.
-• 40 % à mi-parcours : paiement effectué après validation de l’avancement principal du projet.
-• 30 % à la livraison finale : solde à régler après finalisation, vérification et validation du travail.
-
-Cette organisation permet d’assurer un suivi clair du projet et de garantir un bon déroulement des différentes étapes jusqu’à la livraison finale.
-Merci pour votre confiance.</p>
-                    </div>
-                </div>
-                <div class="modal-foot">
-                    <button type="button" class="btn-ghost" id="cancelWhatsappDevisModal">Fermer</button>
-                    <button type="submit" class="btn-primary" id="whatsappDevisSubmitBtn">Télécharger</button>
-                </div>
-            </form>
-        </div>
-    </div>
-
-    <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+    @if ($canManageProspectionCommercial ?? false)
+        <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
+    @endif
     <script>
-        if (window.pdfjsLib) {
-            pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
-        }
-    </script>
-    <script>
-        const sidebar = document.getElementById('sidebar');
-        const toggle = document.getElementById('menuToggle');
-        const sidebarClose = document.getElementById('sidebarClose');
-        const sidebarBackdrop = document.getElementById('sidebarBackdrop');
-        const clientGroup = document.getElementById('clientGroup');
-        const clientToggle = document.getElementById('clientToggle');
-        const projetGroup = document.getElementById('projetGroup');
-        const projetToggle = document.getElementById('projetToggle');
-        const paiementGroup = document.getElementById('paiementGroup');
-        const paiementToggle = document.getElementById('paiementToggle');
-        const configGroup = document.getElementById('configGroup');
-        const configToggle = document.getElementById('configToggle');
-        const panels = document.querySelectorAll('.panel');
-        const modal = document.getElementById('clientModal');
-        const projetModal = document.getElementById('projetModal');
-        const paiementModal = document.getElementById('paiementModal');
-        const utilisateurModal = document.getElementById('utilisateurModal');
-        const evolutionModal = document.getElementById('evolutionModal');
-        const relanceModal = document.getElementById('relanceModal');
-        const autorisationModal = document.getElementById('autorisationModal');
-        const btnAdd = document.getElementById('btnAddClient');
-        const btnAddProjet = document.getElementById('btnAddProjet');
-        const btnAddPaiement = document.getElementById('btnAddPaiement');
-        const btnAddUtilisateur = document.getElementById('btnAddUtilisateur');
-        const btnCloseUtilisateur = document.getElementById('btnCloseUtilisateur');
-        const btnAddEvolution = document.getElementById('btnAddEvolution');
-        const btnCloseEvolution = document.getElementById('btnCloseEvolution');
-        const btnAddRelance = document.getElementById('btnAddRelance');
-        const btnAddAutorisation = document.getElementById('btnAddAutorisation');
-        const btnCloseAutorisation = document.getElementById('btnCloseAutorisation');
-        const closeModal = document.getElementById('closeClientModal');
-        const cancelModal = document.getElementById('cancelClientModal');
-        const closeProjetModal = document.getElementById('closeProjetModal');
-        const cancelProjetModal = document.getElementById('cancelProjetModal');
-        const closePaiementModal = document.getElementById('closePaiementModal');
-        const cancelPaiementModal = document.getElementById('cancelPaiementModal');
-        const closeUtilisateurModal = document.getElementById('closeUtilisateurModal');
-        const cancelUtilisateurModal = document.getElementById('cancelUtilisateurModal');
-        const closeEvolutionModal = document.getElementById('closeEvolutionModal');
-        const cancelEvolutionModal = document.getElementById('cancelEvolutionModal');
-        const closeRelanceModal = document.getElementById('closeRelanceModal');
-        const cancelRelanceModal = document.getElementById('cancelRelanceModal');
-        const closeAutorisationModal = document.getElementById('closeAutorisationModal');
-        const cancelAutorisationModal = document.getElementById('cancelAutorisationModal');
-        const projetsData = @json($projets ?? []);
         const clientsData = @json($clients ?? []);
-        const paiementsData = @json($paiements ?? []);
+        const prospectionsAllData = @json($prospectionsAll ?? $prospections ?? []);
+        const canManageProspectionCommercial = @json($canManageProspectionCommercial ?? false);
+        const defaultPanel = @json($defaultPanel ?? 'dashboard');
+        const isCommercialRole = @json($isCommercialRole ?? false);
         const utilisateursData = @json($utilisateurs ?? []);
-        const evolutionsData = @json($evolutions ?? []);
-        const relancesData = @json($relances ?? []);
-        const autorisationsData = @json($autorisations ?? []);
-        const menuSectionsData = @json($menuSections ?? []);
+        const ficheSteData = @json($ficheSte ?? []);
+        const sidebar = document.getElementById('sidebar');
+        const sidebarBackdrop = document.getElementById('sidebarBackdrop');
+        const menuToggle = document.getElementById('menuToggle');
+        const navParents = document.querySelectorAll('.nav-item[data-panel]:not(.nav-subitem)');
+        const navSubitems = document.querySelectorAll('.nav-subitem');
+        const navGroups = document.querySelectorAll('.nav-group');
+        const panels = document.querySelectorAll('.panel');
 
-        function parseDateFrParts(dateStr) {
-            const m = String(dateStr || '').trim().match(/^(\d{2})\/(\d{2})\/(\d{4})$/);
-            if (!m) return null;
-            const day = Number(m[1]);
-            const month = Number(m[2]);
-            const year = Number(m[3]);
-            const dt = new Date(year, month - 1, day);
-            if (dt.getFullYear() !== year || dt.getMonth() !== month - 1 || dt.getDate() !== day) return null;
-            dt.setHours(0, 0, 0, 0);
-            return dt;
-        }
-
-        function daysUntilRelance(dateStr) {
-            const target = parseDateFrParts(dateStr);
-            if (!target) return null;
-            const today = new Date();
-            today.setHours(0, 0, 0, 0);
-            return Math.round((target - today) / 86400000);
-        }
-
-        function formatRelanceDaysLabel(diff) {
-            if (diff === null) return 'Date à compléter';
-            if (diff === 0) return 'Aujourd’hui';
-            if (diff === 1) return 'Demain';
-            if (diff === -1) return 'En retard d’1 jour';
-            if (diff > 1) return `Dans ${diff} jours`;
-            return `En retard de ${Math.abs(diff)} jours`;
-        }
-
-        function getRelanceNotifItems() {
-            return (relancesData || [])
-                .filter((r) => (r.a_rappeler || '') === 'oui')
-                .map((r) => {
-                    const dateRappel = String(r.date_rappel || '').trim();
-                    const complete = /^\d{2}\/\d{2}\/\d{4}$/.test(dateRappel);
-                    const diff = complete ? daysUntilRelance(dateRappel) : null;
-                    return {
-                        id: r.id,
-                        telephone: r.telephone || '—',
-                        date_rappel: complete ? dateRappel : (dateRappel || '../../2026'),
-                        diff,
-                        sort: diff === null ? 9999 : diff,
-                    };
-                })
-                .sort((a, b) => a.sort - b.sort);
-        }
-
-        function refreshRelanceNotif() {
-            const badge = document.getElementById('relanceNotifBadge');
-            const list = document.getElementById('relanceNotifList');
-            const countLabel = document.getElementById('relanceNotifCountLabel');
-            if (!badge || !list || !countLabel) return;
-
-            const items = getRelanceNotifItems();
-            const n = items.length;
-            badge.textContent = String(n);
-            badge.classList.toggle('is-empty', n === 0);
-            countLabel.textContent = n === 0 ? '0 numéro' : (n === 1 ? '1 numéro' : `${n} numéros`);
-
-            if (n === 0) {
-                list.innerHTML = '<li class="notif-empty">Aucun numéro à relancer</li>';
-                return;
-            }
-
-            list.innerHTML = items.map((item) => {
-                const cls = item.diff === 0 ? ' is-today' : (item.diff !== null && item.diff < 0 ? ' is-overdue' : '');
-                return `<li>
-                    <button type="button" class="notif-item${cls}" data-id="${String(item.id).replace(/"/g, '&quot;')}">
-                        <span class="notif-item-phone">${String(item.telephone).replace(/</g, '&lt;')}</span>
-                        <span class="notif-item-date">${String(item.date_rappel).replace(/</g, '&lt;')}</span>
-                        <span class="notif-item-days">${formatRelanceDaysLabel(item.diff)}</span>
-                    </button>
-                </li>`;
-            }).join('');
-        }
-
-        function openRelanceNotifPanel(open) {
-            const btn = document.getElementById('btnRelanceNotif');
-            const panel = document.getElementById('relanceNotifPanel');
-            if (!btn || !panel) return;
-            panel.classList.toggle('open', open);
-            btn.classList.toggle('is-open', open);
-            btn.setAttribute('aria-expanded', open ? 'true' : 'false');
-            panel.setAttribute('aria-hidden', open ? 'false' : 'true');
-            if (open) {
-                document.getElementById('whatsappNavPanel')?.classList.remove('open');
-                document.getElementById('btnWhatsappNav')?.classList.remove('is-open');
-                document.getElementById('btnWhatsappNav')?.setAttribute('aria-expanded', 'false');
-            }
-        }
-
-        (function initRelanceNotif() {
-            const btn = document.getElementById('btnRelanceNotif');
-            const panel = document.getElementById('relanceNotifPanel');
-            const list = document.getElementById('relanceNotifList');
-            if (!btn || !panel || !list) return;
-
-            refreshRelanceNotif();
-
-            btn.addEventListener('click', (e) => {
-                e.stopPropagation();
-                openRelanceNotifPanel(!panel.classList.contains('open'));
-            });
-
-            document.addEventListener('click', (e) => {
-                if (!e.target.closest('#relanceNotifWrap')) {
-                    openRelanceNotifPanel(false);
+        function collapseAllNavGroups(except = null) {
+            navGroups.forEach((group) => {
+                if (group !== except) {
+                    group.classList.remove('expanded');
                 }
             });
+        }
 
-            list.addEventListener('click', (e) => {
-                const itemBtn = e.target.closest('.notif-item[data-id]');
-                if (!itemBtn) return;
-                const id = itemBtn.dataset.id;
-                openRelanceNotifPanel(false);
-                if (typeof showPanel === 'function') showPanel('fiche-relance');
-                const statueFilter = document.getElementById('filter_relance_statue');
-                if (statueFilter) {
-                    statueFilter.value = '';
-                    filterRelancesTable();
-                }
-                const row = document.querySelector(`#relancesTableBody tr[data-id="${CSS.escape(id)}"]`);
-                if (row) {
-                    row.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                    row.style.outline = '2px solid rgba(94, 176, 255, 0.7)';
-                    setTimeout(() => { row.style.outline = ''; }, 1800);
+        function expandNavGroup(name, forceOpen = true) {
+            navGroups.forEach((group) => {
+                if (group.dataset.navGroup === name) {
+                    group.classList.toggle('expanded', forceOpen);
+                } else if (forceOpen) {
+                    group.classList.remove('expanded');
                 }
             });
-        })();
+        }
 
-        const userStatueLabels = {
-            admin: 'Administrateur',
-            manager: 'Manager',
-            comptable: 'Comptable',
-            vendeur: 'Vendeur',
-            stock: 'Responsable stock',
-        };
+        function setActiveNavSubitem(type, value) {
+            navSubitems.forEach((item) => {
+                const match = type === 'config'
+                    ? item.dataset.config === value
+                    : item.dataset.prospection === value;
+                item.classList.toggle('active', match);
+            });
+        }
 
-        const relanceStatueLabels = {
-            a_voir: 'A VOIR',
-            confirme: 'CONFIRME',
-            inj: 'INJ',
-        };
+        function showPanel(name, { expandGroup = true } = {}) {
+            panels.forEach((panel) => panel.classList.toggle('active', panel.id === `panel-${name}`));
+            navParents.forEach((item) => item.classList.toggle('active', item.dataset.panel === name));
 
-        const statueLabels = {
-            actif: 'EN COURS',
-            attente: 'EN ATTENTE',
-            annule: 'ANNULÉ',
-            execute: 'EXÉCUTÉ',
-        };
-
-        function formatPdfValue(value) {
-            if (typeof value === 'number') {
-                return Number(value).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ' ');
+            const group = document.querySelector(`.nav-group[data-nav-group="${name}"]`);
+            if (group && expandGroup) {
+                expandNavGroup(name, true);
+            } else if (!group) {
+                collapseAllNavGroups();
             }
 
-            return value ?? '';
-        }
-
-        function openRecordPdf(title, ref, fields) {
-            const rows = fields
-                .map(([label, value]) => `<tr><th>${label}</th><td>${formatPdfValue(value)}</td></tr>`)
-                .join('');
-
-            const html = `<!DOCTYPE html><html lang="fr"><head><meta charset="utf-8"><title>${title}</title>
-                <style>
-                    body { font-family: Arial, sans-serif; padding: 24px; text-transform: uppercase; color: #111; }
-                    h1 { font-size: 18px; margin-bottom: 4px; }
-                    p { color: #555; margin: 0 0 16px; }
-                    table { border-collapse: collapse; width: 100%; }
-                    th, td { border: 1px solid #ccc; padding: 8px 10px; text-align: left; font-size: 13px; }
-                    th { background: #f3f6fb; width: 38%; font-weight: 700; }
-                </style></head><body>
-                <h1>EVOPRO — ${title}</h1>
-                <p>Réf : ${ref}</p>
-                <table>${rows}</table>
-                </body></html>`;
-
-            const printWindow = window.open('', '_blank');
-            if (!printWindow) return;
-
-            printWindow.document.write(html);
-            printWindow.document.close();
-            printWindow.onload = () => {
-                printWindow.focus();
-                printWindow.print();
-            };
-        }
-
-        const shell = document.querySelector('.shell');
-
-        function isMobileSidebar() {
-            return window.innerWidth <= 1200;
-        }
-
-        function updateMenuToggleState(isOpen) {
-            if (!toggle) return;
-            toggle.classList.toggle('is-open', isOpen);
-            toggle.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
-            toggle.setAttribute('aria-label', isOpen ? 'Fermer le menu' : 'Ouvrir le menu');
-            toggle.title = isOpen ? 'Fermer le menu' : 'Ouvrir le menu';
-        }
-
-        function openSidebar() {
-            if (isMobileSidebar()) {
-                shell?.classList.remove('sidebar-collapsed');
-                sidebar?.classList.add('open');
-                sidebarBackdrop?.classList.add('open');
-                sidebarBackdrop?.setAttribute('aria-hidden', 'false');
-                document.body.style.overflow = 'hidden';
-            } else {
-                shell?.classList.remove('sidebar-collapsed');
-                try { localStorage.setItem('evopro_sidebar_collapsed', '0'); } catch (e) {}
-            }
-            updateMenuToggleState(true);
-        }
-
-        function closeSidebar() {
-            if (isMobileSidebar()) {
-                sidebar?.classList.remove('open');
-                sidebarBackdrop?.classList.remove('open');
-                sidebarBackdrop?.setAttribute('aria-hidden', 'true');
-                document.body.style.overflow = '';
-            } else {
-                shell?.classList.add('sidebar-collapsed');
-                try { localStorage.setItem('evopro_sidebar_collapsed', '1'); } catch (e) {}
-            }
-            updateMenuToggleState(false);
-        }
-
-        function toggleSidebar() {
-            if (isMobileSidebar()) {
-                if (sidebar?.classList.contains('open')) closeSidebar();
-                else openSidebar();
-                return;
-            }
-            if (shell?.classList.contains('sidebar-collapsed')) openSidebar();
-            else closeSidebar();
-        }
-
-        function syncSidebarForViewport() {
-            if (isMobileSidebar()) {
-                shell?.classList.remove('sidebar-collapsed');
-                if (!sidebar?.classList.contains('open')) updateMenuToggleState(false);
-                else updateMenuToggleState(true);
-                return;
-            }
-            document.body.style.overflow = '';
             sidebar?.classList.remove('open');
             sidebarBackdrop?.classList.remove('open');
-            sidebarBackdrop?.setAttribute('aria-hidden', 'true');
-            let collapsed = false;
-            try { collapsed = localStorage.getItem('evopro_sidebar_collapsed') === '1'; } catch (e) {}
-            shell?.classList.toggle('sidebar-collapsed', collapsed);
-            updateMenuToggleState(!collapsed);
         }
 
-        toggle?.addEventListener('click', toggleSidebar);
-        sidebarClose?.addEventListener('click', closeSidebar);
-        sidebarBackdrop?.addEventListener('click', closeSidebar);
-        window.addEventListener('resize', syncSidebarForViewport);
-        syncSidebarForViewport();
+        navParents.forEach((item) => {
+            item.addEventListener('click', () => {
+                const panel = item.dataset.panel;
+                const group = item.closest('.nav-group');
 
-        clientToggle?.addEventListener('click', () => {
-            clientGroup?.classList.toggle('open');
-        });
+                if (group && item.classList.contains('has-sublist')) {
+                    const isExpanded = group.classList.contains('expanded');
+                    const isActive = item.classList.contains('active');
 
-        projetToggle?.addEventListener('click', () => {
-            projetGroup?.classList.toggle('open');
-        });
-
-        paiementToggle?.addEventListener('click', () => {
-            paiementGroup?.classList.toggle('open');
-        });
-
-        configToggle?.addEventListener('click', () => {
-            configGroup?.classList.toggle('open');
-        });
-
-        function applyTheme(theme) {
-            document.documentElement.setAttribute('data-theme', theme);
-            localStorage.setItem('evopro-theme', theme);
-            const isLight = theme === 'light';
-
-            document.querySelectorAll('.theme-icon-dark, .theme-icon-dark-nav').forEach((el) => {
-                el.style.display = isLight ? 'none' : '';
-            });
-            document.querySelectorAll('.theme-icon-light, .theme-icon-light-nav').forEach((el) => {
-                el.style.display = isLight ? '' : 'none';
-            });
-        }
-
-        function toggleTheme() {
-            const current = document.documentElement.getAttribute('data-theme') || 'dark';
-            applyTheme(current === 'light' ? 'dark' : 'light');
-        }
-
-        document.getElementById('themeToggleNav')?.addEventListener('click', toggleTheme);
-        applyTheme(document.documentElement.getAttribute('data-theme') || 'dark');
-
-        (function initDashboardCardsToggle() {
-            const panel = document.getElementById('panel-dashboard');
-            const btn = document.getElementById('btnToggleCards');
-            if (!panel || !btn) return;
-            const apply = (hidden) => {
-                panel.classList.toggle('cards-hidden', hidden);
-                document.documentElement.classList.toggle('cards-hidden-boot', hidden);
-                try { localStorage.setItem('evopro-cards-hidden', hidden ? '1' : '0'); } catch (e) {}
-                btn.textContent = hidden ? 'Afficher les cartes' : 'Masquer les cartes';
-            };
-            apply(localStorage.getItem('evopro-cards-hidden') === '1');
-            btn.addEventListener('click', () => apply(!panel.classList.contains('cards-hidden')));
-        })();
-
-        function showPanel(name) {
-            panels.forEach((panel) => panel.classList.toggle('active', panel.id === `panel-${name}`));
-            document.querySelectorAll('.nav-item').forEach((el) => el.classList.remove('active'));
-            document.querySelectorAll('.submenu-link').forEach((el) => el.classList.remove('active'));
-            document.getElementById('dashboardNavBtn')?.classList.toggle('active', name === 'dashboard');
-
-            if (name === 'fiche-client') {
-                clientGroup?.classList.add('open');
-                clientToggle?.classList.add('active');
-                document.querySelector('[data-panel="fiche-client"]')?.classList.add('active');
-            } else if (name === 'fiche-relance') {
-                clientGroup?.classList.add('open');
-                clientToggle?.classList.add('active');
-                document.querySelector('[data-panel="fiche-relance"]')?.classList.add('active');
-            } else if (name === 'fiche-projet') {
-                projetGroup?.classList.add('open');
-                projetToggle?.classList.add('active');
-                document.querySelector('[data-panel="fiche-projet"]')?.classList.add('active');
-            } else if (name === 'fiche-evolution') {
-                projetGroup?.classList.add('open');
-                projetToggle?.classList.add('active');
-                document.querySelector('[data-panel="fiche-evolution"]')?.classList.add('active');
-            } else if (name === 'fiche-paiement') {
-                paiementGroup?.classList.add('open');
-                paiementToggle?.classList.add('active');
-                document.querySelector('[data-panel="fiche-paiement"]')?.classList.add('active');
-            } else if (name === 'fiche-utilisateur') {
-                configGroup?.classList.add('open');
-                configToggle?.classList.add('active');
-                document.querySelector('[data-panel="fiche-utilisateur"]')?.classList.add('active');
-            } else if (name === 'fiche-autorisation') {
-                configGroup?.classList.add('open');
-                configToggle?.classList.add('active');
-                document.querySelector('[data-panel="fiche-autorisation"]')?.classList.add('active');
-            } else if (name === 'fiche-whatsapp') {
-                configGroup?.classList.add('open');
-                configToggle?.classList.add('active');
-                document.querySelector('[data-panel="fiche-whatsapp"]')?.classList.add('active');
-            } else if (name === 'dashboard') {
-                document.querySelector(`.nav-item[data-panel="dashboard"]`)?.classList.add('active');
-            }
-
-            if (isMobileSidebar()) closeSidebar();
-        }
-
-        document.querySelectorAll('[data-panel]').forEach((link) => {
-            link.addEventListener('click', (e) => {
-                e.preventDefault();
-                showPanel(link.dataset.panel);
-            });
-        });
-
-        function todayFr() {
-            const d = new Date();
-            return d.toLocaleDateString('fr-FR');
-        }
-
-        function setupDateParts(prefix) {
-            const jj = document.getElementById(`${prefix}_date_jj`);
-            const mm = document.getElementById(`${prefix}_date_mm`);
-            const aaaa = document.getElementById(`${prefix}_date_aaaa`);
-            const hidden = document.getElementById(`${prefix}_date`);
-
-            function sync() {
-                const day = (jj?.value || '').trim();
-                const month = (mm?.value || '').trim();
-                const year = (aaaa?.value || '').trim() || '2026';
-                if (hidden) {
-                    if (day.length === 2 && month.length === 2 && year.length === 4) {
-                        hidden.value = `${day}/${month}/${year}`;
-                    } else if (year.length === 4) {
-                        hidden.value = `${day.length === 2 ? day : '..'}/${month.length === 2 ? month : '..'}/${year}`;
-                    } else {
-                        hidden.value = '../../2026';
+                    if (isExpanded && isActive) {
+                        group.classList.remove('expanded');
+                        return;
                     }
-                }
-            }
 
-            function setParts(dateStr, { emptyDayMonth = false, defaultYear = null } = {}) {
-                const year = defaultYear || String(new Date().getFullYear());
-                if (emptyDayMonth) {
-                    if (jj) jj.value = '';
-                    if (mm) mm.value = '';
-                    if (aaaa) aaaa.value = year;
-                    sync();
-                    return;
-                }
-
-                const parts = String(dateStr || '').split('/');
-                const dayPart = (parts[0] || '').replace(/[^\d.]/g, '').slice(0, 2);
-                const monthPart = (parts[1] || '').replace(/[^\d.]/g, '').slice(0, 2);
-                const yearPart = (parts[2] || '').replace(/\D/g, '').slice(0, 4);
-                if (jj) jj.value = dayPart === '..' ? '' : dayPart.replace(/\D/g, '').slice(0, 2);
-                if (mm) mm.value = monthPart === '..' ? '' : monthPart.replace(/\D/g, '').slice(0, 2);
-                if (aaaa) aaaa.value = yearPart || year;
-                sync();
-            }
-
-            function bindPart(input, maxLen, nextInput) {
-                if (!input) return;
-                input.addEventListener('input', () => {
-                    input.value = input.value.replace(/\D/g, '').slice(0, maxLen);
-                    sync();
-                    if (input.value.length === maxLen && nextInput) {
-                        nextInput.focus();
-                        nextInput.select();
+                    showPanel(panel);
+                    if (panel === 'configuration') {
+                        showConfigSection('utilisateur');
                     }
-                });
-                input.addEventListener('blur', sync);
-            }
-
-            bindPart(jj, 2, mm);
-            bindPart(mm, 2, aaaa);
-            bindPart(aaaa, 4, null);
-
-            return { sync, setParts, jj, mm, aaaa, fieldIds: [`${prefix}_date_jj`, `${prefix}_date_mm`, `${prefix}_date_aaaa`] };
-        }
-
-        function validateDatePartsSubmit(form, dateApi, label, { allowIncomplete = false } = {}) {
-            form?.addEventListener('submit', (e) => {
-                dateApi.sync();
-                const day = (dateApi.jj?.value || '').trim();
-                const month = (dateApi.mm?.value || '').trim();
-                const year = (dateApi.aaaa?.value || '').trim();
-                if (allowIncomplete) {
-                    if (!/^\d{4}$/.test(year)) {
-                        e.preventDefault();
-                        alert(`${label} invalide : année AAAA requise.`);
-                        dateApi.aaaa?.focus();
+                    if (panel === 'prospection') {
+                        showProspectionView('liste');
                     }
                     return;
                 }
-                if (!/^\d{2}$/.test(day) || !/^\d{2}$/.test(month) || !/^\d{4}$/.test(year)) {
-                    e.preventDefault();
-                    alert(`${label} invalide : JJ (2 chiffres) / MM (2 chiffres) / AAAA (4 chiffres).`);
-                    dateApi.jj?.focus();
+
+                showPanel(panel);
+                if (panel === 'prospection') {
+                    showProspectionView('liste');
                 }
             });
-        }
-
-        const clientDateApi = setupDateParts('client');
-        const projetDateApi = setupDateParts('projet');
-        const paiementDateApi = setupDateParts('paiement');
-        const relanceDateApi = setupDateParts('relance');
-        const relanceRappelDateApi = setupDateParts('relance_rappel');
-        validateDatePartsSubmit(document.getElementById('clientForm'), clientDateApi, 'Date');
-        validateDatePartsSubmit(document.getElementById('projetForm'), projetDateApi, 'Date');
-        validateDatePartsSubmit(document.getElementById('paiementForm'), paiementDateApi, 'Date');
-        validateDatePartsSubmit(document.getElementById('relanceForm'), relanceDateApi, 'Date');
-        document.getElementById('relanceForm')?.addEventListener('submit', (e) => {
-            const rappeler = document.getElementById('relance_a_rappeler')?.value || '';
-            if (rappeler !== 'oui') {
-                relanceRappelDateApi.setParts('', { emptyDayMonth: true, defaultYear: '2026' });
-                return;
-            }
-            relanceRappelDateApi.sync();
-            const year = (relanceRappelDateApi.aaaa?.value || '').trim();
-            if (!/^\d{4}$/.test(year)) {
-                e.preventDefault();
-                alert('Date rappel invalide : année AAAA requise.');
-                relanceRappelDateApi.aaaa?.focus();
-            }
         });
 
-        function nextRef() {
-            const rows = document.querySelectorAll('#clientsTableBody tr[data-id]');
-            const n = rows.length + 1;
-            return 'CLI-' + String(n).padStart(4, '0');
-        }
-
-        function openClientModal() {
-            const clientForm = document.getElementById('clientForm');
-            const clientModalTitle = document.getElementById('clientModalTitle');
-            const clientSubmitBtn = document.getElementById('clientSubmitBtn');
-            const clientHttpMethod = document.getElementById('client_http_method');
-
-            clientForm.action = '{{ url('/clients') }}';
-            clientHttpMethod.disabled = true;
-            clientHttpMethod.value = 'POST';
-            clientModalTitle.textContent = 'Ajouter un client';
-            clientSubmitBtn.style.display = '';
-
-            clientDateApi.setParts('', { emptyDayMonth: true });
-            document.getElementById('client_ref').value = nextRef();
-            document.getElementById('client_nom').value = '';
-            document.getElementById('client_ville').value = '';
-            document.getElementById('client_contact').value = '';
-            document.getElementById('client_activite').value = '';
-
-            setClientFormFields('create');
-
-            modal.classList.add('open');
-            modal.setAttribute('aria-hidden', 'false');
-            clientDateApi.jj?.focus();
-        }
-
-        const clientFieldIds = [...clientDateApi.fieldIds, 'client_nom', 'client_ville', 'client_contact', 'client_activite'];
-
-        function setClientFormFields(mode) {
-            clientFieldIds.forEach((id) => {
-                const field = document.getElementById(id);
-                if (field) field.disabled = mode === 'view';
-            });
-        }
-
-        function fillClientForm(client) {
-            clientDateApi.setParts(client.date || '');
-            document.getElementById('client_ref').value = client.ref || '';
-            document.getElementById('client_nom').value = client.nom || '';
-            document.getElementById('client_ville').value = client.ville || '';
-            document.getElementById('client_contact').value = client.contact || '';
-            document.getElementById('client_activite').value = client.activite || '';
-        }
-
-        function openClientView(client) {
-            const clientModalTitle = document.getElementById('clientModalTitle');
-            const clientSubmitBtn = document.getElementById('clientSubmitBtn');
-
-            fillClientForm(client);
-            clientModalTitle.textContent = 'Voir Client';
-            clientSubmitBtn.style.display = 'none';
-            setClientFormFields('view');
-
-            modal.classList.add('open');
-            modal.setAttribute('aria-hidden', 'false');
-        }
-
-        function openClientEdit(client) {
-            const clientForm = document.getElementById('clientForm');
-            const clientModalTitle = document.getElementById('clientModalTitle');
-            const clientSubmitBtn = document.getElementById('clientSubmitBtn');
-            const clientHttpMethod = document.getElementById('client_http_method');
-
-            clientForm.action = `{{ url('/clients') }}/${client.id}`;
-            clientHttpMethod.disabled = false;
-            clientHttpMethod.value = 'PUT';
-            fillClientForm(client);
-            clientModalTitle.textContent = 'Modifier Client';
-            clientSubmitBtn.style.display = '';
-            setClientFormFields('edit');
-
-            modal.classList.add('open');
-            modal.setAttribute('aria-hidden', 'false');
-            document.getElementById('client_nom').focus();
-        }
-
-        function openClientPdf(client) {
-            openRecordPdf('FICHE CLIENT', client.ref || '', [
-                ['Date', client.date],
-                ['Nom Client', client.nom],
-                ['Ville', client.ville],
-                ['Contact', client.contact],
-                ['Activité', client.activite],
-                ['Solde', client.solde],
-            ]);
-        }
-
-        document.getElementById('clientsTableBody')?.addEventListener('click', (e) => {
-            const row = e.target.closest('tr[data-id]');
-            if (!row) return;
-
-            const client = clientsData.find((c) => c.id === row.dataset.id);
-            if (!client) return;
-
-            if (e.target.closest('.action-btn.voir')) openClientView(client);
-            if (e.target.closest('.action-btn.modifier')) openClientEdit(client);
-            if (e.target.closest('.action-btn.pdf')) openClientPdf(client);
-        });
-
-        function closeClientModal() {
-            modal.classList.remove('open');
-            modal.setAttribute('aria-hidden', 'true');
-        }
-
-        btnAdd?.addEventListener('click', openClientModal);
-        closeModal?.addEventListener('click', closeClientModal);
-        cancelModal?.addEventListener('click', closeClientModal);
-        modal?.addEventListener('click', (e) => {
-            if (e.target === modal) closeClientModal();
-        });
-
-        function fillUtilisateurForm(utilisateur) {
-            document.getElementById('utilisateur_date').value = utilisateur.date || '';
-            document.getElementById('utilisateur_nom_complet').value = utilisateur.nom_complet || '';
-            document.getElementById('utilisateur_statue').value = utilisateur.statue || '';
-            document.getElementById('utilisateur_login').value = utilisateur.login || '';
-            document.getElementById('utilisateur_password').value = utilisateur.password || '';
-        }
-
-        const utilisateurFieldIds = ['utilisateur_nom_complet', 'utilisateur_statue', 'utilisateur_login', 'utilisateur_password'];
-
-        function setUtilisateurFormFields(mode) {
-            utilisateurFieldIds.forEach((id) => {
-                const field = document.getElementById(id);
-                if (field) field.disabled = mode === 'view';
-            });
-        }
-
-        function openUtilisateurModal() {
-            const utilisateurForm = document.getElementById('utilisateurForm');
-            const utilisateurModalTitle = document.getElementById('utilisateurModalTitle');
-            const utilisateurSubmitBtn = document.getElementById('utilisateurSubmitBtn');
-            const utilisateurHttpMethod = document.getElementById('utilisateur_http_method');
-            const passwordField = document.getElementById('utilisateur_password');
-
-            utilisateurForm.action = '{{ url('/utilisateurs') }}';
-            utilisateurHttpMethod.disabled = true;
-            utilisateurHttpMethod.value = 'POST';
-            utilisateurModalTitle.textContent = 'Ajouter Utilisateur';
-            utilisateurSubmitBtn.style.display = '';
-            passwordField.required = true;
-
-            document.getElementById('utilisateur_date').value = todayFr();
-            document.getElementById('utilisateur_nom_complet').value = '';
-            document.getElementById('utilisateur_statue').value = '';
-            document.getElementById('utilisateur_login').value = '';
-            passwordField.value = '';
-
-            setUtilisateurFormFields('create');
-
-            utilisateurModal.classList.add('open');
-            utilisateurModal.setAttribute('aria-hidden', 'false');
-            document.getElementById('utilisateur_nom_complet').focus();
-        }
-
-        function openUtilisateurView(utilisateur) {
-            const utilisateurModalTitle = document.getElementById('utilisateurModalTitle');
-            const utilisateurSubmitBtn = document.getElementById('utilisateurSubmitBtn');
-
-            fillUtilisateurForm(utilisateur);
-            utilisateurModalTitle.textContent = 'Voir Utilisateur';
-            utilisateurSubmitBtn.style.display = 'none';
-            setUtilisateurFormFields('view');
-
-            utilisateurModal.classList.add('open');
-            utilisateurModal.setAttribute('aria-hidden', 'false');
-        }
-
-        function openUtilisateurEdit(utilisateur) {
-            const utilisateurForm = document.getElementById('utilisateurForm');
-            const utilisateurModalTitle = document.getElementById('utilisateurModalTitle');
-            const utilisateurSubmitBtn = document.getElementById('utilisateurSubmitBtn');
-            const utilisateurHttpMethod = document.getElementById('utilisateur_http_method');
-            const passwordField = document.getElementById('utilisateur_password');
-
-            utilisateurForm.action = `{{ url('/utilisateurs') }}/${utilisateur.id}`;
-            utilisateurHttpMethod.disabled = false;
-            utilisateurHttpMethod.value = 'PUT';
-            fillUtilisateurForm(utilisateur);
-            utilisateurModalTitle.textContent = 'Modifier Utilisateur';
-            utilisateurSubmitBtn.style.display = '';
-            passwordField.required = false;
-            passwordField.value = '';
-            passwordField.placeholder = 'Laisser vide pour ne pas changer';
-            setUtilisateurFormFields('edit');
-
-            utilisateurModal.classList.add('open');
-            utilisateurModal.setAttribute('aria-hidden', 'false');
-            document.getElementById('utilisateur_nom_complet').focus();
-        }
-
-        function closeUtilisateurModalFn() {
-            const passwordField = document.getElementById('utilisateur_password');
-            passwordField.placeholder = 'Mot de passe';
-            utilisateurModal.classList.remove('open');
-            utilisateurModal.setAttribute('aria-hidden', 'true');
-        }
-
-        document.getElementById('utilisateursTableBody')?.addEventListener('click', (e) => {
-            const row = e.target.closest('tr[data-id]');
-            if (!row) return;
-
-            const utilisateur = utilisateursData.find((u) => u.id === row.dataset.id);
-            if (!utilisateur) return;
-
-            if (e.target.closest('.action-btn.voir')) openUtilisateurView(utilisateur);
-            if (e.target.closest('.action-btn.modifier')) openUtilisateurEdit(utilisateur);
-        });
-
-        btnAddUtilisateur?.addEventListener('click', openUtilisateurModal);
-        btnCloseUtilisateur?.addEventListener('click', () => showPanel('dashboard'));
-        closeUtilisateurModal?.addEventListener('click', closeUtilisateurModalFn);
-        cancelUtilisateurModal?.addEventListener('click', closeUtilisateurModalFn);
-        utilisateurModal?.addEventListener('click', (e) => {
-            if (e.target === utilisateurModal) closeUtilisateurModalFn();
-        });
-
-        const evolutionFieldIds = ['evolution_date', 'evolution_titre_projet', 'evolution_description'];
-
-        function setEvolutionFormFields(mode) {
-            evolutionFieldIds.forEach((id) => {
-                const field = document.getElementById(id);
-                if (field) field.disabled = mode === 'view';
-            });
-        }
-
-        function fillEvolutionForm(evolution) {
-            document.getElementById('evolution_date').value = evolution.date || '';
-            const titreSelect = document.getElementById('evolution_titre_projet');
-            titreSelect.value = evolution.titre_projet || '';
-            if (!titreSelect.value && evolution.titre_projet) {
-                const option = document.createElement('option');
-                option.value = evolution.titre_projet;
-                option.textContent = evolution.titre_projet;
-                option.selected = true;
-                titreSelect.appendChild(option);
-            }
-            document.getElementById('evolution_description').value = evolution.description || '';
-            document.getElementById('evolution_pull_hidden').value = evolution.pull || 'non';
-        }
-
-        function openEvolutionModal() {
-            const evolutionForm = document.getElementById('evolutionForm');
-            const evolutionModalTitle = document.getElementById('evolutionModalTitle');
-            const evolutionSubmitBtn = document.getElementById('evolutionSubmitBtn');
-            const evolutionHttpMethod = document.getElementById('evolution_http_method');
-
-            evolutionForm.action = '{{ url('/evolutions') }}';
-            evolutionHttpMethod.disabled = true;
-            evolutionHttpMethod.value = 'POST';
-            evolutionModalTitle.textContent = 'Ajouter Evolution Travaux';
-            evolutionSubmitBtn.style.display = '';
-
-            document.getElementById('evolution_date').value = todayFr();
-            document.getElementById('evolution_titre_projet').value = '';
-            document.getElementById('evolution_titre_projet').selectedIndex = 0;
-            document.getElementById('evolution_description').value = '';
-            document.getElementById('evolution_pull_hidden').value = 'non';
-
-            setEvolutionFormFields('create');
-            evolutionModal.classList.add('open');
-            evolutionModal.setAttribute('aria-hidden', 'false');
-            document.getElementById('evolution_titre_projet').focus();
-        }
-
-        function openEvolutionView(evolution) {
-            fillEvolutionForm(evolution);
-            document.getElementById('evolutionModalTitle').textContent = 'Voir Evolution Travaux';
-            document.getElementById('evolutionSubmitBtn').style.display = 'none';
-            setEvolutionFormFields('view');
-            evolutionModal.classList.add('open');
-            evolutionModal.setAttribute('aria-hidden', 'false');
-        }
-
-        function openEvolutionEdit(evolution) {
-            const evolutionForm = document.getElementById('evolutionForm');
-            const evolutionHttpMethod = document.getElementById('evolution_http_method');
-
-            evolutionForm.action = `{{ url('/evolutions') }}/${evolution.id}`;
-            evolutionHttpMethod.disabled = false;
-            evolutionHttpMethod.value = 'PUT';
-            fillEvolutionForm(evolution);
-            document.getElementById('evolutionModalTitle').textContent = 'Modifier Evolution Travaux';
-            document.getElementById('evolutionSubmitBtn').style.display = '';
-            setEvolutionFormFields('edit');
-            evolutionModal.classList.add('open');
-            evolutionModal.setAttribute('aria-hidden', 'false');
-            document.getElementById('evolution_description').focus();
-        }
-
-        function closeEvolutionModalFn() {
-            evolutionModal.classList.remove('open');
-            evolutionModal.setAttribute('aria-hidden', 'true');
-        }
-
-        document.getElementById('evolutionsTableBody')?.addEventListener('click', (e) => {
-            const row = e.target.closest('tr[data-id]');
-            if (!row) return;
-
-            const evolution = evolutionsData.find((item) => item.id === row.dataset.id);
-            if (!evolution) return;
-
-            if (e.target.closest('.action-btn.voir')) openEvolutionView(evolution);
-            if (e.target.closest('.action-btn.modifier')) openEvolutionEdit(evolution);
-        });
-
-        btnAddEvolution?.addEventListener('click', openEvolutionModal);
-        btnCloseEvolution?.addEventListener('click', () => showPanel('dashboard'));
-        closeEvolutionModal?.addEventListener('click', closeEvolutionModalFn);
-        cancelEvolutionModal?.addEventListener('click', closeEvolutionModalFn);
-        evolutionModal?.addEventListener('click', (e) => {
-            if (e.target === evolutionModal) closeEvolutionModalFn();
-        });
-
-        window.addEventListener('resize', () => {
-            if (!isMobileSidebar()) closeSidebar();
-        });
-
-        function nextProjetRef() {
-            const rows = document.querySelectorAll('#projetsTableBody tr[data-id]');
-            const n = rows.length + 1;
-            return 'PRJ-' + String(n).padStart(4, '0');
-        }
-
-        function updateProjetStatutColor() {
-            const select = document.getElementById('projet_statut');
-            if (!select) return;
-            select.classList.remove('statue-actif', 'statue-attente', 'statue-annule', 'statue-execute');
-            if (select.value) {
-                select.classList.add(`statue-${select.value}`);
-            }
-        }
-
-        function updateProjetSolde() {
-            const budget = parseFloat(document.getElementById('projet_budget')?.value) || 0;
-            const avance = parseFloat(document.getElementById('projet_avance')?.value) || 0;
-            const solde = budget - avance;
-            document.getElementById('projet_solde').value = formatMontant(solde);
-        }
-
-        const projetForm = document.getElementById('projetForm');
-        const projetModalTitle = document.getElementById('projetModalTitle');
-        const projetSubmitBtn = document.getElementById('projetSubmitBtn');
-        const projetHttpMethod = document.getElementById('projet_http_method');
-        const projetAvanceLabel = document.getElementById('projet_avance_label');
-        const projetAvanceInput = document.getElementById('projet_avance');
-        let projetFormMode = 'create';
-
-        const projetFieldIds = [
-            ...projetDateApi.fieldIds,
-            'projet_nom',
-            'projet_designation',
-            'projet_client',
-            'projet_delai',
-            'projet_statut',
-            'projet_budget',
-            'projet_avance',
-        ];
-
-        function setProjetFormFields(mode) {
-            projetFieldIds.forEach((id) => {
-                const field = document.getElementById(id);
-                if (!field) return;
-
-                if (mode === 'view') {
-                    field.disabled = true;
-                    return;
+        navSubitems.forEach((item) => {
+            item.addEventListener('click', () => {
+                const panel = item.dataset.panel;
+                const group = item.closest('.nav-group');
+                if (group) {
+                    group.classList.add('expanded');
+                    collapseAllNavGroups(group);
                 }
 
-                if (mode === 'edit' && id === 'projet_avance') {
-                    field.disabled = true;
-                    return;
+                showPanel(panel);
+                if (item.dataset.config) {
+                    showConfigSection(item.dataset.config);
                 }
-
-                field.disabled = false;
+                if (item.dataset.prospection) {
+                    showProspectionView(item.dataset.prospection);
+                }
             });
-        }
-
-        function fillProjetForm(projet) {
-            projetDateApi.setParts(projet.date || '');
-            document.getElementById('projet_ref').value = projet.ref || '';
-            document.getElementById('projet_nom').value = projet.nom || '';
-            document.getElementById('projet_designation').value = projet.designation || '';
-
-            const clientSelect = document.getElementById('projet_client');
-            clientSelect.value = projet.client || '';
-            if (!clientSelect.value && projet.client) {
-                const option = Array.from(clientSelect.options).find((opt) => opt.value === projet.client);
-                if (option) option.selected = true;
-            }
-
-            document.getElementById('projet_delai').value = projet.delai || '';
-            document.getElementById('projet_statut').value = projet.statut || 'attente';
-            updateProjetStatutColor();
-            document.getElementById('projet_budget').value = projet.budget ?? '';
-            projetAvanceInput.value = projet.montant_paye ?? 0;
-            updateProjetSolde();
-        }
-
-        function openProjetModal() {
-            projetFormMode = 'create';
-            projetForm.action = '{{ url('/projets') }}';
-            projetHttpMethod.disabled = true;
-            projetHttpMethod.value = 'POST';
-            projetModalTitle.textContent = 'Nouveau Projet';
-            projetSubmitBtn.style.display = '';
-            projetAvanceLabel.textContent = 'Avance';
-            projetAvanceInput.name = 'avance';
-
-            projetDateApi.setParts('', { emptyDayMonth: true });
-            document.getElementById('projet_ref').value = nextProjetRef();
-            document.getElementById('projet_nom').value = '';
-            document.getElementById('projet_designation').value = '';
-            document.getElementById('projet_client').selectedIndex = 0;
-            document.getElementById('projet_delai').value = '';
-            document.getElementById('projet_statut').value = '';
-            document.getElementById('projet_statut').selectedIndex = 0;
-            updateProjetStatutColor();
-            document.getElementById('projet_budget').value = '';
-            projetAvanceInput.value = '0';
-            setProjetFormFields('create');
-            updateProjetSolde();
-
-            projetModal.classList.add('open');
-            projetModal.setAttribute('aria-hidden', 'false');
-            projetDateApi.jj?.focus();
-        }
-
-        function openProjetView(projet) {
-            projetFormMode = 'view';
-            fillProjetForm(projet);
-            projetModalTitle.textContent = 'Voir Projet';
-            projetSubmitBtn.style.display = 'none';
-            projetAvanceLabel.textContent = 'Montant payé';
-            projetAvanceInput.name = '';
-            setProjetFormFields('view');
-
-            projetModal.classList.add('open');
-            projetModal.setAttribute('aria-hidden', 'false');
-        }
-
-        function openProjetEdit(projet) {
-            projetFormMode = 'edit';
-            projetForm.action = `{{ url('/projets') }}/${projet.id}`;
-            projetHttpMethod.disabled = false;
-            projetHttpMethod.value = 'PUT';
-            fillProjetForm(projet);
-            projetModalTitle.textContent = 'Modifier Projet';
-            projetSubmitBtn.style.display = '';
-            projetAvanceLabel.textContent = 'Montant payé';
-            projetAvanceInput.name = '';
-            setProjetFormFields('edit');
-
-            projetModal.classList.add('open');
-            projetModal.setAttribute('aria-hidden', 'false');
-            document.getElementById('projet_nom').focus();
-        }
-
-        document.getElementById('projetsTableBody')?.addEventListener('click', (e) => {
-            if (e.target.closest('.statue-form') || e.target.closest('.rappel-date-form') || e.target.closest('.envoye-switch') || e.target.closest('.relance-inline-input')) return;
-
-            const row = e.target.closest('tr[data-id]');
-            if (!row) return;
-
-            const projet = projetsData.find((p) => p.id === row.dataset.id);
-            if (!projet) return;
-
-            if (e.target.closest('.action-btn.voir')) {
-                openProjetView(projet);
-            }
-
-            if (e.target.closest('.action-btn.modifier')) {
-                openProjetEdit(projet);
-            }
-
-            if (e.target.closest('.action-btn.pdf')) {
-                openRecordPdf('FICHE PROJET', projet.ref || '', [
-                    ['Date', projet.date],
-                    ['Nom Projet', projet.nom],
-                    ['Désignation', projet.designation],
-                    ['Client', projet.client],
-                    ['Délai', projet.delai],
-                    ['Statue', statueLabels[projet.statut] || projet.statut],
-                    ['Budget', projet.budget],
-                    ['Montant payé', projet.montant_paye],
-                    ['Solde', projet.solde],
-                ]);
-            }
         });
 
-        function closeProjetModalFn() {
-            projetModal.classList.remove('open');
-            projetModal.setAttribute('aria-hidden', 'true');
-        }
-
-        btnAddProjet?.addEventListener('click', openProjetModal);
-        closeProjetModal?.addEventListener('click', closeProjetModalFn);
-        cancelProjetModal?.addEventListener('click', closeProjetModalFn);
-        projetModal?.addEventListener('click', (e) => {
-            if (e.target === projetModal) closeProjetModalFn();
+        menuToggle?.addEventListener('click', () => {
+            sidebar?.classList.toggle('open');
+            sidebarBackdrop?.classList.toggle('open');
         });
 
-        document.getElementById('projet_budget')?.addEventListener('input', updateProjetSolde);
-        document.getElementById('projet_avance')?.addEventListener('input', updateProjetSolde);
-        document.getElementById('projet_statut')?.addEventListener('change', updateProjetStatutColor);
-        updateProjetStatutColor();
-
-        function nextPaiementRef() {
-            const rows = document.querySelectorAll('#paiementsTableBody tr[data-id]');
-            const n = rows.length + 1;
-            return 'PAY-' + String(n).padStart(4, '0');
-        }
-
-        function formatMontant(n) {
-            const num = Number(n) || 0;
-            const fixed = num.toFixed(2);
-            const parts = fixed.split('.');
-            parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ' ');
-            return parts.join('.');
-        }
-
-        function applyPaiementClient() {
-            const client = document.getElementById('paiement_client')?.value;
-            const projet = projetsData.find((p) => p.client === client);
-            const titreDisplay = document.getElementById('paiement_titre_display');
-            const titre = document.getElementById('paiement_titre');
-            const budgetHidden = document.getElementById('paiement_budget');
-            const budgetDisplay = document.getElementById('paiement_budget_display');
-            const soldeActuel = document.getElementById('paiement_solde_actuel');
-            const projetIdHidden = document.getElementById('paiement_projet_id');
-
-            if (!projet) {
-                titreDisplay.value = '';
-                titre.value = '';
-                budgetHidden.value = '';
-                budgetDisplay.value = '';
-                soldeActuel.value = '0';
-                projetIdHidden.value = '';
-                updatePaiementSolde();
-                return;
-            }
-
-            const budget = parseFloat(projet.budget) || 0;
-            const dejaPaye = parseFloat(projet.montant_paye) || 0;
-            const restant = Math.max(0, parseFloat(projet.solde ?? (budget - dejaPaye)) || 0);
-
-            projetIdHidden.value = projet.id;
-            titre.value = projet.nom;
-            titreDisplay.value = projet.nom;
-            budgetHidden.value = budget;
-            soldeActuel.value = restant;
-            budgetDisplay.value = formatMontant(restant);
-            updatePaiementSolde();
-        }
-
-        function updatePaiementSolde() {
-            const projetId = document.getElementById('paiement_projet_id')?.value;
-            const projet = projetsData.find((p) => p.id === projetId);
-            const montantSaisi = parseFloat(document.getElementById('paiement_montant_paye')?.value) || 0;
-            const budget = parseFloat(projet?.budget) || 0;
-            const dejaPaye = parseFloat(projet?.montant_paye) || 0;
-            let soldeRestant = parseFloat(projet?.solde);
-
-            if (Number.isNaN(soldeRestant)) {
-                soldeRestant = Math.max(0, budget - dejaPaye);
-            }
-
-            if (paiementFormMode === 'edit') {
-                soldeRestant = Math.max(0, soldeRestant + (paiementEditIncrement || 0));
-            }
-
-            const solde = Math.max(0, soldeRestant - montantSaisi);
-            document.getElementById('paiement_solde').value = formatMontant(solde);
-
-            const budgetDisplay = document.getElementById('paiement_budget_display');
-            if (budgetDisplay && paiementFormMode === 'create') {
-                budgetDisplay.value = formatMontant(soldeRestant);
-            }
-        }
-
-        const paiementForm = document.getElementById('paiementForm');
-        const paiementModalTitle = document.getElementById('paiementModalTitle');
-        const paiementSubmitBtn = document.getElementById('paiementSubmitBtn');
-        const paiementHttpMethod = document.getElementById('paiement_http_method');
-        let paiementFormMode = 'create';
-        let paiementEditIncrement = 0;
-
-        const paiementFieldIds = [
-            ...paiementDateApi.fieldIds,
-            'paiement_client',
-            'paiement_montant_paye',
-            'paiement_type_reg',
-            'paiement_bnq',
-            'paiement_tresorerie',
-        ];
-
-        function setPaiementFormFields(mode) {
-            paiementFieldIds.forEach((id) => {
-                const field = document.getElementById(id);
-                if (!field) return;
-
-                if (mode === 'view') {
-                    field.disabled = true;
-                    return;
-                }
-
-                if ((mode === 'edit' || mode === 'view') && id === 'paiement_client') {
-                    field.disabled = true;
-                    return;
-                }
-
-                field.disabled = false;
-            });
-        }
-
-        function fillPaiementForm(paiement) {
-            paiementDateApi.setParts(paiement.date || '');
-            document.getElementById('paiement_ref').value = paiement.ref || '';
-
-            const clientSelect = document.getElementById('paiement_client');
-            clientSelect.value = paiement.client || '';
-            if (!clientSelect.value && paiement.client) {
-                const option = Array.from(clientSelect.options).find((opt) => opt.value === paiement.client);
-                if (option) option.selected = true;
-            }
-
-            document.getElementById('paiement_titre').value = paiement.titre_projet || '';
-            document.getElementById('paiement_titre_display').value = paiement.titre_projet || '';
-            document.getElementById('paiement_budget').value = paiement.budget ?? '';
-            document.getElementById('paiement_projet_id').value = paiement.projet_id || '';
-            document.getElementById('paiement_montant_paye').value = paiement.increment_paye ?? '';
-            document.getElementById('paiement_type_reg').value = paiement.type_reg || '';
-            document.getElementById('paiement_bnq').value = paiement.bnq || '';
-            document.getElementById('paiement_tresorerie').value = paiement.tresorerie || '';
-            paiementEditIncrement = parseFloat(paiement.increment_paye) || 0;
-
-            const projet = projetsData.find((p) => p.id === paiement.projet_id);
-            const budget = parseFloat(projet?.budget ?? paiement.budget) || 0;
-            const dejaPaye = parseFloat(projet?.montant_paye) || 0;
-            let soldeRestant = parseFloat(projet?.solde);
-            if (Number.isNaN(soldeRestant)) {
-                soldeRestant = Math.max(0, budget - dejaPaye);
-            }
-            soldeRestant = Math.max(0, soldeRestant + paiementEditIncrement);
-            document.getElementById('paiement_solde_actuel').value = soldeRestant;
-            document.getElementById('paiement_budget_display').value = formatMontant(soldeRestant);
-            updatePaiementSolde();
-        }
-
-        function openPaiementModal() {
-            paiementFormMode = 'create';
-            paiementEditIncrement = 0;
-            paiementForm.action = '{{ url('/paiements') }}';
-            paiementHttpMethod.disabled = true;
-            paiementHttpMethod.value = 'POST';
-            paiementModalTitle.textContent = 'Nouveau Paiement';
-            paiementSubmitBtn.style.display = '';
-
-            paiementDateApi.setParts('', { emptyDayMonth: true });
-            document.getElementById('paiement_ref').value = nextPaiementRef();
-            document.getElementById('paiement_client').selectedIndex = 0;
-            document.getElementById('paiement_titre_display').value = '';
-            document.getElementById('paiement_titre').value = '';
-            document.getElementById('paiement_budget').value = '';
-            document.getElementById('paiement_budget_display').value = '';
-            document.getElementById('paiement_solde_actuel').value = '0';
-            document.getElementById('paiement_montant_paye').value = '';
-            document.getElementById('paiement_projet_id').value = '';
-            document.getElementById('paiement_type_reg').selectedIndex = 0;
-            document.getElementById('paiement_bnq').value = '';
-            document.getElementById('paiement_tresorerie').value = '';
-            document.getElementById('paiement_solde').value = '';
-
-            setPaiementFormFields('create');
-
-            paiementModal.classList.add('open');
-            paiementModal.setAttribute('aria-hidden', 'false');
-            paiementDateApi.jj?.focus();
-        }
-
-        function openPaiementView(paiement) {
-            paiementFormMode = 'view';
-            fillPaiementForm(paiement);
-            paiementModalTitle.textContent = 'Voir Paiement';
-            paiementSubmitBtn.style.display = 'none';
-            setPaiementFormFields('view');
-
-            paiementModal.classList.add('open');
-            paiementModal.setAttribute('aria-hidden', 'false');
-        }
-
-        function openPaiementEdit(paiement) {
-            paiementFormMode = 'edit';
-            paiementForm.action = `{{ url('/paiements') }}/${paiement.id}`;
-            paiementHttpMethod.disabled = false;
-            paiementHttpMethod.value = 'PUT';
-            fillPaiementForm(paiement);
-            paiementModalTitle.textContent = 'Modifier Paiement';
-            paiementSubmitBtn.style.display = '';
-            setPaiementFormFields('edit');
-
-            paiementModal.classList.add('open');
-            paiementModal.setAttribute('aria-hidden', 'false');
-            document.getElementById('paiement_montant_paye').focus();
-        }
-
-        function openPaiementPdf(paiement) {
-            openRecordPdf('FICHE PAIEMENT', paiement.ref || '', [
-                ['Date', paiement.date],
-                ['Titre Projet', paiement.titre_projet],
-                ['Nom Client', paiement.client],
-                ['Budget', paiement.budget],
-                ['Montant ce paiement', paiement.increment_paye],
-                ['Total payé projet', paiement.montant_paye],
-                ['Trésorerie', paiement.tresorerie],
-                ['Type règlement', paiement.type_reg],
-                ['Banque', paiement.bnq],
-                ['Solde', paiement.solde],
-            ]);
-        }
-
-        document.getElementById('paiementsTableBody')?.addEventListener('click', (e) => {
-            const row = e.target.closest('tr[data-id]');
-            if (!row) return;
-
-            const paiement = paiementsData.find((p) => p.id === row.dataset.id);
-            if (!paiement) return;
-
-            if (e.target.closest('.action-btn.voir')) openPaiementView(paiement);
-            if (e.target.closest('.action-btn.modifier')) openPaiementEdit(paiement);
-            if (e.target.closest('.action-btn.pdf')) openPaiementPdf(paiement);
+        sidebarBackdrop?.addEventListener('click', () => {
+            sidebar?.classList.remove('open');
+            sidebarBackdrop?.classList.remove('open');
         });
-
-        function closePaiementModalFn() {
-            paiementModal.classList.remove('open');
-            paiementModal.setAttribute('aria-hidden', 'true');
-        }
-
-        btnAddPaiement?.addEventListener('click', openPaiementModal);
-        closePaiementModal?.addEventListener('click', closePaiementModalFn);
-        cancelPaiementModal?.addEventListener('click', closePaiementModalFn);
-        paiementModal?.addEventListener('click', (e) => {
-            if (e.target === paiementModal) closePaiementModalFn();
-        });
-
-        document.getElementById('paiement_client')?.addEventListener('change', applyPaiementClient);
-        document.getElementById('paiement_montant_paye')?.addEventListener('input', updatePaiementSolde);
 
         function parseDateFrToKey(value) {
             const raw = String(value || '').trim();
@@ -7139,500 +2195,72 @@ Merci pour votre confiance.</p>
             return Number(`${match[3]}${match[2]}${match[1]}`);
         }
 
-        function filterRelancesRows(tbodySelector, options, noResultId) {
-            const mois = document.getElementById(options.moisId)?.value || '';
-            const statue = document.getElementById(options.statueId)?.value || '';
-            const deKey = parseDateFrToKey(document.getElementById(options.deId)?.value || '');
-            const aKey = parseDateFrToKey(document.getElementById(options.aId)?.value || '');
-            const numeroQuery = (document.getElementById(options.numeroId)?.value || '').replace(/\D+/g, '');
-            const vendeur = (document.getElementById(options.vendeurId)?.value || '').trim();
-            const importOnly = statue === 'nv_tab';
-            const rows = document.querySelectorAll(`${tbodySelector} tr[data-id]`);
-            let visible = 0;
-
-            rows.forEach((row) => {
-                const rowMois = row.dataset.mois || '';
-                const rowStatue = row.dataset.statue || '';
-                const rowDateKey = parseDateFrToKey(row.dataset.date || '');
-                const rowImport = row.dataset.import === '1';
-                const rowPhone = row.dataset.telephone || '';
-                const rowVendeur = (row.dataset.vendeur || '').toLowerCase();
-                const matchMois = !mois || rowMois === mois;
-                const matchStatue = !statue || importOnly || rowStatue === statue;
-                const matchDe = !deKey || (rowDateKey !== null && rowDateKey >= deKey);
-                const matchA = !aKey || (rowDateKey !== null && rowDateKey <= aKey);
-                const matchImport = !importOnly || rowImport;
-                const matchNumero = !numeroQuery || rowPhone.includes(numeroQuery);
-                const matchVendeur = !vendeur || rowVendeur === vendeur.toLowerCase();
-                const show = matchMois && matchStatue && matchDe && matchA && matchImport && matchNumero && matchVendeur;
-                row.style.display = show ? '' : 'none';
-                if (show) visible++;
-            });
-
-            const emptyRow = document.querySelector(`${tbodySelector} tr.empty-row:not(#${noResultId})`);
-            const noResultRow = document.getElementById(noResultId);
-            if (noResultRow) noResultRow.style.display = rows.length > 0 && visible === 0 ? '' : 'none';
-            if (emptyRow) emptyRow.style.display = rows.length === 0 ? '' : 'none';
-            return visible;
-        }
-
-
-
-
-
-
-
-
-        document.querySelectorAll('.rappel-date-input').forEach((input) => {
-            const normalizeRappel = (raw) => {
-                const s = String(raw || '').trim();
-                if (!s || s === '../../2026') return '../../2026';
-                if (/^(\d{2}|\.\.)\/(\d{2}|\.\.)\/\d{4}$/.test(s)) return s;
-                const digits = s.replace(/\D/g, '').slice(0, 8);
-                if (digits.length === 0) return '../../2026';
-                let day = digits.slice(0, Math.min(2, digits.length));
-                let month = digits.length >= 3 ? digits.slice(2, Math.min(4, digits.length)) : '';
-                let year = digits.length > 4 ? digits.slice(4, 8) : '2026';
-                if (day.length < 2) day = day.padEnd(2, '.');
-                if (month.length < 2) month = month.padEnd(2, '.');
-                if (year.length < 4) year = (year + '2026').slice(0, 4);
-                return `${day}/${month}/${year}`;
-            };
-
-            if (!input.value.trim()) input.value = '../../2026';
-            input.dataset.initial = input.value;
-
-            input.addEventListener('focus', () => {
-                if (input.value === '../../2026') {
-                    input.value = '';
-                }
-            });
-
-            input.addEventListener('input', () => {
-                let v = input.value.replace(/[^\d./]/g, '');
-                const digits = v.replace(/\D/g, '').slice(0, 8);
-                if (digits.length >= 5) v = `${digits.slice(0, 2)}/${digits.slice(2, 4)}/${digits.slice(4)}`;
-                else if (digits.length >= 3) v = `${digits.slice(0, 2)}/${digits.slice(2)}`;
-                else v = digits;
-                input.value = v;
-            });
-
-            const trySave = async () => {
-                if (input.disabled) return;
-                let value = normalizeRappel(input.value);
-                if (!/^(\d{2}|\.\.)\/(\d{2}|\.\.)\/\d{4}$/.test(value)) {
-                    const d = (input.value || '').replace(/\D/g, '');
-                    if (d.length === 8) value = `${d.slice(0, 2)}/${d.slice(2, 4)}/${d.slice(4)}`;
-                    else if (d.length === 4) value = `${d.slice(0, 2)}/${d.slice(2, 4)}/2026`;
-                    else if (d.length === 0) value = '../../2026';
-                    else return;
-                }
-                input.value = value;
-                if (value === (input.dataset.initial || '') || input.classList.contains('is-saving')) return;
-
-                const form = input.form;
-                const action = form?.getAttribute('action') || '';
-                const idMatch = action.match(/\/relances\/([^/]+)\/date-rappel/);
-                const id = idMatch ? decodeURIComponent(idMatch[1]) : '';
-                if (!id) return;
-
-                const previous = input.dataset.initial || '';
-                input.classList.add('is-saving');
-                try {
-                    const response = await fetch(action, {
-                        method: 'PATCH',
-                        headers: {
-                            'Content-Type': 'application/json',
-                            'Accept': 'application/json',
-                            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '',
-                            'X-Requested-With': 'XMLHttpRequest',
-                        },
-                        body: JSON.stringify({ date_rappel: value }),
-                    });
-                    if (!response.ok) throw new Error('save_failed');
-                    input.dataset.initial = value;
-                    const item = (typeof relancesData !== 'undefined')
-                        ? relancesData.find((r) => r.id === id)
-                        : null;
-                    if (item) item.date_rappel = value;
-                    document.querySelectorAll(`.rappel-date-input`).forEach((twin) => {
-                        if (twin === input) return;
-                        const twinAction = twin.form?.getAttribute('action') || '';
-                        if (twinAction.includes(`/relances/${id}/date-rappel`) || twinAction.includes(`/relances/${encodeURIComponent(id)}/date-rappel`)) {
-                            twin.value = value;
-                            twin.dataset.initial = value;
-                        }
-                    });
-                    if (typeof refreshRelanceNotif === 'function') refreshRelanceNotif();
-                } catch (err) {
-                    input.value = previous;
-                } finally {
-                    input.classList.remove('is-saving');
-                }
-            };
-
-            input.addEventListener('blur', () => {
-                if (!input.value.trim()) input.value = '../../2026';
-                trySave();
-            });
-            input.addEventListener('change', trySave);
-            input.addEventListener('keydown', (e) => {
-                if (e.key === 'Enter') {
-                    e.preventDefault();
-                    input.blur();
-                }
-            });
-        });
-
-        function getCsrfToken() {
-            return document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '';
-        }
-
-        function setCsrfToken(token) {
-            const meta = document.querySelector('meta[name="csrf-token"]');
-            if (meta && token) meta.setAttribute('content', token);
-        }
-
-        async function refreshCsrfToken() {
-            try {
-                const res = await fetch('{{ url('/csrf-token') }}', {
-                    headers: { 'Accept': 'application/json', 'X-Requested-With': 'XMLHttpRequest' },
-                    credentials: 'same-origin',
-                });
-                const data = await res.json().catch(() => ({}));
-                if (data.token) setCsrfToken(data.token);
-                return data.token || getCsrfToken();
-            } catch (_) {
-                return getCsrfToken();
-            }
-        }
-
-        function applyRelanceRappelerUi(id, value) {
-            const locked = value === 'non';
-            document.querySelectorAll(`tr[data-id="${CSS.escape(id)}"]`).forEach((row) => {
-                row.dataset.aRappeler = value;
-                row.classList.toggle('row-relance-no-rappel', locked);
-                row.querySelectorAll('.rappel-date-input').forEach((el) => {
-                    el.disabled = locked;
-                });
-            });
-        }
-
-        document.querySelectorAll('.envoye-switch').forEach((group) => {
-            group.addEventListener('click', async (e) => {
-                const btn = e.target.closest('.envoye-opt');
-                if (!btn || group.classList.contains('is-saving')) return;
-
-                const endpoint = group.dataset.endpoint === 'a-rappeler' ? 'a-rappeler' : 'envoye';
-                if (endpoint !== 'a-rappeler') {
-                    const row = group.closest('tr[data-id]');
-                    if (row?.classList.contains('row-relance-no-rappel') || group.classList.contains('is-locked')) return;
-                }
-
-                const value = btn.dataset.value;
-                const id = group.dataset.id;
-                if (!value || !id || group.dataset.value === value) return;
-
-                const fieldKey = endpoint === 'a-rappeler' ? 'a_rappeler' : 'envoye';
-                const previous = group.dataset.value || '';
-                group.classList.add('is-saving');
-                group.dataset.value = value;
-                group.querySelectorAll('.envoye-opt').forEach((opt) => {
-                    opt.classList.toggle('is-active', opt.dataset.value === value);
-                });
-                if (endpoint === 'a-rappeler') {
-                    applyRelanceRappelerUi(id, value);
-                }
-
-                try {
-                    const response = await fetch(`{{ url('/relances') }}/${encodeURIComponent(id)}/${endpoint}`, {
-                        method: 'PATCH',
-                        headers: {
-                            'Content-Type': 'application/json',
-                            'Accept': 'application/json',
-                            'X-CSRF-TOKEN': getCsrfToken(),
-                            'X-Requested-With': 'XMLHttpRequest',
-                        },
-                        body: JSON.stringify({ [fieldKey]: value }),
-                    });
-
-                    if (!response.ok) throw new Error('save_failed');
-
-                    const item = (typeof relancesData !== 'undefined')
-                        ? relancesData.find((r) => r.id === id)
-                        : null;
-                    if (item) item[fieldKey] = value;
-
-                    document.querySelectorAll(`.envoye-switch[data-id="${CSS.escape(id)}"]`).forEach((twin) => {
-                        if (twin === group) return;
-                        const twinEndpoint = twin.dataset.endpoint === 'a-rappeler' ? 'a-rappeler' : 'envoye';
-                        if (twinEndpoint !== endpoint) return;
-                        twin.dataset.value = value;
-                        twin.querySelectorAll('.envoye-opt').forEach((opt) => {
-                            opt.classList.toggle('is-active', opt.dataset.value === value);
-                        });
-                    });
-                    if (endpoint === 'a-rappeler') {
-                        applyRelanceRappelerUi(id, value);
-                    }
-                    if (typeof refreshRelanceNotif === 'function') refreshRelanceNotif();
-                } catch (err) {
-                    group.dataset.value = previous;
-                    group.querySelectorAll('.envoye-opt').forEach((opt) => {
-                        opt.classList.toggle('is-active', opt.dataset.value === previous);
-                    });
-                    if (endpoint === 'a-rappeler') {
-                        applyRelanceRappelerUi(id, previous);
-                    }
-                } finally {
-                    group.classList.remove('is-saving');
-                }
-            });
-        });
-
-        document.querySelectorAll('.relance-inline-input').forEach((el) => {
-            const initial = el.tagName === 'SELECT' ? el.value : (el.value || '').trim();
-            el.dataset.initial = initial;
-
-            const saveInline = async () => {
-                const id = el.dataset.id;
-                const field = el.dataset.field;
-                if (!id || !field || el.classList.contains('is-saving') || el.disabled) return;
-
-                let value = el.tagName === 'SELECT' ? el.value : (el.value || '').trim();
-                if (field === 'date') {
-                    const digits = value.replace(/\D/g, '').slice(0, 8);
-                    if (digits.length === 8) value = `${digits.slice(0, 2)}/${digits.slice(2, 4)}/${digits.slice(4)}`;
-                    if (!/^\d{2}\/\d{2}\/\d{4}$/.test(value)) return;
-                    el.value = value;
-                }
-                if (value === (el.dataset.initial || '')) return;
-
-                el.classList.add('is-saving');
-                try {
-                    const response = await fetch(`{{ url('/relances') }}/${encodeURIComponent(id)}/inline`, {
-                        method: 'PATCH',
-                        headers: {
-                            'Content-Type': 'application/json',
-                            'Accept': 'application/json',
-                            'X-CSRF-TOKEN': getCsrfToken(),
-                            'X-Requested-With': 'XMLHttpRequest',
-                        },
-                        body: JSON.stringify({ field, value }),
-                    });
-                    const data = await response.json().catch(() => ({}));
-                    if (!response.ok) throw new Error(data.message || 'save_failed');
-
-                    const saved = data.value ?? value;
-                    if (el.tagName !== 'SELECT') el.value = saved;
-                    el.dataset.initial = String(saved);
-
-                    const item = (typeof relancesData !== 'undefined')
-                        ? relancesData.find((r) => r.id === id)
-                        : null;
-                    if (item) item[field] = saved;
-
-                    if (field === 'telephone') {
-                        const digits = String(saved).replace(/\D+/g, '');
-                        document.querySelectorAll(`tr[data-id="${CSS.escape(id)}"]`).forEach((row) => {
-                            row.dataset.telephone = digits;
-                        });
-                        filterRelancesTable();
-                    }
-
-                    if (field === 'date') {
-                        const parts = String(saved).split('/');
-                        const mois = parts.length >= 3 ? `${parts[1]}/${parts[2]}` : '';
-                        document.querySelectorAll(`tr[data-id="${CSS.escape(id)}"]`).forEach((row) => {
-                            row.dataset.date = saved;
-                            row.dataset.mois = mois;
-                        });
-                        filterRelancesTable();
-                    }
-
-                    if (field === 'vendeur') {
-                        document.querySelectorAll(`tr[data-id="${CSS.escape(id)}"]`).forEach((row) => {
-                            row.dataset.vendeur = String(saved).toLowerCase();
-                        });
-                        filterRelancesTable();
-                    }
-
-                    document.querySelectorAll(`.relance-inline-input[data-id="${CSS.escape(id)}"][data-field="${field}"]`).forEach((twin) => {
-                        if (twin === el) return;
-                        twin.value = String(saved);
-                        twin.dataset.initial = twin.tagName === 'SELECT' ? twin.value : (twin.value || '').trim();
-                    });
-                } catch (err) {
-                    if (el.tagName === 'SELECT') el.value = el.dataset.initial || '';
-                    else el.value = el.dataset.initial || '';
-                } finally {
-                    el.classList.remove('is-saving');
-                }
-            };
-
-            el.addEventListener('change', saveInline);
-            el.addEventListener('blur', () => {
-                if (el.tagName !== 'SELECT') saveInline();
-            });
-            el.addEventListener('keydown', (e) => {
-                if (e.key === 'Enter' && el.tagName !== 'TEXTAREA') {
-                    e.preventDefault();
-                    el.blur();
-                }
-            });
-        });
-
-        document.querySelectorAll('.relance-date-input').forEach((input) => {
+        function bindDateMask(inputId, onChange) {
+            const input = document.getElementById(inputId);
+            if (!input) return;
             input.addEventListener('input', () => {
                 let v = input.value.replace(/\D/g, '').slice(0, 8);
                 if (v.length >= 5) v = `${v.slice(0, 2)}/${v.slice(2, 4)}/${v.slice(4)}`;
                 else if (v.length >= 3) v = `${v.slice(0, 2)}/${v.slice(2)}`;
                 input.value = v;
+                onChange?.();
             });
-        });
+            if (onChange) input.addEventListener('change', onChange);
+        }
 
-        function filterProjetsTable() {
-            const mois = document.getElementById('filter_projet_mois')?.value || '';
-            const client = document.getElementById('filter_projet_client')?.value || '';
-            const statue = document.getElementById('filter_projet_statue')?.value || '';
+        function filterProspectionsTable() {
+            const mois = document.getElementById('filter_prospection_mois')?.value || '';
+            const commercial = document.getElementById('filter_prospection_commercial')?.value || '';
+            const statue = document.getElementById('filter_prospection_statue')?.value || '';
+            const num = (document.getElementById('filter_prospection_num')?.value || '').replace(/\D/g, '');
+            const deKey = parseDateFrToKey(document.getElementById('filter_prospection_de')?.value || '');
+            const aKey = parseDateFrToKey(document.getElementById('filter_prospection_a')?.value || '');
 
-            const rows = document.querySelectorAll('#projetsTableBody tr[data-id]');
+            const rows = document.querySelectorAll('#prospectionsTableBody tr[data-id]');
             let visible = 0;
 
             rows.forEach((row) => {
                 const rowMois = row.dataset.mois || '';
-                const rowClient = row.dataset.client || '';
+                const rowCommercial = row.dataset.commercial || '';
                 const rowStatue = row.dataset.statue || '';
+                const rowTelephone = row.dataset.telephone || '';
+                const rowDateKey = parseDateFrToKey(row.dataset.date || '');
 
                 const matchMois = !mois || rowMois === mois;
-                const matchClient = !client || rowClient === client;
+                const matchCommercial = !commercial || rowCommercial === commercial;
                 const matchStatue = !statue || rowStatue === statue;
+                const matchNum = !num || rowTelephone.includes(num);
+                const matchDe = !deKey || (rowDateKey !== null && rowDateKey >= deKey);
+                const matchA = !aKey || (rowDateKey !== null && rowDateKey <= aKey);
 
-                const show = matchMois && matchClient && matchStatue;
+                const show = matchMois && matchCommercial && matchStatue && matchNum && matchDe && matchA;
                 row.style.display = show ? '' : 'none';
                 if (show) visible++;
             });
 
-            const emptyRow = document.querySelector('#projetsTableBody tr.empty-row:not(#projetsNoResult)');
-            const noResultRow = document.getElementById('projetsNoResult');
-
-            if (noResultRow) {
-                noResultRow.style.display = rows.length > 0 && visible === 0 ? '' : 'none';
-            }
-
-            if (emptyRow) {
-                emptyRow.style.display = rows.length === 0 ? '' : 'none';
-            }
-        }
-
-        document.getElementById('filter_projet_mois')?.addEventListener('change', filterProjetsTable);
-        document.getElementById('filter_projet_client')?.addEventListener('change', filterProjetsTable);
-        document.getElementById('filter_projet_statue')?.addEventListener('change', filterProjetsTable);
-
-        function filterPaiementsTable() {
-            const mois = document.getElementById('filter_paiement_mois')?.value || '';
-            const client = document.getElementById('filter_paiement_client')?.value || '';
-            const budget = (document.getElementById('filter_paiement_budget')?.value || '').trim().replace(/\s/g, '');
-            const tresorerie = document.getElementById('filter_paiement_tresorerie')?.value || '';
-
-            const rows = document.querySelectorAll('#paiementsTableBody tr[data-id]');
-            let visible = 0;
-
-            rows.forEach((row) => {
-                const rowMois = row.dataset.mois || '';
-                const rowClient = row.dataset.client || '';
-                const rowBudget = String(row.dataset.budget || '').replace(/\s/g, '');
-                const rowTresorerie = row.dataset.tresorerie || '';
-
-                const matchMois = !mois || rowMois === mois;
-                const matchClient = !client || rowClient === client;
-                const matchBudget = !budget || rowBudget.includes(budget);
-                const matchTresorerie = !tresorerie || rowTresorerie === tresorerie;
-
-                const show = matchMois && matchClient && matchBudget && matchTresorerie;
-                row.style.display = show ? '' : 'none';
-                if (show) visible++;
-            });
-
-            const emptyRow = document.querySelector('#paiementsTableBody tr.empty-row:not(#paiementsNoResult)');
-            const noResultRow = document.getElementById('paiementsNoResult');
-
-            if (noResultRow) {
-                noResultRow.style.display = rows.length > 0 && visible === 0 ? '' : 'none';
-            }
-
-            if (emptyRow) {
-                emptyRow.style.display = rows.length === 0 ? '' : 'none';
-            }
-        }
-
-        document.getElementById('filter_paiement_mois')?.addEventListener('change', filterPaiementsTable);
-        document.getElementById('filter_paiement_client')?.addEventListener('change', filterPaiementsTable);
-        document.getElementById('filter_paiement_budget')?.addEventListener('input', filterPaiementsTable);
-        document.getElementById('filter_paiement_tresorerie')?.addEventListener('change', filterPaiementsTable);
-
-        function filterEvolutionsTable() {
-            const mois = document.getElementById('filter_evolution_mois')?.value || '';
-            const projet = document.getElementById('filter_evolution_projet')?.value || '';
-
-            const rows = document.querySelectorAll('#evolutionsTableBody tr[data-id]');
-            let visible = 0;
-
-            rows.forEach((row) => {
-                const matchMois = !mois || row.dataset.mois === mois;
-                const matchProjet = !projet || row.dataset.projet === projet;
-                const show = matchMois && matchProjet;
-                row.style.display = show ? '' : 'none';
-                if (show) visible++;
-            });
-
-            const emptyRow = document.querySelector('#evolutionsTableBody tr.empty-row:not(#evolutionsNoResult)');
-            const noResultRow = document.getElementById('evolutionsNoResult');
-
-            if (noResultRow) {
-                noResultRow.style.display = rows.length > 0 && visible === 0 ? '' : 'none';
-            }
-
-            if (emptyRow) {
-                emptyRow.style.display = rows.length === 0 ? '' : 'none';
-            }
-        }
-
-        document.getElementById('filter_evolution_mois')?.addEventListener('change', filterEvolutionsTable);
-        document.getElementById('filter_evolution_projet')?.addEventListener('change', filterEvolutionsTable);
-
-        function filterTableByMoisStatue(tbodySelector, moisId, statueId, noResultId) {
-            const mois = document.getElementById(moisId)?.value || '';
-            const statue = document.getElementById(statueId)?.value || '';
-            const rows = document.querySelectorAll(`${tbodySelector} tr[data-id]`);
-            let visible = 0;
-
-            rows.forEach((row) => {
-                const matchMois = !mois || (row.dataset.mois || '') === mois;
-                const matchStatue = !statue || (row.dataset.statue || '') === statue;
-                const show = matchMois && matchStatue;
-                row.style.display = show ? '' : 'none';
-                if (show) visible++;
-            });
-
-            const emptyRow = document.querySelector(`${tbodySelector} tr.empty-row:not(#${noResultId})`);
-            const noResultRow = document.getElementById(noResultId);
-
-            if (noResultRow) {
-                noResultRow.style.display = rows.length > 0 && visible === 0 ? '' : 'none';
-            }
-            if (emptyRow) {
-                emptyRow.style.display = rows.length === 0 ? '' : 'none';
-            }
+            const emptyRow = document.querySelector('#prospectionsTableBody tr.empty-row:not(#prospectionsNoResult)');
+            const noResultRow = document.getElementById('prospectionsNoResult');
+            if (noResultRow) noResultRow.style.display = rows.length > 0 && visible === 0 ? '' : 'none';
+            if (emptyRow) emptyRow.style.display = rows.length === 0 ? '' : 'none';
         }
 
         function filterClientsTable() {
             const mois = document.getElementById('filter_client_mois')?.value || '';
+            const nom = (document.getElementById('filter_client_nom')?.value || '').trim().toLowerCase();
+            const num = (document.getElementById('filter_client_num')?.value || '').replace(/\D/g, '');
+            const titre = (document.getElementById('filter_client_titre')?.value || '').trim().toLowerCase();
             const rows = document.querySelectorAll('#clientsTableBody tr[data-id]');
             let visible = 0;
 
             rows.forEach((row) => {
-                const show = !mois || (row.dataset.mois || '') === mois;
+                const rowMois = row.dataset.mois || '';
+                const rowNom = row.dataset.nom || '';
+                const rowTitre = row.dataset.titre || '';
+                const rowNumero = row.dataset.numero || '';
+                const show = (!mois || rowMois === mois)
+                    && (!nom || rowNom.includes(nom))
+                    && (!num || rowNumero.includes(num))
+                    && (!titre || rowTitre.includes(titre));
                 row.style.display = show ? '' : 'none';
                 if (show) visible++;
             });
@@ -7643,1004 +2271,564 @@ Merci pour votre confiance.</p>
             if (emptyRow) emptyRow.style.display = rows.length === 0 ? '' : 'none';
         }
 
-        function updateRelanceVisibleCount(visible) {
-            const el = document.getElementById('relanceVisibleCount');
-            if (!el) return;
-            const deVal = (document.getElementById('filter_relance_de')?.value || '').trim();
-            const aVal = (document.getElementById('filter_relance_a')?.value || '').trim();
-            const deOk = /^\d{2}\/\d{2}\/\d{4}$/.test(deVal);
-            const aOk = /^\d{2}\/\d{2}\/\d{4}$/.test(aVal);
-            const show = deOk || aOk;
-            el.classList.toggle('is-visible', show);
-            if (!show) return;
-            const n = Number(visible) || 0;
-            el.textContent = n === 1 ? '1 numéro' : `${n} numéros`;
-        }
-
-        function filterRelancesTable() {
-            const visible = filterRelancesRows('#relancesTableBody', {
-                moisId: 'filter_relance_mois',
-                statueId: 'filter_relance_statue',
-                deId: 'filter_relance_de',
-                aId: 'filter_relance_a',
-                numeroId: 'filter_relance_numero',
-                vendeurId: 'filter_relance_vendeur',
-            }, 'relancesNoResult');
-            updateRelanceVisibleCount(visible);
-            persistRelanceFilters();
-        }
-
-        function persistRelanceFilters() {
-            try {
-                const payload = {
-                    numero: document.getElementById('filter_relance_numero')?.value || '',
-                    mois: document.getElementById('filter_relance_mois')?.value || '',
-                    statue: document.getElementById('filter_relance_statue')?.value || '',
-                    vendeur: document.getElementById('filter_relance_vendeur')?.value || '',
-                    de: document.getElementById('filter_relance_de')?.value || '',
-                    a: document.getElementById('filter_relance_a')?.value || '',
-                };
-                sessionStorage.setItem('evopro_relance_filters', JSON.stringify(payload));
-            } catch (e) {}
-        }
-
-        function restoreRelanceFilters() {
-            try {
-                const raw = sessionStorage.getItem('evopro_relance_filters');
-                if (!raw) return;
-                const payload = JSON.parse(raw);
-                const setVal = (id, val) => {
-                    const el = document.getElementById(id);
-                    if (el && typeof val === 'string') el.value = val;
-                };
-                setVal('filter_relance_numero', payload.numero);
-                setVal('filter_relance_mois', payload.mois);
-                setVal('filter_relance_statue', payload.statue);
-                setVal('filter_relance_vendeur', payload.vendeur || payload.commercial);
-                setVal('filter_relance_de', payload.de);
-                setVal('filter_relance_a', payload.a);
-            } catch (e) {}
-        }
-
-        function filterUtilisateursTable() {
-            filterTableByMoisStatue('#utilisateursTableBody', 'filter_utilisateur_mois', 'filter_utilisateur_statue', 'utilisateursNoResult');
-        }
-
-        function bindRelancePanelDateMask(inputId) {
-            const input = document.getElementById(inputId);
-            if (!input) return;
-            input.addEventListener('input', () => {
-                let v = input.value.replace(/\D/g, '').slice(0, 8);
-                if (v.length >= 5) v = `${v.slice(0, 2)}/${v.slice(2, 4)}/${v.slice(4)}`;
-                else if (v.length >= 3) v = `${v.slice(0, 2)}/${v.slice(2)}`;
-                input.value = v;
-                filterRelancesTable();
-            });
-            input.addEventListener('change', filterRelancesTable);
-        }
-
         document.getElementById('filter_client_mois')?.addEventListener('change', filterClientsTable);
-        document.getElementById('filter_relance_mois')?.addEventListener('change', filterRelancesTable);
-        document.getElementById('filter_relance_statue')?.addEventListener('change', filterRelancesTable);
-        document.getElementById('filter_relance_vendeur')?.addEventListener('change', filterRelancesTable);
-        document.getElementById('filter_relance_numero')?.addEventListener('input', filterRelancesTable);
-        bindRelancePanelDateMask('filter_relance_de');
-        bindRelancePanelDateMask('filter_relance_a');
-        document.getElementById('filter_utilisateur_mois')?.addEventListener('change', filterUtilisateursTable);
-        document.getElementById('filter_utilisateur_statue')?.addEventListener('change', filterUtilisateursTable);
+        document.getElementById('filter_client_nom')?.addEventListener('input', filterClientsTable);
+        document.getElementById('filter_client_num')?.addEventListener('input', filterClientsTable);
+        document.getElementById('filter_client_titre')?.addEventListener('input', filterClientsTable);
 
-        const relanceFieldIds = [
-            ...relanceDateApi.fieldIds,
-            ...relanceRappelDateApi.fieldIds,
-            'relance_nom_complet',
-            'relance_telephone',
-            'relance_ville',
-            'relance_titre_projet',
-            'relance_description',
-            'relance_vendeur',
-            'relance_envoye',
-            'relance_statue',
-            'relance_a_rappeler',
-        ];
+        const clientModal = document.getElementById('clientModal');
+        const clientForm = document.getElementById('clientForm');
+        const clientModalTitle = document.getElementById('clientModalTitle');
+        const clientFormActions = document.getElementById('clientFormActions');
+        const clientPrintModal = document.getElementById('clientPrintModal');
+        const clientPrintArea = document.getElementById('clientPrintArea');
 
-        function setRelanceFormFields(mode) {
-            relanceFieldIds.forEach((id) => {
-                const field = document.getElementById(id);
-                if (field) field.disabled = mode === 'view';
+        function openModal(el) {
+            el?.classList.add('open');
+            el?.setAttribute('aria-hidden', 'false');
+        }
+
+        function closeModalEl(el) {
+            el?.classList.remove('open');
+            el?.setAttribute('aria-hidden', 'true');
+        }
+
+        function setClientFormMode(mode) {
+            const readonly = mode === 'view';
+            ['client_date', 'client_nom', 'client_ville', 'client_contact', 'client_titre_projet', 'client_delai_travail', 'client_budget'].forEach((id) => {
+                const input = document.getElementById(id);
+                if (input) input.readOnly = readonly;
             });
+            clientFormActions.style.display = mode === 'view' ? 'none' : 'flex';
         }
 
-        function nextRelanceRef() {
-            const rows = document.querySelectorAll('#relancesTableBody tr[data-id]');
-            const n = rows.length + 1;
-            return 'REL-' + String(n).padStart(4, '0');
+        function formatDelaiTravail(value) {
+            let v = String(value || '').trim();
+            if (!v) return '';
+            v = v.replace(/\s*(jrs?|jours?)\s*$/i, '').trim();
+            if (!v) return '';
+            return `${v} JRS`;
         }
 
-        function syncRelanceRappelField() {
-            const oui = (document.getElementById('relance_a_rappeler')?.value || '') === 'oui';
-            const field = document.getElementById('relance_rappel_field');
-            if (field) {
-                field.style.opacity = oui ? '1' : '0.45';
-                field.style.filter = oui ? 'none' : 'grayscale(0.4)';
-                field.querySelectorAll('input').forEach((el) => { el.disabled = !oui; });
+        function fillClientForm(client) {
+            document.getElementById('client_date').value = client.date || '';
+            document.getElementById('client_nom').value = client.nom || '';
+            document.getElementById('client_ville').value = client.ville || '';
+            document.getElementById('client_contact').value = client.contact || '';
+            document.getElementById('client_titre_projet').value = client.titre_projet || client.activite || '';
+            document.getElementById('client_delai_travail').value = formatDelaiTravail(client.delai_travail || '');
+            document.getElementById('client_budget').value = Number(client.budget || 0);
+        }
+
+        function openClientCreate() {
+            clientForm.action = '{{ url('/clients') }}';
+            clientForm.querySelector('input[name="_method"]')?.remove();
+            clientModalTitle.textContent = 'Ajouter un client';
+            fillClientForm({
+                date: new Date().toLocaleDateString('fr-FR', { day: '2-digit', month: '2-digit', year: 'numeric' }),
+                nom: '',
+                titre_projet: '',
+                delai_travail: '',
+                budget: 0,
+                ville: '',
+                contact: '',
+            });
+            setClientFormMode('edit');
+            openModal(clientModal);
+        }
+
+        function openClientView(client) {
+            clientForm.querySelector('input[name="_method"]')?.remove();
+            clientForm.action = '{{ url('/clients') }}';
+            clientModalTitle.textContent = 'Voir Client';
+            fillClientForm(client);
+            setClientFormMode('view');
+            openModal(clientModal);
+        }
+
+        function openClientEdit(client) {
+            clientForm.action = `{{ url('/clients') }}/${encodeURIComponent(client.id)}`;
+            let method = clientForm.querySelector('input[name="_method"]');
+            if (!method) {
+                method = document.createElement('input');
+                method.type = 'hidden';
+                method.name = '_method';
+                clientForm.appendChild(method);
             }
-            if (!oui) {
-                relanceRappelDateApi.setParts('', { emptyDayMonth: true, defaultYear: '2026' });
+            method.value = 'PUT';
+            clientModalTitle.textContent = 'Modifier Client';
+            fillClientForm(client);
+            setClientFormMode('edit');
+            openModal(clientModal);
+        }
+
+        function buildClientPrintHtml(client) {
+            const budget = Number(client.budget || 0).toLocaleString('fr-FR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+            return `
+                <h3>Fiche client — ${String(client.nom || '').replace(/</g, '&lt;')}</h3>
+                <dl>
+                    <dt>Date</dt><dd>${String(client.date || '—').replace(/</g, '&lt;')}</dd>
+                    <dt>Nom Client</dt><dd>${String(client.nom || '—').replace(/</g, '&lt;')}</dd>
+                    <dt>Ville</dt><dd>${String(client.ville || '—').replace(/</g, '&lt;')}</dd>
+                    <dt>Numéro</dt><dd>${String(client.contact || '—').replace(/</g, '&lt;')}</dd>
+                    <dt>Titre Projet</dt><dd>${String(client.titre_projet || client.activite || '—').replace(/</g, '&lt;')}</dd>
+                    <dt>Délai travail</dt><dd>${String(formatDelaiTravail(client.delai_travail || '') || '—').replace(/</g, '&lt;')}</dd>
+                    <dt>Budget</dt><dd>${budget}</dd>
+                </dl>
+            `;
+        }
+
+        function openClientPrint(client) {
+            clientPrintArea.innerHTML = buildClientPrintHtml(client);
+            openModal(clientPrintModal);
+        }
+
+        async function deleteClient(client) {
+            const label = client.nom || 'ce client';
+            if (!confirm(`Supprimer ${label} ?`)) return;
+
+            const fd = new FormData();
+            fd.append('_token', document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '');
+            fd.append('_method', 'DELETE');
+
+            try {
+                const response = await fetch(`{{ url('/clients') }}/${encodeURIComponent(client.id)}`, {
+                    method: 'POST',
+                    body: fd,
+                    headers: { 'X-Requested-With': 'XMLHttpRequest', 'Accept': 'application/json' },
+                });
+                const data = await response.json().catch(() => ({}));
+                if (!response.ok) throw new Error(data.message || 'delete_failed');
+                window.location.href = '{{ route('dashboard') }}?open_panel=client';
+            } catch (_) {
+                alert('Suppression impossible. Réessayez.');
             }
         }
 
-        document.getElementById('relance_a_rappeler')?.addEventListener('change', syncRelanceRappelField);
+        document.getElementById('btnAddClient')?.addEventListener('click', openClientCreate);
+        document.getElementById('closeClientModal')?.addEventListener('click', () => closeModalEl(clientModal));
+        document.getElementById('cancelClientModal')?.addEventListener('click', () => closeModalEl(clientModal));
+        document.getElementById('closeClientPrintModal')?.addEventListener('click', () => closeModalEl(clientPrintModal));
+        document.getElementById('closeClientPrintBtn')?.addEventListener('click', () => closeModalEl(clientPrintModal));
+        document.getElementById('printClientBtn')?.addEventListener('click', () => window.print());
 
-        function fillRelanceForm(relance) {
-            relanceDateApi.setParts(relance.date || '');
-            document.getElementById('relance_ref').value = relance.ref || '';
-            document.getElementById('relance_nom_complet').value = relance.nom_complet || '';
-            document.getElementById('relance_telephone').value = relance.telephone || '';
-            document.getElementById('relance_ville').value = relance.ville || '';
-            document.getElementById('relance_titre_projet').value = relance.titre_projet || '';
-            document.getElementById('relance_description').value = relance.description || '';
-            const vendeurSelect = document.getElementById('relance_vendeur');
-            const vendeurVal = relance.vendeur || relance.commercial || '';
-            if (vendeurSelect) {
-                if (vendeurSelect.tagName === 'SELECT') {
-                    if (vendeurVal && !Array.from(vendeurSelect.options).some((o) => o.value === vendeurVal)) {
-                        vendeurSelect.append(new Option(vendeurVal, vendeurVal));
-                    }
-                }
-                vendeurSelect.value = vendeurVal;
+        const clientDateInput = document.getElementById('client_date');
+        clientDateInput?.addEventListener('input', () => {
+            let v = clientDateInput.value.replace(/\D/g, '').slice(0, 8);
+            if (v.length >= 5) v = `${v.slice(0, 2)}/${v.slice(2, 4)}/${v.slice(4)}`;
+            else if (v.length >= 3) v = `${v.slice(0, 2)}/${v.slice(2)}`;
+            clientDateInput.value = v;
+        });
+
+        const clientDelaiInput = document.getElementById('client_delai_travail');
+        clientDelaiInput?.addEventListener('blur', () => {
+            clientDelaiInput.value = formatDelaiTravail(clientDelaiInput.value);
+        });
+        clientForm?.addEventListener('submit', () => {
+            if (clientDelaiInput) {
+                clientDelaiInput.value = formatDelaiTravail(clientDelaiInput.value);
             }
-            document.getElementById('relance_envoye').value = relance.envoye || '';
-            document.getElementById('relance_statue').value = relance.statue || '';
-            document.getElementById('relance_a_rappeler').value = relance.a_rappeler || '';
-            relanceRappelDateApi.setParts(relance.date_rappel || '');
-            syncRelanceRappelField();
-        }
+        });
 
-        function setRelanceImportBtnVisible(visible) {
-            const btn = document.getElementById('btnOpenRelanceImport');
-            if (btn) btn.style.display = visible ? '' : 'none';
-        }
+        document.getElementById('clientsTableBody')?.addEventListener('click', (e) => {
+            const actionBtn = e.target.closest('.action-btn');
+            if (!actionBtn) return;
 
-        function openRelanceModal() {
-            const relanceForm = document.getElementById('relanceForm');
-            const relanceModalTitle = document.getElementById('relanceModalTitle');
-            const relanceSubmitBtn = document.getElementById('relanceSubmitBtn');
-            const relanceHttpMethod = document.getElementById('relance_http_method');
-
-            relanceForm.action = '{{ url('/relances') }}';
-            relanceHttpMethod.disabled = true;
-            relanceHttpMethod.value = 'POST';
-            relanceModalTitle.textContent = 'Nouveau Prospect';
-            relanceSubmitBtn.style.display = '';
-            setRelanceImportBtnVisible(true);
-
-            relanceDateApi.setParts(todayFr());
-            document.getElementById('relance_ref').value = nextRelanceRef();
-            document.getElementById('relance_nom_complet').value = '';
-            document.getElementById('relance_telephone').value = '';
-            document.getElementById('relance_ville').value = '';
-            document.getElementById('relance_titre_projet').value = '';
-            document.getElementById('relance_description').value = '';
-            const vendeurSelect = document.getElementById('relance_vendeur');
-            const defaultVendeur = @json($authUserNom ?? '');
-            if (vendeurSelect) {
-                if (vendeurSelect.tagName === 'SELECT' && defaultVendeur && !Array.from(vendeurSelect.options).some((o) => o.value === defaultVendeur)) {
-                    vendeurSelect.append(new Option(defaultVendeur, defaultVendeur));
-                }
-                vendeurSelect.value = defaultVendeur;
-            }
-            document.getElementById('relance_envoye').selectedIndex = 0;
-            document.getElementById('relance_statue').selectedIndex = 0;
-            document.getElementById('relance_a_rappeler').selectedIndex = 0;
-            relanceRappelDateApi.setParts('', { emptyDayMonth: true, defaultYear: '2026' });
-            setRelanceFormFields('create');
-            syncRelanceRappelField();
-
-            relanceModal.classList.add('open');
-            relanceModal.setAttribute('aria-hidden', 'false');
-            document.getElementById('relance_nom_complet').focus();
-        }
-
-        function openRelanceView(relance) {
-            fillRelanceForm(relance);
-            document.getElementById('relanceModalTitle').textContent = 'Voir Relance';
-            document.getElementById('relanceSubmitBtn').style.display = 'none';
-            setRelanceImportBtnVisible(false);
-            setRelanceFormFields('view');
-
-            relanceModal.classList.add('open');
-            relanceModal.setAttribute('aria-hidden', 'false');
-        }
-
-        function openRelanceEdit(relance) {
-            const relanceForm = document.getElementById('relanceForm');
-            const relanceHttpMethod = document.getElementById('relance_http_method');
-
-            relanceForm.action = `{{ url('/relances') }}/${relance.id}`;
-            relanceHttpMethod.disabled = false;
-            relanceHttpMethod.value = 'PUT';
-            fillRelanceForm(relance);
-            document.getElementById('relanceModalTitle').textContent = 'Modifier Relance';
-            document.getElementById('relanceSubmitBtn').style.display = '';
-            setRelanceImportBtnVisible(false);
-            setRelanceFormFields('edit');
-
-            relanceModal.classList.add('open');
-            relanceModal.setAttribute('aria-hidden', 'false');
-            document.getElementById('relance_nom_complet').focus();
-        }
-
-        function closeRelanceModalFn() {
-            relanceModal.classList.remove('open');
-            relanceModal.setAttribute('aria-hidden', 'true');
-        }
-
-        document.getElementById('relancesTableBody')?.addEventListener('click', (e) => {
-            if (e.target.closest('.rappel-date-form') || e.target.closest('.statue-form') || e.target.closest('.envoye-switch') || e.target.closest('.relance-inline-input') || e.target.closest('.relance-check')) return;
             const row = e.target.closest('tr[data-id]');
             if (!row) return;
 
-            const relance = relancesData.find((item) => item.id === row.dataset.id);
-            if (!relance) return;
+            const client = clientsData.find((item) => item.id === row.dataset.id);
+            if (!client) return;
 
-            if (e.target.closest('.action-btn.voir')) openRelanceView(relance);
-            if (e.target.closest('.action-btn.modifier')) openRelanceEdit(relance);
+            e.preventDefault();
+            e.stopPropagation();
+
+            if (actionBtn.classList.contains('voir')) openClientView(client);
+            else if (actionBtn.classList.contains('modifier')) openClientEdit(client);
+            else if (actionBtn.classList.contains('imprimer')) openClientPrint(client);
+            else if (actionBtn.classList.contains('supprimer')) deleteClient(client);
         });
 
-        (function initRelanceBulkSelect() {
-            const selectAll = document.getElementById('relanceSelectAll');
-            const deleteBtn = document.getElementById('btnDeleteSelectedRelances');
-            const countEl = document.getElementById('relanceSelectedCount');
-            const tbody = document.getElementById('relancesTableBody');
-            if (!selectAll || !deleteBtn || !tbody) return;
+        document.getElementById('filter_prospection_num')?.addEventListener('input', filterProspectionsTable);
+        document.getElementById('filter_prospection_mois')?.addEventListener('change', filterProspectionsTable);
+        document.getElementById('filter_prospection_commercial')?.addEventListener('change', filterProspectionsTable);
+        document.getElementById('filter_prospection_statue')?.addEventListener('change', filterProspectionsTable);
+        bindDateMask('filter_prospection_de', filterProspectionsTable);
+        bindDateMask('filter_prospection_a', filterProspectionsTable);
 
-            function visibleRowChecks() {
-                return Array.from(tbody.querySelectorAll('tr[data-id]'))
-                    .filter((row) => row.style.display !== 'none')
-                    .map((row) => row.querySelector('.relance-row-check'))
-                    .filter(Boolean);
+        function isDateRappelDue(value) {
+            const match = String(value || '').trim().match(/^(\d{2})\/(\d{2})\/(\d{4})$/);
+            if (!match) return false;
+            const due = new Date(`${match[3]}-${match[2]}-${match[1]}T00:00:00`);
+            const today = new Date();
+            today.setHours(0, 0, 0, 0);
+            return due <= today;
+        }
+
+        function applyProspectionRowStyle(row) {
+            if (!row) return;
+            row.classList.remove('row-prospection-valide', 'row-prospection-annule', 'row-prospection-reporte', 'row-prospection-rappel-du');
+
+            const statue = row.dataset.statue || 'en_attente';
+            const dateRappel = row.dataset.dateRappel || row.querySelector('.prospection-date-input')?.value || '';
+
+            if (statue === 'valide') row.classList.add('row-prospection-valide');
+            if (statue === 'annule') row.classList.add('row-prospection-annule');
+            if (statue === 'reporte') row.classList.add('row-prospection-reporte');
+            if (isDateRappelDue(dateRappel) && (statue === 'en_attente' || statue === 'reporte')) {
+                row.classList.add('row-prospection-rappel-du');
             }
 
-            function selectedIds() {
-                return visibleRowChecks()
-                    .filter((cb) => cb.checked)
-                    .map((cb) => cb.value)
-                    .filter(Boolean);
+            const dateInput = row.querySelector('.prospection-date-input');
+            if (dateInput) {
+                dateInput.classList.toggle('is-rappel-du', row.classList.contains('row-prospection-rappel-du'));
             }
+        }
 
-            function refreshSelectionUi() {
-                const checks = visibleRowChecks();
-                const selected = checks.filter((cb) => cb.checked);
-                const n = selected.length;
-                if (countEl) countEl.textContent = String(n);
-                deleteBtn.classList.toggle('is-visible', n > 0);
-                selectAll.checked = checks.length > 0 && selected.length === checks.length;
-                selectAll.indeterminate = selected.length > 0 && selected.length < checks.length;
-            }
+        document.querySelectorAll('#prospectionsTableBody tr[data-id]').forEach(applyProspectionRowStyle);
 
-            selectAll.addEventListener('change', () => {
-                const checked = selectAll.checked;
-                visibleRowChecks().forEach((cb) => { cb.checked = checked; });
-                refreshSelectionUi();
+        document.querySelectorAll('#prospectionsTableBody .statue-select').forEach((select) => {
+            select.addEventListener('change', () => {
+                select.className = `statue-select ${select.value}`;
+                const row = select.closest('tr[data-id]');
+                if (row) {
+                    row.dataset.statue = select.value;
+                    applyProspectionRowStyle(row);
+                }
             });
+        });
 
-            tbody.addEventListener('change', (e) => {
-                if (!e.target.classList.contains('relance-row-check')) return;
-                refreshSelectionUi();
-            });
+        document.querySelectorAll('.prospection-inline').forEach((el) => {
+            el.dataset.initial = (el.value || '').trim();
 
-            deleteBtn.addEventListener('click', async () => {
-                const ids = selectedIds();
-                if (!ids.length) return;
-                const label = ids.length === 1 ? 'cette ligne' : `ces ${ids.length} lignes`;
-                if (!confirm(`Supprimer ${label} ?`)) return;
+            if (el.classList.contains('prospection-date-input')) {
+                el.addEventListener('input', () => {
+                    let v = el.value.replace(/\D/g, '').slice(0, 8);
+                    if (v.length >= 5) v = `${v.slice(0, 2)}/${v.slice(2, 4)}/${v.slice(4)}`;
+                    else if (v.length >= 3) v = `${v.slice(0, 2)}/${v.slice(2)}`;
+                    el.value = v;
+                });
+            }
 
-                deleteBtn.disabled = true;
+            const saveInline = async () => {
+                const id = el.dataset.id;
+                const field = el.dataset.field;
+                let value = (el.value || '').trim();
+                if (!id || !field || value === (el.dataset.initial || '') || el.classList.contains('is-saving')) return;
+
+                if (field === 'date_rappel' && value !== '' && !/^\d{2}\/\d{2}\/\d{4}$/.test(value)) return;
+
+                el.classList.add('is-saving');
                 try {
-                    const csrf = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '';
-                    const response = await fetch('{{ url('/relances/bulk-destroy') }}', {
-                        method: 'POST',
+                    const response = await fetch(`{{ url('/prospections') }}/${encodeURIComponent(id)}/inline`, {
+                        method: 'PATCH',
                         headers: {
                             'Content-Type': 'application/json',
                             'Accept': 'application/json',
-                            'X-CSRF-TOKEN': csrf,
-                        },
-                        body: JSON.stringify({ ids }),
-                    });
-                    const data = await response.json().catch(() => ({}));
-                    if (!response.ok || !data.ok) {
-                        throw new Error(data.message || 'Suppression impossible.');
-                    }
-                    ids.forEach((id) => {
-                        tbody.querySelector(`tr[data-id="${CSS.escape(id)}"]`)?.remove();
-                        const idx = relancesData.findIndex((r) => r.id === id);
-                        if (idx >= 0) relancesData.splice(idx, 1);
-                    });
-                    selectAll.checked = false;
-                    selectAll.indeterminate = false;
-                    refreshSelectionUi();
-                    if (typeof refreshRelanceNotif === 'function') refreshRelanceNotif();
-                    if (typeof filterRelancesTable === 'function') filterRelancesTable();
-                } catch (err) {
-                    alert(err?.message || 'Suppression impossible.');
-                } finally {
-                    deleteBtn.disabled = false;
-                }
-            });
-
-            document.getElementById('filter_relance_numero')?.addEventListener('input', () => setTimeout(refreshSelectionUi, 0));
-            document.getElementById('filter_relance_mois')?.addEventListener('change', () => setTimeout(refreshSelectionUi, 0));
-            document.getElementById('filter_relance_statue')?.addEventListener('change', () => setTimeout(refreshSelectionUi, 0));
-            document.getElementById('filter_relance_vendeur')?.addEventListener('change', () => setTimeout(refreshSelectionUi, 0));
-            document.getElementById('filter_relance_de')?.addEventListener('input', () => setTimeout(refreshSelectionUi, 0));
-            document.getElementById('filter_relance_a')?.addEventListener('input', () => setTimeout(refreshSelectionUi, 0));
-
-            refreshSelectionUi();
-        })();
-
-        btnAddRelance?.addEventListener('click', openRelanceModal);
-        closeRelanceModal?.addEventListener('click', closeRelanceModalFn);
-        cancelRelanceModal?.addEventListener('click', closeRelanceModalFn);
-        relanceModal?.addEventListener('click', (e) => {
-            if (e.target === relanceModal) closeRelanceModalFn();
-        });
-
-        (function initRelanceImport() {
-            const importModal = document.getElementById('relanceImportModal');
-            const dropzone = document.getElementById('relanceImportDropzone');
-            const fileInput = document.getElementById('relanceImportFile');
-            const fileNameEl = document.getElementById('relanceImportFileName');
-            const statusEl = document.getElementById('relanceImportStatus');
-            const phonesWrap = document.getElementById('relanceImportPhonesWrap');
-            const phonesCountEl = document.getElementById('relanceImportPhonesCount');
-            const phoneListEl = document.getElementById('relanceImportPhoneList');
-            const btnConfirm = document.getElementById('btnConfirmRelanceImport');
-            const btnClear = document.getElementById('btnClearRelanceImportPhones');
-            const btnOpenImport = document.getElementById('btnOpenRelanceImport');
-            if (!importModal || !dropzone || !fileInput) return;
-
-            let detectedPhones = [];
-
-            function setStatus(msg, type) {
-                if (!statusEl) return;
-                if (!msg) {
-                    statusEl.hidden = true;
-                    statusEl.textContent = '';
-                    statusEl.className = 'import-status';
-                    return;
-                }
-                statusEl.hidden = false;
-                statusEl.textContent = msg;
-                statusEl.className = 'import-status' + (type ? ' is-' + type : '');
-            }
-
-            function formatPhoneFr(digits) {
-                const norm = normalizePhoneDigits(digits);
-                const d = norm || String(digits || '').replace(/\D+/g, '');
-                if (d.length === 10 && d.startsWith('0')) {
-                    return d.replace(/(\d{2})(?=\d)/g, '$1 ').trim();
-                }
-                return d;
-            }
-
-            function normalizePhoneDigits(rawDigits) {
-                let d = String(rawDigits || '').replace(/\D+/g, '');
-                if (!d) return null;
-                if (d.startsWith('00')) d = d.slice(2);
-                if (d.startsWith('212')) {
-                    d = d.slice(3);
-                    if (d.length === 9 && /^[5-8]\d{8}$/.test(d)) d = '0' + d;
-                    else if (d.length === 10 && d.startsWith('0')) { /* ok */ }
-                    else if (d.length === 9) d = '0' + d;
-                } else if (d.startsWith('33') && d.length >= 11) {
-                    d = '0' + d.slice(2);
-                }
-                if (d.length === 9 && /^[5-8]\d{8}$/.test(d)) d = '0' + d;
-                // Mobiles MA/FR courants : 05/06/07/08
-                if (d.length === 10 && /^0[5-8]\d{8}$/.test(d)) return d;
-                return null;
-            }
-
-            function harvestDigitRun(run) {
-                const s = String(run || '');
-                const found = [];
-                let i = 0;
-                while (i < s.length) {
-                    let matched = false;
-                    // Priorité aux formats longs (évite de "manger" un vrai 10 chiffres avec un faux 9)
-                    const slice12 = s.slice(i, i + 12);
-                    if (slice12.length === 12 && normalizePhoneDigits(slice12)) {
-                        found.push(slice12);
-                        i += 12;
-                        matched = true;
-                    } else {
-                        const slice10 = s.slice(i, i + 10);
-                        if (slice10.length === 10 && normalizePhoneDigits(slice10)) {
-                            found.push(slice10);
-                            i += 10;
-                            matched = true;
-                        } else if (s.length - i === 9) {
-                            const slice9 = s.slice(i, i + 9);
-                            if (normalizePhoneDigits(slice9)) {
-                                found.push(slice9);
-                                i += 9;
-                                matched = true;
-                            }
-                        }
-                    }
-                    if (!matched) i += 1;
-                }
-                return found;
-            }
-
-            function extractPhones(text) {
-                const raw = String(text || '')
-                    .split(/[\n\r]+/)
-                    .map((line) => {
-                        const digitCount = (line.match(/\d/g) || []).length;
-                        if (digitCount >= 7) {
-                            return line
-                                .replace(/[Oo]/g, '0')
-                                .replace(/[Il|]/g, '1');
-                        }
-                        return line;
-                    })
-                    .join('\n');
-
-                const seen = new Set();
-                const out = [];
-                const pushNormalized = (digits) => {
-                    const norm = normalizePhoneDigits(digits);
-                    if (!norm || seen.has(norm)) return;
-                    seen.add(norm);
-                    out.push(formatPhoneFr(norm));
-                };
-
-                // Lignes isolées (une ligne = souvent un numéro)
-                raw.split(/[\n\r]+/).forEach((line) => {
-                    const lineDigits = line.replace(/\D+/g, '');
-                    if (!lineDigits) return;
-                    if (lineDigits.length >= 9 && lineDigits.length <= 13) {
-                        pushNormalized(lineDigits);
-                    }
-                    harvestDigitRun(lineDigits).forEach(pushNormalized);
-                });
-
-                // Blocs séparés par ponctuation
-                raw.split(/[^\d+]+/).forEach((token) => {
-                    const d = token.replace(/\D+/g, '');
-                    if (d.length >= 9 && d.length <= 13) pushNormalized(d);
-                });
-
-                // Motifs espacés classiques
-                const spaced = raw.match(/(?:\+|00)?\s*(?:212\s*)?0?\s*[5-8](?:[\s.\-()/]*\d){8}/g) || [];
-                spaced.forEach((m) => pushNormalized(m));
-
-                // Suites numériques continues
-                (raw.match(/\d{9,80}/g) || []).forEach((run) => {
-                    harvestDigitRun(run).forEach(pushNormalized);
-                });
-
-                // Fenêtre glissante de secours sur le flux global de chiffres
-                const allDigits = raw.replace(/\D+/g, '');
-                if (allDigits.length >= 9) {
-                    for (let i = 0; i <= allDigits.length - 9; i++) {
-                        const n10 = allDigits.slice(i, i + 10);
-                        if (n10.length === 10 && normalizePhoneDigits(n10)) {
-                            pushNormalized(n10);
-                            i += 9; // saute presque tout le numéro, boucle +1
-                            continue;
-                        }
-                        const n12 = allDigits.slice(i, i + 12);
-                        if (n12.length === 12 && normalizePhoneDigits(n12)) {
-                            pushNormalized(n12);
-                            i += 11;
-                        }
-                    }
-                    harvestDigitRun(allDigits).forEach(pushNormalized);
-                }
-
-                return out;
-            }
-
-            function existingPhoneSet() {
-                const set = new Set();
-                (relancesData || []).forEach((r) => {
-                    const n = normalizePhoneDigits(r.telephone || '');
-                    if (n) set.add(n);
-                });
-                return set;
-            }
-
-            function renderPhones() {
-                if (!phoneListEl || !phonesWrap || !phonesCountEl || !btnConfirm) return;
-                phoneListEl.innerHTML = '';
-                const n = detectedPhones.length;
-                phonesWrap.hidden = n === 0;
-                phonesCountEl.textContent = n === 0
-                    ? '0 numéro détecté'
-                    : (n === 1 ? '1 numéro détecté' : n + ' numéros détectés');
-                btnConfirm.disabled = n === 0;
-                detectedPhones.forEach((phone, idx) => {
-                    const li = document.createElement('li');
-                    li.className = 'import-phone-item';
-                    const span = document.createElement('span');
-                    span.textContent = phone;
-                    const rm = document.createElement('button');
-                    rm.type = 'button';
-                    rm.className = 'import-phone-remove';
-                    rm.setAttribute('aria-label', 'Retirer');
-                    rm.textContent = '×';
-                    rm.addEventListener('click', () => {
-                        detectedPhones.splice(idx, 1);
-                        renderPhones();
-                    });
-                    li.appendChild(span);
-                    li.appendChild(rm);
-                    phoneListEl.appendChild(li);
-                });
-            }
-
-            function resetImportUi() {
-                detectedPhones = [];
-                fileInput.value = '';
-                if (fileNameEl) fileNameEl.textContent = '';
-                setStatus('');
-                renderPhones();
-            }
-
-            function openImportModal() {
-                resetImportUi();
-                closeRelanceModalFn();
-                importModal.classList.add('open');
-                importModal.setAttribute('aria-hidden', 'false');
-            }
-
-            function closeImportModal() {
-                importModal.classList.remove('open');
-                importModal.setAttribute('aria-hidden', 'true');
-            }
-
-            async function prepareImageForOcr(src) {
-                const img = await new Promise((resolve, reject) => {
-                    if (src instanceof HTMLCanvasElement) {
-                        resolve(src);
-                        return;
-                    }
-                    const image = new Image();
-                    image.onload = () => resolve(image);
-                    image.onerror = reject;
-                    if (src instanceof Blob || src instanceof File) {
-                        const url = URL.createObjectURL(src);
-                        image.onload = () => {
-                            URL.revokeObjectURL(url);
-                            resolve(image);
-                        };
-                        image.src = url;
-                    } else {
-                        image.src = src;
-                    }
-                });
-                const w = img.width || img.videoWidth || 0;
-                const h = img.height || img.videoHeight || 0;
-                const scale = w < 1200 ? 2.2 : 1.4;
-                const canvas = document.createElement('canvas');
-                canvas.width = Math.max(1, Math.round((w || 800) * scale));
-                canvas.height = Math.max(1, Math.round((h || 600) * scale));
-                const ctx = canvas.getContext('2d');
-                ctx.fillStyle = '#fff';
-                ctx.fillRect(0, 0, canvas.width, canvas.height);
-                ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
-                const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
-                const data = imageData.data;
-                for (let i = 0; i < data.length; i += 4) {
-                    const gray = data[i] * 0.299 + data[i + 1] * 0.587 + data[i + 2] * 0.114;
-                    const contrast = gray > 160 ? 255 : (gray < 110 ? 0 : gray);
-                    data[i] = data[i + 1] = data[i + 2] = contrast;
-                }
-                ctx.putImageData(imageData, 0, 0);
-                return canvas;
-            }
-
-            async function ocrImageSource(src) {
-                if (typeof Tesseract === 'undefined') {
-                    throw new Error('OCR indisponible');
-                }
-                const canvas = await prepareImageForOcr(src);
-                const runOcr = async (psm) => {
-                    const result = await Tesseract.recognize(canvas, 'eng', {
-                        logger: (info) => {
-                            if (info.status === 'recognizing text' && info.progress != null) {
-                                setStatus('Analyse OCR… ' + Math.round(info.progress * 100) + '%');
-                            }
-                        },
-                        tessedit_char_whitelist: '0123456789+()- ./\n',
-                        preserve_interword_spaces: '1',
-                        tessedit_pageseg_mode: String(psm),
-                    });
-                    return result?.data?.text || '';
-                };
-                // Deux modes de lecture pour récupérer plus de numéros
-                const textA = await runOcr(6);
-                const textB = await runOcr(4);
-                return textA + '\n' + textB;
-            }
-
-            async function extractTextFromImageFile(file) {
-                setStatus('Analyse de l’image…', 'info');
-                return ocrImageSource(file);
-            }
-
-            async function extractTextFromPdf(file) {
-                if (!window.pdfjsLib) {
-                    throw new Error('PDF.js indisponible');
-                }
-                setStatus('Lecture du PDF…', 'info');
-                const buf = await file.arrayBuffer();
-                const pdf = await pdfjsLib.getDocument({ data: buf }).promise;
-                let fullText = '';
-                for (let pageNum = 1; pageNum <= pdf.numPages; pageNum++) {
-                    setStatus('PDF texte page ' + pageNum + '/' + pdf.numPages + '…', 'info');
-                    const page = await pdf.getPage(pageNum);
-                    const content = await page.getTextContent();
-                    let pageText = '';
-                    let lastY = null;
-                    content.items.forEach((it) => {
-                        const y = it.transform ? it.transform[5] : null;
-                        if (lastY != null && y != null && Math.abs(y - lastY) > 2) {
-                            pageText += '\n';
-                        } else if (pageText && !/\s$/.test(pageText)) {
-                            pageText += ' ';
-                        }
-                        pageText += (it.str || '');
-                        if (y != null) lastY = y;
-                    });
-                    fullText += '\n' + pageText;
-                }
-
-                const phonesFromText = extractPhones(fullText);
-                // Toujours compléter par OCR si peu de numéros (PDF scanné / texte incomplet)
-                if (phonesFromText.length >= 15) {
-                    return fullText;
-                }
-
-                setStatus('OCR du PDF pour compléter les numéros…', 'info');
-                let ocrText = fullText;
-                for (let pageNum = 1; pageNum <= Math.min(pdf.numPages, 12); pageNum++) {
-                    setStatus('OCR PDF page ' + pageNum + '/' + Math.min(pdf.numPages, 12) + '…', 'info');
-                    const page = await pdf.getPage(pageNum);
-                    const viewport = page.getViewport({ scale: 2.2 });
-                    const canvas = document.createElement('canvas');
-                    canvas.width = viewport.width;
-                    canvas.height = viewport.height;
-                    const ctx = canvas.getContext('2d');
-                    await page.render({ canvasContext: ctx, viewport }).promise;
-                    ocrText += '\n' + await ocrImageSource(canvas);
-                }
-                return ocrText;
-            }
-
-            async function processFile(file) {
-                if (!file) return;
-                if (fileNameEl) fileNameEl.textContent = file.name;
-                detectedPhones = [];
-                renderPhones();
-                btnConfirm.disabled = true;
-                try {
-                    const isPdf = /pdf$/i.test(file.type) || /\.pdf$/i.test(file.name);
-                    const isImage = /^image\//i.test(file.type) || /\.(jpe?g|png|webp|gif|bmp)$/i.test(file.name);
-                    if (!isPdf && !isImage) {
-                        setStatus('Format non supporté. Utilisez une image ou un PDF.', 'error');
-                        return;
-                    }
-                    const text = isPdf
-                        ? await extractTextFromPdf(file)
-                        : await extractTextFromImageFile(file);
-                    detectedPhones = extractPhones(text);
-                    renderPhones();
-                    if (detectedPhones.length === 0) {
-                        setStatus('Aucun numéro détecté. Essayez une image plus nette ou un PDF texte.', 'error');
-                    } else {
-                        const existing = existingPhoneSet();
-                        const already = detectedPhones.filter((p) => existing.has(normalizePhoneDigits(p))).length;
-                        const fresh = detectedPhones.length - already;
-                        setStatus(
-                            detectedPhones.length + ' numéro(s) détecté(s)'
-                            + (already ? ' — ' + already + ' déjà en base (ignorés à l’import)' : '')
-                            + (fresh ? ' — ' + fresh + ' nouveau(x)' : '')
-                            + '.',
-                            'ok'
-                        );
-                    }
-                } catch (err) {
-                    console.error(err);
-                    setStatus('Échec de l’analyse : ' + (err.message || 'erreur'), 'error');
-                }
-            }
-
-            dropzone.addEventListener('click', () => fileInput.click());
-            dropzone.addEventListener('keydown', (e) => {
-                if (e.key === 'Enter' || e.key === ' ') {
-                    e.preventDefault();
-                    fileInput.click();
-                }
-            });
-            fileInput.addEventListener('change', () => {
-                const f = fileInput.files && fileInput.files[0];
-                if (f) processFile(f);
-            });
-            ['dragenter', 'dragover'].forEach((ev) => {
-                dropzone.addEventListener(ev, (e) => {
-                    e.preventDefault();
-                    dropzone.classList.add('is-dragover');
-                });
-            });
-            ['dragleave', 'drop'].forEach((ev) => {
-                dropzone.addEventListener(ev, (e) => {
-                    e.preventDefault();
-                    dropzone.classList.remove('is-dragover');
-                });
-            });
-            dropzone.addEventListener('drop', (e) => {
-                const f = e.dataTransfer && e.dataTransfer.files && e.dataTransfer.files[0];
-                if (f) processFile(f);
-            });
-
-            btnOpenImport?.addEventListener('click', openImportModal);
-            document.getElementById('closeRelanceImportModal')?.addEventListener('click', closeImportModal);
-            document.getElementById('cancelRelanceImportModal')?.addEventListener('click', closeImportModal);
-            importModal.addEventListener('click', (e) => {
-                if (e.target === importModal) closeImportModal();
-            });
-            btnClear?.addEventListener('click', () => {
-                detectedPhones = [];
-                renderPhones();
-                setStatus('Liste vidée.', 'info');
-            });
-
-            btnConfirm?.addEventListener('click', async () => {
-                if (!detectedPhones.length) return;
-                btnConfirm.disabled = true;
-                setStatus('Création des prospects…', 'info');
-                try {
-                    const postImport = async () => fetch('{{ url('/relances/import') }}', {
-                        method: 'POST',
-                        credentials: 'same-origin',
-                        headers: {
-                            'Content-Type': 'application/json',
-                            'Accept': 'application/json',
-                            'X-CSRF-TOKEN': getCsrfToken(),
+                            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '',
                             'X-Requested-With': 'XMLHttpRequest',
                         },
-                        body: JSON.stringify({
-                            telephones: detectedPhones,
-                            _token: getCsrfToken(),
-                        }),
+                        body: JSON.stringify({ field, value }),
                     });
-
-                    let res = await postImport();
-                    if (res.status === 419) {
-                        await refreshCsrfToken();
-                        res = await postImport();
-                    }
-                    const data = await res.json().catch(() => ({}));
-                    if (!res.ok) {
-                        if (res.status === 419) {
-                            throw new Error('Session expirée. Rechargez la page puis reclassez.');
+                    const data = await response.json().catch(() => ({}));
+                    if (!response.ok) throw new Error(data.message || 'save_failed');
+                    el.dataset.initial = String(data.value ?? value);
+                    if (field === 'date_rappel') {
+                        const row = el.closest('tr[data-id]');
+                        if (row) {
+                            row.dataset.dateRappel = el.dataset.initial;
+                            applyProspectionRowStyle(row);
                         }
-                        throw new Error(data.message || 'Import refusé');
                     }
-                    const created = data.created ?? detectedPhones.length;
-                    const skipped = data.skipped || 0;
-                    setStatus(created + ' créé(s)' + (skipped ? ', ' + skipped + ' déjà présent(s)' : '') + '. Ouverture du tableau…', 'ok');
-                    const url = new URL('{{ url('/dashboard') }}', window.location.origin);
-                    url.searchParams.set('open', 'relance');
-                    window.location.href = url.toString();
-                } catch (err) {
-                    console.error(err);
-                    setStatus('Import impossible : ' + (err.message || 'erreur'), 'error');
-                    btnConfirm.disabled = false;
+                } catch (_) {
+                    el.value = el.dataset.initial || '';
+                } finally {
+                    el.classList.remove('is-saving');
+                }
+            };
+
+            el.addEventListener('blur', saveInline);
+            el.addEventListener('keydown', (e) => {
+                if (e.key === 'Enter' && el.tagName !== 'TEXTAREA') {
+                    e.preventDefault();
+                    el.blur();
                 }
             });
-        })();
-
-        function setAutorisationFormFields(mode) {
-            const userSelect = document.getElementById('autorisation_utilisateur_id');
-            if (userSelect) userSelect.disabled = mode === 'view';
-            document.querySelectorAll('#autorisationSections .auth-permission').forEach((cb) => {
-                cb.disabled = mode === 'view';
-            });
-        }
-
-        function clearAutorisationChecks() {
-            document.querySelectorAll('#autorisationSections .auth-permission').forEach((cb) => {
-                cb.checked = false;
-            });
-        }
-
-        function fillAutorisationForm(autorisation) {
-            document.getElementById('autorisation_utilisateur_id').value = autorisation.utilisateur_id || '';
-            const perms = new Set(autorisation.permissions || []);
-            document.querySelectorAll('#autorisationSections .auth-permission').forEach((cb) => {
-                cb.checked = perms.has(cb.value);
-            });
-        }
-
-        function openAutorisationModal() {
-            const form = document.getElementById('autorisationForm');
-            const method = document.getElementById('autorisation_http_method');
-
-            form.action = '{{ url('/autorisations') }}';
-            method.disabled = true;
-            method.value = 'POST';
-            document.getElementById('autorisationModalTitle').textContent = 'Ajouter Autorisation';
-            document.getElementById('autorisationSubmitBtn').style.display = '';
-            document.getElementById('autorisation_utilisateur_id').selectedIndex = 0;
-            clearAutorisationChecks();
-            setAutorisationFormFields('create');
-
-            autorisationModal.classList.add('open');
-            autorisationModal.setAttribute('aria-hidden', 'false');
-            document.getElementById('autorisation_utilisateur_id').focus();
-        }
-
-        function openAutorisationView(autorisation) {
-            fillAutorisationForm(autorisation);
-            document.getElementById('autorisationModalTitle').textContent = 'Voir Autorisation';
-            document.getElementById('autorisationSubmitBtn').style.display = 'none';
-            setAutorisationFormFields('view');
-
-            autorisationModal.classList.add('open');
-            autorisationModal.setAttribute('aria-hidden', 'false');
-        }
-
-        function openAutorisationEdit(autorisation) {
-            const form = document.getElementById('autorisationForm');
-            const method = document.getElementById('autorisation_http_method');
-
-            form.action = `{{ url('/autorisations') }}/${autorisation.id}`;
-            method.disabled = false;
-            method.value = 'PUT';
-            fillAutorisationForm(autorisation);
-            document.getElementById('autorisationModalTitle').textContent = 'Modifier Autorisation';
-            document.getElementById('autorisationSubmitBtn').style.display = '';
-            setAutorisationFormFields('edit');
-
-            autorisationModal.classList.add('open');
-            autorisationModal.setAttribute('aria-hidden', 'false');
-        }
-
-        function closeAutorisationModalFn() {
-            autorisationModal.classList.remove('open');
-            autorisationModal.setAttribute('aria-hidden', 'true');
-        }
-
-        document.getElementById('autorisationsTableBody')?.addEventListener('click', (e) => {
-            const row = e.target.closest('tr[data-id]');
-            if (!row) return;
-
-            const autorisation = autorisationsData.find((item) => item.id === row.dataset.id);
-            if (!autorisation) return;
-
-            if (e.target.closest('.action-btn.voir')) openAutorisationView(autorisation);
-            if (e.target.closest('.action-btn.modifier')) openAutorisationEdit(autorisation);
         });
 
-        btnAddAutorisation?.addEventListener('click', openAutorisationModal);
-        btnCloseAutorisation?.addEventListener('click', () => showPanel('dashboard'));
-        closeAutorisationModal?.addEventListener('click', closeAutorisationModalFn);
-        cancelAutorisationModal?.addEventListener('click', closeAutorisationModalFn);
-        autorisationModal?.addEventListener('click', (e) => {
-            if (e.target === autorisationModal) closeAutorisationModalFn();
-        });
-
-        @if (session('open_fiche_client'))
-            showPanel('fiche-client');
-        @endif
-
-        @if (session('open_fiche_projet'))
-            showPanel('fiche-projet');
-        @endif
-
-        @if (session('open_fiche_evolution'))
-            showPanel('fiche-evolution');
-        @endif
-
-        @if (session('open_fiche_paiement'))
-            showPanel('fiche-paiement');
-        @endif
-
-        @if (session('open_fiche_utilisateur'))
-            showPanel('fiche-utilisateur');
-        @endif
-
-        document.querySelectorAll('.statue-form').forEach((form) => {
-            form.addEventListener('submit', () => {
-                if (typeof persistRelanceFilters === 'function') persistRelanceFilters();
-            });
-        });
-
-        @if (session('open_fiche_relance'))
-            showPanel('fiche-relance');
-        @endif
-
-        if (new URLSearchParams(window.location.search).get('open') === 'relance') {
-            showPanel('fiche-relance');
-            const clean = window.location.pathname + window.location.hash;
-            window.history.replaceState({}, '', clean);
-        }
-
-        restoreRelanceFilters();
-        filterRelancesTable();
-
-        document.querySelectorAll('tr[data-id][data-a-rappeler="non"]').forEach((row) => {
-            if (row.dataset.id) applyRelanceRappelerUi(row.dataset.id, 'non');
-        });
-
-        @if (session('open_fiche_autorisation'))
-            showPanel('fiche-autorisation');
-        @endif
-
-        @if (session('open_fiche_whatsapp'))
-            showPanel('fiche-whatsapp');
-        @endif
-
-        const whatsappConfig = @json($whatsappConfig ?? []);
-        let whatsappMessages = @json($whatsappMessages ?? []);
-        const whatsappNavWrap = document.getElementById('whatsappNotifWrap');
-        const btnWhatsappNav = document.getElementById('btnWhatsappNav');
-        const whatsappNavPanel = document.getElementById('whatsappNavPanel');
-        const whatsappNavBadge = document.getElementById('whatsappNavBadge');
-        const whatsappNavDot = document.getElementById('whatsappNavDot');
-        const whatsappNavCountLabel = document.getElementById('whatsappNavCountLabel');
-        const whatsappNavList = document.getElementById('whatsappNavList');
-        const whatsappMessageModal = document.getElementById('whatsappMessageModal');
-        const whatsappChoiceModal = document.getElementById('whatsappChoiceModal');
-        const whatsappDevisModal = document.getElementById('whatsappDevisModal');
-        const whatsappMessageForm = document.getElementById('whatsappMessageForm');
-        const whatsappDevisForm = document.getElementById('whatsappDevisForm');
-        const waMsgTelephone = document.getElementById('wa_msg_telephone');
-        const waMsgBody = document.getElementById('wa_msg_body');
-        const waMsgHint = document.getElementById('wa_msg_hint');
-        const waDevisDate = document.getElementById('wa_devis_date');
-        const waDevisTelephone = document.getElementById('wa_devis_telephone');
-        const waDevisNom = document.getElementById('wa_devis_nom');
-        const waDevisTitre = document.getElementById('wa_devis_titre');
-        const waDevisDescription = document.getElementById('wa_devis_description');
-        const waDevisMontant = document.getElementById('wa_devis_montant');
-        const waDevisDelai = document.getElementById('wa_devis_delai');
-        const waDevisNbText = document.getElementById('wa_devis_nb_text');
-        const waCsrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '';
-        let waActionContext = { telephone: '', nomComplet: '', relanceId: '' };
-
-        const DEVIS_LOGO_URL = @json(asset('images/logo-a2s-evopro.png'));
-        let devisLogoDataUrl = '';
-
-        async function getDevisLogoDataUrl() {
-            if (devisLogoDataUrl) return devisLogoDataUrl;
-            try {
-                const response = await fetch(DEVIS_LOGO_URL, { cache: 'force-cache' });
-                const blob = await response.blob();
-                devisLogoDataUrl = await new Promise((resolve, reject) => {
-                    const reader = new FileReader();
-                    reader.onload = () => resolve(String(reader.result || ''));
-                    reader.onerror = reject;
-                    reader.readAsDataURL(blob);
-                });
-            } catch (err) {
-                devisLogoDataUrl = DEVIS_LOGO_URL;
+        function applyLiveField(rowEl, field, value) {
+            const el = rowEl.querySelector(`.prospection-inline[data-field="${field}"]`);
+            if (!el) return;
+            if (document.activeElement === el || el.classList.contains('is-saving')) return;
+            const next = String(value ?? '');
+            if ((el.value || '') === next && (el.dataset.initial || '') === next.trim()) return;
+            el.value = next;
+            el.dataset.initial = next.trim();
+            if (field === 'date_rappel') {
+                rowEl.dataset.dateRappel = next.trim();
+                applyProspectionRowStyle(rowEl);
             }
-            return devisLogoDataUrl;
         }
 
-        const DEVIS_NB_TEXT = `Concernant les modalités de paiement, le montant total du projet sera réparti en 3 tranches :
+        function applyLiveStatue(rowEl, statue) {
+            const select = rowEl.querySelector('.statue-select');
+            if (!select) return;
+            if (document.activeElement === select) return;
+            const next = statue || 'en_attente';
+            if (select.value === next && rowEl.dataset.statue === next) return;
+            select.value = next;
+            select.className = `statue-select ${next}`;
+            rowEl.dataset.statue = next;
+            applyProspectionRowStyle(rowEl);
+        }
 
-• 30 % à la commande : acompte pour le lancement du projet et le début des travaux.
-• 40 % à mi-parcours : paiement effectué après validation de l’avancement principal du projet.
-• 30 % à la livraison finale : solde à régler après finalisation, vérification et validation du travail.
+        async function syncProspectionsLive() {
+            const panel = document.getElementById('panel-prospection');
+            if (!panel?.classList.contains('active')) return;
 
-Cette organisation permet d’assurer un suivi clair du projet et de garantir un bon déroulement des différentes étapes jusqu’à la livraison finale.
-Merci pour votre confiance.`;
+            try {
+                const response = await fetch('{{ route('prospections.live') }}', {
+                    headers: {
+                        'Accept': 'application/json',
+                        'X-Requested-With': 'XMLHttpRequest',
+                    },
+                });
+                if (!response.ok) return;
+                const data = await response.json().catch(() => ({}));
+                const rows = Array.isArray(data.rows) ? data.rows : [];
+
+                if (Array.isArray(prospectionsAllData)) {
+                    const byId = Object.fromEntries(prospectionsAllData.map((row) => [row.id, row]));
+                    rows.forEach((row) => {
+                        byId[row.id] = { ...(byId[row.id] || {}), ...row };
+                    });
+                    prospectionsAllData.length = 0;
+                    Object.values(byId).forEach((row) => prospectionsAllData.push(row));
+                    if (typeof filterCommercialTable === 'function' && document.getElementById('prospection-commercial')?.classList.contains('active')) {
+                        filterCommercialTable();
+                    }
+                }
+
+                rows.forEach((row) => {
+                    const rowEl = document.querySelector(`#prospectionsTableBody tr[data-id="${CSS.escape(row.id)}"]`);
+                    if (!rowEl) return;
+                    applyLiveField(rowEl, 'nom_prospect', row.nom_prospect);
+                    applyLiveField(rowEl, 'ville', row.ville);
+                    applyLiveField(rowEl, 'projet', row.projet);
+                    applyLiveField(rowEl, 'remarque', row.remarque);
+                    applyLiveField(rowEl, 'date_rappel', row.date_rappel);
+                    applyLiveStatue(rowEl, row.statue);
+                });
+            } catch (_) {
+                // ignore network blips
+            }
+        }
+
+        setInterval(syncProspectionsLive, 4000);
+        document.addEventListener('visibilitychange', () => {
+            if (!document.hidden) syncProspectionsLive();
+        });
+
+        function showConfigSection(name) {
+            setActiveNavSubitem('config', name);
+            document.querySelectorAll('#panel-configuration .config-section').forEach((section) => {
+                section.classList.toggle('active', section.id === `config-${name}`);
+            });
+            expandNavGroup('configuration');
+            showPanel('configuration');
+        }
+
+        async function saveFicheSte(closeAfterSave = true) {
+            const form = document.getElementById('ficheSteForm');
+            if (!form) return false;
+
+            const fd = new FormData(form);
+            fd.append('_method', 'PUT');
+
+            try {
+                const response = await fetch(form.action, {
+                    method: 'POST',
+                    headers: {
+                        'Accept': 'application/json',
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '',
+                        'X-Requested-With': 'XMLHttpRequest',
+                    },
+                    body: fd,
+                });
+                const data = await response.json().catch(() => ({}));
+                if (!response.ok) throw new Error(data.message || 'save_failed');
+
+                if (data.fiche_ste) {
+                    Object.assign(ficheSteData, data.fiche_ste);
+                }
+
+                if (closeAfterSave) {
+                    showConfigSection('utilisateur');
+                }
+
+                return true;
+            } catch (error) {
+                window.alert(error.message || 'Impossible d’enregistrer la fiche société.');
+                return false;
+            }
+        }
+
+        document.getElementById('btnFicheSteFermer')?.addEventListener('click', () => saveFicheSte(true));
+
+        const utilisateurSidePanel = document.getElementById('utilisateurSidePanel');
+        const utilisateurForm = document.getElementById('utilisateurForm');
+        const utilisateurSidePanelTitle = document.getElementById('utilisateurSidePanelTitle');
+        const utilisateurFormActions = document.getElementById('utilisateurFormActions');
+
+        function openSidePanel(el) {
+            el?.classList.add('open');
+            el?.setAttribute('aria-hidden', 'false');
+        }
+
+        function closeSidePanelEl(el) {
+            el?.classList.remove('open');
+            el?.setAttribute('aria-hidden', 'true');
+        }
+
+        function setUtilisateurFormMode(mode) {
+            const readonly = mode === 'view';
+            ['utilisateur_date', 'utilisateur_nom_complet', 'utilisateur_ville', 'utilisateur_login', 'utilisateur_password'].forEach((id) => {
+                const input = document.getElementById(id);
+                if (input) input.readOnly = readonly;
+            });
+            const statue = document.getElementById('utilisateur_statue');
+            if (statue) statue.disabled = readonly;
+            const saveBtn = document.getElementById('saveUtilisateurSidePanel');
+            if (saveBtn) saveBtn.style.display = mode === 'view' ? 'none' : '';
+            utilisateurFormActions.style.display = 'flex';
+        }
+
+        function fillUtilisateurForm(user) {
+            document.getElementById('utilisateur_date').value = user.date || '';
+            document.getElementById('utilisateur_nom_complet').value = user.nom_complet || '';
+            document.getElementById('utilisateur_ville').value = user.ville || '';
+            document.getElementById('utilisateur_statue').value = user.statue || 'commercial';
+            document.getElementById('utilisateur_login').value = user.login || '';
+            document.getElementById('utilisateur_password').value = user.password || '';
+        }
+
+        function openUtilisateurCreate() {
+            utilisateurForm.action = '{{ url('/utilisateurs') }}';
+            utilisateurForm.querySelector('input[name="_method"]')?.remove();
+            utilisateurSidePanelTitle.textContent = 'Ajouter un utilisateur';
+            fillUtilisateurForm({
+                date: new Date().toLocaleDateString('fr-FR', { day: '2-digit', month: '2-digit', year: 'numeric' }),
+                nom_complet: '',
+                ville: '',
+                statue: 'commercial',
+                login: '',
+                password: '',
+            });
+            setUtilisateurFormMode('edit');
+            openSidePanel(utilisateurSidePanel);
+        }
+
+        function openUtilisateurView(user) {
+            utilisateurForm.querySelector('input[name="_method"]')?.remove();
+            utilisateurForm.action = '{{ url('/utilisateurs') }}';
+            utilisateurSidePanelTitle.textContent = 'Voir un utilisateur';
+            fillUtilisateurForm(user);
+            setUtilisateurFormMode('view');
+            openSidePanel(utilisateurSidePanel);
+        }
+
+        function openUtilisateurEdit(user) {
+            utilisateurForm.action = `{{ url('/utilisateurs') }}/${encodeURIComponent(user.id)}`;
+            let method = utilisateurForm.querySelector('input[name="_method"]');
+            if (!method) {
+                method = document.createElement('input');
+                method.type = 'hidden';
+                method.name = '_method';
+                utilisateurForm.appendChild(method);
+            }
+            method.value = 'PUT';
+            utilisateurSidePanelTitle.textContent = 'Modifier un utilisateur';
+            fillUtilisateurForm(user);
+            setUtilisateurFormMode('edit');
+            openSidePanel(utilisateurSidePanel);
+        }
+
+        document.getElementById('btnAddUtilisateur')?.addEventListener('click', openUtilisateurCreate);
+        document.getElementById('btnCloseUtilisateurPanel')?.addEventListener('click', () => closeSidePanelEl(utilisateurSidePanel));
+        document.getElementById('closeUtilisateurSidePanel')?.addEventListener('click', () => closeSidePanelEl(utilisateurSidePanel));
+        document.getElementById('cancelUtilisateurSidePanel')?.addEventListener('click', () => closeSidePanelEl(utilisateurSidePanel));
+        utilisateurSidePanel?.addEventListener('click', (event) => {
+            if (event.target === utilisateurSidePanel) closeSidePanelEl(utilisateurSidePanel);
+        });
+
+        bindDateMask('utilisateur_date');
+
+        document.getElementById('utilisateursTableBody')?.addEventListener('click', async (event) => {
+            const btn = event.target.closest('.action-btn');
+            if (!btn) return;
+            const row = btn.closest('tr[data-id]');
+            if (!row) return;
+            const user = utilisateursData.find((item) => item.id === row.dataset.id);
+            if (!user) return;
+
+            if (btn.classList.contains('voir')) {
+                openUtilisateurView(user);
+                return;
+            }
+
+            if (btn.classList.contains('modifier')) {
+                openUtilisateurEdit(user);
+                return;
+            }
+
+            if (btn.classList.contains('suspendre')) {
+                const label = btn.dataset.suspended === '1' ? 'réactiver' : 'suspendre';
+                if (!window.confirm(`Voulez-vous ${label} cet utilisateur ?`)) return;
+
+                try {
+                    const response = await fetch(`{{ url('/utilisateurs') }}/${encodeURIComponent(user.id)}/suspendre`, {
+                        method: 'PATCH',
+                        headers: {
+                            'Accept': 'application/json',
+                            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '',
+                            'X-Requested-With': 'XMLHttpRequest',
+                        },
+                    });
+                    const data = await response.json().catch(() => ({}));
+                    if (!response.ok) throw new Error(data.message || 'suspend_failed');
+                    window.location.href = '{{ route('dashboard') }}?open_panel=configuration&open_config=utilisateur';
+                } catch (error) {
+                    window.alert(error.message || 'Impossible de modifier le statut.');
+                }
+            }
+        });
+
+        function showProspectionView(name) {
+            setActiveNavSubitem('prospection', name);
+            document.querySelectorAll('#panel-prospection .prospection-view').forEach((view) => {
+                view.classList.toggle('active', view.id === `prospection-${name}`);
+            });
+            expandNavGroup('prospection');
+            showPanel('prospection');
+            if (name === 'commercial') {
+                filterCommercialTable();
+            }
+        }
+
+        function showProspectionListe() {
+            showProspectionView('liste');
+        }
+
+        function commercialKey(name) {
+            return String(name || '').trim().toLowerCase();
+        }
+
+        const prospectionStatueLabels = {
+            valide: 'Validé',
+            en_attente: 'En Attente',
+            annule: 'Annulé',
+            reporte: 'Reporté',
+        };
 
         function escapeHtml(value) {
             return String(value ?? '')
@@ -8650,557 +2838,346 @@ Merci pour votre confiance.`;
                 .replace(/"/g, '&quot;');
         }
 
-        function formatMoneyFr(value) {
-            const n = Number(value);
-            if (!Number.isFinite(n)) return '0,00';
-            return n.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ' ').replace('.', ',');
+        function getFilterCommercialName() {
+            const select = document.getElementById('filter_commercial_commercial');
+            if (!select || !select.value) return '';
+            const option = select.options[select.selectedIndex];
+            return option ? option.text.trim() : '';
         }
 
-        function whatsappUnreadCount() {
-            return (whatsappMessages || []).filter((m) => m && m.unread).length;
-        }
+        function filterCommercialTable() {
+            const body = document.getElementById('commercialNumerosBody');
+            if (!body) return;
 
-        function refreshWhatsappNavBadge(unread = null) {
-            const n = unread === null ? whatsappUnreadCount() : Number(unread) || 0;
-            if (whatsappNavBadge) {
-                whatsappNavBadge.textContent = String(n);
-                whatsappNavBadge.classList.toggle('is-empty', n === 0);
-            }
-            whatsappNavDot?.classList.toggle('has-badge', n > 0);
-            if (whatsappNavCountLabel) {
-                whatsappNavCountLabel.textContent = n === 0
-                    ? 'Aucun non lu'
-                    : (n === 1 ? '1 non lu' : `${n} non lus`);
-            }
-        }
+            const mois = document.getElementById('filter_commercial_mois')?.value || '';
+            const commercial = document.getElementById('filter_commercial_commercial')?.value || '';
+            const deKey = parseDateFrToKey(document.getElementById('filter_commercial_de')?.value || '');
+            const aKey = parseDateFrToKey(document.getElementById('filter_commercial_a')?.value || '');
 
-        function refreshWhatsappNavList() {
-            if (!whatsappNavList) return;
-            const items = Array.isArray(whatsappMessages) ? whatsappMessages : [];
-            if (!items.length) {
-                whatsappNavList.innerHTML = '<li class="notif-empty">Aucun message WhatsApp envoyé</li>';
-                return;
-            }
-            whatsappNavList.innerHTML = items.map((item) => {
-                const name = escapeHtml(item.nom_complet || 'Client');
-                const phone = escapeHtml(item.telephone || '');
-                const date = escapeHtml(item.sent_at || '');
-                const preview = escapeHtml(item.message || 'Message envoyé');
-                const unreadCls = item.unread ? ' is-unread' : '';
-                const id = escapeHtml(item.id || '');
-                const relanceId = escapeHtml(item.relance_id || '');
-                return `<li>
-                    <button type="button" class="wa-msg-item${unreadCls}" data-id="${id}" data-relance-id="${relanceId}">
-                        <span class="wa-msg-item-name">${name}</span>
-                        <span class="wa-msg-item-date">${date}</span>
-                        <span class="wa-msg-item-phone">${phone}</span>
-                        <span class="wa-msg-item-preview">${preview}</span>
-                    </button>
-                </li>`;
-            }).join('');
-        }
+            const rows = prospectionsAllData.filter((row) => trimCommercial(row.commercial) !== '');
+            body.querySelectorAll('tr:not(#commercialNumerosEmpty)').forEach((row) => row.remove());
 
-        function setWhatsappNavOpen(open) {
-            whatsappNavPanel?.classList.toggle('open', open);
-            btnWhatsappNav?.classList.toggle('is-open', open);
-            btnWhatsappNav?.setAttribute('aria-expanded', open ? 'true' : 'false');
-            whatsappNavPanel?.setAttribute('aria-hidden', open ? 'false' : 'true');
-            if (open) {
-                refreshWhatsappNavList();
-                if (whatsappUnreadCount() > 0) {
-                    markWhatsappMessagesRead({ all: true });
-                }
+            let visible = 0;
+            rows.forEach((row) => {
+                const parts = String(row.date || '').split('/');
+                const rowMois = parts.length >= 3 ? `${parts[1]}/${parts[2]}` : '';
+                const rowCommercial = commercialKey(row.commercial);
+                const rowDateKey = parseDateFrToKey(row.date || '');
+
+                const matchMois = !mois || rowMois === mois;
+                const matchCommercial = !commercial || rowCommercial === commercial;
+                const matchDe = !deKey || (rowDateKey !== null && rowDateKey >= deKey);
+                const matchA = !aKey || (rowDateKey !== null && rowDateKey <= aKey);
+
+                if (!(matchMois && matchCommercial && matchDe && matchA)) return;
+
+                const tr = document.createElement('tr');
+                tr.dataset.id = row.id;
+                const statue = row.statue || 'en_attente';
+                tr.innerHTML = `
+                    <td>${escapeHtml(row.date || '')}</td>
+                    <td>${escapeHtml(row.telephone || '')}</td>
+                    <td>${escapeHtml(row.commercial || '')}</td>
+                    <td>${escapeHtml(row.nom_prospect || '')}</td>
+                    <td>${escapeHtml(row.ville || '')}</td>
+                    <td>${escapeHtml(row.projet || '')}</td>
+                    <td class="cell-remarque-preview" title="${escapeHtml(row.remarque || '')}">${escapeHtml(row.remarque || '')}</td>
+                    <td>${escapeHtml(prospectionStatueLabels[statue] || statue)}</td>
+                    <td>${escapeHtml(row.date_rappel || '')}</td>
+                `;
+                body.appendChild(tr);
+                visible++;
+            });
+
+            const emptyRow = document.getElementById('commercialNumerosEmpty');
+            if (emptyRow) {
+                emptyRow.style.display = visible === 0 ? '' : 'none';
             }
         }
 
-        async function markWhatsappMessagesRead({ all = false, id = '' } = {}) {
-            if (!all && !id) return;
+        function trimCommercial(value) {
+            return String(value || '').trim();
+        }
+
+        document.getElementById('filter_commercial_mois')?.addEventListener('change', filterCommercialTable);
+        document.getElementById('filter_commercial_commercial')?.addEventListener('change', filterCommercialTable);
+        bindDateMask('filter_commercial_de', filterCommercialTable);
+        bindDateMask('filter_commercial_a', filterCommercialTable);
+
+        document.getElementById('btnCommercialFermer')?.addEventListener('click', () => {
+            showProspectionView('liste');
+        });
+
+        const commercialNumeroModal = document.getElementById('commercialNumeroModal');
+        const commercialNumeroForm = document.getElementById('commercialNumeroForm');
+
+        function openCommercialNumeroModal() {
+            const filterCommercial = getFilterCommercialName();
+            const select = document.getElementById('commercial_numero_commercial');
+            if (select && filterCommercial) {
+                select.value = filterCommercial;
+            }
+            document.getElementById('commercial_numero_date').value = new Date().toLocaleDateString('fr-FR', { day: '2-digit', month: '2-digit', year: 'numeric' });
+            document.getElementById('commercial_numero_telephone').value = '';
+            openModal(commercialNumeroModal);
+        }
+
+        document.getElementById('btnCommercialAjouter')?.addEventListener('click', openCommercialNumeroModal);
+        document.getElementById('closeCommercialNumeroModal')?.addEventListener('click', () => closeModalEl(commercialNumeroModal));
+        document.getElementById('cancelCommercialNumeroModal')?.addEventListener('click', () => closeModalEl(commercialNumeroModal));
+        bindDateMask('commercial_numero_date');
+
+        commercialNumeroForm?.addEventListener('submit', async (event) => {
+            event.preventDefault();
+
+            const commercial = document.getElementById('commercial_numero_commercial')?.value.trim() || '';
+            const date = document.getElementById('commercial_numero_date').value.trim();
+            const telephone = document.getElementById('commercial_numero_telephone').value.trim();
+            if (!commercial || !/^\d{2}\/\d{2}\/\d{4}$/.test(date) || telephone === '') return;
+
             try {
-                const response = await fetch('{{ url('/whatsapp/messages/read') }}', {
+                const fd = new FormData();
+                fd.append('commercial', commercial);
+                fd.append('date', date);
+                fd.append('telephone', telephone);
+                fd.append('_token', document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '');
+
+                const response = await fetch('{{ route('prospections.commercial.store') }}', {
                     method: 'POST',
                     headers: {
-                        'Content-Type': 'application/json',
                         'Accept': 'application/json',
-                        'X-CSRF-TOKEN': waCsrfToken,
+                        'X-Requested-With': 'XMLHttpRequest',
                     },
-                    body: JSON.stringify({ all: !!all, id: id || null }),
+                    body: fd,
                 });
                 const data = await response.json().catch(() => ({}));
-                if (!response.ok || !data.ok) return;
-                if (Array.isArray(data.messages)) whatsappMessages = data.messages;
-                else if (all) whatsappMessages = (whatsappMessages || []).map((m) => ({ ...m, unread: false }));
-                else whatsappMessages = (whatsappMessages || []).map((m) => m.id === id ? { ...m, unread: false } : m);
-                refreshWhatsappNavBadge(data.unread);
-                refreshWhatsappNavList();
-            } catch (_) { /* ignore */ }
+                if (!response.ok) throw new Error(data.message || 'save_failed');
+
+                (data.rows || []).forEach((row) => prospectionsAllData.push(row));
+                closeModalEl(commercialNumeroModal);
+                filterCommercialTable();
+            } catch (error) {
+                window.alert(error.message || 'Impossible d’ajouter le numéro.');
+            }
+        });
+
+        function extractPhoneNumbersFromText(text) {
+            const found = [];
+            const raw = String(text || '')
+                .replace(/[Oo]/g, '0')
+                .replace(/[–—−]/g, '-');
+
+            const patterns = [
+                /(?:\+212|00212|212)[\s\-]*[567]\d(?:[\s\-]?\d){7}/g,
+                /(?<!\d)0[567]\d(?:[\s\-]?\d){7}(?!\d)/g,
+                /(?<!\d)[567]\d(?:[\s\-]?\d){7}(?!\d)/g,
+            ];
+
+            const normalizeMatch = (match) => {
+                let digits = String(match).replace(/\D/g, '');
+                if (digits.startsWith('212') && digits.length >= 12) {
+                    digits = '0' + digits.slice(3);
+                } else if (digits.startsWith('00212') && digits.length >= 14) {
+                    digits = '0' + digits.slice(5);
+                } else if (digits.length === 9 && ['5', '6', '7'].includes(digits[0])) {
+                    digits = '0' + digits;
+                }
+                if (digits.length === 10 && digits.startsWith('0') && ['5', '6', '7'].includes(digits[1])) {
+                    return `${digits.slice(0, 4)} ${digits.slice(4, 6)} ${digits.slice(6, 8)} ${digits.slice(8, 10)}`;
+                }
+                return '';
+            };
+
+            patterns.forEach((regex) => {
+                const matches = raw.match(regex) || [];
+                matches.forEach((match) => {
+                    const normalized = normalizeMatch(match);
+                    if (normalized) found.push(normalized);
+                });
+            });
+
+            (raw.match(/[\d\s\-+().]{9,22}/g) || []).forEach((block) => {
+                if (!/[567]/.test(block)) return;
+                const digits = block.replace(/\D/g, '');
+                if (digits.length < 9 || digits.length > 12) return;
+                if (digits.startsWith('212') && digits.length !== 12) return;
+                if (!digits.startsWith('212') && digits.length !== 9 && digits.length !== 10) return;
+                const normalized = normalizeMatch(digits);
+                if (normalized) found.push(normalized);
+            });
+
+            return [...new Set(found)];
         }
 
-        async function logWhatsappMessage({ telephone, message = '', relanceId = '', nomComplet = '' } = {}) {
-            if (!telephone) return;
+        async function preprocessImageForOcr(file) {
+            const bitmap = await createImageBitmap(file);
+            const scale = Math.max(2, 1400 / Math.max(bitmap.width, bitmap.height, 1));
+            const canvas = document.createElement('canvas');
+            canvas.width = Math.round(bitmap.width * scale);
+            canvas.height = Math.round(bitmap.height * scale);
+            const ctx = canvas.getContext('2d', { willReadFrequently: true });
+            ctx.filter = 'contrast(1.4)';
+            ctx.drawImage(bitmap, 0, 0, canvas.width, canvas.height);
+
+            const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+            const { data } = imageData;
+            for (let i = 0; i < data.length; i += 4) {
+                const gray = 0.299 * data[i] + 0.587 * data[i + 1] + 0.114 * data[i + 2];
+                const value = gray > 165 ? 255 : gray < 95 ? 0 : gray;
+                data[i] = data[i + 1] = data[i + 2] = value;
+            }
+            ctx.putImageData(imageData, 0, 0);
+            bitmap.close?.();
+
+            return canvas;
+        }
+
+        async function recognizePhonesFromImage(file) {
+            const canvas = await preprocessImageForOcr(file);
+            const worker = await Tesseract.createWorker('eng', 1, { logger: () => {} });
             try {
-                const response = await fetch('{{ url('/whatsapp/messages/log') }}', {
+                await worker.setParameters({
+                    tessedit_pageseg_mode: Tesseract.PSM?.SPARSE_TEXT ?? '11',
+                    tessedit_char_whitelist: '0123456789+- ',
+                });
+                const result = await worker.recognize(canvas);
+                return result.data?.text || '';
+            } finally {
+                await worker.terminate();
+            }
+        }
+
+        const commercialImportModal = document.getElementById('commercialImportModal');
+        const commercialImportForm = document.getElementById('commercialImportForm');
+        const commercialImportFile = document.getElementById('commercialImportFile');
+        const commercialImportStatus = document.getElementById('commercialImportStatus');
+        const commercialImportModalStatus = document.getElementById('commercialImportModalStatus');
+        const submitCommercialImport = document.getElementById('submitCommercialImport');
+
+        function openCommercialImportModal() {
+            const filterCommercial = getFilterCommercialName();
+            const select = document.getElementById('commercial_import_commercial');
+            if (select && filterCommercial) {
+                select.value = filterCommercial;
+            } else if (select) {
+                select.value = '';
+            }
+            if (commercialImportFile) commercialImportFile.value = '';
+            if (commercialImportModalStatus) commercialImportModalStatus.textContent = '';
+            openModal(commercialImportModal);
+        }
+
+        document.getElementById('btnCommercialImporter')?.addEventListener('click', openCommercialImportModal);
+        document.getElementById('closeCommercialImportModal')?.addEventListener('click', () => closeModalEl(commercialImportModal));
+        document.getElementById('cancelCommercialImportModal')?.addEventListener('click', () => closeModalEl(commercialImportModal));
+
+        commercialImportForm?.addEventListener('submit', async (event) => {
+            event.preventDefault();
+
+            const commercial = document.getElementById('commercial_import_commercial')?.value.trim() || '';
+            const file = commercialImportFile?.files?.[0];
+            if (!commercial || !file) return;
+
+            if (commercialImportModalStatus) {
+                commercialImportModalStatus.textContent = 'Analyse de l’image en cours…';
+                commercialImportModalStatus.style.color = 'var(--muted)';
+            }
+            if (submitCommercialImport) submitCommercialImport.disabled = true;
+
+            try {
+                if (typeof Tesseract === 'undefined') {
+                    throw new Error('Module OCR indisponible. Vérifiez votre connexion internet et rechargez la page.');
+                }
+
+                const ocrText = await recognizePhonesFromImage(file);
+                const numeros = extractPhoneNumbersFromText(ocrText);
+
+                if (commercialImportModalStatus) {
+                    commercialImportModalStatus.textContent = numeros.length
+                        ? `${numeros.length} numéro(s) détecté(s), enregistrement…`
+                        : 'Analyse terminée, extraction des numéros…';
+                }
+
+                const response = await fetch('{{ route('prospections.commercial.import') }}', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
                         'Accept': 'application/json',
-                        'X-CSRF-TOKEN': waCsrfToken,
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '',
+                        'X-Requested-With': 'XMLHttpRequest',
                     },
                     body: JSON.stringify({
-                        telephone,
-                        message: message || '',
-                        relance_id: relanceId || null,
-                        nom_complet: nomComplet || null,
+                        commercial,
+                        date: new Date().toLocaleDateString('fr-FR', { day: '2-digit', month: '2-digit', year: 'numeric' }),
+                        ocr_text: ocrText,
+                        numeros,
                     }),
                 });
                 const data = await response.json().catch(() => ({}));
-                if (!response.ok || !data.ok) return;
-                if (Array.isArray(data.messages)) whatsappMessages = data.messages;
-                else if (data.item) whatsappMessages = [data.item, ...(whatsappMessages || [])].slice(0, 80);
-                refreshWhatsappNavBadge(data.unread);
-                if (whatsappNavPanel?.classList.contains('open')) refreshWhatsappNavList();
-            } catch (_) { /* ignore */ }
-        }
+                if (!response.ok) {
+                    throw new Error(data.message || (data.errors ? Object.values(data.errors).flat().join(' ') : 'import_failed'));
+                }
 
-        function normalizeWhatsappPhone(telephone) {
-            let digits = String(telephone || '').replace(/\D+/g, '');
-            const indicatif = String(whatsappConfig.indicatif || '212').replace(/\D+/g, '') || '212';
-            if (!digits) return '';
-            if (digits.startsWith('00')) digits = digits.slice(2);
-            if (digits.startsWith('0') && digits.length >= 9) digits = indicatif + digits.slice(1);
-            return digits;
-        }
+                if ((data.created ?? 0) === 0 && (data.skipped ?? 0) > 0) {
+                    throw new Error('Tous les numéros détectés existent déjà pour ce commercial.');
+                }
 
-        function buildWhatsappUrl(telephone, message = '') {
-            const phone = normalizeWhatsappPhone(telephone);
-            if (!phone) return null;
-            let url = 'https://wa.me/' + phone;
-            const text = String(message || '').trim();
-            if (text) url += '?text=' + encodeURIComponent(text);
-            return url;
-        }
+                (data.rows || []).forEach((row) => prospectionsAllData.push(row));
+                filterCommercialTable();
+                closeModalEl(commercialImportModal);
 
-        function openWhatsappNow(telephone, message = '', meta = {}) {
-            if (whatsappConfig.actif === false) {
-                alert('WhatsApp est désactivé dans Configuration > WhatsApp.');
-                return false;
-            }
-            const url = buildWhatsappUrl(telephone, message);
-            if (!url) {
-                alert('Numéro de téléphone invalide.');
-                return false;
-            }
-            window.open(url, '_blank', 'noopener');
-            if (meta.log !== false) {
-                logWhatsappMessage({
-                    telephone,
-                    message,
-                    relanceId: meta.relanceId || '',
-                    nomComplet: meta.nomComplet || '',
-                });
-            }
-            return true;
-        }
-
-        function openWhatsappMessageModal(phone = '', message = '') {
-            if (waMsgTelephone) waMsgTelephone.value = phone || '';
-            if (waMsgBody) waMsgBody.value = message || (whatsappConfig.message_defaut || '');
-            if (waMsgHint) waMsgHint.textContent = 'WhatsApp s’ouvrira avec ce numéro et ce message.';
-            whatsappMessageModal?.classList.add('open');
-            whatsappMessageModal?.setAttribute('aria-hidden', 'false');
-            setWhatsappNavOpen(false);
-            setTimeout(() => (phone ? waMsgBody : waMsgTelephone)?.focus(), 50);
-        }
-
-        function closeWhatsappMessageModal() {
-            whatsappMessageModal?.classList.remove('open');
-            whatsappMessageModal?.setAttribute('aria-hidden', 'true');
-        }
-
-        function openWhatsappChoiceModal(ctx = {}) {
-            waActionContext = {
-                telephone: ctx.telephone || '',
-                nomComplet: ctx.nomComplet || '',
-                relanceId: ctx.relanceId || '',
-            };
-            const hint = document.getElementById('whatsappChoiceHint');
-            if (hint) {
-                const label = [waActionContext.nomComplet, waActionContext.telephone].filter(Boolean).join(' — ');
-                hint.textContent = label
-                    ? `Choisissez une action pour ${label}.`
-                    : 'Choisissez une action pour ce client.';
-            }
-            whatsappChoiceModal?.classList.add('open');
-            whatsappChoiceModal?.setAttribute('aria-hidden', 'false');
-        }
-
-        function closeWhatsappChoiceModal() {
-            whatsappChoiceModal?.classList.remove('open');
-            whatsappChoiceModal?.setAttribute('aria-hidden', 'true');
-        }
-
-        function openWhatsappDevisModal(ctx = {}) {
-            if (waDevisNbText) waDevisNbText.textContent = DEVIS_NB_TEXT;
-            if (waDevisDate) waDevisDate.value = todayFr();
-            if (waDevisTelephone) waDevisTelephone.value = ctx.telephone || waActionContext.telephone || '';
-            if (waDevisNom) waDevisNom.value = ctx.nomComplet || waActionContext.nomComplet || '';
-            if (waDevisTitre) waDevisTitre.value = '';
-            if (waDevisDescription) waDevisDescription.value = '';
-            if (waDevisMontant) waDevisMontant.value = '';
-            if (waDevisDelai) waDevisDelai.value = '';
-            waActionContext = {
-                telephone: waDevisTelephone?.value || '',
-                nomComplet: waDevisNom?.value || '',
-                relanceId: ctx.relanceId || waActionContext.relanceId || '',
-            };
-            closeWhatsappChoiceModal();
-            whatsappDevisModal?.classList.add('open');
-            whatsappDevisModal?.setAttribute('aria-hidden', 'false');
-            setTimeout(() => waDevisTitre?.focus(), 50);
-        }
-
-        function closeWhatsappDevisModal() {
-            whatsappDevisModal?.classList.remove('open');
-            whatsappDevisModal?.setAttribute('aria-hidden', 'true');
-        }
-
-        function buildDevisWhatsappMessage(data, pdfUrl = '') {
-            const montant = formatMoneyFr(data.montant);
-            const linkLine = pdfUrl
-                ? `\n📄 PDF du devis :\n${pdfUrl}\n`
-                : '';
-            return `Bonjour ${data.nom || 'Client'},
-
-Voici notre devis EvoPro :
-${linkLine}
-Date : ${data.date}
-Projet : ${data.titre}
-Description : ${data.description}
-Montant : ${montant} DH
-Délai : ${data.delai}
-
-Merci pour votre confiance.
-EvoPro`;
-        }
-
-        function buildDevisHtml(data, logoSrc = '') {
-            const montant = Number(data.montant) || 0;
-            const nom = escapeHtml(data.nom || '—');
-            const tel = escapeHtml(data.telephone || '—');
-            const titre = escapeHtml(data.titre || '—');
-            const delai = escapeHtml(data.delai || '—');
-            const date = escapeHtml(data.date || '');
-            const desc = escapeHtml(data.description || '');
-            const montantTxt = escapeHtml(formatMoneyFr(montant));
-            const logo = escapeHtml(logoSrc || DEVIS_LOGO_URL);
-            return `<div class="devis-pdf-root" style="box-sizing:border-box;width:210mm;height:148mm;overflow:hidden;display:flex;font-family:'Outfit',Arial,Helvetica,sans-serif;color:#0a1628;background:#eef4fc;text-transform:none;letter-spacing:0;line-height:1.3;">
-                <div style="width:7mm;flex:0 0 7mm;background:linear-gradient(180deg,#3b9eff 0%,#1e6fd9 42%,#0b3d8c 100%);"></div>
-                <div style="flex:1;min-width:0;display:flex;flex-direction:column;height:148mm;">
-                    <div style="background:#07111f;color:#fff;padding:4mm 8mm;display:flex;justify-content:space-between;align-items:center;position:relative;overflow:hidden;">
-                        <div style="position:absolute;right:-8mm;top:-12mm;width:42mm;height:42mm;border-radius:50%;background:rgba(59,158,255,0.16);"></div>
-                        <div style="position:absolute;right:18mm;bottom:-16mm;width:28mm;height:28mm;border-radius:50%;background:rgba(255,255,255,0.06);"></div>
-                        <img src="${logo}" alt="A2S-EvoPro" style="position:relative;height:24mm;width:auto;max-width:78mm;object-fit:contain;display:block;">
-                        <div style="text-align:right;position:relative;">
-                            <div style="display:inline-block;padding:1.6mm 4mm;border-radius:99px;background:rgba(59,158,255,0.22);border:1px solid rgba(126,196,255,0.45);font-size:9px;letter-spacing:.16em;font-weight:700;color:#d6ecff;">DEVIS COMMERCIAL</div>
-                            <div style="margin-top:2.6mm;font-size:12.5px;font-weight:700;color:#fff;">${date}</div>
-                        </div>
-                    </div>
-                    <div style="flex:1;min-height:0;padding:6mm 8mm 4.5mm;display:flex;gap:5.5mm;">
-                        <div style="width:64mm;flex:0 0 64mm;display:flex;flex-direction:column;gap:3.8mm;">
-                            <div style="background:#fff;border:1px solid #d5e4f7;border-radius:3.2mm;padding:3.8mm 4.2mm;">
-                                <div style="font-size:8px;font-weight:700;letter-spacing:.14em;color:#1e6fd9;text-transform:uppercase;margin-bottom:1.6mm;">Client</div>
-                                <div style="font-size:15px;font-weight:700;color:#0a1628;line-height:1.25;">${nom}</div>
-                                <div style="margin-top:1.8mm;font-size:11.5px;color:#4d6480;">Tél. ${tel}</div>
-                            </div>
-                            <div style="background:#fff;border:1px solid #d5e4f7;border-radius:3.2mm;padding:3.8mm 4.2mm;">
-                                <div style="font-size:8px;font-weight:700;letter-spacing:.14em;color:#1e6fd9;text-transform:uppercase;margin-bottom:1.6mm;">Délai de travail</div>
-                                <div style="font-size:15px;font-weight:700;color:#0a1628;">${delai}</div>
-                            </div>
-                            <div style="margin-top:auto;background:linear-gradient(145deg,#0d2a52,#1e6fd9);border-radius:3.6mm;padding:5mm 4.4mm;color:#fff;">
-                                <div style="font-size:8px;font-weight:700;letter-spacing:.16em;color:#b9d8ff;text-transform:uppercase;margin-bottom:2mm;">Montant du projet</div>
-                                <div style="font-size:28px;font-weight:900;letter-spacing:.01em;line-height:1;"><strong>${montantTxt}</strong> <span style="font-size:13px;font-weight:900;opacity:.95;">DH</span></div>
-                            </div>
-                        </div>
-                        <div style="flex:1;min-width:0;display:flex;flex-direction:column;">
-                            <div style="background:#fff;border:1px solid #d5e4f7;border-radius:3.2mm;padding:3.8mm 4.4mm;">
-                                <div style="font-size:8px;font-weight:700;letter-spacing:.14em;color:#1e6fd9;text-transform:uppercase;margin-bottom:1.6mm;">Titre de projet</div>
-                                <div style="font-size:16.5px;font-weight:700;color:#0a1628;line-height:1.25;">${titre}</div>
-                            </div>
-                            <div style="height:9mm;flex:0 0 9mm;"></div>
-                            <div style="flex:1;min-height:0;background:#fff;border:1px solid #d5e4f7;border-radius:3.2mm;padding:4mm 4.4mm;display:flex;flex-direction:column;">
-                                <div style="font-size:8px;font-weight:700;letter-spacing:.14em;color:#1e6fd9;text-transform:uppercase;margin-bottom:2.2mm;">Description</div>
-                                <div style="flex:1;overflow:hidden;font-size:12.5px;line-height:1.5;color:#24364d;white-space:pre-wrap;">${desc}</div>
-                            </div>
-                        </div>
-                    </div>
-                    <div style="padding:0 8mm 5mm;">
-                        <div style="background:#fff;border:1px solid #d5e4f7;border-radius:3.2mm;padding:3.4mm 4mm 3.6mm;">
-                            <div style="font-size:8px;font-weight:700;letter-spacing:.14em;color:#1e6fd9;text-transform:uppercase;margin-bottom:2.4mm;">NB — Modalités de paiement</div>
-                            <div style="display:flex;gap:2.6mm;">
-                                <div style="flex:1;background:#f3f8ff;border-radius:2.4mm;padding:2.5mm 2.8mm;border-left:2.6px solid #3b9eff;">
-                                    <div style="font-size:12.5px;font-weight:800;color:#1e6fd9;">30 %</div>
-                                    <div style="font-size:9.5px;color:#4d6480;margin-top:0.8mm;line-height:1.35;">À la commande — acompte pour le lancement du projet</div>
-                                </div>
-                                <div style="flex:1;background:#f3f8ff;border-radius:2.4mm;padding:2.5mm 2.8mm;border-left:2.6px solid #1e6fd9;">
-                                    <div style="font-size:12.5px;font-weight:800;color:#1e6fd9;">40 %</div>
-                                    <div style="font-size:9.5px;color:#4d6480;margin-top:0.8mm;line-height:1.35;">À mi-parcours — après validation de l’avancement</div>
-                                </div>
-                                <div style="flex:1;background:#f3f8ff;border-radius:2.4mm;padding:2.5mm 2.8mm;border-left:2.6px solid #0b3d8c;">
-                                    <div style="font-size:12.5px;font-weight:800;color:#1e6fd9;">30 %</div>
-                                    <div style="font-size:9.5px;color:#4d6480;margin-top:0.8mm;line-height:1.35;">À la livraison — solde après validation finale</div>
-                                </div>
-                            </div>
-                        </div>
-                        <div style="margin-top:2.6mm;display:flex;justify-content:space-between;align-items:center;font-size:9px;color:#66788f;">
-                            <span>Merci pour votre confiance.</span>
-                            <span style="letter-spacing:.08em;font-weight:700;color:#1e6fd9;">A2S-EvoPro</span>
-                        </div>
-                    </div>
-                </div>
-            </div>`;
-        }
-
-        async function buildDevisPdfBlob(data) {
-            if (!window.html2pdf) {
-                throw new Error('Générateur PDF indisponible.');
-            }
-            const logoSrc = await getDevisLogoDataUrl();
-            const host = document.createElement('div');
-            host.style.cssText = 'position:fixed;left:-10000px;top:0;width:210mm;height:148mm;background:#eef4fc;padding:0;margin:0;text-transform:none;';
-            host.innerHTML = buildDevisHtml(data, logoSrc);
-            document.body.appendChild(host);
-            await Promise.all(Array.from(host.querySelectorAll('img')).map((img) => {
-                if (img.complete) return Promise.resolve();
-                return new Promise((resolve) => {
-                    img.onload = resolve;
-                    img.onerror = resolve;
-                });
-            }));
-            try {
-                const opt = {
-                    margin: 0,
-                    filename: 'devis-evopro.pdf',
-                    image: { type: 'jpeg', quality: 0.98 },
-                    html2canvas: {
-                        scale: 2.5,
-                        useCORS: true,
-                        backgroundColor: '#eef4fc',
-                        windowWidth: 794,
-                        windowHeight: 560,
-                    },
-                    jsPDF: { unit: 'mm', format: 'a5', orientation: 'landscape' },
-                    pagebreak: { mode: [] },
-                };
-                return await html2pdf().set(opt).from(host.firstElementChild).outputPdf('blob');
+                const message = `${data.created || 0} numéro(s) importé(s), ${data.skipped || 0} ignoré(s).`;
+                if (commercialImportStatus) {
+                    commercialImportStatus.textContent = message;
+                    commercialImportStatus.className = 'is-success';
+                }
+            } catch (error) {
+                const message = error.message || 'Import impossible.';
+                if (commercialImportModalStatus) {
+                    commercialImportModalStatus.textContent = message;
+                    commercialImportModalStatus.style.color = '#ffb3b8';
+                }
+                if (commercialImportStatus) {
+                    commercialImportStatus.textContent = message;
+                    commercialImportStatus.className = 'is-error';
+                }
             } finally {
-                host.remove();
-            }
-        }
-
-        async function downloadDevisPdf(data) {
-            const blob = await buildDevisPdfBlob(data);
-            const safeTitre = String(data.titre || 'projet')
-                .replace(/[^\w\-]+/g, '_')
-                .replace(/_+/g, '_')
-                .slice(0, 40) || 'projet';
-            const fileName = `Devis_EvoPro_${safeTitre}.pdf`;
-            const url = URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = fileName;
-            document.body.appendChild(a);
-            a.click();
-            a.remove();
-            setTimeout(() => URL.revokeObjectURL(url), 1500);
-            return true;
-        }
-
-        function phoneFromRelanceRow(row) {
-            if (!row) return '';
-            const input = row.querySelector('input[data-field="telephone"]');
-            return (input?.value || row.dataset.telephone || '').trim();
-        }
-
-        function nomFromRelanceRow(row) {
-            if (!row) return '';
-            const input = row.querySelector('input[data-field="nom_complet"]');
-            return (input?.value || '').trim();
-        }
-
-        function focusRelanceFromWhatsapp(relanceId) {
-            if (!relanceId) return;
-            if (typeof showPanel === 'function') showPanel('fiche-relance');
-            const statueFilter = document.getElementById('filter_relance_statue');
-            if (statueFilter) {
-                statueFilter.value = '';
-                if (typeof filterRelancesTable === 'function') filterRelancesTable();
-            }
-            const row = document.querySelector(`#relancesTableBody tr[data-id="${CSS.escape(relanceId)}"]`);
-            if (row) {
-                row.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                row.style.outline = '2px solid rgba(37, 211, 102, 0.75)';
-                setTimeout(() => { row.style.outline = ''; }, 1800);
-            }
-        }
-
-        refreshWhatsappNavBadge();
-        refreshWhatsappNavList();
-
-        btnWhatsappNav?.addEventListener('click', (e) => {
-            e.stopPropagation();
-            const open = !whatsappNavPanel?.classList.contains('open');
-            setWhatsappNavOpen(open);
-            document.getElementById('relanceNotifPanel')?.classList.remove('open');
-            document.getElementById('btnRelanceNotif')?.classList.remove('is-open');
-        });
-
-        whatsappNavList?.addEventListener('click', (e) => {
-            const itemBtn = e.target.closest('.wa-msg-item[data-id]');
-            if (!itemBtn) return;
-            const relanceId = itemBtn.dataset.relanceId || '';
-            setWhatsappNavOpen(false);
-            focusRelanceFromWhatsapp(relanceId);
-        });
-
-        document.getElementById('btnWhatsappQuickMsg')?.addEventListener('click', () => {
-            openWhatsappMessageModal('', whatsappConfig.message_defaut || '');
-        });
-
-        document.getElementById('btnWhatsappOpenWeb')?.addEventListener('click', () => {
-            window.open('https://web.whatsapp.com/', '_blank', 'noopener');
-            setWhatsappNavOpen(false);
-        });
-
-        document.getElementById('btnWhatsappOpenConfig')?.addEventListener('click', () => {
-            setWhatsappNavOpen(false);
-            showPanel('fiche-whatsapp');
-        });
-
-        document.getElementById('btnCloseWhatsapp')?.addEventListener('click', () => showPanel('dashboard'));
-        document.getElementById('closeWhatsappMessageModal')?.addEventListener('click', closeWhatsappMessageModal);
-        document.getElementById('cancelWhatsappMessageModal')?.addEventListener('click', closeWhatsappMessageModal);
-        whatsappMessageModal?.addEventListener('click', (e) => {
-            if (e.target === whatsappMessageModal) closeWhatsappMessageModal();
-        });
-
-        document.getElementById('closeWhatsappChoiceModal')?.addEventListener('click', closeWhatsappChoiceModal);
-        document.getElementById('cancelWhatsappChoiceModal')?.addEventListener('click', closeWhatsappChoiceModal);
-        whatsappChoiceModal?.addEventListener('click', (e) => {
-            if (e.target === whatsappChoiceModal) closeWhatsappChoiceModal();
-        });
-
-        document.getElementById('btnWaChoiceMessage')?.addEventListener('click', () => {
-            closeWhatsappChoiceModal();
-            if (whatsappConfig.messages_actifs === false) {
-                alert('Les messages WhatsApp sont désactivés.');
-                return;
-            }
-            openWhatsappNow(
-                waActionContext.telephone,
-                whatsappConfig.message_defaut || '',
-                {
-                    relanceId: waActionContext.relanceId,
-                    nomComplet: waActionContext.nomComplet,
-                }
-            );
-        });
-
-        document.getElementById('btnWaChoiceDevis')?.addEventListener('click', () => {
-            openWhatsappDevisModal(waActionContext);
-        });
-
-        document.getElementById('closeWhatsappDevisModal')?.addEventListener('click', closeWhatsappDevisModal);
-        document.getElementById('cancelWhatsappDevisModal')?.addEventListener('click', closeWhatsappDevisModal);
-        whatsappDevisModal?.addEventListener('click', (e) => {
-            if (e.target === whatsappDevisModal) closeWhatsappDevisModal();
-        });
-
-        whatsappMessageForm?.addEventListener('submit', (e) => {
-            e.preventDefault();
-            const telephone = (waMsgTelephone?.value || '').trim();
-            const message = (waMsgBody?.value || '').trim();
-            if (!telephone) {
-                alert('Saisissez un numéro de téléphone.');
-                return;
-            }
-            if (openWhatsappNow(telephone, message)) closeWhatsappMessageModal();
-        });
-
-        whatsappDevisForm?.addEventListener('submit', async (e) => {
-            e.preventDefault();
-            const data = {
-                date: (waDevisDate?.value || todayFr()).trim(),
-                telephone: (waDevisTelephone?.value || waActionContext.telephone || '').trim(),
-                nom: (waDevisNom?.value || waActionContext.nomComplet || '').trim(),
-                titre: (waDevisTitre?.value || '').trim(),
-                description: (waDevisDescription?.value || '').trim(),
-                montant: Number(waDevisMontant?.value || 0),
-                delai: (waDevisDelai?.value || '').trim(),
-            };
-            if (!data.telephone) {
-                alert('Numéro de téléphone manquant.');
-                return;
-            }
-            if (!data.titre || !data.description || !data.delai || !(data.montant > 0)) {
-                alert('Renseignez le titre, la description, le montant et le délai.');
-                return;
-            }
-
-            const submitBtn = document.getElementById('whatsappDevisSubmitBtn');
-            const prevLabel = submitBtn?.textContent || 'Télécharger';
-            if (submitBtn) {
-                submitBtn.disabled = true;
-                submitBtn.textContent = 'Téléchargement…';
-            }
-            try {
-                await downloadDevisPdf(data);
-                closeWhatsappDevisModal();
-            } catch (err) {
-                alert(err?.message || 'Impossible de télécharger le devis PDF.');
-            } finally {
-                if (submitBtn) {
-                    submitBtn.disabled = false;
-                    submitBtn.textContent = prevLabel;
-                }
+                if (submitCommercialImport) submitCommercialImport.disabled = false;
             }
         });
 
-        document.addEventListener('click', (e) => {
-            const waBtn = e.target.closest('[data-wa-action]');
-            if (waBtn) {
-                e.preventDefault();
-                e.stopPropagation();
-                if (waBtn.disabled || waBtn.getAttribute('aria-disabled') === 'true') return;
-                const row = waBtn.closest('tr[data-id]');
-                const phone = phoneFromRelanceRow(row);
-                if (!phone) {
-                    alert('Aucun numéro de téléphone sur cette ligne.');
-                    return;
-                }
-                const meta = {
-                    relanceId: row?.dataset.id || '',
-                    nomComplet: nomFromRelanceRow(row),
-                    telephone: phone,
-                };
-                if (waBtn.dataset.waAction === 'call') {
-                    if (whatsappConfig.appels_actifs === false) {
-                        alert('Les appels WhatsApp sont désactivés.');
-                        return;
-                    }
-                    openWhatsappNow(phone, '', { ...meta, log: false });
-                } else if (waBtn.dataset.waAction === 'choose' || waBtn.dataset.waAction === 'message') {
-                    if (whatsappConfig.messages_actifs === false) {
-                        alert('Les messages WhatsApp sont désactivés.');
-                        return;
-                    }
-                    openWhatsappChoiceModal(meta);
-                }
-                return;
+        @if (session('open_config'))
+            showConfigSection(@json(session('open_config')));
+        @elseif (session('open_panel') === 'configuration')
+            showConfigSection('utilisateur');
+        @elseif (session('open_panel'))
+            showPanel(@json(session('open_panel')));
+        @else
+            const openPanelFromUrl = new URLSearchParams(window.location.search).get('open_panel');
+            const openConfigFromUrl = new URLSearchParams(window.location.search).get('open_config');
+            if (openConfigFromUrl) {
+                showConfigSection(openConfigFromUrl);
+            } else if (openPanelFromUrl === 'configuration') {
+                showConfigSection('utilisateur');
+            } else if (openPanelFromUrl) {
+                showPanel(openPanelFromUrl);
+            } else {
+                showPanel(defaultPanel);
             }
+        @endif
 
-            if (whatsappNavWrap && !whatsappNavWrap.contains(e.target)) {
-                setWhatsappNavOpen(false);
+        @if (session('open_prospection'))
+            showProspectionView(@json(session('open_prospection')));
+        @elseif (session('open_panel') === 'prospection')
+            showProspectionView('liste');
+        @else
+            const openProspectionFromUrl = new URLSearchParams(window.location.search).get('open_prospection');
+            if (openProspectionFromUrl) {
+                showProspectionView(openProspectionFromUrl);
+            } else if (defaultPanel === 'prospection') {
+                showProspectionView('liste');
             }
-        });
+        @endif
     </script>
 </body>
 </html>

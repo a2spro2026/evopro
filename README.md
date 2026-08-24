@@ -1,6 +1,6 @@
 # EvoPro
 
-Système de gestion EvoPro (Laravel 12) — clients, projets, paiements, tableau de bord.
+Système de gestion EvoPro (Laravel 12).
 
 ## URLs
 
@@ -20,24 +20,28 @@ php artisan migrate
 php artisan serve --port=8002
 ```
 
-## Déploiement (Render + a2spr.com)
+## Archive contacts
 
-Le code est sur GitHub : https://github.com/a2spro2026/evopro
+Les numéros et noms exportés sont conservés dans **`contacts-archive/`** (dossier indépendant de `storage/app/evopro_data.json`).
 
-**Déploiement en 1 clic (Render Blueprint) :**
+```bash
+php artisan tinker --execute="App\Support\ContactsArchive::export();"
+```
 
-https://render.com/deploy?repo=https://github.com/a2spro2026/evopro
+## État actuel
 
-1. Ouvrir le lien ci-dessus et connecter le compte Render (ou GitHub).
-2. Créer le service **evopro** (le fichier `render.yaml` configure PHP, SQLite, sessions fichier).
-3. Dans Render → service **evopro** → **Settings** → **Custom Domains**, ajouter : `evopro.a2spr.com`
-4. Attendre le déploiement (build ~2–5 min).
+L’application a été remise à zéro : connexion + tableau de bord minimal. Les anciennes sections (Client, Projets, Relance, etc.) ont été retirées pour reconstruire le projet proprement.
 
-Le DNS `evopro.a2spr.com` pointe déjà vers l’infra A2SPR ; une fois le domaine ajouté sur Render, l’app sera accessible en production.
+## Déploiement VPS
+
+```bash
+deploy-evopro.bat
+```
+
+(GitHub push seul ne met pas à jour la production.)
 
 ## Stack
 
 - Laravel 12, PHP 8.2+
-- Données métier en session (clients, projets, paiements)
+- Données métier : `storage/app/evopro_data.json` via `AppStore`
 - SQLite (migrations Laravel par défaut)
-- Chart.js (CDN) pour le tableau de bord

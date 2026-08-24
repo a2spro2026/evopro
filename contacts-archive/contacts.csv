@@ -1,0 +1,327 @@
+nom;telephone;source;ref;ville
+;05 18 82 06 61;relance;REL-0251;
+;05 18 82 33 69;relance;REL-0250;
+;06 01 22 51 56;relance;REL-0289;
+;06 02 48 90 83;relance;REL-0224;
+;06 04 38 15 46;relance;REL-0197;
+;06 06 85 28 61;relance;REL-0137;
+;06 06 93 32 29;relance;REL-0284;
+;06 07 27 81 22;relance;REL-0183;
+;06 07 62 30 72;relance;REL-0299;
+;06 10 33 90 12;relance;REL-0271;
+;06 11 47 49 12;relance;REL-0270;
+;06 12 07 29 69;relance;REL-0192;
+;06 14 10 19 43;relance;REL-0259;
+;06 15 50 00 82;relance;REL-0164;
+;06 15 73 48 44;relance;REL-0073;
+;06 15 99 96 42;relance;REL-0228;
+;06 17 30 64 20;relance;REL-0282;
+;06 21 14 09 18;relance;REL-0264;
+;06 21 89 87 17;relance;REL-0059;
+;06 22 13 63 88;relance;REL-0290;
+;06 24 22 23 91;relance;REL-0252;
+;06 26 08 14 45;relance;REL-0274;
+;06 26 51 98 23;relance;REL-0262;
+;06 28 33 13 98;relance;REL-0089;
+;06 28 65 17 11;relance;REL-0233;
+;06 29 02 57 63;relance;REL-0236;
+;06 29 09 85 26;relance;REL-0043;
+;06 30 31 55 80;relance;REL-0298;
+;06 30 42 73 01;relance;REL-0301;
+;06 31 19 90 03;relance;REL-0316;
+;06 31 87 07 92;relance;REL-0317;
+;06 32 16 92 00;relance;REL-0093;
+;06 32 30 50 13;relance;REL-0294;
+;06 33 68 27 62;relance;REL-0066;
+;06 34 21 19 86;relance;REL-0160;
+;06 34 55 67 24;relance;REL-0238;
+;06 34 55 67 27;relance;REL-0222;
+;06 35 40 64 71;relance;REL-0271;
+;06 36 72 21 46;relance;REL-0185;
+;06 36 94 20 88;relance;REL-0166;
+;06 37 25 98 26;relance;REL-0212;
+;06 38 43 75 02;relance;REL-0291;
+;06 38 44 90 59;relance;REL-0312;
+;06 39 30 06 12;relance;REL-0245;
+;06 40 29 14 98;relance;REL-0319;
+;06 42 04 41 40;relance;REL-0109;
+;06 42 74 63 70;relance;REL-0273;
+;06 42 88 82 54;relance;REL-0275;
+;06 43 43 93 25;relance;REL-0169;
+;06 43 68 53 24;relance;REL-0313;
+;06 44 29 75 05;relance;REL-0198;
+;06 44 34 57 35;relance;REL-0214;
+;06 45 43 53 36;relance;REL-0143;
+;06 45 70 63 78;relance;REL-0140;
+;06 47 40 62 85;relance;REL-0064;
+;06 48 16 14 18;relance;REL-0060;
+;06 50 40 87 85;relance;REL-0267;
+;06 50 66 16 89;relance;REL-0252;
+;06 52 12 67 27;relance;REL-0253;
+;06 52 59 11 82;relance;REL-0075;
+;06 52 87 16 25;relance;REL-0209;
+;06 52 95 43 46;relance;REL-0190;
+;06 53 75 09 89;relance;REL-0308;
+;06 53 88 17 65;relance;REL-0223;
+;06 54 08 00 31;relance;REL-0207;
+;06 54 21 85 17;relance;REL-0061;
+;06 54 39 55 43;relance;REL-0310;
+;06 54 54 41 64;relance;REL-0244;
+;06 55 87 03 39;relance;REL-0091;
+;06 56 94 78 86;relance;REL-0266;
+;06 60 18 18 04;relance;REL-0243;
+;06 60 22 97 68;relance;REL-0285;
+;06 60 24 90 21;relance;REL-0287;
+;06 60 29 48 80;relance;REL-0260;
+;06 60 30 06 39;relance;REL-0226;
+;06 60 33 73 77;relance;REL-0182;
+;06 60 46 34 28;relance;REL-0152;
+;06 60 57 81 04;relance;REL-0297;
+;06 60 63 14 71;relance;REL-0264;
+;06 60 73 83 11;relance;REL-0258;
+;06 60 81 73 35;relance;REL-0279;
+;06 60 85 34 46;relance;REL-0318;
+;06 60 96 26 64;relance;REL-0076;
+;06 61 05 18 67;relance;REL-0100;
+;06 61 05 73 64;relance;REL-0276;
+;06 61 14 80 69;relance;REL-0288;
+;06 61 15 19 12;relance;REL-0254;
+;06 61 17 08 41;relance;REL-0272;
+;06 61 18 02 91;relance;REL-0187;
+;06 61 19 29 62;relance;REL-0269;
+;06 61 19 63 77;relance;REL-0280;
+;06 61 21 37 05;relance;REL-0158;
+;06 61 23 97 14;relance;REL-0242;
+;06 61 24 47 79;relance;REL-0202;
+;06 61 30 35 91;relance;REL-0273;
+;06 61 33 71 98;relance;REL-0242;
+;06 61 33 98 45;relance;REL-0253;
+;06 61 36 22 65;relance;REL-0320;
+;06 61 36 94 98;relance;REL-0155;
+;06 61 37 90 98;relance;REL-0133;
+;06 61 39 89 09;relance;REL-0112;
+;06 61 48 61 66;relance;REL-0260;
+;06 61 54 80 27;relance;REL-0103;
+;06 61 55 02 41;relance;REL-0176;
+;06 61 60 88 28;relance;REL-0068;
+;06 61 68 90 65;relance;REL-0248;
+;06 61 69 96 98;relance;REL-0303;
+;06 61 71 21 48;relance;REL-0267;
+;06 61 73 86 42;relance;REL-0256;
+;06 61 77 33 14;relance;REL-0309;
+;06 61 77 73 34;relance;REL-0283;
+;06 61 80 90 52;relance;REL-0302;
+;06 61 82 14 89;relance;REL-0127;
+;06 61 84 82 37;relance;REL-0274;
+;06 61 89 10 88;relance;REL-0265;
+;06 61 89 43 81;relance;REL-0151;
+;06 61 89 81 94;relance;REL-0225;
+;06 61 90 11 57;relance;REL-0257;
+;06 61 90 55 82;relance;REL-0255;
+;06 61 92 86 01;relance;REL-0208;
+;06 62 05 19 35;relance;REL-0184;
+;06 62 25 40 85;relance;REL-0200;
+;06 62 31 64 95;relance;REL-0277;
+;06 62 56 01 36;relance;REL-0295;
+;06 62 74 77 55;relance;REL-0247;
+;06 62 77 31 21;relance;REL-0250;
+;06 63 06 06 93;relance;REL-0248;
+;06 63 19 91 59;relance;REL-0170;
+;06 63 34 00 01;relance;REL-0230;
+;06 63 57 26 71;relance;REL-0263;
+;06 63 62 03 43;relance;REL-0246;
+;06 64 25 22 48;relance;REL-0057;
+;06 64 64 68 64;relance;REL-0265;
+;06 65 43 73 54;relance;REL-0153;
+;06 65 82 83 59;relance;REL-0257;
+;06 66 24 46 84;relance;REL-0189;
+;06 66 41 05 48;relance;REL-0268;
+;06 66 47 71 43;relance;REL-0150;
+;06 66 69 30 66;relance;REL-0119;
+;06 66 82 66 64;relance;REL-0191;
+;06 66 86 88 58;relance;REL-0219;
+;06 66 94 67 31;relance;REL-0227;
+;06 67 08 66 08;relance;REL-0101;
+;06 67 14 12 25;relance;REL-0157;
+;06 67 15 94 65;relance;REL-0241;
+;06 67 32 94 24;relance;REL-0270;
+;06 67 39 00 93;relance;REL-0281;
+;06 67 69 19 09;relance;REL-0263;
+;06 67 74 55 53;relance;REL-0307;
+;06 68 33 14 36;relance;REL-0300;
+;06 68 36 00 96;relance;REL-0262;
+;06 68 81 84 38;relance;REL-0134;
+;06 69 11 66 66;relance;REL-0268;
+;06 69 72 24 71;relance;REL-0251;
+;06 69 98 60 26;relance;REL-0249;
+;06 70 02 47 19;relance;REL-0292;
+;06 70 74 64 10;relance;REL-0086;
+;06 70 90 78 78;relance;REL-0315;
+;06 70 94 34 90;relance;REL-0204;
+;06 72 77 00 19;relance;REL-0249;
+;06 73 82 83 51;relance;REL-0258;
+;06 74 31 26 35;relance;REL-0311;
+;06 74 74 46 26;relance;REL-0056;
+;06 75 44 34 68;relance;REL-0110;
+;06 76 02 17 12;relance;REL-0243;
+;06 77 33 79 34;relance;REL-0079;
+;06 77 59 65 09;relance;REL-0159;
+;06 77 61 16 45;relance;REL-0229;
+;06 77 69 07 99;relance;REL-0220;
+;06 79 35 18 03;relance;REL-0080;
+;06 79 45 64 57;relance;REL-0296;
+;06 79 60 96 42;relance;REL-0206;
+;06 80 20 20 25;relance;REL-0172;
+;06 80 81 37 14;relance;REL-0105;
+;06 81 18 18 13;relance;REL-0269;
+;06 82 25 27 57;relance;REL-0255;
+;06 84 12 84 93;relance;REL-0092;
+;06 84 46 47 00;relance;REL-0071;
+;06 89 48 69 90;relance;REL-0272;
+;06 91 03 23 32;relance;REL-0210;
+;06 91 39 43 17;relance;REL-0069;
+;06 91 87 19 83;relance;REL-0293;
+;06 94 51 09 93;relance;REL-0244;
+;06 95 49 62 19;relance;REL-0063;
+;06 95 97 19 49;relance;REL-0070;
+;06 96 30 32 97;relance;REL-0216;
+;06 98 05 18 82;relance;REL-0247;
+;06 98 12 59 33;relance;REL-0231;
+;06 98 15 56 10;relance;REL-0090;
+;06 98 27 74 02;relance;REL-0199;
+;06 98 63 96 48;relance;REL-0321;
+;06 99 34 68 89;relance;REL-0085;
+;07 00 57 21 85;relance;REL-0174;
+;07 00 77 21 62;relance;REL-0095;
+;07 01 11 21 58;relance;REL-0235;
+;07 02 80 44 89;relance;REL-0322;
+;07 07 50 78 51;relance;REL-0074;
+;07 07 56 42 34;relance;REL-0125;
+;07 08 79 82 24;relance;REL-0078;
+;07 08 82 57 17;relance;REL-0232;
+;07 08 88 08 94;relance;REL-0196;
+;07 09 36 59 48;relance;REL-0162;
+;07 10 20 61 84;relance;REL-0245;
+;07 11 11 32 46;relance;REL-0304;
+;07 15 98 70 05;relance;REL-0314;
+;07 24 45 57 76;relance;REL-0193;
+;07 27 06 69 87;relance;REL-0046;
+;07 27 87 64 09;relance;REL-0306;
+;07 50 02 11 20;relance;REL-0082;
+;07 50 74 93 60;relance;REL-0154;
+;07 52 17 63 66;relance;REL-0286;
+;07 60 16 24 89;relance;REL-0098;
+;07 60 17 28 79;relance;REL-0067;
+;07 69 08 69 60;relance;REL-0261;
+;07 70 62 81 15;relance;REL-0215;
+;07 71 60 29 70;relance;REL-0246;
+;07 74 54 48 97;relance;REL-0094;
+;07 75 36 89 32;relance;REL-0203;
+;07 78 39 95 39;relance;REL-0278;
+;07 79 05 92 72;relance;REL-0305;
+;07 79 16 84 42;relance;REL-0266;
+abdelali besour;06 42 76 55 73;relance;REL-0234;
+abdelilah agadir;0665657552;relance;REL-0032;agadir
+ABDELOUAHED NOUIRII;06 52 51 06 10;relance;REL-0194;
+abderahim;0661827153;relance;REL-0010;had soualem
+abderahim setat;06 61 43 48 97;relance;REL-0131;
+abderrahim fes;0660457937;relance;REL-0118;fes , ain smen
+abderrahmane marrakech;0638564680;relance;REL-0029;marrakech
+achraf casa;0698380039;relance;REL-0030;casablanca
+adil;06 60 61 73 83;relance;REL-0115;
+adil tanger;06 65 23 53 33;relance;REL-0072;
+ahmed casa;0666421376;relance;REL-0033;casablanca
+AHMED SIBILI AIT MELOUL;06 20 81 17 19;relance;REL-0050;
+ALAMI KENITRA;06 18 27 15 51;relance;REL-0083;
+amine lamsayah;0609-570-291;client;CLI-0004;sidi kacem
+asiufi abdel3adim  houceima;06 76 76 30 03;relance;REL-0240;
+ayad nourdin;06 68 55 38 14;relance;REL-0213;
+AYDA DAKIR;212626432309;relance;REL-0053;
+ayoub dakhla;0661444632;relance;REL-0020;dakhla
+azdine l3ataouiya;06 97 73 67 11;relance;REL-0116;
+aziz laarach 0640/585/304;06 61 99 26 47;relance;REL-0145;
+bachir tiflet;06 72 18 28 84;relance;REL-0171;
+bahija tanger;0630194890;relance;REL-0035;tanger
+BILAL FES;0600-389-066;client;CLI-0001;fes
+CENTRE HORIZON;0661-164-153;client;CLI-0009;ben hmed
+chahid rs tanger;0600338587;relance;REL-0023;tanger
+chequaoui youness casa;06 61 72 32 29;relance;REL-0237;
+chifor;06 59 45 75 47;relance;REL-0221;
+driss tinghir;06 22 44 12 14;relance;REL-0111;
+drissia tanger;06 15 26 96 02;relance;REL-0123;
+el omari;06 61 68 09 42;relance;REL-0217;
+electromenager;06 26 04 69 33;relance;REL-0261;
+GHIZLAN KANOUNI  JDIDA;06 78 40 34 50;relance;REL-0186;
+hamza mouchap;0603-080-387;client;CLI-0015;CASABLANCA
+hassan rabat;0614306099;relance;REL-0036;rabat
+hassan sehraoui agadir;06 43 99 15 06;relance;REL-0148;
+hassan tanger;06 99 41 90 40;relance;REL-0147;
+hatim kenitra;06 61 83 40 27;relance;REL-0149;
+hayat esthétique;06 87 96 42 88;relance;REL-0054;
+hayat meknes;06 91 81 07 90;relance;REL-0173;
+HOUSSIN KHmISSET;06 66 20 22 63;relance;REL-0047;
+hsaini meknes;06 65 67 22 22;relance;REL-0065;
+ismail azdoud benguerir;0650537668;relance;REL-0038;benguerir
+JAM3 AIT MELOUL;06 66 12 57 99;relance;REL-0088;
+JAWAD NADOR;0661-403-956;client;CLI-0006;nador
+kamal sale;06 65 90 03 07;relance;REL-0144;
+khadija gds;0610-620-739;client;CLI-0003;laayoun
+khalid;06 33 23 76 99;relance;REL-0138;
+khalid;0661-311-792;client;CLI-0007;CASABLANCA
+khalid fes;06 71 39 21 86;relance;REL-0136;
+laila om;0674-383-203;client;CLI-0013;CASABLANCA
+laila para 0674-383-203;—;client;CLI-0014;agadir
+lhaj lhilali;06 00 61 25 69;relance;REL-0205;
+m3amri abdesamad meknes;06 48 28 98 89;relance;REL-0239;
+majida salé;0660160634;relance;REL-0031;salé
+mbarek;0661-075-638;client;CLI-0002;laayoun
+med anoir;06 63 60 51 68;relance;REL-0195;
+med casablanca;0669826119;relance;REL-0016;casablanca
+med sefyani;06 61 33 96 97;relance;REL-0218;
+meryem tanger;06 33 75 22 35;relance;REL-0114;
+miloud rabat;06 61 44 48 02;relance;REL-0062;
+mimoun mokhtari;06 06 83 72 63;relance;REL-0055;
+mly driss boumia  midelt;0667530868;relance;REL-0042;boumia
+mohamed;06 43 61 86 45;relance;REL-0135;
+MOHAMED;0615-311-109;client;CLI-0012;FES (COTE D'IVOIR°
+mohamed;0661-911-484;client;CLI-0005;damnat
+mohamed fes;06 65 07 79 30;relance;REL-0179;
+mohmed   khribgua;07 70 86 57 20;relance;REL-0188;
+mohmed guelmim;0706882647;relance;REL-0027;guelmim
+mohmed rabat;06 66 05 58 24;relance;REL-0211;
+mohmed tarfaya;0667290854;relance;REL-0039;tarfaya
+morad asfi;06 78 90 22 44;relance;REL-0156;
+MOURAD ALAOUI;06 68 31 47 97;relance;REL-0201;
+mourad casa  kqn mchghoul;06 61 64 15 14;relance;REL-0259;
+mr aziz kenitra;06 61 36 38 53;relance;REL-0139;
+Mr rabhi ahmed;06 61 13 62 68;relance;REL-0045;
+mstapha walidya  ste ariri 2;0628887299;relance;REL-0025;walidya
+NAIIMA NUMER ONE;0687-416-675;client;CLI-0011;agadir
+nawal casablanca;06 27 17 05 44;relance;REL-0102;
+omar choukri;0663141546;relance;REL-0312;taroudant houara
+omar taleb;06 30 55 63 68;relance;REL-0254;
+rachid;0667-659-999;relance;REL-0008;temara
+rachid sidi bouothman marrakech;0682455944;relance;REL-0041;marrakech
+rachid tiznit;06 66 32 89 26;relance;REL-0099;
+redouan azemour;0661418112;relance;REL-0034;azemour jdida
+saber tanger;0662472002;relance;REL-0022;tanger
+SADIKI NOURDIN FQIH BENSALEH;06 78 04 08 96;relance;REL-0084;
+said ait ourir marrakech;0662638988;relance;REL-0026;ait ourir
+said casa;07 16 94 44 07;relance;REL-0077;
+said tanger piece;0619460903;relance;REL-0037;tanger
+said taounat;06 21 34 94 17;relance;REL-0168;
+SAIDA;07 10 53 49 76;relance;REL-0087;
+samira agadir;06 62 32 52 51;relance;REL-0049;
+soulaimane;06 88 03 90 95;relance;REL-0256;
+soulayman  bni mellal;0642819816;relance;REL-0040;bni mellal
+soulayman tanger;0635568866;relance;REL-0021;tanger
+ste livraison zoubir;0654-640-541;client;CLI-0010;tanger
+ste wantex;0666-019-428;client;CLI-0008;CASABLANCA
+WALID ASFI;07 78 70 45 13;relance;REL-0081;
+xxxxx;0682854754;relance;REL-0017;xxxx
+yahya casablanca;06 61 08 37 74;relance;REL-0141;
+YASSIN OUTAT LHAJ;07 00 76 31 26;relance;REL-0058;
+yassin taroudant;0663284263;relance;REL-0028;taroudant
+youssef marakech;0661-638-021;relance;REL-0146;
+zakaria fes atlas;06 75 87 76 53;relance;REL-0051;
+zakaria meknes anasi;06 65 74 78 98;relance;REL-0106;
