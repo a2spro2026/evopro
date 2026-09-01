@@ -1101,6 +1101,40 @@
 
         .side-panel-backdrop.open .side-panel { transform: translateX(0); }
 
+        .side-panel.side-panel-wide {
+            width: min(540px, 100%);
+        }
+
+        .side-panel-form-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 0.85rem;
+        }
+
+        .side-panel-form-grid .field.span-2 {
+            grid-column: 1 / -1;
+        }
+
+        @media (max-width: 560px) {
+            .side-panel-form-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .projet-lookup-hint {
+            margin-top: 0.35rem;
+            font-size: 0.72rem;
+            color: var(--muted);
+        }
+
+        .projet-lookup-hint.ok { color: #3dcf8a; }
+        .projet-lookup-hint.warn { color: #f0b86e; }
+
+        .projet-solde-readonly {
+            font-weight: 700;
+            color: var(--accent-soft);
+        }
+
         .side-panel-head {
             display: flex;
             align-items: center;
@@ -1952,11 +1986,122 @@
                 </section>
 
                 <section class="panel" id="panel-projet">
-                    <div class="content-head">
-                        <h1>Projet</h1>
-                        <p>Module en cours de construction.</p>
+                    <div class="section-toolbar">
+                        <div class="content-head" style="margin-bottom:0;">
+                            <h1>Projet</h1>
+                            <p>Suivi des projets confirmés et paiements.</p>
+                        </div>
+                        <div class="toolbar-actions">
+                            <button type="button" class="btn-add" id="btnAddProjet">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>
+                                Ajouter
+                            </button>
+                            <button type="button" class="btn-close-toolbar" id="btnCloseProjetPanel">Fermer</button>
+                        </div>
                     </div>
-                    <div class="placeholder">Contenu Projet à venir.</div>
+
+                    <div class="search-bar" aria-label="Recherche projets" style="margin-bottom:1rem;">
+                        <div class="search-field">
+                            <label for="filter_projet_mois">Mois</label>
+                            <select id="filter_projet_mois">
+                                <option value="">TOUS LES MOIS</option>
+                                @php
+                                    $moisProjets = collect($projets ?? [])
+                                        ->map(function ($row) {
+                                            $parts = explode('/', $row['date'] ?? '');
+                                            return count($parts) >= 3 ? $parts[1].'/'.$parts[2] : null;
+                                        })
+                                        ->filter()
+                                        ->unique()
+                                        ->sort()
+                                        ->values();
+                                @endphp
+                                @foreach ($moisProjets as $mois)
+                                    <option value="{{ $mois }}">{{ $mois }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+                        <div class="search-field">
+                            <label for="filter_projet_commercial">Commercial</label>
+                            <select id="filter_projet_commercial">
+                                <option value="">TOUS LES COMMERCIAUX</option>
+                                @foreach (($commerciaux ?? []) as $commercial)
+                                    <option value="{{ mb_strtolower($commercial) }}">{{ $commercial }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="table-wrap">
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>Date</th>
+                                    <th>Réf</th>
+                                    <th>Commercial</th>
+                                    <th>Titre Projet</th>
+                                    <th>Nom Client</th>
+                                    <th>Ville</th>
+                                    <th>Contact</th>
+                                    <th>Budget</th>
+                                    <th>Avance</th>
+                                    <th>Mode</th>
+                                    <th>Solde</th>
+                                    <th>Part Commercial</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="projetsTableBody">
+                                @forelse (($projets ?? []) as $projet)
+                                    @php
+                                        $partsProjet = explode('/', $projet['date'] ?? '');
+                                        $moisProjet = count($partsProjet) >= 3 ? $partsProjet[1].'/'.$partsProjet[2] : '';
+                                    @endphp
+                                    <tr
+                                        data-id="{{ $projet['id'] }}"
+                                        data-mois="{{ $moisProjet }}"
+                                        data-commercial="{{ mb_strtolower(trim((string) ($projet['commercial'] ?? ''))) }}"
+                                    >
+                                        <td>{{ $projet['date'] ?? '' }}</td>
+                                        <td>{{ $projet['ref'] ?? '' }}</td>
+                                        <td>{{ $projet['commercial'] ?? '' }}</td>
+                                        <td>{{ $projet['titre_projet'] ?? '' }}</td>
+                                        <td>{{ $projet['nom_client'] ?? '' }}</td>
+                                        <td>{{ $projet['ville'] ?? '' }}</td>
+                                        <td>{{ $projet['contact'] ?? '' }}</td>
+                                        <td>{{ number_format((float) ($projet['budget'] ?? 0), 2, '.', ' ') }}</td>
+                                        <td>{{ number_format((float) ($projet['avance'] ?? 0), 2, '.', ' ') }}</td>
+                                        <td>{{ $projet['mode'] ?? 'Vir' }}</td>
+                                        <td>{{ number_format((float) ($projet['solde'] ?? 0), 2, '.', ' ') }}</td>
+                                        <td>{{ (int) ($projet['part_commercial'] ?? 10) }}%</td>
+                                        <td>
+                                            <div class="actions">
+                                                <button type="button" class="action-btn voir" title="Voir" aria-label="Voir">
+                                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8S1 12 1 12z"/><circle cx="12" cy="12" r="3"/></svg>
+                                                </button>
+                                                <button type="button" class="action-btn imprimer" title="Imprimer" aria-label="Imprimer">
+                                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9V2h12v7"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><path d="M6 14h12v8H6z"/></svg>
+                                                </button>
+                                                <button type="button" class="action-btn modifier" title="Modifier" aria-label="Modifier">
+                                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4 12.5-12.5z"/></svg>
+                                                </button>
+                                                <button type="button" class="action-btn supprimer" title="Supprimer" aria-label="Supprimer">
+                                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18"/><path d="M8 6V4h8v2"/><path d="M19 6l-1 14H6L5 6"/></svg>
+                                                </button>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                @empty
+                                    <tr class="empty-row">
+                                        <td colspan="13" class="empty">Aucun projet enregistré.</td>
+                                    </tr>
+                                @endforelse
+                                <tr class="empty-row" id="projetsNoResult" style="display:none;">
+                                    <td colspan="13" class="empty">Aucun résultat pour cette recherche.</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
                 </section>
 
                 <section class="panel" id="panel-paiement">
@@ -2224,6 +2369,108 @@
         </div>
     </div>
 
+    <div class="side-panel-backdrop" id="projetSidePanel" aria-hidden="true">
+        <div class="side-panel side-panel-wide" role="dialog" aria-modal="true" aria-labelledby="projetSidePanelTitle">
+            <div class="side-panel-head">
+                <h2 id="projetSidePanelTitle">Ajouter un projet</h2>
+                <button type="button" class="modal-close" id="closeProjetSidePanel" aria-label="Fermer">×</button>
+            </div>
+            <form method="post" action="{{ url('/projets') }}" id="projetForm">
+                @csrf
+                <input type="hidden" name="prospection_id" id="projet_prospection_id" value="">
+                <div class="side-panel-body">
+                    <div class="side-panel-form-grid">
+                        <div class="field">
+                            <label for="projet_date">Date</label>
+                            <input type="text" id="projet_date" name="date" placeholder="JJ/MM/AAAA" maxlength="10" inputmode="numeric" autocomplete="off" required>
+                        </div>
+                        <div class="field">
+                            <label for="projet_ref">Réf</label>
+                            <input type="text" id="projet_ref" readonly tabindex="-1" aria-readonly="true">
+                        </div>
+                        <div class="field span-2">
+                            <label for="projet_commercial">Commercial</label>
+                            <select id="projet_commercial" name="commercial" required>
+                                <option value="">Choisir…</option>
+                                @foreach (($commerciauxUsers ?? []) as $commercialUser)
+                                    <option value="{{ $commercialUser }}">{{ $commercialUser }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+                        <div class="field span-2">
+                            <label for="projet_contact">N° contact</label>
+                            <input type="text" id="projet_contact" name="contact" maxlength="255" placeholder="Ex. 06…" inputmode="tel" autocomplete="off">
+                            <p class="projet-lookup-hint" id="projetLookupHint">Saisissez un numéro pour importer les données de prospection.</p>
+                        </div>
+                        <div class="field span-2">
+                            <label for="projet_nom_client">Nom Client</label>
+                            <input type="text" id="projet_nom_client" name="nom_client" maxlength="255" required>
+                        </div>
+                        <div class="field">
+                            <label for="projet_ville">Ville</label>
+                            <input type="text" id="projet_ville" name="ville" maxlength="255">
+                        </div>
+                        <div class="field">
+                            <label for="projet_titre_projet">Titre Projet</label>
+                            <input type="text" id="projet_titre_projet" name="titre_projet" maxlength="255" required>
+                        </div>
+                        <div class="field">
+                            <label for="projet_budget">Budget</label>
+                            <input type="number" id="projet_budget" name="budget" min="0" step="0.01" value="0">
+                        </div>
+                        <div class="field">
+                            <label for="projet_avance">Avance</label>
+                            <input type="number" id="projet_avance" name="avance" min="0" step="0.01" value="0">
+                        </div>
+                        <div class="field">
+                            <label for="projet_mode">Mode</label>
+                            <select id="projet_mode" name="mode" required>
+                                <option value="Vir">Vir</option>
+                                <option value="Esp">Esp</option>
+                                <option value="Chq">Chq</option>
+                                <option value="Vers">Vers</option>
+                            </select>
+                        </div>
+                        <div class="field">
+                            <label for="projet_part_commercial">Part Commercial</label>
+                            <select id="projet_part_commercial" name="part_commercial" required>
+                                <option value="10">10%</option>
+                                <option value="15">15%</option>
+                                <option value="20">20%</option>
+                                <option value="30">30%</option>
+                                <option value="50">50%</option>
+                            </select>
+                        </div>
+                        <div class="field span-2">
+                            <label>Solde</label>
+                            <div class="projet-solde-readonly" id="projet_solde_display">0.00</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="side-panel-foot" id="projetFormActions">
+                    <button type="button" class="btn-ghost" id="cancelProjetSidePanel">Fermer</button>
+                    <button type="submit" class="btn-primary" id="saveProjetSidePanel">Valider</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div class="modal-backdrop" id="projetPrintModal" aria-hidden="true">
+        <div class="modal" role="dialog" aria-modal="true" aria-labelledby="projetPrintTitle">
+            <div class="modal-head">
+                <h2 id="projetPrintTitle">Fiche projet</h2>
+                <button type="button" class="modal-close" id="closeProjetPrintModal" aria-label="Fermer">×</button>
+            </div>
+            <div class="modal-body">
+                <div class="print-sheet" id="projetPrintArea"></div>
+            </div>
+            <div class="modal-foot">
+                <button type="button" class="btn-ghost" id="closeProjetPrintBtn">Fermer</button>
+                <button type="button" class="btn-primary" id="printProjetBtn">Imprimer</button>
+            </div>
+        </div>
+    </div>
+
     <div class="modal-backdrop" id="clientModal" aria-hidden="true">
         <div class="modal" role="dialog" aria-modal="true" aria-labelledby="clientModalTitle">
             <div class="modal-head">
@@ -2291,6 +2538,7 @@
     @endif
     <script>
         const clientsData = @json($clients ?? []);
+        const projetsData = @json($projets ?? []);
         const prospectionsAllData = @json($prospectionsAll ?? $prospections ?? []);
         const canManageProspectionCommercial = @json($canManageProspectionCommercial ?? false);
         const defaultPanel = @json($defaultPanel ?? 'dashboard');
@@ -2556,6 +2804,16 @@
             el?.setAttribute('aria-hidden', 'true');
         }
 
+        function openSidePanel(el) {
+            el?.classList.add('open');
+            el?.setAttribute('aria-hidden', 'false');
+        }
+
+        function closeSidePanelEl(el) {
+            el?.classList.remove('open');
+            el?.setAttribute('aria-hidden', 'true');
+        }
+
         function setClientFormMode(mode) {
             const readonly = mode === 'view';
             ['client_date', 'client_nom', 'client_ville', 'client_contact', 'client_titre_projet', 'client_delai_travail', 'client_budget'].forEach((id) => {
@@ -2710,6 +2968,278 @@
             else if (actionBtn.classList.contains('modifier')) openClientEdit(client);
             else if (actionBtn.classList.contains('imprimer')) openClientPrint(client);
             else if (actionBtn.classList.contains('supprimer')) deleteClient(client);
+        });
+
+        const projetSidePanel = document.getElementById('projetSidePanel');
+        const projetForm = document.getElementById('projetForm');
+        const projetSidePanelTitle = document.getElementById('projetSidePanelTitle');
+        const projetFormActions = document.getElementById('projetFormActions');
+        const projetPrintModal = document.getElementById('projetPrintModal');
+        const projetPrintArea = document.getElementById('projetPrintArea');
+        const projetLookupHint = document.getElementById('projetLookupHint');
+
+        function normalizePhoneDigits(value) {
+            return String(value || '').replace(/\D/g, '');
+        }
+
+        function nextProjetRef() {
+            const year = new Date().getFullYear();
+            const sameYear = (projetsData || []).filter((row) => String(row.ref || '').endsWith(`/${year}`));
+            let max = 0;
+            sameYear.forEach((row) => {
+                const match = String(row.ref || '').match(/^PR(\d+)\/\d{4}$/);
+                if (match) max = Math.max(max, parseInt(match[1], 10));
+            });
+            return `PR${String(max + 1).padStart(2, '0')}/${year}`;
+        }
+
+        function findProspectionByPhone(phone) {
+            const key = normalizePhoneDigits(phone);
+            if (!key) return null;
+            return (prospectionsAllData || []).find((row) => normalizePhoneDigits(row.telephone) === key) || null;
+        }
+
+        function findClientByPhone(phone) {
+            const key = normalizePhoneDigits(phone);
+            if (!key) return null;
+            return (clientsData || []).find((row) => normalizePhoneDigits(row.contact) === key) || null;
+        }
+
+        function updateProjetSoldeDisplay() {
+            const budget = Number(document.getElementById('projet_budget')?.value || 0);
+            const avance = Number(document.getElementById('projet_avance')?.value || 0);
+            const solde = Math.max(0, budget - avance);
+            const el = document.getElementById('projet_solde_display');
+            if (el) {
+                el.textContent = solde.toLocaleString('fr-FR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+            }
+        }
+
+        function importProjetFromContact() {
+            const phone = document.getElementById('projet_contact')?.value || '';
+            const prospection = findProspectionByPhone(phone);
+            const client = findClientByPhone(phone);
+
+            if (!normalizePhoneDigits(phone)) {
+                if (projetLookupHint) {
+                    projetLookupHint.textContent = 'Saisissez un numéro pour importer les données de prospection.';
+                    projetLookupHint.className = 'projet-lookup-hint';
+                }
+                return;
+            }
+
+            if (prospection) {
+                document.getElementById('projet_nom_client').value = prospection.nom_prospect || '';
+                document.getElementById('projet_ville').value = prospection.ville || '';
+                document.getElementById('projet_titre_projet').value = prospection.projet || '';
+                document.getElementById('projet_prospection_id').value = prospection.id || '';
+                if (prospection.commercial) {
+                    document.getElementById('projet_commercial').value = prospection.commercial;
+                }
+                if (projetLookupHint) {
+                    projetLookupHint.textContent = 'Données importées depuis la prospection.';
+                    projetLookupHint.className = 'projet-lookup-hint ok';
+                }
+            } else if (projetLookupHint) {
+                projetLookupHint.textContent = 'Aucune prospection trouvée pour ce numéro.';
+                projetLookupHint.className = 'projet-lookup-hint warn';
+                document.getElementById('projet_prospection_id').value = '';
+            }
+
+            const budget = Number(prospection?.budget ?? client?.budget ?? 0);
+            document.getElementById('projet_budget').value = budget;
+            updateProjetSoldeDisplay();
+        }
+
+        function setProjetFormMode(mode) {
+            const readonly = mode === 'view';
+            [
+                'projet_date', 'projet_contact', 'projet_nom_client', 'projet_ville',
+                'projet_titre_projet', 'projet_budget', 'projet_avance',
+            ].forEach((id) => {
+                const input = document.getElementById(id);
+                if (input) input.readOnly = readonly;
+            });
+            ['projet_commercial', 'projet_mode', 'projet_part_commercial'].forEach((id) => {
+                const select = document.getElementById(id);
+                if (select) select.disabled = readonly;
+            });
+            const saveBtn = document.getElementById('saveProjetSidePanel');
+            if (saveBtn) saveBtn.style.display = mode === 'view' ? 'none' : '';
+            if (projetFormActions) projetFormActions.style.display = 'flex';
+        }
+
+        function fillProjetForm(projet) {
+            document.getElementById('projet_date').value = projet.date || '';
+            document.getElementById('projet_ref').value = projet.ref || '';
+            document.getElementById('projet_commercial').value = projet.commercial || '';
+            document.getElementById('projet_contact').value = projet.contact || '';
+            document.getElementById('projet_nom_client').value = projet.nom_client || '';
+            document.getElementById('projet_ville').value = projet.ville || '';
+            document.getElementById('projet_titre_projet').value = projet.titre_projet || '';
+            document.getElementById('projet_budget').value = Number(projet.budget || 0);
+            document.getElementById('projet_avance').value = Number(projet.avance || 0);
+            document.getElementById('projet_mode').value = projet.mode || 'Vir';
+            document.getElementById('projet_part_commercial').value = String(projet.part_commercial || 10);
+            document.getElementById('projet_prospection_id').value = projet.prospection_id || '';
+            updateProjetSoldeDisplay();
+            if (projetLookupHint) {
+                projetLookupHint.textContent = 'Saisissez un numéro pour importer les données de prospection.';
+                projetLookupHint.className = 'projet-lookup-hint';
+            }
+        }
+
+        function openProjetCreate() {
+            projetForm.action = '{{ url('/projets') }}';
+            projetForm.querySelector('input[name="_method"]')?.remove();
+            projetSidePanelTitle.textContent = 'Ajouter un projet';
+            fillProjetForm({
+                date: new Date().toLocaleDateString('fr-FR', { day: '2-digit', month: '2-digit', year: 'numeric' }),
+                ref: nextProjetRef(),
+                commercial: '',
+                contact: '',
+                nom_client: '',
+                ville: '',
+                titre_projet: '',
+                budget: 0,
+                avance: 0,
+                mode: 'Vir',
+                part_commercial: 10,
+            });
+            document.getElementById('projet_ref').value = nextProjetRef();
+            setProjetFormMode('edit');
+            openSidePanel(projetSidePanel);
+        }
+
+        function openProjetView(projet) {
+            projetForm.querySelector('input[name="_method"]')?.remove();
+            projetForm.action = '{{ url('/projets') }}';
+            projetSidePanelTitle.textContent = 'Voir un projet';
+            fillProjetForm(projet);
+            setProjetFormMode('view');
+            openSidePanel(projetSidePanel);
+        }
+
+        function openProjetEdit(projet) {
+            projetForm.action = `{{ url('/projets') }}/${encodeURIComponent(projet.id)}`;
+            let method = projetForm.querySelector('input[name="_method"]');
+            if (!method) {
+                method = document.createElement('input');
+                method.type = 'hidden';
+                method.name = '_method';
+                projetForm.appendChild(method);
+            }
+            method.value = 'PUT';
+            projetSidePanelTitle.textContent = 'Modifier un projet';
+            fillProjetForm(projet);
+            setProjetFormMode('edit');
+            openSidePanel(projetSidePanel);
+        }
+
+        function buildProjetPrintHtml(projet) {
+            const fmt = (n) => Number(n || 0).toLocaleString('fr-FR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+            const esc = (v) => String(v ?? '—').replace(/</g, '&lt;');
+            return `
+                <h3>Fiche projet — ${esc(projet.ref)}</h3>
+                <dl>
+                    <dt>Date</dt><dd>${esc(projet.date)}</dd>
+                    <dt>Réf</dt><dd>${esc(projet.ref)}</dd>
+                    <dt>Commercial</dt><dd>${esc(projet.commercial)}</dd>
+                    <dt>Titre Projet</dt><dd>${esc(projet.titre_projet)}</dd>
+                    <dt>Nom Client</dt><dd>${esc(projet.nom_client)}</dd>
+                    <dt>Ville</dt><dd>${esc(projet.ville)}</dd>
+                    <dt>Contact</dt><dd>${esc(projet.contact)}</dd>
+                    <dt>Budget</dt><dd>${fmt(projet.budget)}</dd>
+                    <dt>Avance</dt><dd>${fmt(projet.avance)}</dd>
+                    <dt>Mode</dt><dd>${esc(projet.mode)}</dd>
+                    <dt>Solde</dt><dd>${fmt(projet.solde)}</dd>
+                    <dt>Part Commercial</dt><dd>${esc(projet.part_commercial)}%</dd>
+                </dl>
+            `;
+        }
+
+        function openProjetPrint(projet) {
+            projetPrintArea.innerHTML = buildProjetPrintHtml(projet);
+            openModal(projetPrintModal);
+        }
+
+        async function deleteProjet(projet) {
+            const label = projet.ref || projet.nom_client || 'ce projet';
+            if (!confirm(`Supprimer ${label} ?`)) return;
+
+            const fd = new FormData();
+            fd.append('_token', csrfToken);
+            fd.append('_method', 'DELETE');
+
+            try {
+                const response = await fetch(`{{ url('/projets') }}/${encodeURIComponent(projet.id)}`, {
+                    method: 'POST',
+                    body: fd,
+                    headers: { 'X-Requested-With': 'XMLHttpRequest', 'Accept': 'application/json' },
+                });
+                const data = await response.json().catch(() => ({}));
+                if (!response.ok) throw new Error(data.message || 'delete_failed');
+                window.location.href = '{{ route('dashboard') }}?open_panel=projet';
+            } catch (_) {
+                alert('Suppression impossible. Réessayez.');
+            }
+        }
+
+        function filterProjetsTable() {
+            const mois = document.getElementById('filter_projet_mois')?.value || '';
+            const commercial = document.getElementById('filter_projet_commercial')?.value || '';
+            const rows = document.querySelectorAll('#projetsTableBody tr[data-id]');
+            let visible = 0;
+
+            rows.forEach((row) => {
+                const rowMois = row.dataset.mois || '';
+                const rowCommercial = row.dataset.commercial || '';
+                const show = (!mois || rowMois === mois)
+                    && (!commercial || rowCommercial === commercial);
+                row.style.display = show ? '' : 'none';
+                if (show) visible++;
+            });
+
+            const emptyRow = document.querySelector('#projetsTableBody tr.empty-row:not(#projetsNoResult)');
+            const noResultRow = document.getElementById('projetsNoResult');
+            if (noResultRow) noResultRow.style.display = rows.length > 0 && visible === 0 ? '' : 'none';
+            if (emptyRow) emptyRow.style.display = rows.length === 0 ? '' : 'none';
+        }
+
+        document.getElementById('filter_projet_mois')?.addEventListener('change', filterProjetsTable);
+        document.getElementById('filter_projet_commercial')?.addEventListener('change', filterProjetsTable);
+
+        document.getElementById('btnAddProjet')?.addEventListener('click', openProjetCreate);
+        document.getElementById('btnCloseProjetPanel')?.addEventListener('click', () => showPanel('dashboard'));
+        document.getElementById('closeProjetSidePanel')?.addEventListener('click', () => closeSidePanelEl(projetSidePanel));
+        document.getElementById('cancelProjetSidePanel')?.addEventListener('click', () => closeSidePanelEl(projetSidePanel));
+        document.getElementById('closeProjetPrintModal')?.addEventListener('click', () => closeModalEl(projetPrintModal));
+        document.getElementById('closeProjetPrintBtn')?.addEventListener('click', () => closeModalEl(projetPrintModal));
+        document.getElementById('printProjetBtn')?.addEventListener('click', () => window.print());
+
+        bindDateMask('projet_date');
+        document.getElementById('projet_contact')?.addEventListener('blur', importProjetFromContact);
+        document.getElementById('projet_contact')?.addEventListener('change', importProjetFromContact);
+        document.getElementById('projet_budget')?.addEventListener('input', updateProjetSoldeDisplay);
+        document.getElementById('projet_avance')?.addEventListener('input', updateProjetSoldeDisplay);
+
+        document.getElementById('projetsTableBody')?.addEventListener('click', (e) => {
+            const actionBtn = e.target.closest('.action-btn');
+            if (!actionBtn) return;
+
+            const row = e.target.closest('tr[data-id]');
+            if (!row) return;
+
+            const projet = projetsData.find((item) => item.id === row.dataset.id);
+            if (!projet) return;
+
+            e.preventDefault();
+            e.stopPropagation();
+
+            if (actionBtn.classList.contains('voir')) openProjetView(projet);
+            else if (actionBtn.classList.contains('imprimer')) openProjetPrint(projet);
+            else if (actionBtn.classList.contains('modifier')) openProjetEdit(projet);
+            else if (actionBtn.classList.contains('supprimer')) deleteProjet(projet);
         });
 
         document.getElementById('filter_prospection_num')?.addEventListener('input', filterProspectionsTable);
@@ -3033,16 +3563,6 @@
         const utilisateurForm = document.getElementById('utilisateurForm');
         const utilisateurSidePanelTitle = document.getElementById('utilisateurSidePanelTitle');
         const utilisateurFormActions = document.getElementById('utilisateurFormActions');
-
-        function openSidePanel(el) {
-            el?.classList.add('open');
-            el?.setAttribute('aria-hidden', 'false');
-        }
-
-        function closeSidePanelEl(el) {
-            el?.classList.remove('open');
-            el?.setAttribute('aria-hidden', 'true');
-        }
 
         function setUtilisateurFormMode(mode) {
             const readonly = mode === 'view';

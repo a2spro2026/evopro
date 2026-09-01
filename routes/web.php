@@ -4,6 +4,7 @@ use App\Support\AppStore;
 use App\Support\CommercialPresenceHelper;
 use App\Support\ContactsArchive;
 use App\Support\FicheSteHelper;
+use App\Support\ProjetHelper;
 use App\Support\ProspectionHelper;
 use App\Support\UtilisateurHelper;
 use Illuminate\Http\Request;
@@ -107,6 +108,12 @@ Route::get('/dashboard', function () use ($requireAuth) {
         ->values()
         ->all();
 
+    $projetsList = collect(AppStore::get('projets'))
+        ->map(fn ($row) => ProjetHelper::normalizeRow($row))
+        ->sortByDesc(fn ($row) => $row['date'] ?? '')
+        ->values()
+        ->all();
+
     return view('dashboard', [
         'authUserNom' => $authUserNom,
         'authUserStatue' => (string) ($authUser['statue'] ?? ''),
@@ -124,6 +131,7 @@ Route::get('/dashboard', function () use ($requireAuth) {
         'prospectionsAll' => $prospectionsAll,
         'clients' => $clients,
         'clientStats' => $clientStats,
+        'projets' => $projetsList,
         'commerciaux' => $commerciaux,
         'commerciauxUsers' => $commerciauxUsers,
         'utilisateurs' => $utilisateurs,
@@ -505,6 +513,109 @@ Route::middleware('auth.user')->delete('/clients/{id}', function (Request $reque
 
     return redirect()->route('dashboard')->with('open_panel', 'client');
 })->where('id', '.+')->name('clients.destroy');
+
+Route::middleware('auth.user')->post('/projets', function (Request $request) {
+    $data = $request->validate([
+        'date' => ['required', 'string', 'regex:/^\d{2}\/\d{2}\/\d{4}$/'],
+        'commercial' => ['required', 'string', 'max:255'],
+        'titre_projet' => ['required', 'string', 'max:255'],
+        'nom_client' => ['required', 'string', 'max:255'],
+        'ville' => ['nullable', 'string', 'max:255'],
+        'contact' => ['nullable', 'string', 'max:255'],
+        'budget' => ['nullable', 'numeric', 'min:0'],
+        'avance' => ['nullable', 'numeric', 'min:0'],
+        'mode' => ['required', 'string', 'in:Vir,Esp,Chq,Vers'],
+        'part_commercial' => ['required', 'integer', 'in:10,15,20,30,50'],
+        'prospection_id' => ['nullable', 'string', 'max:255'],
+    ]);
+
+    $projets = AppStore::get('projets');
+    $budget = (float) ($data['budget'] ?? 0);
+    $avance = (float) ($data['avance'] ?? 0);
+
+    $projets[] = ProjetHelper::normalizeRow([
+        'id' => uniqid('prj_', true),
+        'date' => $data['date'],
+        'ref' => ProjetHelper::nextRef($projets),
+        'commercial' => trim($data['commercial']),
+        'titre_projet' => trim($data['titre_projet']),
+        'nom_client' => trim($data['nom_client']),
+        'ville' => trim((string) ($data['ville'] ?? '')),
+        'contact' => trim((string) ($data['contact'] ?? '')),
+        'budget' => $budget,
+        'avance' => $avance,
+        'mode' => $data['mode'],
+        'part_commercial' => $data['part_commercial'],
+        'prospection_id' => $data['prospection_id'] ?? null,
+    ]);
+
+    AppStore::put('projets', $projets);
+
+    return redirect()->route('dashboard')->with('open_panel', 'projet');
+})->name('projets.store');
+
+Route::middleware('auth.user')->put('/projets/{id}', function (Request $request, string $id) {
+    $data = $request->validate([
+        'date' => ['required', 'string', 'regex:/^\d{2}\/\d{2}\/\d{4}$/'],
+        'commercial' => ['required', 'string', 'max:255'],
+        'titre_projet' => ['required', 'string', 'max:255'],
+        'nom_client' => ['required', 'string', 'max:255'],
+        'ville' => ['nullable', 'string', 'max:255'],
+        'contact' => ['nullable', 'string', 'max:255'],
+        'budget' => ['nullable', 'numeric', 'min:0'],
+        'avance' => ['nullable', 'numeric', 'min:0'],
+        'mode' => ['required', 'string', 'in:Vir,Esp,Chq,Vers'],
+        'part_commercial' => ['required', 'integer', 'in:10,15,20,30,50'],
+        'prospection_id' => ['nullable', 'string', 'max:255'],
+    ]);
+
+    $projets = AppStore::get('projets');
+    $index = collect($projets)->search(fn ($projet) => ($projet['id'] ?? '') === $id);
+
+    if ($index === false) {
+        return redirect()->route('dashboard')->with('open_panel', 'projet');
+    }
+
+    $existing = $projets[$index];
+    $budget = (float) ($data['budget'] ?? 0);
+    $avance = (float) ($data['avance'] ?? 0);
+
+    $projets[$index] = ProjetHelper::normalizeRow([
+        ...$existing,
+        'date' => $data['date'],
+        'ref' => $existing['ref'] ?? ProjetHelper::nextRef($projets),
+        'commercial' => trim($data['commercial']),
+        'titre_projet' => trim($data['titre_projet']),
+        'nom_client' => trim($data['nom_client']),
+        'ville' => trim((string) ($data['ville'] ?? '')),
+        'contact' => trim((string) ($data['contact'] ?? '')),
+        'budget' => $budget,
+        'avance' => $avance,
+        'mode' => $data['mode'],
+        'part_commercial' => $data['part_commercial'],
+        'prospection_id' => $data['prospection_id'] ?? ($existing['prospection_id'] ?? null),
+        'statut' => $existing['statut'] ?? null,
+    ]);
+
+    AppStore::put('projets', $projets);
+
+    return redirect()->route('dashboard')->with('open_panel', 'projet');
+})->where('id', '.+')->name('projets.update');
+
+Route::middleware('auth.user')->delete('/projets/{id}', function (Request $request, string $id) {
+    $projets = collect(AppStore::get('projets'))
+        ->reject(fn ($projet) => ($projet['id'] ?? '') === $id)
+        ->values()
+        ->all();
+
+    AppStore::put('projets', $projets);
+
+    if ($request->expectsJson() || $request->ajax()) {
+        return response()->json(['ok' => true, 'id' => $id]);
+    }
+
+    return redirect()->route('dashboard')->with('open_panel', 'projet');
+})->where('id', '.+')->name('projets.destroy');
 
 Route::middleware('auth.user')->post('/utilisateurs', function (Request $request) {
     $data = $request->validate([
