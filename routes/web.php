@@ -1,6 +1,7 @@
 <?php
 
 use App\Support\AppStore;
+use App\Support\CommercialPresenceHelper;
 use App\Support\ContactsArchive;
 use App\Support\FicheSteHelper;
 use App\Support\ProspectionHelper;
@@ -114,6 +115,7 @@ Route::get('/dashboard', function () use ($requireAuth) {
         'isAdministrateur' => $isAdministrateur,
         'isAssistante' => $isAssistante,
         'isCommercialRole' => $isCommercialRole,
+        'canViewCommercialPresence' => $isAdministrateur || $isAssistante,
         'defaultPanel' => $defaultPanel,
         'welcomeName' => $welcomeName,
         'dashboardCounts' => $dashboardCounts,
@@ -186,6 +188,10 @@ $handleConnexion = function (Request $request) {
         'statue' => $userStatue,
     ]);
 
+    if ($userStatue === 'commercial') {
+        CommercialPresenceHelper::markOnline(session('auth_user', []));
+    }
+
     $redirect = redirect()->route('dashboard');
     if ($defaultPanel === 'prospection') {
         return $redirect->with('open_panel', 'prospection')->with('open_prospection', 'liste');
@@ -198,12 +204,49 @@ Route::post('/connexion', $handleConnexion)->name('connexion');
 Route::post('/', $handleConnexion);
 
 Route::post('/deconnexion', function () {
+    $authUser = session('auth_user', []);
+    if (UtilisateurHelper::isCommercialRole($authUser['statue'] ?? '')) {
+        CommercialPresenceHelper::markOffline($authUser);
+    }
+
     session()->forget(['login', 'statue', 'auth_user']);
     session()->invalidate();
     session()->regenerateToken();
 
     return redirect('/');
 })->name('logout');
+
+Route::middleware('auth.user')->post('/presence/heartbeat', function () {
+    $authUser = session('auth_user', []);
+    if (! UtilisateurHelper::isCommercialRole($authUser['statue'] ?? '')) {
+        abort(403);
+    }
+
+    CommercialPresenceHelper::heartbeat($authUser);
+
+    return response()->json(['ok' => true]);
+})->name('presence.heartbeat');
+
+Route::middleware('auth.user')->post('/presence/offline', function () {
+    $authUser = session('auth_user', []);
+    if (UtilisateurHelper::isCommercialRole($authUser['statue'] ?? '')) {
+        CommercialPresenceHelper::markOffline($authUser);
+    }
+
+    return response()->json(['ok' => true]);
+})->name('presence.offline');
+
+Route::middleware('auth.user')->get('/presence/live', function () {
+    $authStatue = UtilisateurHelper::normalizeStatue(session('auth_user.statue'));
+    if (! in_array($authStatue, ['administrateur', 'assistante'], true)) {
+        abort(403);
+    }
+
+    return response()->json([
+        'ok' => true,
+        'commercials' => CommercialPresenceHelper::statusesForManager(),
+    ]);
+})->name('presence.live');
 
 Route::middleware('auth.user')->get('/prospections/live', function () {
     $authUser = session('auth_user', []);
@@ -255,6 +298,14 @@ Route::middleware('auth.user')->patch('/prospections/{id}/statue', function (Req
     }
 
     AppStore::put('prospections', $rows);
+
+    if ($request->expectsJson() || $request->ajax()) {
+        return response()->json([
+            'ok' => true,
+            'id' => $id,
+            'statue' => $rows[$index]['statue'],
+        ]);
+    }
 
     return redirect()->route('dashboard')->with('open_panel', 'prospection');
 })->where('id', '.+')->name('prospections.statue');

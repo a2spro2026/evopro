@@ -472,8 +472,9 @@
                         <div class="field">
                             <label for="statue">Statue</label>
                             <select id="statue" name="statue" required>
+                                <option value="" disabled @selected(old('statue') === null || old('statue') === '')>Choisir une statue…</option>
                                 @foreach (\App\Support\UtilisateurHelper::statueLabels() as $value => $label)
-                                    <option value="{{ $value }}" @selected(old('statue', 'administrateur') === $value)>{{ $label }}</option>
+                                    <option value="{{ $value }}" @selected(old('statue') === $value)>{{ $label }}</option>
                                 @endforeach
                             </select>
                         </div>
@@ -484,8 +485,8 @@
                                 type="text"
                                 id="login"
                                 name="login"
-                                value="{{ old('login', 'zerraguiabdelilah') }}"
-                                placeholder="Identifiant ou e-mail"
+                                value="{{ old('login') }}"
+                                placeholder="Identifiant"
                                 required
                                 autocomplete="username"
                             >
@@ -497,7 +498,7 @@
                                 type="password"
                                 id="password"
                                 name="password"
-                                value="{{ old('password', '0661755048') }}"
+                                value=""
                                 placeholder="••••••••"
                                 required
                                 autocomplete="current-password"

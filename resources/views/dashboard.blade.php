@@ -18,6 +18,45 @@
             --accent-soft: #7ec4ff;
             --text: #f4f8ff;
             --muted: rgba(210, 224, 245, 0.68);
+            --topbar-bg: rgba(9, 21, 37, 0.92);
+            --input-bg: rgba(255, 255, 255, 0.04);
+            --hover-bg: rgba(59, 158, 255, 0.1);
+            --table-head: rgba(9, 21, 37, 0.95);
+            --shadow: rgba(0, 0, 0, 0.35);
+        }
+
+        [data-theme="light"] {
+            --bg: #edf3fb;
+            --sidebar: #f7faff;
+            --panel: rgba(255, 255, 255, 0.95);
+            --line: rgba(59, 120, 200, 0.2);
+            --accent: #1a7fd4;
+            --accent-soft: #3b9eff;
+            --text: #0f1f35;
+            --muted: rgba(30, 50, 80, 0.62);
+            --topbar-bg: rgba(255, 255, 255, 0.92);
+            --input-bg: rgba(15, 31, 53, 0.04);
+            --hover-bg: rgba(59, 158, 255, 0.12);
+            --table-head: rgba(237, 243, 251, 0.98);
+            --shadow: rgba(15, 31, 53, 0.08);
+        }
+
+        [data-theme="light"] .card-stat {
+            background: linear-gradient(165deg, rgba(255, 255, 255, 0.96), rgba(245, 250, 255, 0.92));
+            box-shadow: 0 8px 24px var(--shadow);
+        }
+
+        [data-theme="light"] .table-wrap {
+            background: rgba(255, 255, 255, 0.88);
+            box-shadow: 0 8px 28px var(--shadow);
+        }
+
+        [data-theme="light"] .panel .data-table th {
+            background: var(--table-head);
+        }
+
+        [data-theme="light"] .panel .data-table tbody tr:hover {
+            background: rgba(59, 158, 255, 0.08);
         }
 
         * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -42,13 +81,26 @@
             min-height: 100vh;
             display: grid;
             grid-template-columns: 260px 1fr;
+            transition: grid-template-columns 0.25s ease;
+        }
+
+        .shell.sidebar-hidden {
+            grid-template-columns: 0 1fr;
+        }
+
+        .shell.sidebar-hidden .sidebar {
+            overflow: hidden;
+            opacity: 0;
+            pointer-events: none;
+            border-right-color: transparent;
         }
 
         .sidebar {
             display: flex;
             flex-direction: column;
             border-right: 1px solid var(--line);
-            background: linear-gradient(180deg, rgba(9, 21, 37, 0.98), rgba(7, 17, 31, 0.98));
+            background: linear-gradient(180deg, color-mix(in srgb, var(--sidebar) 98%, transparent), color-mix(in srgb, var(--bg) 98%, transparent));
+            transition: opacity 0.25s ease, border-color 0.25s ease;
         }
 
         .sidebar-brand {
@@ -339,9 +391,106 @@
             gap: 1rem;
             padding: 1rem 1.75rem;
             border-bottom: 1px solid var(--line);
-            background: rgba(9, 21, 37, 0.92);
+            background: var(--topbar-bg);
             backdrop-filter: blur(12px);
         }
+
+        .topbar-left,
+        .topbar-actions {
+            display: flex;
+            align-items: center;
+            gap: 0.65rem;
+            flex-shrink: 0;
+        }
+
+        .commercial-presence-bar {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            justify-content: center;
+            gap: 0.45rem;
+            flex: 1;
+            min-width: 0;
+            padding: 0 0.5rem;
+        }
+
+        .presence-pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+            padding: 0.28rem 0.65rem;
+            border-radius: 999px;
+            border: 1px solid var(--line);
+            background: var(--input-bg);
+            font-size: 0.68rem;
+            font-weight: 600;
+            letter-spacing: 0.02em;
+            white-space: nowrap;
+        }
+
+        .presence-dot {
+            width: 9px;
+            height: 9px;
+            border-radius: 50%;
+            flex-shrink: 0;
+        }
+
+        .presence-dot.unknown {
+            background: #8a96a8;
+        }
+
+        .presence-dot.online {
+            background: #3dcf8a;
+            animation: presencePulseGreen 1.1s ease-in-out infinite;
+        }
+
+        .presence-dot.offline {
+            background: #f07178;
+            box-shadow: 0 0 6px rgba(240, 113, 120, 0.45);
+        }
+
+        @keyframes presencePulseGreen {
+            0%, 100% {
+                box-shadow: 0 0 0 0 rgba(61, 207, 138, 0.65);
+                opacity: 1;
+            }
+            50% {
+                box-shadow: 0 0 0 5px rgba(61, 207, 138, 0);
+                opacity: 0.82;
+            }
+        }
+
+        .topbar-btn {
+            display: inline-grid;
+            place-items: center;
+            appearance: none;
+            border: 1px solid var(--line);
+            background: var(--input-bg);
+            color: var(--text);
+            border-radius: 10px;
+            width: 40px;
+            height: 40px;
+            cursor: pointer;
+            transition: background 0.2s ease, border-color 0.2s ease, color 0.2s ease;
+        }
+
+        .topbar-btn:hover {
+            background: var(--hover-bg);
+            border-color: color-mix(in srgb, var(--accent) 35%, var(--line));
+        }
+
+        .topbar-btn svg {
+            width: 18px;
+            height: 18px;
+        }
+
+        .topbar-btn .icon-hide { display: none; }
+        .shell.sidebar-hidden .topbar-btn[data-toggle="sidebar"] .icon-show { display: none; }
+        .shell.sidebar-hidden .topbar-btn[data-toggle="sidebar"] .icon-hide { display: block; }
+
+        .topbar-btn[data-toggle="theme"] .icon-light { display: none; }
+        [data-theme="light"] .topbar-btn[data-toggle="theme"] .icon-dark { display: none; }
+        [data-theme="light"] .topbar-btn[data-toggle="theme"] .icon-light { display: block; }
 
         .welcome {
             display: flex;
@@ -366,7 +515,7 @@
             padding: 0.45rem 0.75rem;
             border-radius: 999px;
             border: 1px solid var(--line);
-            background: rgba(255, 255, 255, 0.04);
+            background: var(--input-bg);
             font-size: 0.82rem;
             color: var(--muted);
             text-transform: uppercase;
@@ -738,6 +887,35 @@
             opacity: 0.82;
         }
 
+        body.role-commercial #prospectionsTableBody tr.row-prospection-valide td {
+            background: rgba(110, 118, 130, 0.22) !important;
+            color: rgba(165, 172, 182, 0.88) !important;
+        }
+
+        body.role-commercial #prospectionsTableBody tr.row-prospection-valide {
+            opacity: 0.58;
+            filter: grayscale(0.9);
+        }
+
+        body.role-commercial #prospectionsTableBody tr.row-prospection-valide .prospection-text-input,
+        body.role-commercial #prospectionsTableBody tr.row-prospection-valide .remarque-input,
+        body.role-commercial #prospectionsTableBody tr.row-prospection-valide .prospection-date-input {
+            color: rgba(150, 158, 168, 0.9);
+            background: rgba(110, 118, 130, 0.12);
+            border-color: rgba(110, 118, 130, 0.2);
+        }
+
+        body.role-commercial #prospectionsTableBody tr.row-prospection-valide .statue-select.valide {
+            color: #9aa3b0;
+            background-color: rgba(110, 118, 130, 0.2);
+            border-color: rgba(110, 118, 130, 0.35);
+        }
+
+        [data-theme="light"] body.role-commercial #prospectionsTableBody tr.row-prospection-valide td {
+            background: rgba(120, 128, 140, 0.18) !important;
+            color: rgba(90, 98, 110, 0.82) !important;
+        }
+
         #prospectionsTableBody tr.row-prospection-annule td {
             background: rgba(240, 113, 120, 0.16);
             color: rgba(255, 210, 214, 0.82);
@@ -1099,14 +1277,16 @@
 
         .menu-toggle {
             display: none;
-            appearance: none;
-            border: 1px solid var(--line);
-            background: rgba(255, 255, 255, 0.04);
-            color: var(--text);
-            border-radius: 10px;
-            width: 40px;
-            height: 40px;
-            cursor: pointer;
+        }
+
+        @media (max-width: 900px) {
+            .shell.sidebar-hidden {
+                grid-template-columns: 1fr;
+            }
+
+            .shell.sidebar-hidden .sidebar {
+                transform: translateX(-105%);
+            }
         }
 
         @media (max-width: 1100px) {
@@ -1123,8 +1303,8 @@
                 transform: translateX(-105%);
                 transition: transform 0.25s ease;
             }
-            .sidebar.open { transform: translateX(0); }
-            .menu-toggle { display: inline-grid; place-items: center; }
+            .sidebar.open { transform: translateX(0); opacity: 1; pointer-events: auto; }
+            .topbar-btn[data-toggle="sidebar"] { display: inline-grid; }
             .sidebar-backdrop {
                 display: none;
                 position: fixed;
@@ -1140,12 +1320,23 @@
             .content { padding: 1.25rem; }
             .topbar { padding: 0.85rem 1rem; }
         }
+        @media (min-width: 901px) {
+            .topbar-btn[data-toggle="sidebar"] { display: inline-grid; }
+        }
     </style>
+    <script>
+        (function () {
+            const theme = localStorage.getItem('evopro-theme');
+            if (theme) document.documentElement.setAttribute('data-theme', theme);
+            const sidebarHidden = localStorage.getItem('evopro-sidebar') === 'hidden';
+            if (sidebarHidden) document.documentElement.classList.add('sidebar-hidden-init');
+        })();
+    </script>
 </head>
-<body>
+<body @class(['role-commercial' => $isCommercialRole ?? false])>
     <div class="sidebar-backdrop" id="sidebarBackdrop" aria-hidden="true"></div>
 
-    <div class="shell">
+    <div class="shell" id="appShell">
         <aside class="sidebar" id="sidebar" aria-label="Navigation principale">
             <div class="sidebar-brand">
                 <div class="logo-stage">
@@ -1256,7 +1447,7 @@
             </nav>
 
             <div class="sidebar-foot">
-                <form method="post" action="{{ route('logout') }}">
+                <form method="post" action="{{ route('logout') }}" id="logoutForm">
                     @csrf
                     <button type="submit" class="btn-logout">Se déconnecter</button>
                 </form>
@@ -1265,13 +1456,46 @@
 
         <div class="main">
             <header class="topbar">
-                <div style="display:flex;align-items:center;gap:0.75rem;">
-                    <button type="button" class="menu-toggle" id="menuToggle" aria-label="Ouvrir le menu">☰</button>
+                <div class="topbar-left">
+                    <button type="button" class="topbar-btn" id="sidebarToggle" data-toggle="sidebar" aria-label="Afficher ou masquer le menu latéral" title="Menu latéral">
+                        <svg class="icon-show" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                            <rect x="3" y="3" width="18" height="18" rx="2"/><path d="M9 3v18"/><path d="M14 9h5"/><path d="M14 15h5"/>
+                        </svg>
+                        <svg class="icon-hide" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                            <rect x="3" y="3" width="18" height="18" rx="2"/><path d="M9 3v18"/><path d="M16 9l3 3-3 3"/>
+                        </svg>
+                    </button>
                     <div class="welcome">
                         <strong>Bienvenu {{ $welcomeName }}</strong>
                     </div>
                 </div>
-                <div class="user-badge">{{ strtoupper($authUserStatue ?: '—') }}</div>
+
+                @if ($canViewCommercialPresence ?? false)
+                <div class="commercial-presence-bar" id="commercialPresenceBar" aria-label="Présence des commerciaux">
+                    @foreach (($commerciauxUsers ?? []) as $commercialUser)
+                        <span
+                            class="presence-pill"
+                            data-commercial-key="{{ mb_strtolower($commercialUser) }}"
+                            title="{{ $commercialUser }} — Hors ligne"
+                        >
+                            <span class="presence-dot offline" aria-hidden="true"></span>
+                            <span class="presence-label">{{ $commercialUser }}</span>
+                        </span>
+                    @endforeach
+                </div>
+                @endif
+
+                <div class="topbar-actions">
+                    <button type="button" class="topbar-btn" id="themeToggle" data-toggle="theme" aria-label="Basculer mode clair ou sombre" title="Mode clair / sombre">
+                        <svg class="icon-dark" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                            <path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/>
+                        </svg>
+                        <svg class="icon-light" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                            <circle cx="12" cy="12" r="4"/><path d="M12 2v2"/><path d="M12 20v2"/><path d="m4.93 4.93 1.41 1.41"/><path d="m17.66 17.66 1.41 1.41"/><path d="M2 12h2"/><path d="M20 12h2"/><path d="m6.34 17.66-1.41 1.41"/><path d="m19.07 4.93-1.41 1.41"/>
+                        </svg>
+                    </button>
+                    <div class="user-badge">{{ strtoupper($authUserStatue ?: '—') }}</div>
+                </div>
             </header>
 
             <main class="content">
@@ -1471,21 +1695,16 @@
                                             >{{ $row['remarque'] ?? '' }}</textarea>
                                         </td>
                                         <td>
-                                            <form method="post" action="{{ url('/prospections/'.$row['id'].'/statue') }}" class="statue-form">
-                                                @csrf
-                                                @method('PATCH')
-                                                <select
-                                                    name="statue"
-                                                    class="statue-select {{ $statue }}"
-                                                    aria-label="Statue prospection"
-                                                    onchange="this.form.submit()"
-                                                >
-                                                    <option value="valide" @selected($statue === 'valide')>Validé</option>
-                                                    <option value="en_attente" @selected($statue === 'en_attente')>En Attente</option>
-                                                    <option value="annule" @selected($statue === 'annule')>Annulé</option>
-                                                    <option value="reporte" @selected($statue === 'reporte')>Reporté</option>
-                                                </select>
-                                            </form>
+                                            <select
+                                                class="statue-select {{ $statue }}"
+                                                data-id="{{ $row['id'] }}"
+                                                aria-label="Statue prospection"
+                                            >
+                                                <option value="valide" @selected($statue === 'valide')>Validé</option>
+                                                <option value="en_attente" @selected($statue === 'en_attente')>En Attente</option>
+                                                <option value="annule" @selected($statue === 'annule')>Annulé</option>
+                                                <option value="reporte" @selected($statue === 'reporte')>Reporté</option>
+                                            </select>
                                         </td>
                                         <td class="cell-rappel">
                                             <input
@@ -2076,11 +2295,16 @@
         const canManageProspectionCommercial = @json($canManageProspectionCommercial ?? false);
         const defaultPanel = @json($defaultPanel ?? 'dashboard');
         const isCommercialRole = @json($isCommercialRole ?? false);
+        const canViewCommercialPresence = @json($canViewCommercialPresence ?? false);
+        const liveSyncIntervalMs = canViewCommercialPresence ? 2000 : 3000;
+        const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '';
         const utilisateursData = @json($utilisateurs ?? []);
         const ficheSteData = @json($ficheSte ?? []);
         const sidebar = document.getElementById('sidebar');
+        const appShell = document.getElementById('appShell');
         const sidebarBackdrop = document.getElementById('sidebarBackdrop');
-        const menuToggle = document.getElementById('menuToggle');
+        const sidebarToggle = document.getElementById('sidebarToggle');
+        const themeToggle = document.getElementById('themeToggle');
         const navParents = document.querySelectorAll('.nav-item[data-panel]:not(.nav-subitem)');
         const navSubitems = document.querySelectorAll('.nav-subitem');
         const navGroups = document.querySelectorAll('.nav-group');
@@ -2178,15 +2402,54 @@
             });
         });
 
-        menuToggle?.addEventListener('click', () => {
-            sidebar?.classList.toggle('open');
-            sidebarBackdrop?.classList.toggle('open');
+        function isMobileSidebar() {
+            return window.matchMedia('(max-width: 900px)').matches;
+        }
+
+        function setSidebarHidden(hidden) {
+            appShell?.classList.toggle('sidebar-hidden', hidden);
+            if (!isMobileSidebar()) {
+                localStorage.setItem('evopro-sidebar', hidden ? 'hidden' : 'visible');
+            }
+            sidebarToggle?.setAttribute('aria-label', hidden ? 'Afficher le menu latéral' : 'Masquer le menu latéral');
+        }
+
+        if (document.documentElement.classList.contains('sidebar-hidden-init') && !isMobileSidebar()) {
+            setSidebarHidden(true);
+            document.documentElement.classList.remove('sidebar-hidden-init');
+        }
+
+        sidebarToggle?.addEventListener('click', () => {
+            if (isMobileSidebar()) {
+                sidebar?.classList.toggle('open');
+                sidebarBackdrop?.classList.toggle('open');
+                return;
+            }
+            setSidebarHidden(!appShell?.classList.contains('sidebar-hidden'));
         });
 
         sidebarBackdrop?.addEventListener('click', () => {
             sidebar?.classList.remove('open');
             sidebarBackdrop?.classList.remove('open');
         });
+
+        function applyTheme(theme) {
+            if (theme === 'light') {
+                document.documentElement.setAttribute('data-theme', 'light');
+            } else {
+                document.documentElement.removeAttribute('data-theme');
+                theme = 'dark';
+            }
+            localStorage.setItem('evopro-theme', theme);
+            themeToggle?.setAttribute('aria-label', theme === 'light' ? 'Passer en mode sombre' : 'Passer en mode clair');
+        }
+
+        themeToggle?.addEventListener('click', () => {
+            const isLight = document.documentElement.getAttribute('data-theme') === 'light';
+            applyTheme(isLight ? 'dark' : 'light');
+        });
+
+        applyTheme(localStorage.getItem('evopro-theme') || 'dark');
 
         function parseDateFrToKey(value) {
             const raw = String(value || '').trim();
@@ -2488,12 +2751,39 @@
         document.querySelectorAll('#prospectionsTableBody tr[data-id]').forEach(applyProspectionRowStyle);
 
         document.querySelectorAll('#prospectionsTableBody .statue-select').forEach((select) => {
-            select.addEventListener('change', () => {
-                select.className = `statue-select ${select.value}`;
+            select.addEventListener('change', async () => {
+                const id = select.dataset.id || select.closest('tr[data-id]')?.dataset.id;
+                const statue = select.value;
                 const row = select.closest('tr[data-id]');
+                const previous = row?.dataset.statue || 'en_attente';
+
+                select.className = `statue-select ${statue}`;
                 if (row) {
-                    row.dataset.statue = select.value;
+                    row.dataset.statue = statue;
                     applyProspectionRowStyle(row);
+                }
+
+                if (!id) return;
+
+                try {
+                    const response = await fetch(`{{ url('/prospections') }}/${encodeURIComponent(id)}/statue`, {
+                        method: 'PATCH',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Accept': 'application/json',
+                            'X-CSRF-TOKEN': csrfToken,
+                            'X-Requested-With': 'XMLHttpRequest',
+                        },
+                        body: JSON.stringify({ statue }),
+                    });
+                    if (!response.ok) throw new Error('save_failed');
+                } catch (_) {
+                    select.value = previous;
+                    select.className = `statue-select ${previous}`;
+                    if (row) {
+                        row.dataset.statue = previous;
+                        applyProspectionRowStyle(row);
+                    }
                 }
             });
         });
@@ -2624,10 +2914,74 @@
             }
         }
 
-        setInterval(syncProspectionsLive, 4000);
+        syncProspectionsLive();
+        setInterval(syncProspectionsLive, liveSyncIntervalMs);
         document.addEventListener('visibilitychange', () => {
             if (!document.hidden) syncProspectionsLive();
         });
+
+        async function syncCommercialPresence() {
+            if (!canViewCommercialPresence) return;
+
+            try {
+                const response = await fetch('{{ route('presence.live') }}', {
+                    headers: {
+                        'Accept': 'application/json',
+                        'X-Requested-With': 'XMLHttpRequest',
+                    },
+                });
+                if (!response.ok) return;
+                const data = await response.json().catch(() => ({}));
+                (data.commercials || []).forEach((commercial) => {
+                    const pill = document.querySelector(`#commercialPresenceBar .presence-pill[data-commercial-key="${CSS.escape(commercial.key)}"]`);
+                    if (!pill) return;
+                    const dot = pill.querySelector('.presence-dot');
+                    const isOnline = commercial.status === 'online';
+                    dot?.classList.remove('online', 'offline', 'unknown');
+                    dot?.classList.add(isOnline ? 'online' : 'offline');
+                    pill.title = `${commercial.nom_complet} — ${isOnline ? 'En ligne' : 'Hors ligne'}`;
+                });
+            } catch (_) {
+                // ignore network blips
+            }
+        }
+
+        if (canViewCommercialPresence) {
+            syncCommercialPresence();
+            setInterval(syncCommercialPresence, 2500);
+            document.addEventListener('visibilitychange', () => {
+                if (!document.hidden) syncCommercialPresence();
+            });
+        }
+
+        async function sendPresenceHeartbeat() {
+            if (!isCommercialRole) return;
+            try {
+                await fetch('{{ route('presence.heartbeat') }}', {
+                    method: 'POST',
+                    headers: {
+                        'Accept': 'application/json',
+                        'X-CSRF-TOKEN': csrfToken,
+                        'X-Requested-With': 'XMLHttpRequest',
+                    },
+                });
+            } catch (_) {
+                // ignore
+            }
+        }
+
+        function sendPresenceOffline() {
+            if (!isCommercialRole) return;
+            const body = new URLSearchParams({ _token: csrfToken });
+            navigator.sendBeacon('{{ route('presence.offline') }}', body);
+        }
+
+        if (isCommercialRole) {
+            sendPresenceHeartbeat();
+            setInterval(sendPresenceHeartbeat, 4000);
+            window.addEventListener('pagehide', sendPresenceOffline);
+            document.getElementById('logoutForm')?.addEventListener('submit', sendPresenceOffline);
+        }
 
         function showConfigSection(name) {
             setActiveNavSubitem('config', name);
