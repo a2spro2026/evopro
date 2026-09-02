@@ -371,6 +371,44 @@ class UtilisateurHelper
     }
 
     /**
+     * @param  array<string, mixed>  $row
+     * @param  array<string, mixed>  $authUser
+     */
+    public static function assertCommercialCanEditProspectionRow(array $row, array $authUser): void
+    {
+        self::assertCanAccessProspectionRow($row, $authUser);
+
+        if (
+            self::isCommercialRole($authUser['statue'] ?? '')
+            && ($row['statue'] ?? '') === 'valide'
+        ) {
+            abort(403, 'Cette fiche validée ne peut plus être modifiée.');
+        }
+    }
+
+    /**
+     * @param  array<string, mixed>  $row
+     * @param  array<string, mixed>  $authUser
+     * @param  array<string, mixed>  $payload
+     */
+    public static function assertCommercialCanChangeProspectionStatue(array $row, array $authUser, array $payload): void
+    {
+        self::assertCanAccessProspectionRow($row, $authUser);
+
+        if (! self::isCommercialRole($authUser['statue'] ?? '')) {
+            return;
+        }
+
+        if (($row['statue'] ?? '') === 'valide') {
+            abort(403, 'Le statut d\'un client confirmé ne peut plus être modifié.');
+        }
+
+        if (($payload['statue'] ?? '') === 'valide') {
+            abort(403, 'Seuls l\'administrateur ou l\'assistante peuvent confirmer un client.');
+        }
+    }
+
+    /**
      * @param  array<string, mixed>  $authUser
      */
     public static function assertCanAccessProspectionRow(array $row, array $authUser): void

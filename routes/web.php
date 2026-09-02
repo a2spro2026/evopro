@@ -305,7 +305,7 @@ Route::middleware('auth.user')->patch('/prospections/{id}/statue', function (Req
         return back()->withErrors(['statue' => 'Prospection introuvable.']);
     }
 
-    UtilisateurHelper::assertCanAccessProspectionRow($rows[$index], session('auth_user', []));
+    UtilisateurHelper::assertCommercialCanChangeProspectionStatue($rows[$index], session('auth_user', []), $data);
 
     $rows[$index]['statue'] = $data['statue'];
 
@@ -350,7 +350,7 @@ Route::middleware('auth.user')->patch('/prospections/{id}/inline', function (Req
         return response()->json(['ok' => false, 'message' => 'Introuvable'], 404);
     }
 
-    UtilisateurHelper::assertCanAccessProspectionRow($rows[$index], session('auth_user', []));
+    UtilisateurHelper::assertCommercialCanEditProspectionRow($rows[$index], session('auth_user', []));
 
     $rows[$index][$field] = $value;
     AppStore::put('prospections', $rows);

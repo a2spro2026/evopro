@@ -770,10 +770,44 @@
             border: 1px solid transparent;
         }
 
-        .statue-select.valide {
+        .statue-select.valide,
+        .statue-badge.valide {
             color: #7ee8b0;
             background-color: rgba(61, 207, 138, 0.16);
             border-color: rgba(61, 207, 138, 0.4);
+        }
+
+        .statue-badge {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0.32rem 0.65rem;
+            border-radius: 999px;
+            font-size: 0.72rem;
+            font-weight: 700;
+            letter-spacing: 0.03em;
+            line-height: 1.2;
+            text-transform: uppercase;
+            border: 1px solid transparent;
+            user-select: none;
+        }
+
+        .statue-badge.en_attente {
+            color: #ffc857;
+            background-color: rgba(240, 180, 41, 0.16);
+            border-color: rgba(240, 180, 41, 0.4);
+        }
+
+        .statue-badge.annule {
+            color: #ff9aa0;
+            background-color: rgba(240, 113, 120, 0.16);
+            border-color: rgba(240, 113, 120, 0.4);
+        }
+
+        .statue-badge.reporte {
+            color: #9ec5ff;
+            background-color: rgba(99, 155, 255, 0.16);
+            border-color: rgba(99, 155, 255, 0.4);
         }
 
         .statue-select.en_attente {
@@ -905,10 +939,15 @@
             border-color: rgba(110, 118, 130, 0.2);
         }
 
-        body.role-commercial #prospectionsTableBody tr.row-prospection-valide .statue-select.valide {
+        body.role-commercial #prospectionsTableBody tr.row-prospection-valide .statue-badge.valide {
             color: #9aa3b0;
             background-color: rgba(110, 118, 130, 0.2);
             border-color: rgba(110, 118, 130, 0.35);
+        }
+
+        body.role-commercial #prospectionsTableBody tr.row-prospection-valide .prospection-inline.is-row-locked {
+            pointer-events: none;
+            cursor: not-allowed;
         }
 
         [data-theme="light"] body.role-commercial #prospectionsTableBody tr.row-prospection-valide td {
@@ -1666,6 +1705,7 @@
                                             },
                                             $rappelDu && in_array($statue, ['en_attente', 'reporte'], true) ? 'row-prospection-rappel-du' : '',
                                         ])->filter()->implode(' ');
+                                        $rowLocked = ($isCommercialRole ?? false) && $statue === 'valide';
                                     @endphp
                                     <tr
                                         data-id="{{ $row['id'] }}"
@@ -1685,65 +1725,75 @@
                                         <td>
                                             <input
                                                 type="text"
-                                                class="prospection-text-input prospection-inline"
+                                                class="prospection-text-input prospection-inline{{ $rowLocked ? ' is-row-locked' : '' }}"
                                                 data-field="nom_prospect"
                                                 data-id="{{ $row['id'] }}"
                                                 value="{{ $row['nom_prospect'] ?? '' }}"
                                                 maxlength="255"
                                                 placeholder="Nom prospect"
                                                 aria-label="Nom prospect"
+                                                @readonly($rowLocked)
                                             >
                                         </td>
                                         <td>
                                             <input
                                                 type="text"
-                                                class="prospection-text-input prospection-inline"
+                                                class="prospection-text-input prospection-inline{{ $rowLocked ? ' is-row-locked' : '' }}"
                                                 data-field="ville"
                                                 data-id="{{ $row['id'] }}"
                                                 value="{{ $row['ville'] ?? '' }}"
                                                 maxlength="255"
                                                 placeholder="Ville"
                                                 aria-label="Ville"
+                                                @readonly($rowLocked)
                                             >
                                         </td>
                                         <td>
                                             <input
                                                 type="text"
-                                                class="prospection-text-input prospection-inline"
+                                                class="prospection-text-input prospection-inline{{ $rowLocked ? ' is-row-locked' : '' }}"
                                                 data-field="projet"
                                                 data-id="{{ $row['id'] }}"
                                                 value="{{ $row['projet'] ?? '' }}"
                                                 maxlength="255"
                                                 placeholder="Titre projet"
                                                 aria-label="Titre projet"
+                                                @readonly($rowLocked)
                                             >
                                         </td>
                                         <td class="cell-remarque">
                                             <textarea
-                                                class="remarque-input prospection-inline"
+                                                class="remarque-input prospection-inline{{ $rowLocked ? ' is-row-locked' : '' }}"
                                                 data-field="remarque"
                                                 data-id="{{ $row['id'] }}"
                                                 rows="2"
                                                 placeholder="Note d'appel avec le client…"
                                                 aria-label="Remarque"
+                                                @readonly($rowLocked)
                                             >{{ $row['remarque'] ?? '' }}</textarea>
                                         </td>
-                                        <td>
-                                            <select
-                                                class="statue-select {{ $statue }}"
-                                                data-id="{{ $row['id'] }}"
-                                                aria-label="Statue prospection"
-                                            >
-                                                <option value="valide" @selected($statue === 'valide')>Validé</option>
-                                                <option value="en_attente" @selected($statue === 'en_attente')>En Attente</option>
-                                                <option value="annule" @selected($statue === 'annule')>Annulé</option>
-                                                <option value="reporte" @selected($statue === 'reporte')>Reporté</option>
-                                            </select>
+                                        <td class="cell-statue">
+                                            @if ($rowLocked)
+                                                <span class="statue-badge valide" aria-label="Statue prospection">Validé</span>
+                                            @else
+                                                <select
+                                                    class="statue-select {{ $statue }}"
+                                                    data-id="{{ $row['id'] }}"
+                                                    aria-label="Statue prospection"
+                                                >
+                                                    @if (! ($isCommercialRole ?? false))
+                                                        <option value="valide" @selected($statue === 'valide')>Validé</option>
+                                                    @endif
+                                                    <option value="en_attente" @selected($statue === 'en_attente')>En Attente</option>
+                                                    <option value="annule" @selected($statue === 'annule')>Annulé</option>
+                                                    <option value="reporte" @selected($statue === 'reporte')>Reporté</option>
+                                                </select>
+                                            @endif
                                         </td>
                                         <td class="cell-rappel">
                                             <input
                                                 type="text"
-                                                class="prospection-date-input prospection-inline{{ $rappelDu && in_array($statue, ['en_attente', 'reporte'], true) ? ' is-rappel-du' : '' }}"
+                                                class="prospection-date-input prospection-inline{{ $rappelDu && in_array($statue, ['en_attente', 'reporte'], true) ? ' is-rappel-du' : '' }}{{ $rowLocked ? ' is-row-locked' : '' }}"
                                                 data-field="date_rappel"
                                                 data-id="{{ $row['id'] }}"
                                                 value="{{ $row['date_rappel'] ?? '' }}"
@@ -1752,6 +1802,7 @@
                                                 inputmode="numeric"
                                                 autocomplete="off"
                                                 aria-label="Date Rappel"
+                                                @readonly($rowLocked)
                                             >
                                         </td>
                                     </tr>
@@ -2544,6 +2595,19 @@
         const defaultPanel = @json($defaultPanel ?? 'dashboard');
         const isCommercialRole = @json($isCommercialRole ?? false);
         const canViewCommercialPresence = @json($canViewCommercialPresence ?? false);
+        const prospectionStatueLabels = {
+            valide: 'Validé',
+            en_attente: 'En Attente',
+            annule: 'Annulé',
+            reporte: 'Reporté',
+        };
+        function escapeHtml(value) {
+            return String(value ?? '')
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;')
+                .replace(/"/g, '&quot;');
+        }
         const liveSyncIntervalMs = canViewCommercialPresence ? 2000 : 3000;
         const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '';
         const utilisateursData = @json($utilisateurs ?? []);
@@ -3258,34 +3322,73 @@
             return due <= today;
         }
 
-        function applyProspectionRowStyle(row) {
-            if (!row) return;
-            row.classList.remove('row-prospection-valide', 'row-prospection-annule', 'row-prospection-reporte', 'row-prospection-rappel-du');
-
-            const statue = row.dataset.statue || 'en_attente';
-            const dateRappel = row.dataset.dateRappel || row.querySelector('.prospection-date-input')?.value || '';
-
-            if (statue === 'valide') row.classList.add('row-prospection-valide');
-            if (statue === 'annule') row.classList.add('row-prospection-annule');
-            if (statue === 'reporte') row.classList.add('row-prospection-reporte');
-            if (isDateRappelDue(dateRappel) && (statue === 'en_attente' || statue === 'reporte')) {
-                row.classList.add('row-prospection-rappel-du');
-            }
-
-            const dateInput = row.querySelector('.prospection-date-input');
-            if (dateInput) {
-                dateInput.classList.toggle('is-rappel-du', row.classList.contains('row-prospection-rappel-du'));
-            }
+        function isCommercialProspectionRowLocked(row) {
+            return isCommercialRole && (row?.dataset.statue || '') === 'valide';
         }
 
-        document.querySelectorAll('#prospectionsTableBody tr[data-id]').forEach(applyProspectionRowStyle);
+        function renderProspectionStatueCell(row) {
+            if (!row) return;
+            const cell = row.querySelector('.cell-statue');
+            if (!cell) return;
 
-        document.querySelectorAll('#prospectionsTableBody .statue-select').forEach((select) => {
+            const statue = row.dataset.statue || 'en_attente';
+            const locked = isCommercialProspectionRowLocked(row);
+
+            if (locked) {
+                cell.innerHTML = `<span class="statue-badge valide" aria-label="Statue prospection">${escapeHtml(prospectionStatueLabels.valide)}</span>`;
+                return;
+            }
+
+            let select = cell.querySelector('.statue-select');
+            if (!select) {
+                cell.innerHTML = `
+                    <select class="statue-select ${statue}" data-id="${escapeHtml(row.dataset.id || '')}" aria-label="Statue prospection">
+                        ${isCommercialRole ? '' : `<option value="valide"${statue === 'valide' ? ' selected' : ''}>Validé</option>`}
+                        <option value="en_attente"${statue === 'en_attente' ? ' selected' : ''}>En Attente</option>
+                        <option value="annule"${statue === 'annule' ? ' selected' : ''}>Annulé</option>
+                        <option value="reporte"${statue === 'reporte' ? ' selected' : ''}>Reporté</option>
+                    </select>
+                `;
+                select = cell.querySelector('.statue-select');
+                if (select) bindProspectionStatueSelect(select);
+                return;
+            }
+
+            select.value = statue;
+            select.className = `statue-select ${statue}`;
+        }
+
+        function setCommercialProspectionRowLock(row) {
+            if (!row) return;
+            const locked = isCommercialProspectionRowLocked(row);
+            row.querySelectorAll('.prospection-inline').forEach((el) => {
+                el.readOnly = locked;
+                el.classList.toggle('is-row-locked', locked);
+            });
+            renderProspectionStatueCell(row);
+        }
+
+        function bindProspectionStatueSelect(select) {
+            if (!select || select.dataset.bound === '1') return;
+            select.dataset.bound = '1';
+
             select.addEventListener('change', async () => {
                 const id = select.dataset.id || select.closest('tr[data-id]')?.dataset.id;
                 const statue = select.value;
                 const row = select.closest('tr[data-id]');
                 const previous = row?.dataset.statue || 'en_attente';
+
+                if (isCommercialRole && previous === 'valide') {
+                    select.value = previous;
+                    select.className = `statue-select ${previous}`;
+                    return;
+                }
+
+                if (isCommercialRole && statue === 'valide') {
+                    select.value = previous;
+                    select.className = `statue-select ${previous}`;
+                    return;
+                }
 
                 select.className = `statue-select ${statue}`;
                 if (row) {
@@ -3316,6 +3419,34 @@
                     }
                 }
             });
+        }
+
+        function applyProspectionRowStyle(row) {
+            if (!row) return;
+            row.classList.remove('row-prospection-valide', 'row-prospection-annule', 'row-prospection-reporte', 'row-prospection-rappel-du');
+
+            const statue = row.dataset.statue || 'en_attente';
+            const dateRappel = row.dataset.dateRappel || row.querySelector('.prospection-date-input')?.value || '';
+
+            if (statue === 'valide') row.classList.add('row-prospection-valide');
+            if (statue === 'annule') row.classList.add('row-prospection-annule');
+            if (statue === 'reporte') row.classList.add('row-prospection-reporte');
+            if (isDateRappelDue(dateRappel) && (statue === 'en_attente' || statue === 'reporte')) {
+                row.classList.add('row-prospection-rappel-du');
+            }
+
+            const dateInput = row.querySelector('.prospection-date-input');
+            if (dateInput) {
+                dateInput.classList.toggle('is-rappel-du', row.classList.contains('row-prospection-rappel-du'));
+            }
+
+            setCommercialProspectionRowLock(row);
+        }
+
+        document.querySelectorAll('#prospectionsTableBody tr[data-id]').forEach(applyProspectionRowStyle);
+
+        document.querySelectorAll('#prospectionsTableBody .statue-select').forEach((select) => {
+            bindProspectionStatueSelect(select);
         });
 
         document.querySelectorAll('.prospection-inline').forEach((el) => {
@@ -3334,6 +3465,8 @@
                 const id = el.dataset.id;
                 const field = el.dataset.field;
                 let value = (el.value || '').trim();
+                const row = el.closest('tr[data-id]');
+                if (isCommercialProspectionRowLocked(row)) return;
                 if (!id || !field || value === (el.dataset.initial || '') || el.classList.contains('is-saving')) return;
 
                 if (field === 'date_rappel' && value !== '' && !/^\d{2}\/\d{2}\/\d{4}$/.test(value)) return;
@@ -3391,13 +3524,12 @@
         }
 
         function applyLiveStatue(rowEl, statue) {
-            const select = rowEl.querySelector('.statue-select');
-            if (!select) return;
-            if (document.activeElement === select) return;
             const next = statue || 'en_attente';
-            if (select.value === next && rowEl.dataset.statue === next) return;
-            select.value = next;
-            select.className = `statue-select ${next}`;
+            const select = rowEl.querySelector('.statue-select');
+            if (document.activeElement === select) return;
+            if (rowEl.dataset.statue === next && (!select || select.value === next)) {
+                if (isCommercialProspectionRowLocked(rowEl)) return;
+            }
             rowEl.dataset.statue = next;
             applyProspectionRowStyle(rowEl);
         }
@@ -3695,21 +3827,6 @@
 
         function commercialKey(name) {
             return String(name || '').trim().toLowerCase();
-        }
-
-        const prospectionStatueLabels = {
-            valide: 'Validé',
-            en_attente: 'En Attente',
-            annule: 'Annulé',
-            reporte: 'Reporté',
-        };
-
-        function escapeHtml(value) {
-            return String(value ?? '')
-                .replace(/&/g, '&amp;')
-                .replace(/</g, '&lt;')
-                .replace(/>/g, '&gt;')
-                .replace(/"/g, '&quot;');
         }
 
         function getFilterCommercialName() {
