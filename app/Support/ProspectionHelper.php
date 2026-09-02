@@ -107,20 +107,38 @@ class ProspectionHelper
             return '';
         }
 
-        $key = mb_strtolower($commercial);
-        $users = UtilisateurHelper::normalizeAll(AppStore::get('utilisateurs'));
+        $user = self::resolveCommercialUser($commercial);
 
-        foreach ($users as $user) {
-            if (UtilisateurHelper::normalizeStatue($user['statue'] ?? '') !== 'commercial') {
-                continue;
-            }
+        return trim((string) ($user['nom_complet'] ?? $commercial));
+    }
 
-            if (UtilisateurHelper::rowBelongsToCommercial(['commercial' => $commercial], $user)) {
-                return trim((string) ($user['nom_complet'] ?? $commercial));
-            }
+    /**
+     * @return array<string, mixed>|null
+     */
+    public static function resolveCommercialUser(string $commercial): ?array
+    {
+        $commercial = trim($commercial);
+        if ($commercial === '') {
+            return null;
         }
 
-        return $commercial;
+        $users = UtilisateurHelper::normalizeAll(AppStore::get('utilisateurs'));
+        $commercialUsers = collect($users)
+            ->filter(fn ($user) => UtilisateurHelper::isCommercial($user))
+            ->values()
+            ->all();
+
+        $probe = ['commercial' => $commercial];
+
+        return UtilisateurHelper::findCommercialUserForProspectionRow($probe, $commercialUsers);
+    }
+
+    public static function resolveCommercialUserId(string $commercial): ?string
+    {
+        $user = self::resolveCommercialUser($commercial);
+        $id = trim((string) ($user['id'] ?? ''));
+
+        return $id !== '' ? $id : null;
     }
 
     /**
@@ -135,6 +153,7 @@ class ProspectionHelper
             'id' => uniqid('pros_', true),
             'date' => trim((string) ($data['date'] ?? '')) ?: now()->format('d/m/Y'),
             'commercial' => self::resolveCommercialName((string) ($data['commercial'] ?? '')),
+            'commercial_user_id' => self::resolveCommercialUserId((string) ($data['commercial'] ?? '')),
             'telephone' => self::normalizePhoneDisplay((string) ($data['telephone'] ?? '')) ?: trim((string) ($data['telephone'] ?? '')),
             'nom_prospect' => trim((string) ($data['nom_prospect'] ?? '')),
             'ville' => trim((string) ($data['ville'] ?? '')),
@@ -166,9 +185,16 @@ class ProspectionHelper
     public static function appendNumbersForCommercial(array $rows, string $commercial, array $telephones, ?string $date = null): array
     {
         $commercial = self::resolveCommercialName($commercial);
+        $commercialUserId = self::resolveCommercialUserId($commercial);
         $commercialKey = mb_strtolower(trim($commercial));
         $existing = collect($rows)
-            ->filter(fn ($row) => mb_strtolower(trim((string) ($row['commercial'] ?? ''))) === $commercialKey)
+            ->filter(function ($row) use ($commercialKey, $commercialUserId) {
+                if ($commercialUserId !== null && ($row['commercial_user_id'] ?? '') === $commercialUserId) {
+                    return true;
+                }
+
+                return mb_strtolower(trim((string) ($row['commercial'] ?? ''))) === $commercialKey;
+            })
             ->map(fn ($row) => self::normalizePhoneDigits((string) ($row['telephone'] ?? '')))
             ->filter()
             ->flip();

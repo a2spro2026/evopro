@@ -61,6 +61,8 @@ Route::get('/dashboard', function () use ($requireAuth) {
 
     ContactsArchive::importClientsFromProduction();
 
+    UtilisateurHelper::repairProspectionCommercialLinks();
+
     $utilisateurs = UtilisateurHelper::normalizeAll(AppStore::get('utilisateurs'));
     if ($utilisateurs !== AppStore::get('utilisateurs')) {
         AppStore::put('utilisateurs', $utilisateurs);
@@ -108,6 +110,11 @@ Route::get('/dashboard', function () use ($requireAuth) {
         ->values()
         ->all();
 
+    $commerciauxPresenceUsers = collect($utilisateurs)
+        ->filter(fn ($u) => UtilisateurHelper::isCommercial($u))
+        ->values()
+        ->all();
+
     $projetsList = collect(AppStore::get('projets'))
         ->map(fn ($row) => ProjetHelper::normalizeRow($row))
         ->sortByDesc(fn ($row) => $row['date'] ?? '')
@@ -134,6 +141,7 @@ Route::get('/dashboard', function () use ($requireAuth) {
         'projets' => $projetsList,
         'commerciaux' => $commerciaux,
         'commerciauxUsers' => $commerciauxUsers,
+        'commerciauxPresenceUsers' => $commerciauxPresenceUsers,
         'utilisateurs' => $utilisateurs,
         'ficheSte' => FicheSteHelper::get(),
     ]);
@@ -687,6 +695,8 @@ Route::middleware('auth.user')->put('/utilisateurs/{id}', function (Request $req
             ->withErrors(['utilisateur_login' => 'Ce login existe déjà.']);
     }
 
+    $previousUser = $utilisateurs[$index];
+
     $utilisateurs[$index] = UtilisateurHelper::normalizeRow(array_merge($utilisateurs[$index], [
         'date' => $data['date'],
         'nom_complet' => trim($data['nom_complet']),
@@ -696,7 +706,11 @@ Route::middleware('auth.user')->put('/utilisateurs/{id}', function (Request $req
         'password' => $data['password'],
     ]), $index);
 
+    $utilisateurs[$index] = UtilisateurHelper::mergeCommercialAliases($previousUser, $utilisateurs[$index]);
+
     AppStore::put('utilisateurs', $utilisateurs);
+
+    UtilisateurHelper::syncProspectionsAfterCommercialUpdate($previousUser, $utilisateurs[$index]);
 
     return redirect()->route('dashboard')
         ->with('open_panel', 'configuration')

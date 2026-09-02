@@ -1506,14 +1506,14 @@
 
                 @if ($canViewCommercialPresence ?? false)
                 <div class="commercial-presence-bar" id="commercialPresenceBar" aria-label="Présence des commerciaux">
-                    @foreach (($commerciauxUsers ?? []) as $commercialUser)
+                    @foreach (($commerciauxPresenceUsers ?? []) as $commercialUser)
                         <span
                             class="presence-pill"
-                            data-commercial-key="{{ mb_strtolower($commercialUser) }}"
-                            title="{{ $commercialUser }} — Hors ligne"
+                            data-commercial-key="{{ mb_strtolower($commercialUser['id'] ?? '') }}"
+                            title="{{ $commercialUser['nom_complet'] ?? '' }} — Hors ligne"
                         >
                             <span class="presence-dot offline" aria-hidden="true"></span>
-                            <span class="presence-label">{{ $commercialUser }}</span>
+                            <span class="presence-label">{{ $commercialUser['nom_complet'] ?? '' }}</span>
                         </span>
                     @endforeach
                 </div>

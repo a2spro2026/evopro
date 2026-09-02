@@ -49,6 +49,11 @@ class CommercialPresenceHelper
      */
     public static function commercialKey(array $authUser): string
     {
+        $id = trim((string) ($authUser['id'] ?? ''));
+        if ($id !== '') {
+            return mb_strtolower($id);
+        }
+
         return mb_strtolower(trim((string) ($authUser['nom_complet'] ?? $authUser['login'] ?? '')));
     }
 
@@ -116,8 +121,8 @@ class CommercialPresenceHelper
         $result = [];
 
         foreach ($commercials as $user) {
-            $key = mb_strtolower(trim((string) ($user['nom_complet'] ?? '')));
-            $row = $data[$key] ?? null;
+            $key = self::commercialKey($user);
+            $row = $data[$key] ?? $data[mb_strtolower(trim((string) ($user['nom_complet'] ?? '')))] ?? null;
             $status = 'offline';
 
             if (is_array($row)) {

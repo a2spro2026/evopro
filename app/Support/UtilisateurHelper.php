@@ -58,6 +58,12 @@ class UtilisateurHelper
             'login' => trim((string) ($row['login'] ?? '')),
             'password' => (string) ($row['password'] ?? ''),
             'suspendu' => (bool) ($row['suspendu'] ?? false),
+            'aliases' => collect((array) ($row['aliases'] ?? []))
+                ->map(fn ($alias) => mb_strtolower(trim((string) $alias)))
+                ->filter()
+                ->unique()
+                ->values()
+                ->all(),
         ];
     }
 
@@ -133,7 +139,39 @@ class UtilisateurHelper
             }
         }
 
+        foreach ((array) ($user['aliases'] ?? []) as $alias) {
+            $alias = mb_strtolower(trim((string) $alias));
+            if ($alias !== '') {
+                $keys[] = $alias;
+            }
+        }
+
         return array_values(array_unique($keys));
+    }
+
+    /**
+     * @param  array<string, mixed>  $previousUser
+     * @param  array<string, mixed>  $updatedUser
+     * @return array<string, mixed>
+     */
+    public static function mergeCommercialAliases(array $previousUser, array $updatedUser): array
+    {
+        if (self::normalizeStatue($updatedUser['statue'] ?? '') !== 'commercial') {
+            return $updatedUser;
+        }
+
+        $aliases = collect((array) ($updatedUser['aliases'] ?? []))
+            ->merge((array) ($previousUser['aliases'] ?? []))
+            ->merge(self::commercialIdentityKeys($previousUser))
+            ->map(fn ($alias) => mb_strtolower(trim((string) $alias)))
+            ->filter()
+            ->unique()
+            ->values()
+            ->all();
+
+        $updatedUser['aliases'] = $aliases;
+
+        return $updatedUser;
     }
 
     /**
@@ -142,6 +180,13 @@ class UtilisateurHelper
      */
     public static function rowBelongsToCommercial(array $row, array $authUser): bool
     {
+        $authId = trim((string) ($authUser['id'] ?? ''));
+        $rowUserId = trim((string) ($row['commercial_user_id'] ?? ''));
+
+        if ($authId !== '' && $rowUserId !== '' && $authId === $rowUserId) {
+            return true;
+        }
+
         $rowCommercial = mb_strtolower(trim((string) ($row['commercial'] ?? '')));
         if ($rowCommercial === '') {
             return false;
@@ -154,6 +199,175 @@ class UtilisateurHelper
         }
 
         return false;
+    }
+
+    /**
+     * @param  array<int, array<string, mixed>>  $commercialUsers
+     * @return array<string, mixed>|null
+     */
+    public static function findCommercialUserForProspectionRow(array $row, array $commercialUsers): ?array
+    {
+        $rowUserId = trim((string) ($row['commercial_user_id'] ?? ''));
+        if ($rowUserId !== '') {
+            foreach ($commercialUsers as $user) {
+                if (($user['id'] ?? '') === $rowUserId) {
+                    return $user;
+                }
+            }
+        }
+
+        foreach ($commercialUsers as $user) {
+            if (self::rowBelongsToCommercial($row, $user)) {
+                return $user;
+            }
+        }
+
+        return null;
+    }
+
+    /**
+     * @param  array<string, mixed>  $user
+     */
+    public static function prospectionRowMatchesCommercialUser(array $row, array $user): bool
+    {
+        $authId = trim((string) ($user['id'] ?? ''));
+        $rowUserId = trim((string) ($row['commercial_user_id'] ?? ''));
+
+        if ($authId !== '' && $rowUserId !== '' && $authId === $rowUserId) {
+            return true;
+        }
+
+        return self::rowBelongsToCommercial($row, $user);
+    }
+
+    /**
+     * @param  array<string, mixed>  $previousUser
+     * @param  array<string, mixed>  $updatedUser
+     */
+    public static function syncProspectionsAfterCommercialUpdate(array $previousUser, array $updatedUser): void
+    {
+        if (self::normalizeStatue($updatedUser['statue'] ?? '') !== 'commercial') {
+            return;
+        }
+
+        $userId = trim((string) ($updatedUser['id'] ?? ''));
+        if ($userId === '') {
+            return;
+        }
+
+        $label = trim((string) ($updatedUser['nom_complet'] ?? ''));
+        $rows = AppStore::get('prospections');
+        $changed = false;
+
+        foreach ($rows as $index => $row) {
+            $matchesPrevious = self::prospectionRowMatchesCommercialUser($row, $previousUser);
+            $matchesUpdated = self::prospectionRowMatchesCommercialUser($row, $updatedUser);
+
+            if (! $matchesPrevious && ! $matchesUpdated) {
+                continue;
+            }
+
+            $rows[$index]['commercial_user_id'] = $userId;
+            if ($label !== '') {
+                $rows[$index]['commercial'] = $label;
+            }
+            $changed = true;
+        }
+
+        if ($changed) {
+            AppStore::put('prospections', $rows);
+        }
+    }
+
+    public static function repairProspectionCommercialLinks(): void
+    {
+        $commercialUsers = collect(self::normalizeAll(AppStore::get('utilisateurs')))
+            ->filter(fn ($user) => self::isCommercial($user))
+            ->values()
+            ->all();
+
+        if ($commercialUsers === []) {
+            return;
+        }
+
+        $rows = AppStore::get('prospections');
+        $changed = false;
+        $unmatchedStrings = [];
+
+        foreach ($rows as $index => $row) {
+            $user = self::findCommercialUserForProspectionRow($row, $commercialUsers);
+            if ($user !== null) {
+                $userId = trim((string) ($user['id'] ?? ''));
+                if ($userId !== '' && ($row['commercial_user_id'] ?? '') !== $userId) {
+                    $rows[$index]['commercial_user_id'] = $userId;
+                    $changed = true;
+                }
+
+                continue;
+            }
+
+            $commercial = mb_strtolower(trim((string) ($row['commercial'] ?? '')));
+            if ($commercial !== '') {
+                $unmatchedStrings[$commercial] = true;
+            }
+        }
+
+        $unmatchedStrings = array_keys($unmatchedStrings);
+        $unmatchedUsers = collect($commercialUsers)
+            ->filter(function ($user) use ($rows) {
+                foreach ($rows as $row) {
+                    if (self::prospectionRowMatchesCommercialUser($row, $user)) {
+                        return false;
+                    }
+                }
+
+                return true;
+            })
+            ->values()
+            ->all();
+
+        if (count($unmatchedStrings) === 1 && count($unmatchedUsers) === 1) {
+            $commercial = $unmatchedStrings[0];
+            $user = $unmatchedUsers[0];
+            $userId = trim((string) ($user['id'] ?? ''));
+
+            if ($userId !== '') {
+                $aliases = collect((array) ($user['aliases'] ?? []))
+                    ->push($commercial)
+                    ->map(fn ($alias) => mb_strtolower(trim((string) $alias)))
+                    ->filter()
+                    ->unique()
+                    ->values()
+                    ->all();
+
+                foreach ($commercialUsers as $i => $commercialUser) {
+                    if (($commercialUser['id'] ?? '') === $userId) {
+                        $commercialUsers[$i]['aliases'] = $aliases;
+                        break;
+                    }
+                }
+
+                $utilisateurs = self::normalizeAll(AppStore::get('utilisateurs'));
+                foreach ($utilisateurs as $i => $utilisateur) {
+                    if (($utilisateur['id'] ?? '') === $userId) {
+                        $utilisateurs[$i]['aliases'] = $aliases;
+                        break;
+                    }
+                }
+                AppStore::put('utilisateurs', $utilisateurs);
+
+                foreach ($rows as $index => $row) {
+                    if (mb_strtolower(trim((string) ($row['commercial'] ?? ''))) === $commercial) {
+                        $rows[$index]['commercial_user_id'] = $userId;
+                        $changed = true;
+                    }
+                }
+            }
+        }
+
+        if ($changed) {
+            AppStore::put('prospections', $rows);
+        }
     }
 
     /**
