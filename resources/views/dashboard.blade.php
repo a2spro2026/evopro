@@ -1024,6 +1024,42 @@
             border-color: rgba(110, 118, 130, 0.35);
         }
 
+        body.role-commercial #prospectionsTableBody tr.row-commercial-locked td {
+            pointer-events: none;
+            user-select: none;
+            cursor: not-allowed;
+        }
+
+        body.role-commercial #prospectionsTableBody tr.row-commercial-locked .prospection-text-input:hover,
+        body.role-commercial #prospectionsTableBody tr.row-commercial-locked .prospection-text-input:focus,
+        body.role-commercial #prospectionsTableBody tr.row-commercial-locked .description-input:hover,
+        body.role-commercial #prospectionsTableBody tr.row-commercial-locked .description-input:focus,
+        body.role-commercial #prospectionsTableBody tr.row-commercial-locked .remarque-input:hover,
+        body.role-commercial #prospectionsTableBody tr.row-commercial-locked .remarque-input:focus,
+        body.role-commercial #prospectionsTableBody tr.row-commercial-locked .prospection-date-input:hover,
+        body.role-commercial #prospectionsTableBody tr.row-commercial-locked .prospection-date-input:focus {
+            border-color: transparent !important;
+            background: transparent !important;
+            box-shadow: none !important;
+            outline: none !important;
+        }
+
+        .prospection-static {
+            display: block;
+            width: 100%;
+            text-align: center;
+            font-size: 0.82rem;
+            line-height: 1.45;
+            color: inherit;
+            white-space: pre-wrap;
+            word-break: break-word;
+            padding: 0.2rem 0.25rem;
+        }
+
+        .prospection-static.is-empty {
+            opacity: 0.45;
+        }
+
         body.role-commercial #prospectionsTableBody tr.row-prospection-valide .prospection-inline.is-row-locked {
             pointer-events: none;
             cursor: not-allowed;
@@ -1791,6 +1827,9 @@
                                             $rappelDu && in_array($statue, ['en_attente', 'reporte'], true) ? 'row-prospection-rappel-du' : '',
                                         ])->filter()->implode(' ');
                                         $rowLocked = ($isCommercialRole ?? false) && $statue === 'valide';
+                                        if ($rowLocked) {
+                                            $rowClasses = trim($rowClasses.' row-commercial-locked');
+                                        }
                                     @endphp
                                     <tr
                                         data-id="{{ $row['id'] }}"
@@ -1800,6 +1839,7 @@
                                         data-statue="{{ $statue }}"
                                         data-telephone="{{ preg_replace('/\D+/', '', (string) ($row['telephone'] ?? '')) }}"
                                         data-date-rappel="{{ $dateRappel }}"
+                                        @if ($rowLocked) data-row-locked="1" @endif
                                         @if ($rowClasses !== '') class="{{ $rowClasses }}" @endif
                                     >
                                         <td>{{ $row['date'] ?? '' }}</td>
@@ -1808,54 +1848,66 @@
                                         @endif
                                         <td>{{ $row['telephone'] ?? '' }}</td>
                                         <td>
+                                            @if ($rowLocked)
+                                                <span class="prospection-static{{ trim((string) ($row['nom_prospect'] ?? '')) === '' ? ' is-empty' : '' }}" data-field="nom_prospect">{{ $row['nom_prospect'] ?? '—' }}</span>
+                                            @else
                                             <input
                                                 type="text"
-                                                class="prospection-text-input prospection-inline{{ $rowLocked ? ' is-row-locked' : '' }}"
+                                                class="prospection-text-input prospection-inline"
                                                 data-field="nom_prospect"
                                                 data-id="{{ $row['id'] }}"
                                                 value="{{ $row['nom_prospect'] ?? '' }}"
                                                 maxlength="255"
                                                 placeholder="Nom prospect"
                                                 aria-label="Nom prospect"
-                                                @readonly($rowLocked)
                                             >
+                                            @endif
                                         </td>
                                         <td class="cell-ville">
+                                            @if ($rowLocked)
+                                                <span class="prospection-static{{ trim((string) ($row['ville'] ?? '')) === '' ? ' is-empty' : '' }}" data-field="ville">{{ $row['ville'] ?? '—' }}</span>
+                                            @else
                                             <input
                                                 type="text"
-                                                class="prospection-text-input prospection-inline{{ $rowLocked ? ' is-row-locked' : '' }}"
+                                                class="prospection-text-input prospection-inline"
                                                 data-field="ville"
                                                 data-id="{{ $row['id'] }}"
                                                 value="{{ $row['ville'] ?? '' }}"
                                                 maxlength="255"
                                                 placeholder="Ville"
                                                 aria-label="Ville"
-                                                @readonly($rowLocked)
                                             >
+                                            @endif
                                         </td>
                                         <td>
+                                            @if ($rowLocked)
+                                                <span class="prospection-static{{ trim((string) ($row['projet'] ?? '')) === '' ? ' is-empty' : '' }}" data-field="projet">{{ $row['projet'] ?? '—' }}</span>
+                                            @else
                                             <input
                                                 type="text"
-                                                class="prospection-text-input prospection-inline{{ $rowLocked ? ' is-row-locked' : '' }}"
+                                                class="prospection-text-input prospection-inline"
                                                 data-field="projet"
                                                 data-id="{{ $row['id'] }}"
                                                 value="{{ $row['projet'] ?? '' }}"
                                                 maxlength="255"
                                                 placeholder="Titre projet"
                                                 aria-label="Titre projet"
-                                                @readonly($rowLocked)
                                             >
+                                            @endif
                                         </td>
                                         <td class="cell-description">
+                                            @if ($rowLocked)
+                                                <span class="prospection-static{{ trim((string) ($row['description'] ?? '')) === '' ? ' is-empty' : '' }}" data-field="description">{{ $row['description'] ?? '—' }}</span>
+                                            @else
                                             <textarea
-                                                class="description-input prospection-inline{{ $rowLocked ? ' is-row-locked' : '' }}"
+                                                class="description-input prospection-inline"
                                                 data-field="description"
                                                 data-id="{{ $row['id'] }}"
                                                 rows="2"
                                                 placeholder="Description du projet ou de l'appel…"
                                                 aria-label="Description"
-                                                @readonly($rowLocked)
                                             >{{ $row['description'] ?? '' }}</textarea>
+                                            @endif
                                         </td>
                                         <td class="cell-statue">
                                             @if ($rowLocked)
@@ -1876,20 +1928,26 @@
                                             @endif
                                         </td>
                                         <td class="cell-remarque">
+                                            @if ($rowLocked)
+                                                <span class="prospection-static{{ trim((string) ($row['remarque'] ?? '')) === '' ? ' is-empty' : '' }}" data-field="remarque">{{ $row['remarque'] ?? '—' }}</span>
+                                            @else
                                             <textarea
-                                                class="remarque-input prospection-inline{{ $rowLocked ? ' is-row-locked' : '' }}"
+                                                class="remarque-input prospection-inline"
                                                 data-field="remarque"
                                                 data-id="{{ $row['id'] }}"
                                                 rows="2"
                                                 placeholder="Remarque…"
                                                 aria-label="Remarque"
-                                                @readonly($rowLocked)
                                             >{{ $row['remarque'] ?? '' }}</textarea>
+                                            @endif
                                         </td>
                                         <td class="cell-rappel">
+                                            @if ($rowLocked)
+                                                <span class="prospection-static{{ trim((string) ($row['date_rappel'] ?? '')) === '' ? ' is-empty' : '' }}" data-field="date_rappel">{{ $row['date_rappel'] ?? '—' }}</span>
+                                            @else
                                             <input
                                                 type="text"
-                                                class="prospection-date-input prospection-inline{{ $rappelDu && in_array($statue, ['en_attente', 'reporte'], true) ? ' is-rappel-du' : '' }}{{ $rowLocked ? ' is-row-locked' : '' }}"
+                                                class="prospection-date-input prospection-inline{{ $rappelDu && in_array($statue, ['en_attente', 'reporte'], true) ? ' is-rappel-du' : '' }}"
                                                 data-field="date_rappel"
                                                 data-id="{{ $row['id'] }}"
                                                 value="{{ $row['date_rappel'] ?? '' }}"
@@ -1898,8 +1956,8 @@
                                                 inputmode="numeric"
                                                 autocomplete="off"
                                                 aria-label="Date Rappel"
-                                                @readonly($rowLocked)
                                             >
+                                            @endif
                                         </td>
                                     </tr>
                                 @empty
@@ -3477,13 +3535,36 @@
             select.className = `statue-select ${statue}`;
         }
 
+        function renderCommercialLockedRowFields(row) {
+            if (!row || !isCommercialProspectionRowLocked(row)) return;
+
+            row.classList.add('row-commercial-locked');
+            row.dataset.rowLocked = '1';
+
+            row.querySelectorAll('.prospection-inline').forEach((el) => {
+                if (el.dataset.staticized === '1') return;
+                const field = el.dataset.field || '';
+                const value = (el.value || '').trim();
+                const span = document.createElement('span');
+                span.className = `prospection-static${value === '' ? ' is-empty' : ''}`;
+                span.dataset.field = field;
+                span.textContent = value === '' ? '—' : value;
+                span.dataset.staticized = '1';
+                el.replaceWith(span);
+            });
+
+            renderProspectionStatueCell(row);
+        }
+
         function setCommercialProspectionRowLock(row) {
             if (!row) return;
-            const locked = isCommercialProspectionRowLocked(row);
-            row.querySelectorAll('.prospection-inline').forEach((el) => {
-                el.readOnly = locked;
-                el.classList.toggle('is-row-locked', locked);
-            });
+            if (isCommercialProspectionRowLocked(row)) {
+                renderCommercialLockedRowFields(row);
+                return;
+            }
+
+            row.classList.remove('row-commercial-locked');
+            delete row.dataset.rowLocked;
             renderProspectionStatueCell(row);
         }
 
@@ -3568,11 +3649,21 @@
             bindProspectionStatueSelect(select);
         });
 
+        document.getElementById('prospectionsTableBody')?.addEventListener('focusin', (event) => {
+            const row = event.target.closest('tr[data-id]');
+            if (!isCommercialProspectionRowLocked(row)) return;
+            if (event.target.matches('.prospection-inline, .statue-select')) {
+                event.target.blur();
+            }
+        }, true);
+
         document.querySelectorAll('.prospection-inline').forEach((el) => {
             el.dataset.initial = (el.value || '').trim();
 
             if (el.classList.contains('prospection-date-input')) {
                 el.addEventListener('input', () => {
+                    const row = el.closest('tr[data-id]');
+                    if (isCommercialProspectionRowLocked(row)) return;
                     let v = el.value.replace(/\D/g, '').slice(0, 8);
                     if (v.length >= 5) v = `${v.slice(0, 2)}/${v.slice(2, 4)}/${v.slice(4)}`;
                     else if (v.length >= 3) v = `${v.slice(0, 2)}/${v.slice(2)}`;
@@ -3629,6 +3720,20 @@
         });
 
         function applyLiveField(rowEl, field, value) {
+            if (isCommercialProspectionRowLocked(rowEl)) {
+                const staticEl = rowEl.querySelector(`.prospection-static[data-field="${field}"]`);
+                const next = String(value ?? '').trim();
+                if (staticEl) {
+                    staticEl.textContent = next === '' ? '—' : next;
+                    staticEl.classList.toggle('is-empty', next === '');
+                }
+                if (field === 'date_rappel') {
+                    rowEl.dataset.dateRappel = next;
+                    applyProspectionRowStyle(rowEl);
+                }
+                return;
+            }
+
             const el = rowEl.querySelector(`.prospection-inline[data-field="${field}"]`);
             if (!el) return;
             if (document.activeElement === el || el.classList.contains('is-saving')) return;
