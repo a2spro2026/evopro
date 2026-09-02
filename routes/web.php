@@ -68,7 +68,7 @@ Route::get('/dashboard', function () use ($requireAuth) {
         AppStore::put('utilisateurs', $utilisateurs);
     }
 
-    $prospections = AppStore::get('prospections');
+    $prospections = ProspectionHelper::migrateDescriptionFields(AppStore::get('prospections'));
     $prospectionsAll = $prospections;
     $authStatue = UtilisateurHelper::normalizeStatue((string) ($authUser['statue'] ?? ''));
     $canManageProspectionCommercial = UtilisateurHelper::canManageProspectionCommercial($authStatue);
@@ -286,6 +286,7 @@ Route::middleware('auth.user')->get('/prospections/live', function () {
             'nom_prospect' => $row['nom_prospect'] ?? '',
             'ville' => $row['ville'] ?? '',
             'projet' => $row['projet'] ?? '',
+            'description' => $row['description'] ?? '',
             'remarque' => $row['remarque'] ?? '',
             'statue' => $row['statue'] ?? 'en_attente',
             'date_rappel' => $row['date_rappel'] ?? '',
@@ -328,7 +329,7 @@ Route::middleware('auth.user')->patch('/prospections/{id}/statue', function (Req
 
 Route::middleware('auth.user')->patch('/prospections/{id}/inline', function (Request $request, string $id) {
     $data = $request->validate([
-        'field' => ['required', 'string', 'in:remarque,date_rappel,nom_prospect,ville,projet'],
+        'field' => ['required', 'string', 'in:description,remarque,date_rappel,nom_prospect,ville,projet'],
         'value' => ['nullable', 'string', 'max:2000'],
     ]);
 

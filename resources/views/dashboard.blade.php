@@ -832,13 +832,75 @@
             max-height: calc(100vh - 17rem);
         }
 
-        #panel-prospection .data-table th:nth-child(7),
-        #panel-prospection .data-table td.cell-remarque {
+        .prospection-toolbar {
+            display: flex;
+            align-items: flex-end;
+            gap: 0.65rem;
+            margin-bottom: 0.85rem;
+        }
+
+        .prospection-toolbar .search-bar {
+            flex: 1;
+            margin-bottom: 0;
+        }
+
+        .btn-prospection-refresh {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 2.35rem;
+            height: 2.35rem;
+            border-radius: 10px;
+            border: 1px solid rgba(126, 196, 255, 0.28);
+            background: rgba(59, 158, 255, 0.1);
+            color: #9ad4ff;
+            cursor: pointer;
+            flex-shrink: 0;
+            transition: background 0.2s ease, border-color 0.2s ease, transform 0.15s ease;
+        }
+
+        .btn-prospection-refresh:hover {
+            background: rgba(59, 158, 255, 0.18);
+            border-color: rgba(126, 196, 255, 0.45);
+        }
+
+        .btn-prospection-refresh:active {
+            transform: scale(0.96);
+        }
+
+        .btn-prospection-refresh svg {
+            width: 16px;
+            height: 16px;
+        }
+
+        #panel-prospection .data-table th.cell-ville,
+        #panel-prospection .data-table td.cell-ville {
+            width: 5%;
+            min-width: 52px;
+            max-width: 76px;
+        }
+
+        #panel-prospection .data-table td.cell-ville .prospection-text-input {
+            min-width: 0;
+            padding: 0.35rem 0.3rem;
+            font-size: 0.78rem;
+        }
+
+        #panel-prospection .data-table th.cell-description,
+        #panel-prospection .data-table td.cell-description {
             width: 18%;
             min-width: 160px;
             max-width: none;
         }
 
+        #panel-prospection .data-table th.cell-remarque,
+        #panel-prospection .data-table td.cell-remarque {
+            width: 11%;
+            min-width: 96px;
+            max-width: 140px;
+        }
+
+        .description-input,
         .remarque-input {
             width: 100%;
             min-height: 2.6rem;
@@ -858,13 +920,29 @@
             outline: none;
         }
 
+        .description-input:focus {
+            outline: none;
+            border: none;
+            box-shadow: none;
+        }
+
+        .description-input.is-saving,
+        .remarque-input.is-saving { opacity: 0.65; }
+
         .remarque-input:focus {
             outline: none;
             border: none;
             box-shadow: none;
         }
 
-        .remarque-input.is-saving { opacity: 0.65; }
+        .description-input {
+            min-height: 3rem;
+        }
+
+        .remarque-input {
+            min-height: 2.2rem;
+            font-size: 0.8rem;
+        }
 
         .prospection-date-input {
             width: 100%;
@@ -932,6 +1010,7 @@
         }
 
         body.role-commercial #prospectionsTableBody tr.row-prospection-valide .prospection-text-input,
+        body.role-commercial #prospectionsTableBody tr.row-prospection-valide .description-input,
         body.role-commercial #prospectionsTableBody tr.row-prospection-valide .remarque-input,
         body.role-commercial #prospectionsTableBody tr.row-prospection-valide .prospection-date-input {
             color: rgba(150, 158, 168, 0.9);
@@ -1603,7 +1682,7 @@
                         <h1>{{ ($isCommercialRole ?? false) || ($isAssistante ?? false) ? 'Tableau de relance' : 'Prospection' }}</h1>
                         <p>
                             @if ($isCommercialRole ?? false)
-                                Complétez les numéros importés pour vous (nom, ville, projet, remarque, statue, rappel).
+                                Complétez les numéros importés pour vous (nom, ville, projet, description, statue, remarque, rappel).
                             @elseif (($isAdministrateur ?? false) || ($isAssistante ?? false))
                                 Vue en direct de toutes les relances remplies par les commerciaux.
                             @else
@@ -1613,8 +1692,9 @@
                     </div>
 
                     <div class="prospection-view active" id="prospection-liste">
-                    @php $relanceColspan = ($isCommercialRole ?? false) ? 8 : 9; @endphp
+                    @php $relanceColspan = ($isCommercialRole ?? false) ? 10 : 11; @endphp
 
+                    <div class="prospection-toolbar">
                     <div class="search-bar" aria-label="Recherche prospection" style="grid-template-columns: repeat({{ ($isCommercialRole ?? false) ? 5 : 6 }}, minmax(0, 1fr));">
                         <div class="search-field">
                             <label for="filter_prospection_num">Num</label>
@@ -1670,6 +1750,10 @@
                             </select>
                         </div>
                     </div>
+                    <button type="button" class="btn-prospection-refresh" id="btnProspectionRefresh" title="Actualiser et réinitialiser les filtres" aria-label="Actualiser et réinitialiser les filtres">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12a9 9 0 1 1-2.64-6.36"/><path d="M21 3v6h-6"/></svg>
+                    </button>
+                    </div>
 
                     <div class="table-wrap">
                         <table class="data-table">
@@ -1681,10 +1765,11 @@
                                     @endif
                                     <th>Numéro Téléphone</th>
                                     <th>Nom Prospect</th>
-                                    <th>Ville</th>
+                                    <th class="cell-ville">Ville</th>
                                     <th>Titre Projet</th>
-                                    <th>Remarque</th>
+                                    <th class="cell-description">Description</th>
                                     <th>Statue</th>
+                                    <th class="cell-remarque">Remarque</th>
                                     <th>Date Rappel</th>
                                 </tr>
                             </thead>
@@ -1735,7 +1820,7 @@
                                                 @readonly($rowLocked)
                                             >
                                         </td>
-                                        <td>
+                                        <td class="cell-ville">
                                             <input
                                                 type="text"
                                                 class="prospection-text-input prospection-inline{{ $rowLocked ? ' is-row-locked' : '' }}"
@@ -1761,16 +1846,16 @@
                                                 @readonly($rowLocked)
                                             >
                                         </td>
-                                        <td class="cell-remarque">
+                                        <td class="cell-description">
                                             <textarea
-                                                class="remarque-input prospection-inline{{ $rowLocked ? ' is-row-locked' : '' }}"
-                                                data-field="remarque"
+                                                class="description-input prospection-inline{{ $rowLocked ? ' is-row-locked' : '' }}"
+                                                data-field="description"
                                                 data-id="{{ $row['id'] }}"
                                                 rows="2"
-                                                placeholder="Note d'appel avec le client…"
-                                                aria-label="Remarque"
+                                                placeholder="Description du projet ou de l'appel…"
+                                                aria-label="Description"
                                                 @readonly($rowLocked)
-                                            >{{ $row['remarque'] ?? '' }}</textarea>
+                                            >{{ $row['description'] ?? '' }}</textarea>
                                         </td>
                                         <td class="cell-statue">
                                             @if ($rowLocked)
@@ -1789,6 +1874,17 @@
                                                     <option value="reporte" @selected($statue === 'reporte')>Reporté</option>
                                                 </select>
                                             @endif
+                                        </td>
+                                        <td class="cell-remarque">
+                                            <textarea
+                                                class="remarque-input prospection-inline{{ $rowLocked ? ' is-row-locked' : '' }}"
+                                                data-field="remarque"
+                                                data-id="{{ $row['id'] }}"
+                                                rows="2"
+                                                placeholder="Remarque…"
+                                                aria-label="Remarque"
+                                                @readonly($rowLocked)
+                                            >{{ $row['remarque'] ?? '' }}</textarea>
                                         </td>
                                         <td class="cell-rappel">
                                             <input
@@ -3313,6 +3409,29 @@
         bindDateMask('filter_prospection_de', filterProspectionsTable);
         bindDateMask('filter_prospection_a', filterProspectionsTable);
 
+        function resetProspectionFilters() {
+            const num = document.getElementById('filter_prospection_num');
+            const mois = document.getElementById('filter_prospection_mois');
+            const de = document.getElementById('filter_prospection_de');
+            const a = document.getElementById('filter_prospection_a');
+            const commercial = document.getElementById('filter_prospection_commercial');
+            const statue = document.getElementById('filter_prospection_statue');
+            if (num) num.value = '';
+            if (mois) mois.value = '';
+            if (de) de.value = '';
+            if (a) a.value = '';
+            if (commercial) commercial.value = '';
+            if (statue) statue.value = '';
+            filterProspectionsTable();
+        }
+
+        document.getElementById('btnProspectionRefresh')?.addEventListener('click', async () => {
+            resetProspectionFilters();
+            if (typeof syncProspectionsLive === 'function') {
+                await syncProspectionsLive();
+            }
+        });
+
         function isDateRappelDue(value) {
             const match = String(value || '').trim().match(/^(\d{2})\/(\d{2})\/(\d{4})$/);
             if (!match) return false;
@@ -3567,6 +3686,7 @@
                     applyLiveField(rowEl, 'nom_prospect', row.nom_prospect);
                     applyLiveField(rowEl, 'ville', row.ville);
                     applyLiveField(rowEl, 'projet', row.projet);
+                    applyLiveField(rowEl, 'description', row.description);
                     applyLiveField(rowEl, 'remarque', row.remarque);
                     applyLiveField(rowEl, 'date_rappel', row.date_rappel);
                     applyLiveStatue(rowEl, row.statue);

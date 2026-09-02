@@ -158,6 +158,7 @@ class ProspectionHelper
             'nom_prospect' => trim((string) ($data['nom_prospect'] ?? '')),
             'ville' => trim((string) ($data['ville'] ?? '')),
             'projet' => trim((string) ($data['projet'] ?? '')),
+            'description' => trim((string) ($data['description'] ?? '')),
             'remarque' => trim((string) ($data['remarque'] ?? '')),
             'statue' => in_array($statue, ['valide', 'en_attente', 'annule', 'reporte'], true) ? $statue : 'en_attente',
             'date_rappel' => trim((string) ($data['date_rappel'] ?? '')),
@@ -234,5 +235,31 @@ class ProspectionHelper
         }
 
         return ['created' => $created, 'skipped' => $skipped, 'rows' => $newRows];
+    }
+
+    /**
+     * @param  array<int, array<string, mixed>>  $rows
+     * @return array<int, array<string, mixed>>
+     */
+    public static function migrateDescriptionFields(array $rows): array
+    {
+        $changed = false;
+
+        foreach ($rows as &$row) {
+            if (array_key_exists('description', $row)) {
+                continue;
+            }
+
+            $row['description'] = trim((string) ($row['remarque'] ?? ''));
+            $row['remarque'] = '';
+            $changed = true;
+        }
+        unset($row);
+
+        if ($changed) {
+            AppStore::put('prospections', $rows);
+        }
+
+        return $rows;
     }
 }
