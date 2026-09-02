@@ -374,6 +374,20 @@ class UtilisateurHelper
      * @param  array<string, mixed>  $row
      * @param  array<string, mixed>  $authUser
      */
+    public static function isProspectionConfirmed(array $row): bool
+    {
+        return ($row['statue'] ?? '') === 'confirme';
+    }
+
+    public static function isProspectionVisibleToCommercial(array $row): bool
+    {
+        return ! self::isProspectionConfirmed($row);
+    }
+
+    /**
+     * @param  array<string, mixed>  $row
+     * @param  array<string, mixed>  $authUser
+     */
     public static function assertCommercialCanEditProspectionRow(array $row, array $authUser): void
     {
         self::assertCanAccessProspectionRow($row, $authUser);
@@ -382,7 +396,7 @@ class UtilisateurHelper
             self::isCommercialRole($authUser['statue'] ?? '')
             && ($row['statue'] ?? '') === 'valide'
         ) {
-            abort(403, 'Cette fiche validée ne peut plus être modifiée.');
+            abort(403, 'Ce prospect validé ne peut plus être modifié.');
         }
     }
 
@@ -399,12 +413,22 @@ class UtilisateurHelper
             return;
         }
 
-        if (($row['statue'] ?? '') === 'valide') {
-            abort(403, 'Le statut d\'un client confirmé ne peut plus être modifié.');
+        if (($payload['statue'] ?? '') === 'confirme') {
+            abort(403, 'Seul l\'administrateur peut confirmer un prospect.');
         }
 
-        if (($payload['statue'] ?? '') === 'valide') {
-            abort(403, 'Seuls l\'administrateur ou l\'assistante peuvent confirmer un client.');
+        if (($row['statue'] ?? '') === 'valide') {
+            abort(403, 'Ce prospect validé ne peut plus être modifié.');
+        }
+    }
+
+    /**
+     * @param  array<string, mixed>  $authUser
+     */
+    public static function assertCanConfirmProspection(array $authUser): void
+    {
+        if (! self::isAdministrateur($authUser['statue'] ?? '')) {
+            abort(403, 'Seul l\'administrateur peut confirmer un prospect.');
         }
     }
 

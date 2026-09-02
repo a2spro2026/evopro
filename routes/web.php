@@ -80,6 +80,7 @@ Route::get('/dashboard', function () use ($requireAuth) {
     if ($authStatue === 'commercial') {
         $prospections = collect($prospections)
             ->filter(fn ($row) => UtilisateurHelper::rowBelongsToCommercial($row, $authUser))
+            ->filter(fn ($row) => UtilisateurHelper::isProspectionVisibleToCommercial($row))
             ->values()
             ->all();
     }
@@ -272,6 +273,7 @@ Route::middleware('auth.user')->get('/prospections/live', function () {
     if ($authStatue === 'commercial') {
         $rows = collect($rows)
             ->filter(fn ($row) => UtilisateurHelper::rowBelongsToCommercial($row, $authUser))
+            ->filter(fn ($row) => UtilisateurHelper::isProspectionVisibleToCommercial($row))
             ->values()
             ->all();
     }
@@ -296,7 +298,7 @@ Route::middleware('auth.user')->get('/prospections/live', function () {
 
 Route::middleware('auth.user')->patch('/prospections/{id}/statue', function (Request $request, string $id) {
     $data = $request->validate([
-        'statue' => ['required', 'string', 'in:valide,en_attente,annule,reporte'],
+        'statue' => ['required', 'string', 'in:valide,confirme,en_attente,annule,reporte'],
     ]);
 
     $rows = AppStore::get('prospections');
@@ -306,11 +308,17 @@ Route::middleware('auth.user')->patch('/prospections/{id}/statue', function (Req
         return back()->withErrors(['statue' => 'Prospection introuvable.']);
     }
 
-    UtilisateurHelper::assertCommercialCanChangeProspectionStatue($rows[$index], session('auth_user', []), $data);
+    $authUser = session('auth_user', []);
+
+    if ($data['statue'] === 'confirme') {
+        UtilisateurHelper::assertCanConfirmProspection($authUser);
+    }
+
+    UtilisateurHelper::assertCommercialCanChangeProspectionStatue($rows[$index], $authUser, $data);
 
     $rows[$index]['statue'] = $data['statue'];
 
-    if ($data['statue'] === 'valide') {
+    if ($data['statue'] === 'confirme') {
         ContactsArchive::transferProspectionToClient($rows[$index]);
     }
 

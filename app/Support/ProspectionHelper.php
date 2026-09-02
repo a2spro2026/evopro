@@ -160,7 +160,7 @@ class ProspectionHelper
             'projet' => trim((string) ($data['projet'] ?? '')),
             'description' => trim((string) ($data['description'] ?? '')),
             'remarque' => trim((string) ($data['remarque'] ?? '')),
-            'statue' => in_array($statue, ['valide', 'en_attente', 'annule', 'reporte'], true) ? $statue : 'en_attente',
+            'statue' => in_array($statue, ['valide', 'confirme', 'en_attente', 'annule', 'reporte'], true) ? $statue : 'en_attente',
             'date_rappel' => trim((string) ($data['date_rappel'] ?? '')),
             'from_commercial_import' => (bool) ($data['from_commercial_import'] ?? false),
         ];
