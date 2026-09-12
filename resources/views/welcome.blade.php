@@ -319,6 +319,12 @@
             background-position: right 0.9rem center;
             padding-right: 2.4rem;
             cursor: pointer;
+            color-scheme: light;
+        }
+
+        .field select option {
+            background-color: #ffffff;
+            color: #122033;
         }
 
         .field input::placeholder {

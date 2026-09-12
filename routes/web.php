@@ -70,6 +70,7 @@ Route::get('/dashboard', function () use ($requireAuth) {
     }
 
     $prospections = ProspectionHelper::migrateDescriptionFields(AppStore::get('prospections'));
+    $prospections = ProspectionHelper::migratePageFields($prospections);
     $prospectionsAll = $prospections;
     $authStatue = UtilisateurHelper::normalizeStatue((string) ($authUser['statue'] ?? ''));
     $canManageProspectionCommercial = UtilisateurHelper::canManageProspectionCommercial($authStatue);
@@ -304,6 +305,8 @@ Route::middleware('auth.user')->get('/prospections/live', function () {
             'remarque' => $row['remarque'] ?? '',
             'statue' => $row['statue'] ?? 'en_attente',
             'date_rappel' => $row['date_rappel'] ?? '',
+            'page' => (int) ($row['page'] ?? 1),
+            'num' => (int) ($row['num'] ?? 0),
         ])->values()->all(),
     ]);
 })->name('prospections.live');
@@ -404,7 +407,8 @@ Route::middleware('auth.user')->post('/prospections/commercial/numeros', functio
         $rows,
         $data['commercial'],
         [$data['telephone']],
-        $data['date']
+        $data['date'],
+        false
     );
 
     if ($request->expectsJson() || $request->ajax()) {
@@ -413,6 +417,9 @@ Route::middleware('auth.user')->post('/prospections/commercial/numeros', functio
             'created' => $result['created'],
             'skipped' => $result['skipped'],
             'rows' => $result['rows'],
+            'pages' => $result['pages'],
+            'page_from' => $result['page_from'],
+            'page_to' => $result['page_to'],
         ]);
     }
 
@@ -433,12 +440,16 @@ Route::middleware('auth.user')->post('/prospections/commercial/import', function
     ]);
 
     $numeros = [];
+    if (! empty($data['numeros'])) {
+        $numeros = array_merge($numeros, $data['numeros']);
+    }
     if (trim((string) ($data['ocr_text'] ?? '')) !== '') {
-        $numeros = ProspectionHelper::extractPhoneNumbers((string) $data['ocr_text']);
+        $numeros = array_merge($numeros, ProspectionHelper::extractPhoneNumbers((string) $data['ocr_text']));
     }
-    if ($numeros === [] && ! empty($data['numeros'])) {
-        $numeros = $data['numeros'];
-    }
+    $numeros = array_values(array_unique(array_filter(array_map(
+        fn ($n) => ProspectionHelper::normalizePhoneDisplay((string) $n),
+        $numeros
+    ))));
 
     if ($numeros === []) {
         return response()->json([
@@ -450,8 +461,9 @@ Route::middleware('auth.user')->post('/prospections/commercial/import', function
     $result = ProspectionHelper::appendNumbersForCommercial(
         $rows,
         $data['commercial'],
-        $data['numeros'],
-        $data['date'] ?? null
+        $numeros,
+        $data['date'] ?? null,
+        true
     );
 
     return response()->json([
@@ -460,6 +472,11 @@ Route::middleware('auth.user')->post('/prospections/commercial/import', function
         'skipped' => $result['skipped'],
         'rows' => $result['rows'],
         'numeros' => $numeros,
+        'detected' => count($numeros),
+        'pages' => $result['pages'],
+        'page_from' => $result['page_from'],
+        'page_to' => $result['page_to'],
+        'page_size' => ProspectionHelper::PAGE_SIZE,
     ]);
 })->name('prospections.commercial.import');
 

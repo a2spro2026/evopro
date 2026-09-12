@@ -77,6 +77,186 @@
             text-transform: uppercase;
         }
 
+        /* Native <select>: Windows paints the open list with a light background.
+           Keep option text DARK so names stay readable. Closed field stays themed. */
+        select {
+            color: var(--text);
+            background-color: #102038;
+            color-scheme: light;
+        }
+
+        select:focus {
+            color: #0f1f35;
+            background-color: #ffffff;
+        }
+
+        select option,
+        select optgroup {
+            background-color: #ffffff !important;
+            color: #0f1f35 !important;
+        }
+
+        [data-theme="light"] select {
+            background-color: #ffffff;
+            color: #0f1f35;
+            color-scheme: light;
+        }
+
+        [data-theme="light"] select:focus {
+            color: #0f1f35;
+            background-color: #ffffff;
+        }
+
+        .modal select,
+        .field select,
+        .side-panel-body select,
+        .search-field select {
+            background-color: #102038;
+            color: #f4f8ff;
+        }
+
+        .modal select:focus,
+        .field select:focus,
+        .side-panel-body select:focus,
+        .search-field select:focus {
+            background-color: #ffffff;
+            color: #0f1f35;
+        }
+
+        [data-theme="light"] .modal select,
+        [data-theme="light"] .field select,
+        [data-theme="light"] .side-panel-body select,
+        [data-theme="light"] .search-field select {
+            background-color: #ffffff;
+            color: #0f1f35;
+        }
+
+        /* Custom combo (replaces native dropdown list — reliable on Windows dark UI) */
+        .evopro-combo {
+            position: relative;
+            width: 100%;
+        }
+
+        .evopro-combo-native {
+            position: absolute !important;
+            opacity: 0 !important;
+            pointer-events: none !important;
+            width: 1px !important;
+            height: 1px !important;
+            margin: 0 !important;
+            padding: 0 !important;
+            border: 0 !important;
+            clip: rect(0 0 0 0);
+        }
+
+        .evopro-combo-trigger {
+            width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 0.5rem;
+            min-height: 38px;
+            padding: 0.55rem 0.75rem;
+            border-radius: 10px;
+            border: 1px solid rgba(110, 168, 255, 0.22);
+            background: #102038;
+            color: #f4f8ff;
+            font-family: inherit;
+            font-size: 0.88rem;
+            font-weight: 500;
+            text-transform: uppercase;
+            text-align: left;
+            cursor: pointer;
+        }
+
+        .evopro-combo-trigger::after {
+            content: '';
+            width: 10px;
+            height: 10px;
+            flex: 0 0 auto;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%237ec4ff' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: center;
+            background-size: contain;
+        }
+
+        .evopro-combo.open .evopro-combo-trigger {
+            border-color: rgba(126, 196, 255, 0.55);
+            box-shadow: 0 0 0 3px rgba(59, 158, 255, 0.18);
+        }
+
+        .evopro-combo-menu {
+            display: none;
+            position: fixed;
+            z-index: 5000;
+            max-height: 240px;
+            overflow: auto;
+            border-radius: 10px;
+            border: 1px solid rgba(126, 196, 255, 0.3);
+            background: #0f1f35;
+            box-shadow: 0 14px 36px rgba(0, 0, 0, 0.45);
+            padding: 0.25rem;
+        }
+
+        .evopro-combo.open .evopro-combo-menu {
+            display: block;
+        }
+
+        .evopro-combo-option {
+            display: block;
+            width: 100%;
+            border: 0;
+            border-radius: 8px;
+            background: transparent;
+            color: #f4f8ff;
+            font-family: inherit;
+            font-size: 0.88rem;
+            font-weight: 500;
+            text-transform: uppercase;
+            text-align: left;
+            padding: 0.55rem 0.7rem;
+            cursor: pointer;
+        }
+
+        .evopro-combo-option:hover,
+        .evopro-combo-option.is-active {
+            background: rgba(59, 158, 255, 0.22);
+            color: #ffffff;
+        }
+
+        .evopro-combo-option.is-placeholder {
+            color: rgba(210, 224, 245, 0.55);
+        }
+
+        .statue-form .evopro-combo-trigger {
+            min-height: 0;
+            padding: 0.32rem 0.85rem 0.32rem 0.65rem;
+            border-radius: 999px;
+            font-size: 0.72rem;
+            font-weight: 700;
+        }
+
+        [data-theme="light"] .evopro-combo-trigger {
+            background: #ffffff;
+            color: #0f1f35;
+            border-color: rgba(59, 120, 200, 0.28);
+        }
+
+        [data-theme="light"] .evopro-combo-menu {
+            background: #ffffff;
+            border-color: rgba(59, 120, 200, 0.28);
+        }
+
+        [data-theme="light"] .evopro-combo-option {
+            color: #0f1f35;
+        }
+
+        [data-theme="light"] .evopro-combo-option:hover,
+        [data-theme="light"] .evopro-combo-option.is-active {
+            background: rgba(59, 158, 255, 0.14);
+            color: #0f1f35;
+        }
+
         .shell {
             min-height: 100vh;
             display: grid;
@@ -677,13 +857,19 @@
             padding: 0 0.75rem;
             border-radius: 10px;
             border: 1px solid rgba(110, 168, 255, 0.22);
-            background: rgba(6, 14, 26, 0.75);
-            color: var(--text);
+            background-color: #102038;
+            color: #f4f8ff;
             font-family: inherit;
             font-size: 0.85rem;
             outline: none;
             width: 100%;
             appearance: none;
+        }
+
+        [data-theme="light"] .search-field input,
+        [data-theme="light"] .search-field select {
+            background-color: #ffffff;
+            color: #0f1f35;
         }
 
         .search-field select {
@@ -692,6 +878,10 @@
             background-position: right 0.75rem center;
             padding-right: 2.25rem;
             cursor: pointer;
+        }
+
+        [data-theme="light"] .search-field select {
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%231a7fd4' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");
         }
 
         .table-wrap {
@@ -769,6 +959,17 @@
             background-position: right 0.45rem center;
             background-size: 10px;
             border: 1px solid transparent;
+        }
+
+        /* Dropdown list must stay readable regardless of statue color */
+        .statue-select option {
+            background-color: #ffffff !important;
+            color: #0f1f35 !important;
+        }
+
+        [data-theme="light"] .statue-select option {
+            background-color: #ffffff !important;
+            color: #0f1f35 !important;
         }
 
         .statue-select.valide,
@@ -1332,10 +1533,27 @@
             padding: 0.62rem 0.72rem;
             border-radius: 10px;
             border: 1px solid rgba(110, 168, 255, 0.18);
-            background: rgba(255, 255, 255, 0.04);
-            color: var(--text);
+            background-color: #102038;
+            color: #f4f8ff;
             font-family: inherit;
             font-size: 0.88rem;
+            cursor: pointer;
+        }
+
+        .field select option,
+        .modal select option,
+        .search-field select option,
+        .statue-select option {
+            background-color: #ffffff !important;
+            color: #0f1f35 !important;
+        }
+
+        [data-theme="light"] .field select option,
+        [data-theme="light"] .modal select option,
+        [data-theme="light"] .search-field select option,
+        [data-theme="light"] .statue-select option {
+            background-color: #ffffff !important;
+            color: #0f1f35 !important;
         }
 
         .btn-close-toolbar {
@@ -1434,6 +1652,67 @@
         }
 
         .field input:read-only { opacity: 0.85; }
+
+        .commercial-pick-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 0.4rem;
+            max-height: 220px;
+            overflow: auto;
+            padding: 0.35rem;
+            border-radius: 10px;
+            border: 1px solid rgba(110, 168, 255, 0.22);
+            background: #0b1729;
+        }
+
+        .commercial-pick-btn {
+            width: 100%;
+            text-align: left;
+            padding: 0.65rem 0.8rem;
+            border-radius: 8px;
+            border: 1px solid rgba(110, 168, 255, 0.18);
+            background: #13233b;
+            color: #f4f8ff;
+            font-family: inherit;
+            font-size: 0.9rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            cursor: pointer;
+        }
+
+        .commercial-pick-btn:hover {
+            background: rgba(59, 158, 255, 0.2);
+            border-color: rgba(126, 196, 255, 0.45);
+        }
+
+        .commercial-pick-btn.is-selected {
+            background: rgba(59, 158, 255, 0.35);
+            border-color: rgba(126, 196, 255, 0.7);
+            color: #ffffff;
+            box-shadow: inset 0 0 0 1px rgba(126, 196, 255, 0.35);
+        }
+
+        .commercial-pick-empty {
+            color: #ffb3b8;
+            font-size: 0.82rem;
+            padding: 0.5rem;
+        }
+
+        [data-theme="light"] .commercial-pick-grid {
+            background: #f3f7fc;
+            border-color: rgba(59, 120, 200, 0.25);
+        }
+
+        [data-theme="light"] .commercial-pick-btn {
+            background: #ffffff;
+            color: #0f1f35;
+            border-color: rgba(59, 120, 200, 0.22);
+        }
+
+        [data-theme="light"] .commercial-pick-btn.is-selected {
+            background: rgba(59, 158, 255, 0.16);
+            color: #0f1f35;
+        }
 
         .btn-primary, .btn-ghost {
             padding: 0.58rem 0.95rem;
@@ -1747,12 +2026,39 @@
                     </div>
 
                     <div class="prospection-view active" id="prospection-liste">
-                    @php $relanceColspan = ($isCommercialRole ?? false) ? 10 : 11; @endphp
+                    @php
+                        $relanceColspan = ($isCommercialRole ?? false) ? 11 : 12;
+                        $relancePages = collect($prospections ?? [])
+                            ->map(fn ($row) => (int) ($row['page'] ?? 1))
+                            ->filter(fn ($p) => $p >= 1)
+                            ->unique()
+                            ->sort()
+                            ->values();
+                        $defaultRelancePage = ($isCommercialRole ?? false)
+                            ? (string) ($relancePages->last() ?: 1)
+                            : '';
+                    @endphp
 
                     <div class="prospection-toolbar">
-                    <div class="search-bar" aria-label="Recherche prospection" style="grid-template-columns: repeat({{ ($isCommercialRole ?? false) ? 5 : 6 }}, minmax(0, 1fr));">
+                    <div class="search-bar" aria-label="Recherche prospection" style="grid-template-columns: repeat({{ ($isCommercialRole ?? false) ? 6 : 7 }}, minmax(0, 1fr));">
                         <div class="search-field">
-                            <label for="filter_prospection_num">Num</label>
+                            <label for="filter_prospection_page">Page</label>
+                            <select id="filter_prospection_page">
+                                @if (! ($isCommercialRole ?? false))
+                                    <option value="" @selected($defaultRelancePage === '')>Toutes les pages</option>
+                                @endif
+                                @forelse ($relancePages as $pageNum)
+                                    <option value="{{ $pageNum }}" @selected((string) $pageNum === (string) $defaultRelancePage)>Page {{ $pageNum }}</option>
+                                @empty
+                                    <option value="1" @selected($defaultRelancePage === '1')>Page 1</option>
+                                @endforelse
+                                @if ($isCommercialRole ?? false)
+                                    <option value="">Toutes les pages</option>
+                                @endif
+                            </select>
+                        </div>
+                        <div class="search-field">
+                            <label for="filter_prospection_num">Tél</label>
                             <input type="text" id="filter_prospection_num" placeholder="Ex. 06…" maxlength="20" autocomplete="off" inputmode="tel">
                         </div>
                         <div class="search-field">
@@ -1817,11 +2123,12 @@
                         <table class="data-table">
                             <thead>
                                 <tr>
+                                    <th>Num</th>
                                     <th>Date</th>
                                     @if (! ($isCommercialRole ?? false))
                                         <th>Commercial</th>
                                     @endif
-                                    <th>Numéro Téléphone</th>
+                                    <th>Numéro téléphone</th>
                                     <th>Nom Prospect</th>
                                     <th class="cell-ville">Ville</th>
                                     <th>Titre Projet</th>
@@ -1832,13 +2139,24 @@
                                 </tr>
                             </thead>
                             <tbody id="prospectionsTableBody">
-                                @forelse (($prospections ?? []) as $row)
+                                @php
+                                    $prospectionsSorted = collect($prospections ?? [])
+                                        ->sortBy([
+                                            fn ($row) => (int) ($row['page'] ?? 1),
+                                            fn ($row) => (int) ($row['num'] ?? 0),
+                                        ])
+                                        ->values()
+                                        ->all();
+                                @endphp
+                                @forelse ($prospectionsSorted as $row)
                                     @php
                                         $statue = $row['statue'] ?? 'en_attente';
                                         $parts = explode('/', $row['date'] ?? '');
                                         $mois = count($parts) >= 3 ? $parts[1].'/'.$parts[2] : '';
                                         $dateRappel = trim((string) ($row['date_rappel'] ?? ''));
                                         $rappelDu = \App\Support\ContactsArchive::isDateRappelDue($dateRappel);
+                                        $rowPage = (int) ($row['page'] ?? 1);
+                                        $rowNum = (int) ($row['num'] ?? 0);
                                         $rowClasses = collect([
                                             match ($statue) {
                                                 'valide' => 'row-prospection-valide',
@@ -1853,6 +2171,7 @@
                                         if ($rowLocked) {
                                             $rowClasses = trim($rowClasses.' row-commercial-locked');
                                         }
+                                        $hiddenByPage = $defaultRelancePage !== '' && (string) $rowPage !== (string) $defaultRelancePage;
                                     @endphp
                                     <tr
                                         data-id="{{ $row['id'] }}"
@@ -1861,10 +2180,14 @@
                                         data-commercial="{{ mb_strtolower(trim((string) ($row['commercial'] ?? ''))) }}"
                                         data-statue="{{ $statue }}"
                                         data-telephone="{{ preg_replace('/\D+/', '', (string) ($row['telephone'] ?? '')) }}"
+                                        data-page="{{ $rowPage }}"
+                                        data-num="{{ $rowNum }}"
                                         data-date-rappel="{{ $dateRappel }}"
                                         @if ($rowLocked) data-row-locked="1" @endif
                                         @if ($rowClasses !== '') class="{{ $rowClasses }}" @endif
+                                        @if ($hiddenByPage) style="display:none;" @endif
                                     >
+                                        <td>{{ $rowNum > 0 ? $rowNum : '—' }}</td>
                                         <td>{{ $row['date'] ?? '' }}</td>
                                         @if (! ($isCommercialRole ?? false))
                                             <td>{{ $row['commercial'] ?? '' }}</td>
@@ -2019,7 +2342,13 @@
                             </div>
                         </div>
 
-                        <div class="search-bar" aria-label="Recherche commercial" style="grid-template-columns: repeat(4, minmax(0, 1fr)); margin-bottom:1rem;">
+                        <div class="search-bar" aria-label="Recherche commercial" style="grid-template-columns: repeat(5, minmax(0, 1fr)); margin-bottom:1rem;">
+                            <div class="search-field">
+                                <label for="filter_commercial_page">Page</label>
+                                <select id="filter_commercial_page">
+                                    <option value="">Toutes les pages</option>
+                                </select>
+                            </div>
                             <div class="search-field">
                                 <label for="filter_commercial_mois">Mois</label>
                                 <select id="filter_commercial_mois">
@@ -2064,9 +2393,10 @@
                             <table class="data-table commercial-relance-table">
                                 <thead>
                                     <tr>
-                                        <th>Date</th>
                                         <th>Num</th>
+                                        <th>Date</th>
                                         <th>Commercial</th>
+                                        <th>Numéro téléphone</th>
                                         <th>Nom Prospect</th>
                                         <th>Ville</th>
                                         <th>Titre Projet</th>
@@ -2077,7 +2407,7 @@
                                 </thead>
                                 <tbody id="commercialNumerosBody">
                                     <tr class="empty-row" id="commercialNumerosEmpty">
-                                        <td colspan="9" class="empty">Aucun numéro commercial.</td>
+                                        <td colspan="10" class="empty">Aucun numéro commercial.</td>
                                     </tr>
                                 </tbody>
                             </table>
@@ -2119,12 +2449,14 @@
                             </div>
                             <div class="search-field">
                                 <label for="entrants_repartir_commercial">Commercial cible</label>
-                                <select id="entrants_repartir_commercial">
-                                    <option value="">Choisir un commercial…</option>
-                                    @foreach (($commerciauxUsers ?? []) as $commercialUser)
-                                        <option value="{{ $commercialUser }}">{{ $commercialUser }}</option>
-                                    @endforeach
-                                </select>
+                                <input type="hidden" id="entrants_repartir_commercial" value="">
+                                <div class="commercial-pick-grid" id="entrants_repartir_commercial_picker" role="listbox" aria-label="Commercial cible" style="max-height:160px;">
+                                    @forelse (($commerciauxUsers ?? []) as $commercialUser)
+                                        <button type="button" class="commercial-pick-btn" data-value="{{ $commercialUser }}">{{ $commercialUser }}</button>
+                                    @empty
+                                        <p class="commercial-pick-empty">Aucun commercial.</p>
+                                    @endforelse
+                                </div>
                             </div>
                         </div>
 
@@ -2592,12 +2924,14 @@
                 <div class="modal-body">
                     <div class="field">
                         <label for="commercial_numero_commercial">Commercial</label>
-                        <select id="commercial_numero_commercial" name="commercial" required>
-                            <option value="">Choisir un commercial…</option>
-                            @foreach (($commerciauxUsers ?? []) as $commercialUser)
-                                <option value="{{ $commercialUser }}">{{ $commercialUser }}</option>
-                            @endforeach
-                        </select>
+                        <input type="hidden" id="commercial_numero_commercial" name="commercial" value="">
+                        <div class="commercial-pick-grid" id="commercial_numero_commercial_picker" role="listbox" aria-label="Choisir un commercial">
+                            @forelse (($commerciauxUsers ?? []) as $commercialUser)
+                                <button type="button" class="commercial-pick-btn" data-value="{{ $commercialUser }}">{{ $commercialUser }}</button>
+                            @empty
+                                <p class="commercial-pick-empty">Aucun commercial enregistré. Créez-en un dans Configuration → Utilisateur.</p>
+                            @endforelse
+                        </div>
                     </div>
                     <div class="field">
                         <label for="commercial_numero_date">Date</label>
@@ -2651,12 +2985,14 @@
                 <div class="modal-body">
                     <div class="field">
                         <label for="commercial_import_commercial">Commercial</label>
-                        <select id="commercial_import_commercial" name="commercial" required>
-                            <option value="">Choisir un commercial…</option>
-                            @foreach (($commerciauxUsers ?? []) as $commercialUser)
-                                <option value="{{ $commercialUser }}">{{ $commercialUser }}</option>
-                            @endforeach
-                        </select>
+                        <input type="hidden" id="commercial_import_commercial" name="commercial" value="">
+                        <div class="commercial-pick-grid" id="commercial_import_commercial_picker" role="listbox" aria-label="Choisir un commercial">
+                            @forelse (($commerciauxUsers ?? []) as $commercialUser)
+                                <button type="button" class="commercial-pick-btn" data-value="{{ $commercialUser }}">{{ $commercialUser }}</button>
+                            @empty
+                                <p class="commercial-pick-empty">Aucun commercial enregistré. Créez-en un dans Configuration → Utilisateur.</p>
+                            @endforelse
+                        </div>
                     </div>
                     <div class="field">
                         <label for="commercialImportFile">Capture / Image</label>
@@ -2916,6 +3252,171 @@
                 .replace(/>/g, '&gt;')
                 .replace(/"/g, '&quot;');
         }
+
+        function positionEvoproComboMenu(wrap) {
+            const trigger = wrap.querySelector('.evopro-combo-trigger');
+            const menu = wrap.querySelector('.evopro-combo-menu');
+            if (!trigger || !menu) return;
+
+            const rect = trigger.getBoundingClientRect();
+            const width = Math.max(rect.width, 180);
+            let left = rect.left;
+            let top = rect.bottom + 4;
+            const maxRight = window.innerWidth - 8;
+            if (left + width > maxRight) left = Math.max(8, maxRight - width);
+
+            menu.style.width = `${width}px`;
+            menu.style.left = `${left}px`;
+            menu.style.top = `${top}px`;
+
+            // If not enough space below, open upward
+            requestAnimationFrame(() => {
+                const menuRect = menu.getBoundingClientRect();
+                if (menuRect.bottom > window.innerHeight - 8) {
+                    const upTop = rect.top - menuRect.height - 4;
+                    menu.style.top = `${Math.max(8, upTop)}px`;
+                }
+            });
+        }
+
+        function syncEvoproCombo(select) {
+            const wrap = select?.closest?.('.evopro-combo');
+            if (!wrap) return;
+            const trigger = wrap.querySelector('.evopro-combo-trigger');
+            const menu = wrap.querySelector('.evopro-combo-menu');
+            if (!trigger || !menu) return;
+
+            const selected = select.options[select.selectedIndex];
+            const label = selected ? selected.textContent.trim() : '';
+            trigger.textContent = label || 'Choisir…';
+            trigger.classList.toggle('is-placeholder', !select.value);
+
+            menu.querySelectorAll('.evopro-combo-option').forEach((btn) => {
+                btn.classList.toggle('is-active', btn.dataset.value === select.value);
+            });
+        }
+
+        function rebuildEvoproComboMenu(select) {
+            const wrap = select?.closest?.('.evopro-combo');
+            if (!wrap) return;
+            const menu = wrap.querySelector('.evopro-combo-menu');
+            if (!menu) return;
+
+            menu.innerHTML = '';
+            Array.from(select.options).forEach((opt) => {
+                const btn = document.createElement('button');
+                btn.type = 'button';
+                btn.className = 'evopro-combo-option' + (opt.value === '' ? ' is-placeholder' : '');
+                btn.dataset.value = opt.value;
+                btn.textContent = opt.textContent.trim() || opt.value || '—';
+                if (opt.disabled) btn.disabled = true;
+                btn.addEventListener('click', (event) => {
+                    event.preventDefault();
+                    event.stopPropagation();
+                    select.value = opt.value;
+                    select.dispatchEvent(new Event('change', { bubbles: true }));
+                    select.dispatchEvent(new Event('input', { bubbles: true }));
+                    wrap.classList.remove('open');
+                    syncEvoproCombo(select);
+                });
+                menu.appendChild(btn);
+            });
+            syncEvoproCombo(select);
+        }
+
+        function enhanceSelect(select) {
+            if (!select || select.dataset.evoproCombo === '1') return;
+            if (select.multiple) return;
+            // Keep native tiny statue pills; option text is forced dark for Windows
+            if (select.classList.contains('statue-select')) return;
+
+            select.dataset.evoproCombo = '1';
+            select.classList.add('evopro-combo-native');
+
+            const wrap = document.createElement('div');
+            wrap.className = 'evopro-combo';
+            select.parentNode.insertBefore(wrap, select);
+            wrap.appendChild(select);
+
+            const trigger = document.createElement('button');
+            trigger.type = 'button';
+            trigger.className = 'evopro-combo-trigger';
+            trigger.setAttribute('aria-haspopup', 'listbox');
+
+            const menu = document.createElement('div');
+            menu.className = 'evopro-combo-menu';
+            menu.setAttribute('role', 'listbox');
+
+            wrap.appendChild(trigger);
+            wrap.appendChild(menu);
+
+            trigger.addEventListener('click', (event) => {
+                event.preventDefault();
+                event.stopPropagation();
+                const willOpen = !wrap.classList.contains('open');
+                document.querySelectorAll('.evopro-combo.open').forEach((el) => {
+                    if (el !== wrap) el.classList.remove('open');
+                });
+                if (willOpen) {
+                    rebuildEvoproComboMenu(select);
+                    wrap.classList.add('open');
+                    positionEvoproComboMenu(wrap);
+                } else {
+                    wrap.classList.remove('open');
+                }
+            });
+
+            // Keep label in sync when JS sets select.value
+            const valueDesc = Object.getOwnPropertyDescriptor(HTMLSelectElement.prototype, 'value');
+            if (valueDesc?.get && valueDesc?.set) {
+                Object.defineProperty(select, 'value', {
+                    configurable: true,
+                    enumerable: true,
+                    get() {
+                        return valueDesc.get.call(this);
+                    },
+                    set(next) {
+                        valueDesc.set.call(this, next);
+                        syncEvoproCombo(this);
+                    },
+                });
+            }
+
+            select.addEventListener('change', () => syncEvoproCombo(select));
+            rebuildEvoproComboMenu(select);
+        }
+
+        function enhanceAllSelects(root = document) {
+            root.querySelectorAll('select').forEach((select) => enhanceSelect(select));
+        }
+
+        document.addEventListener('click', () => {
+            document.querySelectorAll('.evopro-combo.open').forEach((el) => el.classList.remove('open'));
+        });
+        window.addEventListener('resize', () => {
+            document.querySelectorAll('.evopro-combo.open').forEach((el) => positionEvoproComboMenu(el));
+        });
+        document.addEventListener('scroll', () => {
+            document.querySelectorAll('.evopro-combo.open').forEach((el) => positionEvoproComboMenu(el));
+        }, true);
+
+        enhanceAllSelects();
+        const comboObserver = new MutationObserver((mutations) => {
+            mutations.forEach((mutation) => {
+                if (mutation.type === 'childList' && mutation.target instanceof HTMLSelectElement) {
+                    if (mutation.target.dataset.evoproCombo === '1') {
+                        rebuildEvoproComboMenu(mutation.target);
+                    }
+                    return;
+                }
+                mutation.addedNodes.forEach((node) => {
+                    if (!(node instanceof HTMLElement)) return;
+                    if (node.matches?.('select')) enhanceSelect(node);
+                    else if (node.querySelectorAll) enhanceAllSelects(node);
+                });
+            });
+        });
+        comboObserver.observe(document.body, { childList: true, subtree: true });
         const liveSyncIntervalMs = canViewCommercialPresence ? 2000 : 3000;
         const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '';
         const utilisateursData = @json($utilisateurs ?? []);
@@ -3099,6 +3600,7 @@
             const mois = document.getElementById('filter_prospection_mois')?.value || '';
             const commercial = document.getElementById('filter_prospection_commercial')?.value || '';
             const statue = document.getElementById('filter_prospection_statue')?.value || '';
+            const page = document.getElementById('filter_prospection_page')?.value ?? '';
             const num = (document.getElementById('filter_prospection_num')?.value || '').replace(/\D/g, '');
             const deKey = parseDateFrToKey(document.getElementById('filter_prospection_de')?.value || '');
             const aKey = parseDateFrToKey(document.getElementById('filter_prospection_a')?.value || '');
@@ -3111,16 +3613,18 @@
                 const rowCommercial = row.dataset.commercial || '';
                 const rowStatue = row.dataset.statue || '';
                 const rowTelephone = row.dataset.telephone || '';
+                const rowPage = row.dataset.page || '1';
                 const rowDateKey = parseDateFrToKey(row.dataset.date || '');
 
                 const matchMois = !mois || rowMois === mois;
                 const matchCommercial = !commercial || rowCommercial === commercial;
                 const matchStatue = !statue || rowStatue === statue;
+                const matchPage = page === '' || rowPage === String(page);
                 const matchNum = !num || rowTelephone.includes(num);
                 const matchDe = !deKey || (rowDateKey !== null && rowDateKey >= deKey);
                 const matchA = !aKey || (rowDateKey !== null && rowDateKey <= aKey);
 
-                const show = matchMois && matchCommercial && matchStatue && matchNum && matchDe && matchA;
+                const show = matchMois && matchCommercial && matchStatue && matchPage && matchNum && matchDe && matchA;
                 row.style.display = show ? '' : 'none';
                 if (show) visible++;
             });
@@ -3703,6 +4207,7 @@
         });
 
         document.getElementById('filter_prospection_num')?.addEventListener('input', filterProspectionsTable);
+        document.getElementById('filter_prospection_page')?.addEventListener('change', filterProspectionsTable);
         document.getElementById('filter_prospection_mois')?.addEventListener('change', filterProspectionsTable);
         document.getElementById('filter_prospection_commercial')?.addEventListener('change', filterProspectionsTable);
         document.getElementById('filter_prospection_statue')?.addEventListener('change', filterProspectionsTable);
@@ -3711,6 +4216,7 @@
 
         function resetProspectionFilters() {
             const num = document.getElementById('filter_prospection_num');
+            const page = document.getElementById('filter_prospection_page');
             const mois = document.getElementById('filter_prospection_mois');
             const de = document.getElementById('filter_prospection_de');
             const a = document.getElementById('filter_prospection_a');
@@ -3722,6 +4228,10 @@
             if (a) a.value = '';
             if (commercial) commercial.value = '';
             if (statue) statue.value = '';
+            if (page) {
+                const opts = [...page.options].filter((o) => o.value !== '');
+                page.value = opts.length ? opts[opts.length - 1].value : '1';
+            }
             filterProspectionsTable();
         }
 
@@ -4340,10 +4850,38 @@
 
             const mois = document.getElementById('filter_commercial_mois')?.value || '';
             const commercial = document.getElementById('filter_commercial_commercial')?.value || '';
+            const pageFilter = document.getElementById('filter_commercial_page')?.value || '';
             const deKey = parseDateFrToKey(document.getElementById('filter_commercial_de')?.value || '');
             const aKey = parseDateFrToKey(document.getElementById('filter_commercial_a')?.value || '');
 
-            const rows = prospectionsAllData.filter((row) => trimCommercial(row.commercial) !== '');
+            const rows = prospectionsAllData
+                .filter((row) => trimCommercial(row.commercial) !== '')
+                .slice()
+                .sort((a, b) => {
+                    const pageCmp = (Number(a.page || 1) - Number(b.page || 1));
+                    if (pageCmp !== 0) return pageCmp;
+                    return (Number(a.num || 0) - Number(b.num || 0));
+                });
+
+            const pageSelect = document.getElementById('filter_commercial_page');
+            if (pageSelect) {
+                const pages = [...new Set(rows
+                    .filter((row) => {
+                        if (!commercial) return true;
+                        return commercialKey(row.commercial) === commercial;
+                    })
+                    .map((row) => Number(row.page || 1))
+                    .filter((p) => p >= 1))]
+                    .sort((a, b) => a - b);
+                const current = pageSelect.value;
+                pageSelect.innerHTML = '<option value="">Toutes les pages</option>' +
+                    pages.map((p) => `<option value="${p}">Page ${p}</option>`).join('');
+                if (current && (current === '' || pages.includes(Number(current)))) {
+                    pageSelect.value = current;
+                }
+            }
+
+            const activePage = document.getElementById('filter_commercial_page')?.value || '';
             body.querySelectorAll('tr:not(#commercialNumerosEmpty)').forEach((row) => row.remove());
 
             let visible = 0;
@@ -4352,21 +4890,24 @@
                 const rowMois = parts.length >= 3 ? `${parts[1]}/${parts[2]}` : '';
                 const rowCommercial = commercialKey(row.commercial);
                 const rowDateKey = parseDateFrToKey(row.date || '');
+                const rowPage = String(row.page || 1);
 
                 const matchMois = !mois || rowMois === mois;
                 const matchCommercial = !commercial || rowCommercial === commercial;
+                const matchPage = !activePage || rowPage === String(activePage);
                 const matchDe = !deKey || (rowDateKey !== null && rowDateKey >= deKey);
                 const matchA = !aKey || (rowDateKey !== null && rowDateKey <= aKey);
 
-                if (!(matchMois && matchCommercial && matchDe && matchA)) return;
+                if (!(matchMois && matchCommercial && matchPage && matchDe && matchA)) return;
 
                 const tr = document.createElement('tr');
                 tr.dataset.id = row.id;
                 const statue = row.statue || 'en_attente';
                 tr.innerHTML = `
+                    <td>${escapeHtml(String(row.num || '—'))}</td>
                     <td>${escapeHtml(row.date || '')}</td>
-                    <td>${escapeHtml(row.telephone || '')}</td>
                     <td>${escapeHtml(row.commercial || '')}</td>
+                    <td>${escapeHtml(row.telephone || '')}</td>
                     <td>${escapeHtml(row.nom_prospect || '')}</td>
                     <td>${escapeHtml(row.ville || '')}</td>
                     <td>${escapeHtml(row.projet || '')}</td>
@@ -4390,6 +4931,7 @@
 
         document.getElementById('filter_commercial_mois')?.addEventListener('change', filterCommercialTable);
         document.getElementById('filter_commercial_commercial')?.addEventListener('change', filterCommercialTable);
+        document.getElementById('filter_commercial_page')?.addEventListener('change', filterCommercialTable);
         bindDateMask('filter_commercial_de', filterCommercialTable);
         bindDateMask('filter_commercial_a', filterCommercialTable);
 
@@ -4591,12 +5133,39 @@
         const commercialNumeroModal = document.getElementById('commercialNumeroModal');
         const commercialNumeroForm = document.getElementById('commercialNumeroForm');
 
+        function setCommercialPickerValue(inputId, value) {
+            const input = document.getElementById(inputId);
+            const picker = document.getElementById(`${inputId}_picker`);
+            if (input) input.value = value || '';
+            if (!picker) return;
+            picker.querySelectorAll('.commercial-pick-btn').forEach((btn) => {
+                const selected = (btn.dataset.value || '') === (value || '');
+                btn.classList.toggle('is-selected', selected);
+                btn.classList.toggle('active', selected);
+            });
+        }
+
+        function bindCommercialPicker(inputId) {
+            const picker = document.getElementById(`${inputId}_picker`);
+            const input = document.getElementById(inputId);
+            if (!picker || !input || picker.dataset.bound === '1') return;
+            picker.dataset.bound = '1';
+            picker.addEventListener('click', (event) => {
+                const btn = event.target.closest('.commercial-pick-btn');
+                if (!btn) return;
+                event.preventDefault();
+                setCommercialPickerValue(inputId, btn.dataset.value || '');
+                input.dispatchEvent(new Event('change', { bubbles: true }));
+            });
+        }
+
+        bindCommercialPicker('commercial_numero_commercial');
+        bindCommercialPicker('commercial_import_commercial');
+        bindCommercialPicker('entrants_repartir_commercial');
+
         function openCommercialNumeroModal() {
             const filterCommercial = getFilterCommercialName();
-            const select = document.getElementById('commercial_numero_commercial');
-            if (select && filterCommercial) {
-                select.value = filterCommercial;
-            }
+            setCommercialPickerValue('commercial_numero_commercial', filterCommercial || '');
             document.getElementById('commercial_numero_date').value = new Date().toLocaleDateString('fr-FR', { day: '2-digit', month: '2-digit', year: 'numeric' });
             document.getElementById('commercial_numero_telephone').value = '';
             openModal(commercialNumeroModal);
@@ -4613,7 +5182,11 @@
             const commercial = document.getElementById('commercial_numero_commercial')?.value.trim() || '';
             const date = document.getElementById('commercial_numero_date').value.trim();
             const telephone = document.getElementById('commercial_numero_telephone').value.trim();
-            if (!commercial || !/^\d{2}\/\d{2}\/\d{4}$/.test(date) || telephone === '') return;
+            if (!commercial) {
+                window.alert('Choisissez un commercial dans la liste.');
+                return;
+            }
+            if (!/^\d{2}\/\d{2}\/\d{4}$/.test(date) || telephone === '') return;
 
             try {
                 const fd = new FormData();
@@ -4643,22 +5216,20 @@
 
         function extractPhoneNumbersFromText(text) {
             const found = [];
-            const raw = String(text || '')
-                .replace(/[Oo]/g, '0')
-                .replace(/[–—−]/g, '-');
-
-            const patterns = [
-                /(?:\+212|00212|212)[\s\-]*[567]\d(?:[\s\-]?\d){7}/g,
-                /(?<!\d)0[567]\d(?:[\s\-]?\d){7}(?!\d)/g,
-                /(?<!\d)[567]\d(?:[\s\-]?\d){7}(?!\d)/g,
-            ];
+            let raw = String(text || '')
+                .replace(/[–—−]/g, '-')
+                .replace(/[•·|]/g, ' ')
+                .replace(/[OoQ]/g, '0');
+            raw = raw.replace(/(?<=[\d\s\-+(])[Il|](?=[\d\s\-+)])/g, '1');
+            raw = raw.replace(/(?<=\d)[Bb](?=\d)/g, '8');
+            raw = raw.replace(/(?<=\d)[Ss](?=\d)/g, '5');
 
             const normalizeMatch = (match) => {
                 let digits = String(match).replace(/\D/g, '');
-                if (digits.startsWith('212') && digits.length >= 12) {
-                    digits = '0' + digits.slice(3);
-                } else if (digits.startsWith('00212') && digits.length >= 14) {
+                if (digits.startsWith('00212') && digits.length >= 14) {
                     digits = '0' + digits.slice(5);
+                } else if (digits.startsWith('212') && digits.length >= 12) {
+                    digits = '0' + digits.slice(3);
                 } else if (digits.length === 9 && ['5', '6', '7'].includes(digits[0])) {
                     digits = '0' + digits;
                 }
@@ -4668,6 +5239,12 @@
                 return '';
             };
 
+            const patterns = [
+                /(?:\+212|00212|212)[\s\-_.]*[567]\d(?:[\s\-_.]?\d){7}/g,
+                /(?<!\d)0[567]\d(?:[\s\-_.]?\d){7}(?!\d)/g,
+                /(?<!\d)[567]\d(?:[\s\-_.]?\d){7}(?!\d)/g,
+            ];
+
             patterns.forEach((regex) => {
                 const matches = raw.match(regex) || [];
                 matches.forEach((match) => {
@@ -4676,12 +5253,25 @@
                 });
             });
 
-            (raw.match(/[\d\s\-+().]{9,22}/g) || []).forEach((block) => {
+            raw.split(/\r?\n/).forEach((line) => {
+                const trimmed = line.trim();
+                if (!trimmed) return;
+                const digits = trimmed.replace(/\D/g, '');
+                if ([9, 10, 12].includes(digits.length)) {
+                    const normalized = normalizeMatch(digits);
+                    if (normalized) found.push(normalized);
+                }
+                const lineMatches = trimmed.match(/(?:\+?212|0)?[567]\d[\d\s\-_.]{7,16}/g) || [];
+                lineMatches.forEach((match) => {
+                    const normalized = normalizeMatch(match);
+                    if (normalized) found.push(normalized);
+                });
+            });
+
+            (raw.match(/[\d\s\-+()._]{8,24}/g) || []).forEach((block) => {
                 if (!/[567]/.test(block)) return;
                 const digits = block.replace(/\D/g, '');
-                if (digits.length < 9 || digits.length > 12) return;
-                if (digits.startsWith('212') && digits.length !== 12) return;
-                if (!digits.startsWith('212') && digits.length !== 9 && digits.length !== 10) return;
+                if (![9, 10, 12, 13].includes(digits.length)) return;
                 const normalized = normalizeMatch(digits);
                 if (normalized) found.push(normalized);
             });
@@ -4689,21 +5279,22 @@
             return [...new Set(found)];
         }
 
-        async function preprocessImageForOcr(file) {
+        async function preprocessImageForOcr(file, { invert = false, threshold = 160 } = {}) {
             const bitmap = await createImageBitmap(file);
-            const scale = Math.max(2, 1400 / Math.max(bitmap.width, bitmap.height, 1));
+            const scale = Math.max(2.5, 1800 / Math.max(bitmap.width, bitmap.height, 1));
             const canvas = document.createElement('canvas');
             canvas.width = Math.round(bitmap.width * scale);
             canvas.height = Math.round(bitmap.height * scale);
             const ctx = canvas.getContext('2d', { willReadFrequently: true });
-            ctx.filter = 'contrast(1.4)';
+            ctx.filter = 'contrast(1.55) brightness(1.05)';
             ctx.drawImage(bitmap, 0, 0, canvas.width, canvas.height);
 
             const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
             const { data } = imageData;
             for (let i = 0; i < data.length; i += 4) {
-                const gray = 0.299 * data[i] + 0.587 * data[i + 1] + 0.114 * data[i + 2];
-                const value = gray > 165 ? 255 : gray < 95 ? 0 : gray;
+                let gray = 0.299 * data[i] + 0.587 * data[i + 1] + 0.114 * data[i + 2];
+                if (invert) gray = 255 - gray;
+                const value = gray > threshold ? 255 : 0;
                 data[i] = data[i + 1] = data[i + 2] = value;
             }
             ctx.putImageData(imageData, 0, 0);
@@ -4713,18 +5304,32 @@
         }
 
         async function recognizePhonesFromImage(file) {
-            const canvas = await preprocessImageForOcr(file);
             const worker = await Tesseract.createWorker('eng', 1, { logger: () => {} });
+            const texts = [];
             try {
-                await worker.setParameters({
-                    tessedit_pageseg_mode: Tesseract.PSM?.SPARSE_TEXT ?? '11',
-                    tessedit_char_whitelist: '0123456789+- ',
-                });
-                const result = await worker.recognize(canvas);
-                return result.data?.text || '';
+                const passes = [
+                    { invert: false, threshold: 155, psm: Tesseract.PSM?.SPARSE_TEXT ?? '11', whitelist: true },
+                    { invert: false, threshold: 175, psm: Tesseract.PSM?.SINGLE_BLOCK ?? '6', whitelist: true },
+                    { invert: true, threshold: 140, psm: Tesseract.PSM?.SPARSE_TEXT ?? '11', whitelist: false },
+                ];
+
+                for (const pass of passes) {
+                    const canvas = await preprocessImageForOcr(file, pass);
+                    const params = {
+                        tessedit_pageseg_mode: pass.psm,
+                    };
+                    if (pass.whitelist) {
+                        params.tessedit_char_whitelist = '0123456789+- ()';
+                    }
+                    await worker.setParameters(params);
+                    const result = await worker.recognize(canvas);
+                    if (result.data?.text) texts.push(result.data.text);
+                }
             } finally {
                 await worker.terminate();
             }
+
+            return texts.join('\n');
         }
 
         const commercialImportModal = document.getElementById('commercialImportModal');
@@ -4736,12 +5341,7 @@
 
         function openCommercialImportModal() {
             const filterCommercial = getFilterCommercialName();
-            const select = document.getElementById('commercial_import_commercial');
-            if (select && filterCommercial) {
-                select.value = filterCommercial;
-            } else if (select) {
-                select.value = '';
-            }
+            setCommercialPickerValue('commercial_import_commercial', filterCommercial || '');
             if (commercialImportFile) commercialImportFile.value = '';
             if (commercialImportModalStatus) commercialImportModalStatus.textContent = '';
             openModal(commercialImportModal);
@@ -4756,12 +5356,16 @@
 
             const commercial = document.getElementById('commercial_import_commercial')?.value.trim() || '';
             const file = commercialImportFile?.files?.[0];
-            if (!commercial || !file) return;
-
-            if (commercialImportModalStatus) {
-                commercialImportModalStatus.textContent = 'Analyse de l’image en cours…';
-                commercialImportModalStatus.style.color = 'var(--muted)';
+            if (!commercial) {
+                window.alert('Choisissez un commercial dans la liste.');
+                return;
             }
+            if (!file) return;
+
+                if (commercialImportModalStatus) {
+                    commercialImportModalStatus.textContent = 'Analyse OCR renforcée en cours (peut prendre 20–40 s)…';
+                    commercialImportModalStatus.style.color = 'var(--muted)';
+                }
             if (submitCommercialImport) submitCommercialImport.disabled = true;
 
             try {
@@ -4806,10 +5410,29 @@
                 filterCommercialTable();
                 closeModalEl(commercialImportModal);
 
-                const message = `${data.created || 0} numéro(s) importé(s), ${data.skipped || 0} ignoré(s).`;
+                const message = `${data.created || 0} numéro(s) importé(s)`
+                    + (data.page_from ? ` — page${data.page_from !== data.page_to ? `s ${data.page_from} à ${data.page_to}` : ` ${data.page_from}`}` : '')
+                    + `, ${data.skipped || 0} ignoré(s)`
+                    + (data.detected ? ` (${data.detected} détecté(s) sur l’image)` : '')
+                    + '.';
                 if (commercialImportStatus) {
                     commercialImportStatus.textContent = message;
                     commercialImportStatus.className = 'is-success';
+                }
+
+                const pageSelect = document.getElementById('filter_prospection_page');
+                if (pageSelect && data.page_to) {
+                    const exists = [...pageSelect.options].some((o) => o.value === String(data.page_to));
+                    if (!exists) {
+                        const opt = document.createElement('option');
+                        opt.value = String(data.page_to);
+                        opt.textContent = `Page ${data.page_to}`;
+                        const allOpt = [...pageSelect.options].find((o) => o.value === '');
+                        if (allOpt) pageSelect.insertBefore(opt, allOpt);
+                        else pageSelect.appendChild(opt);
+                    }
+                    pageSelect.value = String(data.page_to);
+                    filterProspectionsTable();
                 }
             } catch (error) {
                 const message = error.message || 'Import impossible.';
