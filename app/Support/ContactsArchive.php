@@ -349,6 +349,13 @@ class ContactsArchive
     public static function normalizeClientRow(array $row): array
     {
         $titre = trim((string) ($row['titre_projet'] ?? $row['activite'] ?? ''));
+        $budget = (float) ($row['budget'] ?? 0);
+        $avance = array_key_exists('avance', $row)
+            ? (float) $row['avance']
+            : max(0, $budget - (float) ($row['solde'] ?? 0));
+        $solde = array_key_exists('solde', $row)
+            ? (float) $row['solde']
+            : max(0, $budget - $avance);
 
         return [
             'id' => $row['id'] ?? uniqid('cli_', true),
@@ -357,11 +364,12 @@ class ContactsArchive
             'nom' => trim((string) ($row['nom'] ?? '')),
             'titre_projet' => $titre,
             'delai_travail' => self::formatDelaiTravail($row['delai_travail'] ?? ''),
-            'budget' => (float) ($row['budget'] ?? 0),
+            'budget' => $budget,
+            'avance' => $avance,
             'ville' => trim((string) ($row['ville'] ?? '')),
             'contact' => trim((string) ($row['contact'] ?? '')),
             'activite' => $titre,
-            'solde' => (float) ($row['solde'] ?? 0),
+            'solde' => $solde,
         ];
     }
 

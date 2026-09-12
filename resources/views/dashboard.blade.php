@@ -347,6 +347,7 @@
 
         .nav-subicon.relance { background: rgba(240, 180, 41, 0.12); color: #ffc857; border-color: rgba(240, 180, 41, 0.22); }
         .nav-subicon.commercial { background: rgba(61, 207, 138, 0.12); color: #7ee8b0; border-color: rgba(61, 207, 138, 0.22); }
+        .nav-subicon.entrants { background: rgba(126, 196, 255, 0.12); color: #9ad4ff; border-color: rgba(126, 196, 255, 0.22); }
         .nav-subicon.utilisateur { background: rgba(126, 196, 255, 0.12); color: #9ad4ff; border-color: rgba(126, 196, 255, 0.22); }
         .nav-subicon.fiche-ste { background: rgba(155, 123, 255, 0.12); color: #c4b0ff; border-color: rgba(155, 123, 255, 0.22); }
 
@@ -1588,6 +1589,12 @@
                                 </span>
                                 Commercial
                             </button>
+                            <button type="button" class="nav-subitem" data-panel="prospection" data-prospection="entrants">
+                                <span class="nav-subicon entrants" aria-hidden="true">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/><path d="M14 5h7"/><path d="M17.5 2v6"/></svg>
+                                </span>
+                                Numéros entrants
+                            </button>
                         @endif
                     </div>
                 </div>
@@ -2077,6 +2084,99 @@
                         </div>
                         <p id="commercialImportStatus" aria-live="polite"></p>
                     </div>
+
+                    <div class="prospection-view" id="prospection-entrants">
+                        <div class="section-toolbar" style="margin-bottom:1rem;">
+                            <div class="content-head" style="margin-bottom:0;">
+                                <h2 style="font-size:1.05rem;">Numéros entrants</h2>
+                                <p>Boîte des numéros reçus. L’admin les répartit manuellement vers les commerciaux (Relance).</p>
+                            </div>
+                            <div class="toolbar-actions">
+                                <button type="button" class="btn-add" id="btnEntrantsAjouter">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>
+                                    Ajouter
+                                </button>
+                                <button type="button" class="btn-add" id="btnEntrantsRepartir" disabled>
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M19 8v6"/><path d="M22 11h-6"/></svg>
+                                    Répartir
+                                </button>
+                                <button type="button" class="btn-close-toolbar" id="btnEntrantsFermer">Fermer</button>
+                            </div>
+                        </div>
+
+                        <div class="search-bar" aria-label="Filtres numéros entrants" style="grid-template-columns: repeat(3, minmax(0, 1fr)); margin-bottom:1rem;">
+                            <div class="search-field">
+                                <label for="filter_entrants_statue">Statue</label>
+                                <select id="filter_entrants_statue">
+                                    <option value="nouveau">Nouveaux</option>
+                                    <option value="">Tous</option>
+                                    <option value="reparti">Répartis</option>
+                                </select>
+                            </div>
+                            <div class="search-field">
+                                <label for="filter_entrants_num">Num</label>
+                                <input type="text" id="filter_entrants_num" placeholder="Ex. 06…" maxlength="20" autocomplete="off" inputmode="tel">
+                            </div>
+                            <div class="search-field">
+                                <label for="entrants_repartir_commercial">Commercial cible</label>
+                                <select id="entrants_repartir_commercial">
+                                    <option value="">Choisir un commercial…</option>
+                                    @foreach (($commerciauxUsers ?? []) as $commercialUser)
+                                        <option value="{{ $commercialUser }}">{{ $commercialUser }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="table-wrap">
+                            <table class="data-table">
+                                <thead>
+                                    <tr>
+                                        <th style="width:2.5rem;"><input type="checkbox" id="entrantsSelectAll" aria-label="Tout sélectionner"></th>
+                                        <th>Date</th>
+                                        <th>Numéro</th>
+                                        <th>Source</th>
+                                        <th>Statue</th>
+                                        <th>Commercial</th>
+                                        <th>Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="numerosEntrantsBody">
+                                    @foreach (($numerosEntrants ?? []) as $entrant)
+                                        <tr
+                                            data-id="{{ $entrant['id'] }}"
+                                            data-statue="{{ $entrant['statue'] ?? 'nouveau' }}"
+                                            data-telephone="{{ preg_replace('/\D+/', '', (string) ($entrant['telephone'] ?? '')) }}"
+                                        >
+                                            <td>
+                                                @if (($entrant['statue'] ?? '') === 'nouveau')
+                                                    <input type="checkbox" class="entrant-check" value="{{ $entrant['id'] }}" aria-label="Sélectionner">
+                                                @endif
+                                            </td>
+                                            <td>{{ $entrant['date'] ?? '' }}</td>
+                                            <td>{{ $entrant['telephone'] ?? '' }}</td>
+                                            <td>{{ $entrant['source'] ?? 'manuel' }}</td>
+                                            <td>{{ ($entrant['statue'] ?? '') === 'reparti' ? 'Réparti' : 'Nouveau' }}</td>
+                                            <td>{{ $entrant['commercial'] ?? '—' }}</td>
+                                            <td>
+                                                @if (($entrant['statue'] ?? '') === 'nouveau')
+                                                    <button type="button" class="action-btn danger entrant-delete" data-id="{{ $entrant['id'] }}" title="Supprimer" aria-label="Supprimer">
+                                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18"/><path d="M8 6V4h8v2"/><path d="M19 6l-1 14H6L5 6"/></svg>
+                                                    </button>
+                                                @else
+                                                    —
+                                                @endif
+                                            </td>
+                                        </tr>
+                                    @endforeach
+                                    <tr class="empty-row" id="numerosEntrantsEmpty" @if (! empty($numerosEntrants)) style="display:none;" @endif>
+                                        <td colspan="7" class="empty">Aucun numéro entrant pour le moment.</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <p id="entrantsStatus" aria-live="polite"></p>
+                    </div>
                     @endif
                 </section>
 
@@ -2153,6 +2253,7 @@
                                     <th>Titre Projet</th>
                                     <th>Délai travail</th>
                                     <th>Budget</th>
+                                    <th>Solde</th>
                                     <th>Actions</th>
                                 </tr>
                             </thead>
@@ -2177,6 +2278,7 @@
                                         <td>{{ $titreProjet }}</td>
                                         <td>{{ \App\Support\ContactsArchive::formatDelaiTravail($client['delai_travail'] ?? '') }}</td>
                                         <td>{{ number_format((float) ($client['budget'] ?? 0), 2, '.', ' ') }}</td>
+                                        <td>{{ number_format((float) ($client['solde'] ?? 0), 2, '.', ' ') }}</td>
                                         <td>
                                             <div class="actions">
                                                 <button type="button" class="action-btn voir" title="Voir" aria-label="Voir">
@@ -2196,11 +2298,11 @@
                                     </tr>
                                 @empty
                                     <tr class="empty-row">
-                                        <td colspan="8" class="empty">Aucun client enregistré.</td>
+                                        <td colspan="9" class="empty">Aucun client enregistré.</td>
                                     </tr>
                                 @endforelse
                                 <tr class="empty-row" id="clientsNoResult" style="display:none;">
-                                    <td colspan="8" class="empty">Aucun résultat pour cette recherche.</td>
+                                    <td colspan="9" class="empty">Aucun résultat pour cette recherche.</td>
                                 </tr>
                             </tbody>
                         </table>
@@ -2514,6 +2616,31 @@
         </div>
     </div>
 
+    <div class="modal-backdrop" id="entrantsNumeroModal" aria-hidden="true">
+        <div class="modal" role="dialog" aria-modal="true" aria-labelledby="entrantsNumeroModalTitle">
+            <div class="modal-head">
+                <h2 id="entrantsNumeroModalTitle">Ajouter des numéros entrants</h2>
+                <button type="button" class="modal-close" id="closeEntrantsNumeroModal" aria-label="Fermer">×</button>
+            </div>
+            <form id="entrantsNumeroForm">
+                <div class="modal-body">
+                    <div class="field">
+                        <label for="entrants_numero_date">Date</label>
+                        <input type="text" id="entrants_numero_date" name="date" placeholder="JJ/MM/AAAA" maxlength="10" inputmode="numeric" autocomplete="off">
+                    </div>
+                    <div class="field">
+                        <label for="entrants_numero_telephone">Numéro(s)</label>
+                        <textarea id="entrants_numero_telephone" name="telephone" rows="5" placeholder="Un numéro par ligne&#10;Ex. 0612345678" required></textarea>
+                    </div>
+                </div>
+                <div class="modal-foot">
+                    <button type="button" class="btn-ghost" id="cancelEntrantsNumeroModal">Annuler</button>
+                    <button type="submit" class="btn-primary">Ajouter à la boîte</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
     <div class="modal-backdrop" id="commercialImportModal" aria-hidden="true">
         <div class="modal" role="dialog" aria-modal="true" aria-labelledby="commercialImportModalTitle">
             <div class="modal-head">
@@ -2730,6 +2857,14 @@
                         <label for="client_budget">Budget</label>
                         <input type="number" id="client_budget" name="budget" min="0" step="0.01" value="0">
                     </div>
+                    <div class="field">
+                        <label for="client_avance">Avance</label>
+                        <input type="number" id="client_avance" name="avance" min="0" step="0.01" value="0">
+                    </div>
+                    <div class="field">
+                        <label for="client_solde">Solde (reste à solder)</label>
+                        <input type="number" id="client_solde" name="solde" min="0" step="0.01" value="0" readonly>
+                    </div>
                 </div>
                 <div class="modal-foot" id="clientFormActions">
                     <button type="button" class="btn-ghost" id="cancelClientModal">Annuler</button>
@@ -2844,19 +2979,23 @@
 
                 if (group && item.classList.contains('has-sublist')) {
                     const isExpanded = group.classList.contains('expanded');
-                    const isActive = item.classList.contains('active');
 
-                    if (isExpanded && isActive) {
+                    if (isExpanded) {
                         group.classList.remove('expanded');
+                        return;
+                    }
+
+                    collapseAllNavGroups(group);
+                    group.classList.add('expanded');
+
+                    // Prospection : n’ouvre le tableau qu’au clic sur Relance / Commercial / Entrants
+                    if (panel === 'prospection') {
                         return;
                     }
 
                     showPanel(panel);
                     if (panel === 'configuration') {
                         showConfigSection('utilisateur');
-                    }
-                    if (panel === 'prospection') {
-                        showProspectionView('liste');
                     }
                     return;
                 }
@@ -3051,12 +3190,22 @@
             el?.setAttribute('aria-hidden', 'true');
         }
 
+        function updateClientSoldeDisplay() {
+            const budget = Number(document.getElementById('client_budget')?.value || 0);
+            const avance = Number(document.getElementById('client_avance')?.value || 0);
+            const solde = Math.max(0, budget - avance);
+            const el = document.getElementById('client_solde');
+            if (el) el.value = solde.toFixed(2);
+        }
+
         function setClientFormMode(mode) {
             const readonly = mode === 'view';
-            ['client_date', 'client_nom', 'client_ville', 'client_contact', 'client_titre_projet', 'client_delai_travail', 'client_budget'].forEach((id) => {
+            ['client_date', 'client_nom', 'client_ville', 'client_contact', 'client_titre_projet', 'client_delai_travail', 'client_budget', 'client_avance'].forEach((id) => {
                 const input = document.getElementById(id);
                 if (input) input.readOnly = readonly;
             });
+            const solde = document.getElementById('client_solde');
+            if (solde) solde.readOnly = true;
             clientFormActions.style.display = mode === 'view' ? 'none' : 'flex';
         }
 
@@ -3076,6 +3225,11 @@
             document.getElementById('client_titre_projet').value = client.titre_projet || client.activite || '';
             document.getElementById('client_delai_travail').value = formatDelaiTravail(client.delai_travail || '');
             document.getElementById('client_budget').value = Number(client.budget || 0);
+            const budget = Number(client.budget || 0);
+            const solde = Number(client.solde || 0);
+            const avance = client.avance != null ? Number(client.avance) : Math.max(0, budget - solde);
+            document.getElementById('client_avance').value = avance;
+            updateClientSoldeDisplay();
         }
 
         function openClientCreate() {
@@ -3088,6 +3242,8 @@
                 titre_projet: '',
                 delai_travail: '',
                 budget: 0,
+                avance: 0,
+                solde: 0,
                 ville: '',
                 contact: '',
             });
@@ -3122,6 +3278,9 @@
 
         function buildClientPrintHtml(client) {
             const budget = Number(client.budget || 0).toLocaleString('fr-FR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+            const avance = Number(client.avance != null ? client.avance : Math.max(0, Number(client.budget || 0) - Number(client.solde || 0)))
+                .toLocaleString('fr-FR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+            const solde = Number(client.solde || 0).toLocaleString('fr-FR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
             return `
                 <h3>Fiche client — ${String(client.nom || '').replace(/</g, '&lt;')}</h3>
                 <dl>
@@ -3132,6 +3291,8 @@
                     <dt>Titre Projet</dt><dd>${String(client.titre_projet || client.activite || '—').replace(/</g, '&lt;')}</dd>
                     <dt>Délai travail</dt><dd>${String(formatDelaiTravail(client.delai_travail || '') || '—').replace(/</g, '&lt;')}</dd>
                     <dt>Budget</dt><dd>${budget}</dd>
+                    <dt>Avance</dt><dd>${avance}</dd>
+                    <dt>Solde (reste à solder)</dt><dd>${solde}</dd>
                 </dl>
             `;
         }
@@ -3164,6 +3325,8 @@
         }
 
         document.getElementById('btnAddClient')?.addEventListener('click', openClientCreate);
+        document.getElementById('client_budget')?.addEventListener('input', updateClientSoldeDisplay);
+        document.getElementById('client_avance')?.addEventListener('input', updateClientSoldeDisplay);
         document.getElementById('closeClientModal')?.addEventListener('click', () => closeModalEl(clientModal));
         document.getElementById('cancelClientModal')?.addEventListener('click', () => closeModalEl(clientModal));
         document.getElementById('closeClientPrintModal')?.addEventListener('click', () => closeModalEl(clientPrintModal));
@@ -3346,6 +3509,66 @@
             document.getElementById('projet_ref').value = nextProjetRef();
             setProjetFormMode('edit');
             openSidePanel(projetSidePanel);
+        }
+
+        function readProspectionFieldFromRow(row, field) {
+            const el = row?.querySelector(`.prospection-inline[data-field="${field}"], .prospection-static[data-field="${field}"]`);
+            if (!el) return '';
+            const value = (el.value ?? el.textContent ?? '').trim();
+            return value === '—' ? '' : value;
+        }
+
+        function resolveProjetCommercialValue(name) {
+            const select = document.getElementById('projet_commercial');
+            const wanted = String(name || '').trim().toLowerCase();
+            if (!select || !wanted) return '';
+            const exact = Array.from(select.options).find((opt) => opt.value.trim().toLowerCase() === wanted);
+            return exact ? exact.value : '';
+        }
+
+        function getProspectionPayloadFromRow(row) {
+            const id = row?.dataset.id || '';
+            const fromStore = (prospectionsAllData || []).find((item) => item.id === id);
+            if (fromStore) {
+                return {
+                    id,
+                    commercial: fromStore.commercial || '',
+                    telephone: fromStore.telephone || '',
+                    nom_prospect: fromStore.nom_prospect || '',
+                    ville: fromStore.ville || '',
+                    projet: fromStore.projet || '',
+                };
+            }
+
+            return {
+                id,
+                commercial: row?.dataset.commercial || '',
+                telephone: row?.querySelector('td:nth-child(3)')?.textContent?.trim()
+                    || row?.dataset.telephone
+                    || '',
+                nom_prospect: readProspectionFieldFromRow(row, 'nom_prospect'),
+                ville: readProspectionFieldFromRow(row, 'ville'),
+                projet: readProspectionFieldFromRow(row, 'projet'),
+            };
+        }
+
+        function openProjetCreateFromProspection(row) {
+            if (!isAdministrateur || typeof openSidePanel !== 'function') return;
+            const payload = getProspectionPayloadFromRow(row);
+            showPanel('projet');
+            openProjetCreate();
+            const commercialValue = resolveProjetCommercialValue(payload.commercial);
+            document.getElementById('projet_commercial').value = commercialValue || payload.commercial || '';
+            document.getElementById('projet_contact').value = payload.telephone || '';
+            document.getElementById('projet_nom_client').value = payload.nom_prospect || '';
+            document.getElementById('projet_ville').value = payload.ville || '';
+            document.getElementById('projet_titre_projet').value = payload.projet || '';
+            document.getElementById('projet_prospection_id').value = payload.id || '';
+            if (projetLookupHint) {
+                projetLookupHint.textContent = 'Prérempli depuis la relance confirmée.';
+                projetLookupHint.className = 'projet-lookup-hint ok';
+            }
+            updateProjetSoldeDisplay();
         }
 
         function openProjetView(projet) {
@@ -3639,6 +3862,15 @@
                         body: JSON.stringify({ statue }),
                     });
                     if (!response.ok) throw new Error('save_failed');
+
+                    if (Array.isArray(prospectionsAllData)) {
+                        const item = prospectionsAllData.find((entry) => entry.id === id);
+                        if (item) item.statue = statue;
+                    }
+
+                    if (statue === 'confirme' && isAdministrateur) {
+                        openProjetCreateFromProspection(row);
+                    }
                 } catch (_) {
                     select.value = previous;
                     select.className = `statue-select ${previous}`;
@@ -4082,6 +4314,9 @@
             if (name === 'commercial') {
                 filterCommercialTable();
             }
+            if (name === 'entrants') {
+                filterEntrantsTable();
+            }
         }
 
         function showProspectionListe() {
@@ -4161,6 +4396,197 @@
         document.getElementById('btnCommercialFermer')?.addEventListener('click', () => {
             showProspectionView('liste');
         });
+
+        const numerosEntrantsData = @json($numerosEntrants ?? []);
+
+        function selectedEntrantIds() {
+            return Array.from(document.querySelectorAll('#numerosEntrantsBody .entrant-check:checked'))
+                .map((el) => el.value)
+                .filter(Boolean);
+        }
+
+        function updateEntrantsRepartirButton() {
+            const btn = document.getElementById('btnEntrantsRepartir');
+            if (!btn) return;
+            const commercial = document.getElementById('entrants_repartir_commercial')?.value || '';
+            btn.disabled = !(commercial && selectedEntrantIds().length > 0);
+        }
+
+        function filterEntrantsTable() {
+            const statue = document.getElementById('filter_entrants_statue')?.value ?? 'nouveau';
+            const num = (document.getElementById('filter_entrants_num')?.value || '').replace(/\D/g, '');
+            const rows = document.querySelectorAll('#numerosEntrantsBody tr[data-id]');
+            let visible = 0;
+
+            rows.forEach((row) => {
+                const rowStatue = row.dataset.statue || 'nouveau';
+                const rowTel = row.dataset.telephone || '';
+                const matchStatue = !statue || rowStatue === statue;
+                const matchNum = !num || rowTel.includes(num);
+                const show = matchStatue && matchNum;
+                row.style.display = show ? '' : 'none';
+                if (show) visible++;
+            });
+
+            const emptyRow = document.getElementById('numerosEntrantsEmpty');
+            if (emptyRow) emptyRow.style.display = visible === 0 ? '' : 'none';
+            updateEntrantsRepartirButton();
+        }
+
+        function appendEntrantRow(row) {
+            const body = document.getElementById('numerosEntrantsBody');
+            if (!body || !row?.id) return;
+            const emptyRow = document.getElementById('numerosEntrantsEmpty');
+            const tr = document.createElement('tr');
+            tr.dataset.id = row.id;
+            tr.dataset.statue = row.statue || 'nouveau';
+            tr.dataset.telephone = String(row.telephone || '').replace(/\D/g, '');
+            const isNouveau = (row.statue || 'nouveau') === 'nouveau';
+            tr.innerHTML = `
+                <td>${isNouveau ? `<input type="checkbox" class="entrant-check" value="${escapeHtml(row.id)}" aria-label="Sélectionner">` : ''}</td>
+                <td>${escapeHtml(row.date || '')}</td>
+                <td>${escapeHtml(row.telephone || '')}</td>
+                <td>${escapeHtml(row.source || 'manuel')}</td>
+                <td>${isNouveau ? 'Nouveau' : 'Réparti'}</td>
+                <td>${escapeHtml(row.commercial || '—')}</td>
+                <td>${isNouveau ? `<button type="button" class="action-btn danger entrant-delete" data-id="${escapeHtml(row.id)}" title="Supprimer" aria-label="Supprimer"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18"/><path d="M8 6V4h8v2"/><path d="M19 6l-1 14H6L5 6"/></svg></button>` : '—'}</td>
+            `;
+            if (emptyRow) body.insertBefore(tr, emptyRow);
+            else body.prepend(tr);
+            numerosEntrantsData.unshift(row);
+            filterEntrantsTable();
+        }
+
+        document.getElementById('filter_entrants_statue')?.addEventListener('change', filterEntrantsTable);
+        document.getElementById('filter_entrants_num')?.addEventListener('input', filterEntrantsTable);
+        document.getElementById('entrants_repartir_commercial')?.addEventListener('change', updateEntrantsRepartirButton);
+        document.getElementById('numerosEntrantsBody')?.addEventListener('change', (e) => {
+            if (e.target.classList.contains('entrant-check') || e.target.id === 'entrantsSelectAll') {
+                updateEntrantsRepartirButton();
+            }
+        });
+        document.getElementById('entrantsSelectAll')?.addEventListener('change', (e) => {
+            const checked = !!e.target.checked;
+            document.querySelectorAll('#numerosEntrantsBody tr[data-id]').forEach((row) => {
+                if (row.style.display === 'none') return;
+                const cb = row.querySelector('.entrant-check');
+                if (cb) cb.checked = checked;
+            });
+            updateEntrantsRepartirButton();
+        });
+
+        document.getElementById('btnEntrantsFermer')?.addEventListener('click', () => showProspectionView('liste'));
+
+        const entrantsNumeroModal = document.getElementById('entrantsNumeroModal');
+        const entrantsNumeroForm = document.getElementById('entrantsNumeroForm');
+
+        document.getElementById('btnEntrantsAjouter')?.addEventListener('click', () => {
+            document.getElementById('entrants_numero_date').value = new Date().toLocaleDateString('fr-FR', { day: '2-digit', month: '2-digit', year: 'numeric' });
+            document.getElementById('entrants_numero_telephone').value = '';
+            openModal(entrantsNumeroModal);
+        });
+        document.getElementById('closeEntrantsNumeroModal')?.addEventListener('click', () => closeModalEl(entrantsNumeroModal));
+        document.getElementById('cancelEntrantsNumeroModal')?.addEventListener('click', () => closeModalEl(entrantsNumeroModal));
+        bindDateMask('entrants_numero_date');
+
+        entrantsNumeroForm?.addEventListener('submit', async (event) => {
+            event.preventDefault();
+            const date = document.getElementById('entrants_numero_date')?.value.trim() || '';
+            const raw = document.getElementById('entrants_numero_telephone')?.value || '';
+            const numeros = raw.split(/[\n,;]+/).map((v) => v.trim()).filter(Boolean);
+            if (numeros.length === 0) return;
+
+            const status = document.getElementById('entrantsStatus');
+            try {
+                const response = await fetch('{{ route('numeros-entrants.store') }}', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json',
+                        'X-CSRF-TOKEN': csrfToken,
+                        'X-Requested-With': 'XMLHttpRequest',
+                    },
+                    body: JSON.stringify({ numeros, date: date || null, source: 'manuel' }),
+                });
+                const data = await response.json().catch(() => ({}));
+                if (!response.ok) throw new Error(data.message || 'save_failed');
+                (data.rows || []).forEach((row) => appendEntrantRow(row));
+                closeModalEl(entrantsNumeroModal);
+                if (status) status.textContent = `${data.created || 0} ajouté(s), ${data.skipped || 0} ignoré(s).`;
+            } catch (error) {
+                if (status) status.textContent = error.message || 'Échec de l’ajout.';
+            }
+        });
+
+        document.getElementById('btnEntrantsRepartir')?.addEventListener('click', async () => {
+            const commercial = document.getElementById('entrants_repartir_commercial')?.value || '';
+            const ids = selectedEntrantIds();
+            const status = document.getElementById('entrantsStatus');
+            if (!commercial || ids.length === 0) return;
+
+            try {
+                const response = await fetch('{{ route('numeros-entrants.repartir') }}', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json',
+                        'X-CSRF-TOKEN': csrfToken,
+                        'X-Requested-With': 'XMLHttpRequest',
+                    },
+                    body: JSON.stringify({ commercial, ids }),
+                });
+                const data = await response.json().catch(() => ({}));
+                if (!response.ok) throw new Error(data.message || 'repartir_failed');
+
+                (data.rows || []).forEach((row) => {
+                    if (Array.isArray(prospectionsAllData)) prospectionsAllData.push(row);
+                });
+
+                ids.forEach((id) => {
+                    const row = document.querySelector(`#numerosEntrantsBody tr[data-id="${CSS.escape(id)}"]`);
+                    if (!row) return;
+                    row.dataset.statue = 'reparti';
+                    row.querySelector('.entrant-check')?.closest('td')?.replaceChildren();
+                    const cells = row.querySelectorAll('td');
+                    if (cells[4]) cells[4].textContent = 'Réparti';
+                    if (cells[5]) cells[5].textContent = commercial;
+                    if (cells[6]) cells[6].textContent = '—';
+                });
+
+                const selectAll = document.getElementById('entrantsSelectAll');
+                if (selectAll) selectAll.checked = false;
+                filterEntrantsTable();
+                if (status) status.textContent = `${data.distributed || 0} réparti(s) vers ${commercial}.`;
+            } catch (error) {
+                if (status) status.textContent = error.message || 'Échec de la répartition.';
+            }
+        });
+
+        document.getElementById('numerosEntrantsBody')?.addEventListener('click', async (event) => {
+            const btn = event.target.closest('.entrant-delete');
+            if (!btn) return;
+            const id = btn.dataset.id;
+            if (!id || !confirm('Supprimer ce numéro de la boîte ?')) return;
+            const status = document.getElementById('entrantsStatus');
+            try {
+                const response = await fetch(`{{ url('/numeros-entrants') }}/${encodeURIComponent(id)}`, {
+                    method: 'DELETE',
+                    headers: {
+                        'Accept': 'application/json',
+                        'X-CSRF-TOKEN': csrfToken,
+                        'X-Requested-With': 'XMLHttpRequest',
+                    },
+                });
+                if (!response.ok) throw new Error('delete_failed');
+                document.querySelector(`#numerosEntrantsBody tr[data-id="${CSS.escape(id)}"]`)?.remove();
+                filterEntrantsTable();
+                if (status) status.textContent = 'Numéro supprimé.';
+            } catch (_) {
+                if (status) status.textContent = 'Échec de la suppression.';
+            }
+        });
+
+        filterEntrantsTable();
 
         const commercialNumeroModal = document.getElementById('commercialNumeroModal');
         const commercialNumeroForm = document.getElementById('commercialNumeroForm');

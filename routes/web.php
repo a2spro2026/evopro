@@ -4,6 +4,7 @@ use App\Support\AppStore;
 use App\Support\CommercialPresenceHelper;
 use App\Support\ContactsArchive;
 use App\Support\FicheSteHelper;
+use App\Support\NumerosEntrantsHelper;
 use App\Support\ProjetHelper;
 use App\Support\ProspectionHelper;
 use App\Support\UtilisateurHelper;
@@ -85,10 +86,14 @@ Route::get('/dashboard', function () use ($requireAuth) {
             ->all();
     }
 
-    $clients = AppStore::get('clients');
+    $clients = collect(AppStore::get('clients'))
+        ->map(fn ($row) => ContactsArchive::normalizeClientRow($row))
+        ->values()
+        ->all();
     $clientStats = [
         'nombre_projets' => count($clients),
         'total_budgets' => (float) collect($clients)->sum(fn ($c) => (float) ($c['budget'] ?? 0)),
+        'total_soldes' => (float) collect($clients)->sum(fn ($c) => (float) ($c['solde'] ?? 0)),
     ];
     $commerciaux = collect($utilisateurs)
         ->filter(fn ($u) => UtilisateurHelper::isCommercial($u))
@@ -122,6 +127,12 @@ Route::get('/dashboard', function () use ($requireAuth) {
         ->values()
         ->all();
 
+    $numerosEntrants = collect(AppStore::get('numeros_entrants'))
+        ->map(fn ($row) => NumerosEntrantsHelper::normalizeRow($row))
+        ->sortByDesc(fn ($row) => $row['date'] ?? '')
+        ->values()
+        ->all();
+
     return view('dashboard', [
         'authUserNom' => $authUserNom,
         'authUserStatue' => (string) ($authUser['statue'] ?? ''),
@@ -137,6 +148,7 @@ Route::get('/dashboard', function () use ($requireAuth) {
         'totalCharges' => $totalCharges,
         'prospections' => $prospections,
         'prospectionsAll' => $prospectionsAll,
+        'numerosEntrants' => $numerosEntrants,
         'clients' => $clients,
         'clientStats' => $clientStats,
         'projets' => $projetsList,
@@ -451,6 +463,91 @@ Route::middleware('auth.user')->post('/prospections/commercial/import', function
     ]);
 })->name('prospections.commercial.import');
 
+Route::middleware('auth.user')->post('/numeros-entrants', function (Request $request) use ($requireProspectionManager) {
+    $requireProspectionManager();
+
+    $data = $request->validate([
+        'telephone' => ['nullable', 'string', 'max:255'],
+        'numeros' => ['nullable', 'array'],
+        'numeros.*' => ['string', 'max:255'],
+        'date' => ['nullable', 'string', 'regex:/^\d{2}\/\d{2}\/\d{4}$/'],
+        'source' => ['nullable', 'string', 'max:50'],
+    ]);
+
+    $numeros = [];
+    if (trim((string) ($data['telephone'] ?? '')) !== '') {
+        $numeros[] = $data['telephone'];
+    }
+    if (! empty($data['numeros'])) {
+        $numeros = array_merge($numeros, $data['numeros']);
+    }
+
+    if ($numeros === []) {
+        return response()->json(['ok' => false, 'message' => 'Aucun numéro fourni.'], 422);
+    }
+
+    $inbox = AppStore::get('numeros_entrants');
+    $result = NumerosEntrantsHelper::addNumbers(
+        $inbox,
+        $numeros,
+        trim((string) ($data['source'] ?? 'manuel')) ?: 'manuel',
+        $data['date'] ?? null
+    );
+
+    return response()->json([
+        'ok' => true,
+        'created' => $result['created'],
+        'skipped' => $result['skipped'],
+        'rows' => $result['rows'],
+    ]);
+})->name('numeros-entrants.store');
+
+Route::middleware('auth.user')->post('/numeros-entrants/repartir', function (Request $request) use ($requireProspectionManager) {
+    $requireProspectionManager();
+
+    $data = $request->validate([
+        'commercial' => ['required', 'string', 'max:255'],
+        'ids' => ['required', 'array', 'min:1'],
+        'ids.*' => ['string', 'max:255'],
+        'date' => ['nullable', 'string', 'regex:/^\d{2}\/\d{2}\/\d{4}$/'],
+    ]);
+
+    $inbox = collect(AppStore::get('numeros_entrants'))
+        ->map(fn ($row) => NumerosEntrantsHelper::normalizeRow($row))
+        ->values()
+        ->all();
+
+    $result = NumerosEntrantsHelper::distributeToCommercial(
+        $inbox,
+        $data['ids'],
+        $data['commercial'],
+        $data['date'] ?? null
+    );
+
+    return response()->json([
+        'ok' => true,
+        'distributed' => $result['distributed'],
+        'skipped' => $result['skipped'],
+        'rows' => $result['rows'],
+        'inbox' => collect($result['inbox'])->map(fn ($row) => NumerosEntrantsHelper::normalizeRow($row))->values()->all(),
+    ]);
+})->name('numeros-entrants.repartir');
+
+Route::middleware('auth.user')->delete('/numeros-entrants/{id}', function (string $id) use ($requireProspectionManager) {
+    $requireProspectionManager();
+
+    $inbox = AppStore::get('numeros_entrants');
+    $filtered = collect($inbox)->reject(fn ($row) => ($row['id'] ?? '') === $id)->values()->all();
+
+    if (count($filtered) === count($inbox)) {
+        return response()->json(['ok' => false, 'message' => 'Numéro introuvable.'], 404);
+    }
+
+    AppStore::put('numeros_entrants', $filtered);
+
+    return response()->json(['ok' => true, 'id' => $id]);
+})->where('id', '.+')->name('numeros-entrants.destroy');
+
 Route::middleware('auth.user')->post('/clients', function (Request $request) {
     $data = $request->validate([
         'date' => ['required', 'string', 'regex:/^\d{2}\/\d{2}\/\d{4}$/'],
@@ -460,11 +557,18 @@ Route::middleware('auth.user')->post('/clients', function (Request $request) {
         'titre_projet' => ['required', 'string', 'max:255'],
         'delai_travail' => ['nullable', 'string', 'max:255'],
         'budget' => ['nullable', 'numeric', 'min:0'],
+        'avance' => ['nullable', 'numeric', 'min:0'],
+        'solde' => ['nullable', 'numeric', 'min:0'],
     ]);
 
     $clients = AppStore::get('clients');
     $n = count($clients) + 1;
     $titre = trim($data['titre_projet']);
+    $budget = (float) ($data['budget'] ?? 0);
+    $avance = (float) ($data['avance'] ?? 0);
+    $solde = array_key_exists('solde', $data)
+        ? (float) $data['solde']
+        : max(0, $budget - $avance);
 
     $clients[] = ContactsArchive::normalizeClientRow([
         'id' => uniqid('cli_', true),
@@ -475,7 +579,9 @@ Route::middleware('auth.user')->post('/clients', function (Request $request) {
         'contact' => trim((string) ($data['contact'] ?? '')),
         'titre_projet' => $titre,
         'delai_travail' => ContactsArchive::formatDelaiTravail($data['delai_travail'] ?? ''),
-        'budget' => (float) ($data['budget'] ?? 0),
+        'budget' => $budget,
+        'avance' => $avance,
+        'solde' => $solde,
     ]);
 
     AppStore::put('clients', $clients);
@@ -492,6 +598,8 @@ Route::middleware('auth.user')->put('/clients/{id}', function (Request $request,
         'titre_projet' => ['required', 'string', 'max:255'],
         'delai_travail' => ['nullable', 'string', 'max:255'],
         'budget' => ['nullable', 'numeric', 'min:0'],
+        'avance' => ['nullable', 'numeric', 'min:0'],
+        'solde' => ['nullable', 'numeric', 'min:0'],
     ]);
 
     $clients = AppStore::get('clients');
@@ -502,6 +610,12 @@ Route::middleware('auth.user')->put('/clients/{id}', function (Request $request,
     }
 
     $titre = trim($data['titre_projet']);
+    $budget = (float) ($data['budget'] ?? 0);
+    $avance = (float) ($data['avance'] ?? 0);
+    $solde = array_key_exists('solde', $data)
+        ? (float) $data['solde']
+        : max(0, $budget - $avance);
+
     $clients[$index]['date'] = $data['date'];
     $clients[$index]['nom'] = trim($data['nom']);
     $clients[$index]['ville'] = trim((string) ($data['ville'] ?? ''));
@@ -509,7 +623,9 @@ Route::middleware('auth.user')->put('/clients/{id}', function (Request $request,
     $clients[$index]['titre_projet'] = $titre;
     $clients[$index]['activite'] = $titre;
     $clients[$index]['delai_travail'] = ContactsArchive::formatDelaiTravail($data['delai_travail'] ?? '');
-    $clients[$index]['budget'] = (float) ($data['budget'] ?? 0);
+    $clients[$index]['budget'] = $budget;
+    $clients[$index]['avance'] = $avance;
+    $clients[$index]['solde'] = $solde;
 
     AppStore::put('clients', $clients);
 
