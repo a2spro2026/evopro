@@ -135,6 +135,11 @@
         .evopro-combo {
             position: relative;
             width: 100%;
+            z-index: 5;
+        }
+
+        .evopro-combo.open {
+            z-index: 80;
         }
 
         .evopro-combo-native {
@@ -187,8 +192,12 @@
 
         .evopro-combo-menu {
             display: none;
-            position: fixed;
-            z-index: 5000;
+            position: absolute;
+            z-index: 90;
+            left: 0;
+            right: 0;
+            top: calc(100% + 4px);
+            width: 100%;
             max-height: 240px;
             overflow: auto;
             border-radius: 10px;
@@ -711,8 +720,8 @@
         .panel.active { display: block; }
 
         @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(6px); }
-            to { opacity: 1; transform: translateY(0); }
+            from { opacity: 0; }
+            to { opacity: 1; }
         }
 
         .content-head {
@@ -834,6 +843,7 @@
             border-radius: 12px;
             border: 1px solid rgba(110, 168, 255, 0.18);
             background: rgba(10, 20, 36, 0.65);
+            overflow: visible;
         }
 
         .search-field {
@@ -841,6 +851,13 @@
             flex-direction: column;
             gap: 0.35rem;
             min-width: 0;
+            overflow: visible;
+            position: relative;
+            z-index: 1;
+        }
+
+        .search-field:has(.evopro-combo.open) {
+            z-index: 100;
         }
 
         .search-field label {
@@ -3253,32 +3270,6 @@
                 .replace(/"/g, '&quot;');
         }
 
-        function positionEvoproComboMenu(wrap) {
-            const trigger = wrap.querySelector('.evopro-combo-trigger');
-            const menu = wrap.querySelector('.evopro-combo-menu');
-            if (!trigger || !menu) return;
-
-            const rect = trigger.getBoundingClientRect();
-            const width = Math.max(rect.width, 180);
-            let left = rect.left;
-            let top = rect.bottom + 4;
-            const maxRight = window.innerWidth - 8;
-            if (left + width > maxRight) left = Math.max(8, maxRight - width);
-
-            menu.style.width = `${width}px`;
-            menu.style.left = `${left}px`;
-            menu.style.top = `${top}px`;
-
-            // If not enough space below, open upward
-            requestAnimationFrame(() => {
-                const menuRect = menu.getBoundingClientRect();
-                if (menuRect.bottom > window.innerHeight - 8) {
-                    const upTop = rect.top - menuRect.height - 4;
-                    menu.style.top = `${Math.max(8, upTop)}px`;
-                }
-            });
-        }
-
         function syncEvoproCombo(select) {
             const wrap = select?.closest?.('.evopro-combo');
             if (!wrap) return;
@@ -3290,6 +3281,11 @@
             const label = selected ? selected.textContent.trim() : '';
             trigger.textContent = label || 'Choisir…';
             trigger.classList.toggle('is-placeholder', !select.value);
+
+            // Clear any leftover fixed-position inline styles
+            menu.style.left = '';
+            menu.style.top = '';
+            menu.style.width = '';
 
             menu.querySelectorAll('.evopro-combo-option').forEach((btn) => {
                 btn.classList.toggle('is-active', btn.dataset.value === select.value);
@@ -3360,7 +3356,6 @@
                 if (willOpen) {
                     rebuildEvoproComboMenu(select);
                     wrap.classList.add('open');
-                    positionEvoproComboMenu(wrap);
                 } else {
                     wrap.classList.remove('open');
                 }
@@ -3393,12 +3388,6 @@
         document.addEventListener('click', () => {
             document.querySelectorAll('.evopro-combo.open').forEach((el) => el.classList.remove('open'));
         });
-        window.addEventListener('resize', () => {
-            document.querySelectorAll('.evopro-combo.open').forEach((el) => positionEvoproComboMenu(el));
-        });
-        document.addEventListener('scroll', () => {
-            document.querySelectorAll('.evopro-combo.open').forEach((el) => positionEvoproComboMenu(el));
-        }, true);
 
         enhanceAllSelects();
         const comboObserver = new MutationObserver((mutations) => {
