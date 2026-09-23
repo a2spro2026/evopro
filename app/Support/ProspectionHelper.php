@@ -220,12 +220,20 @@ class ProspectionHelper
     /**
      * @return array<string, mixed>
      */
-    public static function createRow(string $commercial, string $telephone, ?string $date = null, int $page = 1, int $num = 0, string $batchId = ''): array
-    {
+    public static function createRow(
+        string $commercial,
+        string $telephone,
+        ?string $date = null,
+        int $page = 1,
+        int $num = 0,
+        string $batchId = '',
+        string $nomProspect = ''
+    ): array {
         return self::createRelanceRow([
             'commercial' => $commercial,
             'telephone' => $telephone,
             'date' => $date,
+            'nom_prospect' => $nomProspect,
             'from_commercial_import' => true,
             'page' => $page,
             'num' => $num,
@@ -277,7 +285,8 @@ class ProspectionHelper
         string $commercial,
         array $telephones,
         ?string $date = null,
-        bool $forceNewPage = true
+        bool $forceNewPage = true,
+        string $nomProspect = ''
     ): array {
         $commercial = self::resolveCommercialName($commercial);
         $commercialUserId = self::resolveCommercialUserId($commercial);
@@ -371,7 +380,7 @@ class ProspectionHelper
             }
 
             $numOnPage++;
-            $row = self::createRow($commercial, $display, $date, $page, $numOnPage, $batchId);
+            $row = self::createRow($commercial, $display, $date, $page, $numOnPage, $batchId, $nomProspect);
             if ($commercialUserId !== null) {
                 $row['commercial_user_id'] = $commercialUserId;
             }

@@ -269,7 +269,7 @@
         .shell {
             min-height: 100vh;
             display: grid;
-            grid-template-columns: 260px 1fr;
+            grid-template-columns: 272px 1fr;
             transition: grid-template-columns 0.25s ease;
         }
 
@@ -416,10 +416,48 @@
 
         .nav-list {
             flex: 1;
-            padding: 0.85rem 0.75rem;
+            padding: 0.75rem 0.7rem 1rem;
             display: flex;
             flex-direction: column;
-            gap: 0.25rem;
+            gap: 0.35rem;
+            overflow-y: auto;
+            scrollbar-width: thin;
+            scrollbar-color: rgba(110, 168, 255, 0.35) transparent;
+        }
+
+        .nav-section {
+            display: flex;
+            flex-direction: column;
+            gap: 0.28rem;
+            margin-top: 0.55rem;
+            padding-top: 0.55rem;
+            border-top: 1px solid rgba(110, 168, 255, 0.1);
+        }
+
+        .nav-section:first-child {
+            margin-top: 0;
+            padding-top: 0;
+            border-top: none;
+        }
+
+        .nav-section-label {
+            display: flex;
+            align-items: center;
+            gap: 0.45rem;
+            padding: 0.15rem 0.55rem 0.35rem;
+            font-size: 0.68rem;
+            font-weight: 700;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            color: rgba(158, 190, 230, 0.55);
+            user-select: none;
+        }
+
+        .nav-section-label::after {
+            content: '';
+            flex: 1;
+            height: 1px;
+            background: linear-gradient(90deg, rgba(110, 168, 255, 0.22), transparent 85%);
         }
 
         .nav-item {
@@ -427,17 +465,18 @@
             align-items: center;
             gap: 0.7rem;
             width: 100%;
-            padding: 0.78rem 0.9rem;
+            padding: 0.72rem 0.8rem;
             border: none;
             border-radius: 12px;
             background: transparent;
             color: var(--muted);
             font-family: inherit;
-            font-size: 0.92rem;
+            font-size: 0.9rem;
             font-weight: 500;
             text-align: left;
             cursor: pointer;
-            transition: background 0.2s ease, color 0.2s ease, transform 0.2s ease;
+            position: relative;
+            transition: background 0.2s ease, color 0.2s ease, box-shadow 0.2s ease, transform 0.15s ease;
         }
 
         .nav-item-text { flex: 1; min-width: 0; }
@@ -446,13 +485,13 @@
             width: 18px;
             height: 18px;
             flex-shrink: 0;
-            opacity: 0.55;
-            transition: transform 0.2s ease, opacity 0.2s ease;
+            opacity: 0.45;
+            transition: transform 0.25s ease, opacity 0.2s ease;
         }
 
         .nav-group.expanded > .nav-item .nav-chevron {
             transform: rotate(180deg);
-            opacity: 0.85;
+            opacity: 0.9;
         }
 
         .nav-item:hover {
@@ -461,53 +500,121 @@
         }
 
         .nav-item.active {
-            background: rgba(59, 158, 255, 0.16);
+            background: linear-gradient(135deg, rgba(59, 158, 255, 0.2), rgba(59, 158, 255, 0.1));
             color: #fff;
-            box-shadow: inset 0 0 0 1px rgba(110, 168, 255, 0.22);
+            box-shadow:
+                inset 0 0 0 1px rgba(110, 168, 255, 0.28),
+                0 6px 16px rgba(20, 60, 120, 0.18);
+        }
+
+        .nav-item.active::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 20%;
+            bottom: 20%;
+            width: 3px;
+            border-radius: 0 3px 3px 0;
+            background: linear-gradient(180deg, #7ec4ff, #3b9eff);
+            box-shadow: 0 0 10px rgba(59, 158, 255, 0.55);
         }
 
         .nav-group {
             display: flex;
             flex-direction: column;
-            gap: 0.2rem;
+            gap: 0;
+            border-radius: 14px;
+            transition: background 0.25s ease, box-shadow 0.25s ease;
+        }
+
+        .nav-group.expanded {
+            background: rgba(8, 22, 42, 0.55);
+            box-shadow:
+                inset 0 0 0 1px rgba(110, 168, 255, 0.12),
+                0 8px 22px rgba(0, 0, 0, 0.16);
+            padding: 0.2rem;
+            margin: 0.1rem 0;
+        }
+
+        [data-theme="light"] .nav-group.expanded {
+            background: rgba(59, 120, 200, 0.06);
+            box-shadow: inset 0 0 0 1px rgba(59, 120, 200, 0.12);
+        }
+
+        .nav-group.expanded > .nav-item {
+            background: transparent;
+        }
+
+        .nav-group.expanded > .nav-item.active {
+            background: linear-gradient(135deg, rgba(59, 158, 255, 0.18), rgba(59, 158, 255, 0.08));
         }
 
         .nav-sublist {
             display: none;
             flex-direction: column;
-            gap: 0.2rem;
-            padding: 0 0 0.15rem 0.35rem;
+            gap: 0.18rem;
+            padding: 0.15rem 0.2rem 0.35rem 0.55rem;
+            margin: 0 0.15rem 0.15rem 0.85rem;
+            border-left: 2px solid rgba(110, 168, 255, 0.18);
+            position: relative;
         }
 
-        .nav-group.expanded .nav-sublist { display: flex; }
+        .nav-group.expanded .nav-sublist {
+            display: flex;
+            animation: navSubIn 0.22s ease both;
+        }
+
+        @keyframes navSubIn {
+            from { opacity: 0; transform: translateY(-4px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
 
         .nav-subitem {
             display: flex;
             align-items: center;
             gap: 0.55rem;
             width: 100%;
-            padding: 0.62rem 0.85rem 0.62rem 1.1rem;
+            padding: 0.58rem 0.75rem 0.58rem 0.7rem;
             border: none;
             border-radius: 10px;
             background: transparent;
             color: var(--muted);
             font-family: inherit;
-            font-size: 0.82rem;
+            font-size: 0.8rem;
             font-weight: 600;
             text-align: left;
             cursor: pointer;
-            transition: background 0.2s ease, color 0.2s ease;
+            position: relative;
+            transition: background 0.2s ease, color 0.2s ease, transform 0.15s ease;
+        }
+
+        .nav-subitem::before {
+            content: '';
+            position: absolute;
+            left: -0.55rem;
+            top: 50%;
+            width: 0.45rem;
+            height: 2px;
+            background: rgba(110, 168, 255, 0.28);
+            transform: translateY(-50%);
         }
 
         .nav-subitem:hover {
-            background: rgba(59, 158, 255, 0.08);
+            background: rgba(59, 158, 255, 0.1);
             color: var(--text);
+            transform: translateX(2px);
         }
 
         .nav-subitem.active {
-            background: rgba(59, 158, 255, 0.14);
+            background: linear-gradient(135deg, rgba(59, 158, 255, 0.2), rgba(94, 176, 255, 0.08));
             color: #fff;
-            box-shadow: inset 0 0 0 1px rgba(110, 168, 255, 0.2);
+            box-shadow: inset 0 0 0 1px rgba(110, 168, 255, 0.22);
+        }
+
+        .nav-subitem.active::before {
+            background: #7ec4ff;
+            box-shadow: 0 0 8px rgba(126, 196, 255, 0.65);
+            width: 0.55rem;
         }
 
         .nav-icon {
@@ -518,6 +625,13 @@
             place-items: center;
             flex-shrink: 0;
             border: 1px solid transparent;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .nav-item:hover .nav-icon,
+        .nav-item.active .nav-icon {
+            transform: scale(1.04);
+            box-shadow: 0 0 12px rgba(59, 158, 255, 0.18);
         }
 
         .nav-icon svg { width: 16px; height: 16px; }
@@ -539,6 +653,12 @@
         .nav-subicon.entrants { background: rgba(126, 196, 255, 0.12); color: #9ad4ff; border-color: rgba(126, 196, 255, 0.22); }
         .nav-subicon.utilisateur { background: rgba(126, 196, 255, 0.12); color: #9ad4ff; border-color: rgba(126, 196, 255, 0.22); }
         .nav-subicon.fiche-ste { background: rgba(155, 123, 255, 0.12); color: #c4b0ff; border-color: rgba(155, 123, 255, 0.22); }
+        .nav-subicon.projet { background: rgba(155, 123, 255, 0.12); color: #c4b0ff; border-color: rgba(155, 123, 255, 0.22); }
+        .nav-subicon.client { background: rgba(126, 196, 255, 0.12); color: #9ad4ff; border-color: rgba(126, 196, 255, 0.22); }
+        .nav-subicon.paiement { background: rgba(61, 207, 138, 0.12); color: #7ee8b0; border-color: rgba(61, 207, 138, 0.22); }
+        .nav-subicon.bon-charge { background: rgba(240, 113, 120, 0.12); color: #ff9aa0; border-color: rgba(240, 113, 120, 0.22); }
+        .nav-subicon.balance-charges { background: rgba(240, 180, 41, 0.12); color: #ffc857; border-color: rgba(240, 180, 41, 0.22); }
+        .nav-subicon.paie-commerciaux { background: rgba(61, 207, 138, 0.12); color: #7ee8b0; border-color: rgba(61, 207, 138, 0.22); }
 
         .nav-icon.dashboard { background: rgba(59, 158, 255, 0.14); color: #9ad4ff; border-color: rgba(126, 196, 255, 0.25); }
         .nav-icon.prospection { background: rgba(240, 180, 41, 0.14); color: #ffc857; border-color: rgba(240, 180, 41, 0.25); }
@@ -547,6 +667,39 @@
         .nav-icon.paiement { background: rgba(61, 207, 138, 0.14); color: #7ee8b0; border-color: rgba(61, 207, 138, 0.25); }
         .nav-icon.charge { background: rgba(240, 113, 120, 0.14); color: #ff9aa0; border-color: rgba(240, 113, 120, 0.25); }
         .nav-icon.config { background: rgba(77, 212, 234, 0.14); color: #7ee8f5; border-color: rgba(77, 212, 234, 0.25); }
+
+        .panel-placeholder {
+            margin-top: 1rem;
+            padding: 1.6rem 1.4rem;
+            border-radius: 16px;
+            border: 1px solid rgba(110, 168, 255, 0.16);
+            background:
+                linear-gradient(145deg, rgba(18, 40, 72, 0.55), rgba(10, 22, 42, 0.35)),
+                radial-gradient(ellipse 80% 60% at 10% 0%, rgba(59, 158, 255, 0.12), transparent 55%);
+            box-shadow: 0 10px 28px rgba(0, 0, 0, 0.18);
+        }
+
+        .panel-placeholder strong {
+            display: block;
+            font-size: 0.95rem;
+            font-weight: 650;
+            color: var(--text);
+            margin-bottom: 0.35rem;
+        }
+
+        .panel-placeholder span {
+            display: block;
+            font-size: 0.82rem;
+            color: var(--muted);
+            line-height: 1.45;
+        }
+
+        [data-theme="light"] .panel-placeholder {
+            background:
+                linear-gradient(145deg, rgba(255, 255, 255, 0.9), rgba(235, 244, 255, 0.75)),
+                radial-gradient(ellipse 80% 60% at 10% 0%, rgba(59, 158, 255, 0.08), transparent 55%);
+            border-color: rgba(59, 120, 200, 0.18);
+        }
 
         .sidebar-foot {
             padding: 0.85rem 0.75rem 1rem;
@@ -1330,6 +1483,45 @@
 
         .toolbar-actions { display: flex; gap: 0.55rem; align-items: center; flex-wrap: wrap; }
 
+        .entrants-toolbar-actions {
+            align-items: flex-end;
+        }
+
+        .entrants-commercial-cible {
+            display: flex;
+            flex-direction: column;
+            gap: 0.28rem;
+            min-width: 190px;
+        }
+
+        .entrants-commercial-cible label {
+            font-size: 0.68rem;
+            font-weight: 600;
+            letter-spacing: 0.04em;
+            text-transform: uppercase;
+            color: var(--accent-soft);
+        }
+
+        .entrants-commercial-cible select,
+        .entrants-commercial-cible .evopro-combo-trigger {
+            min-height: 38px;
+            height: 38px;
+            padding: 0 0.75rem;
+            border-radius: 10px;
+            border: 1px solid rgba(110, 168, 255, 0.22);
+            background-color: #102038;
+            color: #f4f8ff;
+            font-family: inherit;
+            font-size: 0.84rem;
+            min-width: 190px;
+        }
+
+        [data-theme="light"] .entrants-commercial-cible select,
+        [data-theme="light"] .entrants-commercial-cible .evopro-combo-trigger {
+            background-color: #ffffff;
+            color: #0f1f35;
+        }
+
         .btn-add {
             display: inline-flex;
             align-items: center;
@@ -1845,14 +2037,19 @@
 
             <nav class="nav-list">
                 @if ($isAdministrateur ?? false)
-                <button type="button" class="nav-item {{ ($defaultPanel ?? 'dashboard') === 'dashboard' ? 'active' : '' }}" data-panel="dashboard">
-                    <span class="nav-icon dashboard" aria-hidden="true">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/></svg>
-                    </span>
-                    Tableau de Bord
-                </button>
+                <div class="nav-section">
+                    <div class="nav-section-label">Vue d’ensemble</div>
+                    <button type="button" class="nav-item {{ ($defaultPanel ?? 'dashboard') === 'dashboard' ? 'active' : '' }}" data-panel="dashboard">
+                        <span class="nav-icon dashboard" aria-hidden="true">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/></svg>
+                        </span>
+                        Tableau de Bord
+                    </button>
+                </div>
                 @endif
 
+                <div class="nav-section">
+                    <div class="nav-section-label">Activité</div>
                 @if ($isCommercialRole ?? false)
                 <button type="button" class="nav-item {{ ($defaultPanel ?? '') === 'prospection' ? 'active' : '' }}" data-panel="prospection">
                     <span class="nav-icon prospection" aria-hidden="true">
@@ -1895,32 +2092,81 @@
                     </div>
                 </div>
                 @endif
+                </div>
 
                 @if ($isAdministrateur ?? false)
-                <button type="button" class="nav-item" data-panel="client">
-                    <span class="nav-icon client" aria-hidden="true">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>
-                    </span>
-                    Client
-                </button>
-                <button type="button" class="nav-item" data-panel="projet">
-                    <span class="nav-icon projet" aria-hidden="true">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7h18"/><path d="M3 12h18"/><path d="M8 7v10"/><path d="M16 7v10"/></svg>
-                    </span>
-                    Projet
-                </button>
-                <button type="button" class="nav-item" data-panel="paiement">
-                    <span class="nav-icon paiement" aria-hidden="true">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="5" width="20" height="14" rx="2"/><path d="M2 10h20"/></svg>
-                    </span>
-                    Paiement
-                </button>
-                <button type="button" class="nav-item" data-panel="charge">
-                    <span class="nav-icon charge" aria-hidden="true">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 8v8"/><path d="M8 12h8"/></svg>
-                    </span>
-                    Charge
-                </button>
+                <div class="nav-section">
+                    <div class="nav-section-label">Projets & clients</div>
+                <div class="nav-group" data-nav-group="projet">
+                    <button type="button" class="nav-item has-sublist" data-panel="projet" data-toggle-group="projet">
+                        <span class="nav-icon projet" aria-hidden="true">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7h18"/><path d="M3 12h18"/><path d="M8 7v10"/><path d="M16 7v10"/></svg>
+                        </span>
+                        <span class="nav-item-text">Projet</span>
+                        <span class="nav-chevron" aria-hidden="true">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>
+                        </span>
+                    </button>
+                    <div class="nav-sublist" aria-label="Sous-menu projet">
+                        <button type="button" class="nav-subitem" data-panel="projet">
+                            <span class="nav-subicon projet" aria-hidden="true">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7h18"/><path d="M3 12h18"/><path d="M8 7v10"/><path d="M16 7v10"/></svg>
+                            </span>
+                            État Projet
+                        </button>
+                        <button type="button" class="nav-subitem" data-panel="client">
+                            <span class="nav-subicon client" aria-hidden="true">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>
+                            </span>
+                            Fiche Client
+                        </button>
+                        <button type="button" class="nav-subitem" data-panel="paiement">
+                            <span class="nav-subicon paiement" aria-hidden="true">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="5" width="20" height="14" rx="2"/><path d="M2 10h20"/></svg>
+                            </span>
+                            Paiement
+                        </button>
+                    </div>
+                </div>
+                </div>
+
+                <div class="nav-section">
+                    <div class="nav-section-label">Finances</div>
+                <div class="nav-group" data-nav-group="charge">
+                    <button type="button" class="nav-item has-sublist" data-panel="charge" data-toggle-group="charge">
+                        <span class="nav-icon charge" aria-hidden="true">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 8v8"/><path d="M8 12h8"/></svg>
+                        </span>
+                        <span class="nav-item-text">Charge</span>
+                        <span class="nav-chevron" aria-hidden="true">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>
+                        </span>
+                    </button>
+                    <div class="nav-sublist" aria-label="Sous-menu charge">
+                        <button type="button" class="nav-subitem" data-panel="bon-charge">
+                            <span class="nav-subicon bon-charge" aria-hidden="true">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/><path d="M8 13h8"/><path d="M8 17h6"/></svg>
+                            </span>
+                            Bon Charge
+                        </button>
+                        <button type="button" class="nav-subitem" data-panel="balance-charges">
+                            <span class="nav-subicon balance-charges" aria-hidden="true">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v18"/><path d="M5 8h4l2 4 2-8 2 4h4"/><path d="M5 16h14"/></svg>
+                            </span>
+                            Balance Charges
+                        </button>
+                        <button type="button" class="nav-subitem" data-panel="paie-commerciaux">
+                            <span class="nav-subicon paie-commerciaux" aria-hidden="true">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+                            </span>
+                            Paie Commerciaux
+                        </button>
+                    </div>
+                </div>
+                </div>
+
+                <div class="nav-section">
+                    <div class="nav-section-label">Système</div>
                 <div class="nav-group" data-nav-group="configuration">
                     <button type="button" class="nav-item has-sublist" data-panel="configuration" data-toggle-group="configuration">
                         <span class="nav-icon config" aria-hidden="true">
@@ -1945,6 +2191,7 @@
                             Fiche Ste
                         </button>
                     </div>
+                </div>
                 </div>
                 @endif
             </nav>
@@ -2005,7 +2252,6 @@
                 <section class="panel {{ ($defaultPanel ?? 'dashboard') === 'dashboard' ? 'active' : '' }}" id="panel-dashboard">
                     <div class="content-head">
                         <h1>Tableau de Bord</h1>
-                        <p>Vue d’ensemble des projets et charges.</p>
                     </div>
 
                     <div class="cards" aria-label="Statistiques">
@@ -2031,15 +2277,6 @@
                 <section class="panel {{ ($defaultPanel ?? 'dashboard') === 'prospection' ? 'active' : '' }}" id="panel-prospection">
                     <div class="content-head">
                         <h1>{{ ($isCommercialRole ?? false) || ($isAssistante ?? false) ? 'Tableau de relance' : 'Prospection' }}</h1>
-                        <p>
-                            @if ($isCommercialRole ?? false)
-                                Complétez les numéros importés pour vous (nom, ville, projet, description). Validez le prospect : l'administrateur confirme ensuite.
-                            @elseif (($isAdministrateur ?? false) || ($isAssistante ?? false))
-                                Vue en direct de toutes les relances remplies par les commerciaux.
-                            @else
-                                Suivi des prospects et des contacts commerciaux.
-                            @endif
-                        </p>
                     </div>
 
                     <div class="prospection-view active" id="prospection-liste">
@@ -2344,7 +2581,6 @@
                         <div class="section-toolbar" style="margin-bottom:1rem;">
                             <div class="content-head" style="margin-bottom:0;">
                                 <h2 style="font-size:1.05rem;">Commercial</h2>
-                                <p>Gestion des numéros par commercial.</p>
                             </div>
                             <div class="toolbar-actions">
                                 <button type="button" class="btn-add" id="btnCommercialAjouter">
@@ -2436,9 +2672,17 @@
                         <div class="section-toolbar" style="margin-bottom:1rem;">
                             <div class="content-head" style="margin-bottom:0;">
                                 <h2 style="font-size:1.05rem;">Numéros entrants</h2>
-                                <p>Boîte des numéros reçus. L’admin les répartit manuellement vers les commerciaux (Relance).</p>
                             </div>
-                            <div class="toolbar-actions">
+                            <div class="toolbar-actions entrants-toolbar-actions">
+                                <div class="entrants-commercial-cible">
+                                    <label for="entrants_repartir_commercial">Commercial cible</label>
+                                    <select id="entrants_repartir_commercial">
+                                        <option value="">Choisir…</option>
+                                        @foreach (($commerciauxUsers ?? []) as $commercialUser)
+                                            <option value="{{ $commercialUser }}">{{ $commercialUser }}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
                                 <button type="button" class="btn-add" id="btnEntrantsAjouter">
                                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>
                                     Ajouter
@@ -2451,7 +2695,7 @@
                             </div>
                         </div>
 
-                        <div class="search-bar" aria-label="Filtres numéros entrants" style="grid-template-columns: repeat(3, minmax(0, 1fr)); margin-bottom:1rem;">
+                        <div class="search-bar" aria-label="Filtres numéros entrants" style="grid-template-columns: repeat(2, minmax(0, 1fr)); margin-bottom:1rem;">
                             <div class="search-field">
                                 <label for="filter_entrants_statue">Statue</label>
                                 <select id="filter_entrants_statue">
@@ -2463,17 +2707,6 @@
                             <div class="search-field">
                                 <label for="filter_entrants_num">Num</label>
                                 <input type="text" id="filter_entrants_num" placeholder="Ex. 06…" maxlength="20" autocomplete="off" inputmode="tel">
-                            </div>
-                            <div class="search-field">
-                                <label for="entrants_repartir_commercial">Commercial cible</label>
-                                <input type="hidden" id="entrants_repartir_commercial" value="">
-                                <div class="commercial-pick-grid" id="entrants_repartir_commercial_picker" role="listbox" aria-label="Commercial cible" style="max-height:160px;">
-                                    @forelse (($commerciauxUsers ?? []) as $commercialUser)
-                                        <button type="button" class="commercial-pick-btn" data-value="{{ $commercialUser }}">{{ $commercialUser }}</button>
-                                    @empty
-                                        <p class="commercial-pick-empty">Aucun commercial.</p>
-                                    @endforelse
-                                </div>
                             </div>
                         </div>
 
@@ -2533,7 +2766,6 @@
                     <div class="section-toolbar">
                         <div class="content-head" style="margin-bottom:0;">
                             <h1>Fiche Clients</h1>
-                            <p>Fiches clients et projets associés.</p>
                         </div>
                         <div class="toolbar-actions">
                             <button type="button" class="btn-add" id="btnAddClient">
@@ -2661,8 +2893,7 @@
                 <section class="panel" id="panel-projet">
                     <div class="section-toolbar">
                         <div class="content-head" style="margin-bottom:0;">
-                            <h1>Projet</h1>
-                            <p>Suivi des projets confirmés et paiements.</p>
+                            <h1>État Projet</h1>
                         </div>
                         <div class="toolbar-actions">
                             <button type="button" class="btn-add" id="btnAddProjet">
@@ -2780,23 +3011,46 @@
                 <section class="panel" id="panel-paiement">
                     <div class="content-head">
                         <h1>Paiement</h1>
-                        <p>Module en cours de construction.</p>
                     </div>
-                    <div class="placeholder">Contenu Paiement à venir.</div>
+                    <div class="panel-placeholder">
+                        <strong>Suivi des paiements</strong>
+                        <span>Cette section accueillera les encaissements liés aux projets.</span>
+                    </div>
                 </section>
 
-                <section class="panel" id="panel-charge">
+                <section class="panel" id="panel-bon-charge">
                     <div class="content-head">
-                        <h1>Charge</h1>
-                        <p>Module en cours de construction.</p>
+                        <h1>Bon Charge</h1>
                     </div>
-                    <div class="placeholder">Contenu Charge à venir.</div>
+                    <div class="panel-placeholder">
+                        <strong>Bons de charge</strong>
+                        <span>Enregistrez et consultez les bons de charge ici.</span>
+                    </div>
+                </section>
+
+                <section class="panel" id="panel-balance-charges">
+                    <div class="content-head">
+                        <h1>Balance Charges</h1>
+                    </div>
+                    <div class="panel-placeholder">
+                        <strong>Balance des charges</strong>
+                        <span>Vue synthétique des charges et soldes à venir.</span>
+                    </div>
+                </section>
+
+                <section class="panel" id="panel-paie-commerciaux">
+                    <div class="content-head">
+                        <h1>Paie Commerciaux</h1>
+                    </div>
+                    <div class="panel-placeholder">
+                        <strong>Paie des commerciaux</strong>
+                        <span>Calcul et suivi des commissions / paiements commerciaux.</span>
+                    </div>
                 </section>
 
                 <section class="panel" id="panel-configuration">
                     <div class="content-head">
                         <h1>Configuration</h1>
-                        <p>Paramètres, utilisateurs et fiche société.</p>
                     </div>
 
                     <div class="config-content">
@@ -2804,7 +3058,6 @@
                                 <div class="section-toolbar" style="margin-bottom:1rem;">
                                     <div class="content-head" style="margin-bottom:0;">
                                         <h1 style="font-size:1.15rem;">Utilisateur</h1>
-                                        <p>Comptes, accès et rôles.</p>
                                     </div>
                                     <div class="toolbar-actions">
                                         <button type="button" class="btn-add" id="btnAddUtilisateur">
@@ -2888,7 +3141,6 @@
                             <section class="config-section" id="config-fiche-ste">
                                 <div class="content-head" style="margin-bottom:1rem;">
                                     <h1 style="font-size:1.15rem;">Fiche Ste</h1>
-                                    <p>Informations de la société.</p>
                                 </div>
 
                                 <div class="config-form-panel">
@@ -2953,6 +3205,10 @@
                     <div class="field">
                         <label for="commercial_numero_date">Date</label>
                         <input type="text" id="commercial_numero_date" name="date" placeholder="JJ/MM/AAAA" maxlength="10" inputmode="numeric" autocomplete="off" required>
+                    </div>
+                    <div class="field">
+                        <label for="commercial_numero_nom_prospect">Nom Prospect</label>
+                        <input type="text" id="commercial_numero_nom_prospect" name="nom_prospect" maxlength="255" placeholder="Nom du prospect" autocomplete="off">
                     </div>
                     <div class="field">
                         <label for="commercial_numero_telephone">Numéro</label>
@@ -3090,14 +3346,18 @@
                             <label for="projet_ref">Réf</label>
                             <input type="text" id="projet_ref" readonly tabindex="-1" aria-readonly="true">
                         </div>
-                        <div class="field span-2">
+                        <div class="field">
                             <label for="projet_commercial">Commercial</label>
-                            <select id="projet_commercial" name="commercial" required>
+                            <select id="projet_commercial">
                                 <option value="">Choisir…</option>
                                 @foreach (($commerciauxUsers ?? []) as $commercialUser)
                                     <option value="{{ $commercialUser }}">{{ $commercialUser }}</option>
                                 @endforeach
                             </select>
+                        </div>
+                        <div class="field">
+                            <label for="projet_nom_commercial">Nom Commercial</label>
+                            <input type="text" id="projet_nom_commercial" name="commercial" maxlength="255" placeholder="Saisie manuelle" autocomplete="off" required>
                         </div>
                         <div class="field span-2">
                             <label for="projet_contact">N° contact</label>
@@ -3449,11 +3709,30 @@
 
         function showPanel(name, { expandGroup = true } = {}) {
             panels.forEach((panel) => panel.classList.toggle('active', panel.id === `panel-${name}`));
-            navParents.forEach((item) => item.classList.toggle('active', item.dataset.panel === name));
 
-            const group = document.querySelector(`.nav-group[data-nav-group="${name}"]`);
+            navParents.forEach((item) => {
+                const group = item.closest('.nav-group');
+                if (group) {
+                    const ownsPanel = item.dataset.panel === name
+                        || [...group.querySelectorAll('.nav-subitem')].some((sub) => sub.dataset.panel === name);
+                    item.classList.toggle('active', ownsPanel);
+                } else {
+                    item.classList.toggle('active', item.dataset.panel === name);
+                }
+            });
+
+            navSubitems.forEach((item) => {
+                if (item.dataset.config || item.dataset.prospection) return;
+                item.classList.toggle('active', item.dataset.panel === name);
+            });
+
+            const group = document.querySelector(`.nav-group[data-nav-group="${name}"]`)
+                || [...document.querySelectorAll('.nav-group')].find((g) =>
+                    [...g.querySelectorAll('.nav-subitem')].some((sub) => sub.dataset.panel === name)
+                );
+
             if (group && expandGroup) {
-                expandNavGroup(name, true);
+                expandNavGroup(group.dataset.navGroup, true);
             } else if (!group) {
                 collapseAllNavGroups();
             }
@@ -3478,8 +3757,8 @@
                     collapseAllNavGroups(group);
                     group.classList.add('expanded');
 
-                    // Prospection : n’ouvre le tableau qu’au clic sur Relance / Commercial / Entrants
-                    if (panel === 'prospection') {
+                    // Prospection / Projet / Charge : n’ouvre le panneau qu’au clic sur un sous-menu
+                    if (panel === 'prospection' || panel === 'projet' || panel === 'charge') {
                         return;
                     }
 
@@ -3908,6 +4187,15 @@
             }
         }
 
+        function setProjetCommercialFields(name) {
+            const select = document.getElementById('projet_commercial');
+            const input = document.getElementById('projet_nom_commercial');
+            const raw = String(name || '').trim();
+            const matched = resolveProjetCommercialValue(raw);
+            if (select) select.value = matched;
+            if (input) input.value = raw || matched || '';
+        }
+
         function importProjetFromContact() {
             const phone = document.getElementById('projet_contact')?.value || '';
             const prospection = findProspectionByPhone(phone);
@@ -3927,7 +4215,7 @@
                 document.getElementById('projet_titre_projet').value = prospection.projet || '';
                 document.getElementById('projet_prospection_id').value = prospection.id || '';
                 if (prospection.commercial) {
-                    document.getElementById('projet_commercial').value = prospection.commercial;
+                    setProjetCommercialFields(prospection.commercial);
                 }
                 if (projetLookupHint) {
                     projetLookupHint.textContent = 'Données importées depuis la prospection.';
@@ -3948,7 +4236,7 @@
             const readonly = mode === 'view';
             [
                 'projet_date', 'projet_contact', 'projet_nom_client', 'projet_ville',
-                'projet_titre_projet', 'projet_budget', 'projet_avance',
+                'projet_titre_projet', 'projet_budget', 'projet_avance', 'projet_nom_commercial',
             ].forEach((id) => {
                 const input = document.getElementById(id);
                 if (input) input.readOnly = readonly;
@@ -3965,7 +4253,7 @@
         function fillProjetForm(projet) {
             document.getElementById('projet_date').value = projet.date || '';
             document.getElementById('projet_ref').value = projet.ref || '';
-            document.getElementById('projet_commercial').value = projet.commercial || '';
+            setProjetCommercialFields(projet.commercial || '');
             document.getElementById('projet_contact').value = projet.contact || '';
             document.getElementById('projet_nom_client').value = projet.nom_client || '';
             document.getElementById('projet_ville').value = projet.ville || '';
@@ -4051,7 +4339,7 @@
             showPanel('projet');
             openProjetCreate();
             const commercialValue = resolveProjetCommercialValue(payload.commercial);
-            document.getElementById('projet_commercial').value = commercialValue || payload.commercial || '';
+            setProjetCommercialFields(commercialValue || payload.commercial || '');
             document.getElementById('projet_contact').value = payload.telephone || '';
             document.getElementById('projet_nom_client').value = payload.nom_prospect || '';
             document.getElementById('projet_ville').value = payload.ville || '';
@@ -4175,6 +4463,11 @@
         document.getElementById('projet_contact')?.addEventListener('change', importProjetFromContact);
         document.getElementById('projet_budget')?.addEventListener('input', updateProjetSoldeDisplay);
         document.getElementById('projet_avance')?.addEventListener('input', updateProjetSoldeDisplay);
+        document.getElementById('projet_commercial')?.addEventListener('change', (event) => {
+            const value = event.target?.value || '';
+            const input = document.getElementById('projet_nom_commercial');
+            if (input && value) input.value = value;
+        });
 
         document.getElementById('projetsTableBody')?.addEventListener('click', (e) => {
             const actionBtn = e.target.closest('.action-btn');
@@ -5150,12 +5443,12 @@
 
         bindCommercialPicker('commercial_numero_commercial');
         bindCommercialPicker('commercial_import_commercial');
-        bindCommercialPicker('entrants_repartir_commercial');
 
         function openCommercialNumeroModal() {
             const filterCommercial = getFilterCommercialName();
             setCommercialPickerValue('commercial_numero_commercial', filterCommercial || '');
             document.getElementById('commercial_numero_date').value = new Date().toLocaleDateString('fr-FR', { day: '2-digit', month: '2-digit', year: 'numeric' });
+            document.getElementById('commercial_numero_nom_prospect').value = '';
             document.getElementById('commercial_numero_telephone').value = '';
             openModal(commercialNumeroModal);
         }
@@ -5170,6 +5463,7 @@
 
             const commercial = document.getElementById('commercial_numero_commercial')?.value.trim() || '';
             const date = document.getElementById('commercial_numero_date').value.trim();
+            const nomProspect = document.getElementById('commercial_numero_nom_prospect')?.value.trim() || '';
             const telephone = document.getElementById('commercial_numero_telephone').value.trim();
             if (!commercial) {
                 window.alert('Choisissez un commercial dans la liste.');
@@ -5181,6 +5475,7 @@
                 const fd = new FormData();
                 fd.append('commercial', commercial);
                 fd.append('date', date);
+                fd.append('nom_prospect', nomProspect);
                 fd.append('telephone', telephone);
                 fd.append('_token', document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '');
 

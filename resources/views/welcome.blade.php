@@ -47,7 +47,7 @@
             align-items: center;
             padding: 2.5rem 3.5rem 7.5rem;
             background:
-                linear-gradient(105deg, rgba(4, 12, 28, 0.28) 0%, rgba(6, 18, 38, 0.18) 40%, rgba(8, 22, 48, 0.22) 70%, rgba(4, 12, 28, 0.4) 100%),
+                linear-gradient(105deg, rgba(4, 12, 28, 0.22) 0%, rgba(6, 18, 38, 0.12) 45%, rgba(8, 22, 48, 0.28) 78%, rgba(4, 12, 28, 0.55) 100%),
                 url('{{ asset('images/login-bg.png') }}') center / cover no-repeat;
         }
 
@@ -56,8 +56,8 @@
             position: absolute;
             inset: 0;
             background:
-                radial-gradient(ellipse 40% 35% at 55% 48%, rgba(4, 16, 36, 0.35), transparent 70%),
-                radial-gradient(ellipse 35% 30% at 88% 18%, rgba(30, 100, 220, 0.1), transparent 65%);
+                radial-gradient(ellipse 42% 38% at 58% 48%, rgba(4, 16, 36, 0.22), transparent 72%),
+                radial-gradient(ellipse 32% 28% at 90% 16%, rgba(30, 100, 220, 0.12), transparent 65%);
             pointer-events: none;
         }
 
@@ -514,7 +514,6 @@
                         <button type="submit">Connexion</button>
                     </form>
 
-                    <p class="login-footer">Espace réservé aux utilisateurs autorisés</p>
                 </div>
             </div>
         </aside>

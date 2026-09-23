@@ -400,6 +400,7 @@ Route::middleware('auth.user')->post('/prospections/commercial/numeros', functio
         'commercial' => ['required', 'string', 'max:255'],
         'date' => ['required', 'string', 'regex:/^\d{2}\/\d{2}\/\d{4}$/'],
         'telephone' => ['required', 'string', 'max:255'],
+        'nom_prospect' => ['nullable', 'string', 'max:255'],
     ]);
 
     $rows = AppStore::get('prospections');
@@ -408,7 +409,8 @@ Route::middleware('auth.user')->post('/prospections/commercial/numeros', functio
         $data['commercial'],
         [$data['telephone']],
         $data['date'],
-        false
+        false,
+        trim((string) ($data['nom_prospect'] ?? ''))
     );
 
     if ($request->expectsJson() || $request->ajax()) {
