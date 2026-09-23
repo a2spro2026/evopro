@@ -999,6 +999,29 @@
             overflow: visible;
         }
 
+        .search-bar-compact {
+            gap: 0.45rem;
+            padding: 0.55rem 0.65rem;
+            border-radius: 10px;
+        }
+
+        .search-bar-compact .search-field {
+            gap: 0.2rem;
+        }
+
+        .search-bar-compact .search-field label {
+            font-size: 0.65rem;
+        }
+
+        .search-bar-compact .search-field input,
+        .search-bar-compact .search-field select,
+        .search-bar-compact .search-field .evopro-combo-trigger {
+            height: 32px;
+            padding: 0 0.55rem;
+            font-size: 0.78rem;
+            border-radius: 8px;
+        }
+
         .search-field {
             display: flex;
             flex-direction: column;
@@ -2621,7 +2644,7 @@
                             </div>
                         </div>
 
-                        <div class="search-bar" aria-label="Recherche commercial" style="grid-template-columns: repeat(2, minmax(0, 1fr)); margin-bottom:1rem;">
+                        <div class="search-bar search-bar-compact" aria-label="Recherche commercial" style="grid-template-columns: repeat(5, minmax(0, 1fr)); margin-bottom:0.75rem;">
                             <div class="search-field">
                                 <label for="filter_commercial_page">Page</label>
                                 <select id="filter_commercial_page">
