@@ -298,6 +298,7 @@ Route::middleware('auth.user')->get('/prospections/live', function () {
             'date' => $row['date'] ?? '',
             'commercial' => $row['commercial'] ?? '',
             'telephone' => $row['telephone'] ?? '',
+            'id_prospect' => $row['id_prospect'] ?? '',
             'nom_prospect' => $row['nom_prospect'] ?? '',
             'ville' => $row['ville'] ?? '',
             'activite' => $row['activite'] ?? '',
@@ -403,6 +404,7 @@ Route::middleware('auth.user')->post('/prospections/commercial/numeros', functio
         'date' => ['required', 'string', 'regex:/^\d{2}\/\d{2}\/\d{4}$/'],
         'telephone' => ['required', 'string', 'max:255'],
         'nom_prospect' => ['nullable', 'string', 'max:255'],
+        'id_prospect' => ['nullable', 'string', 'max:255'],
         'activite' => ['nullable', 'string', 'max:255'],
         'type' => ['nullable', 'string', 'max:255'],
         'ville' => ['nullable', 'string', 'max:255'],
@@ -417,6 +419,7 @@ Route::middleware('auth.user')->post('/prospections/commercial/numeros', functio
         false,
         trim((string) ($data['nom_prospect'] ?? '')),
         [
+            'id_prospect' => trim((string) ($data['id_prospect'] ?? '')),
             'activite' => trim((string) ($data['activite'] ?? '')),
             'type' => trim((string) ($data['type'] ?? '')),
             'ville' => trim((string) ($data['ville'] ?? '')),

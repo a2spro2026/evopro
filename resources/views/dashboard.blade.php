@@ -2675,8 +2675,9 @@
                                         <th>Num</th>
                                         <th>Date</th>
                                         <th>Commercial</th>
-                                        <th>Numéro téléphone</th>
-                                        <th>Nom Prospect</th>
+                                        <th>ID Prospect</th>
+                                        <th>Nom Complet</th>
+                                        <th>Contact</th>
                                         <th>Activité</th>
                                         <th>Type</th>
                                         <th>Ville</th>
@@ -2688,7 +2689,7 @@
                                 </thead>
                                 <tbody id="commercialNumerosBody">
                                     <tr class="empty-row" id="commercialNumerosEmpty">
-                                        <td colspan="12" class="empty">Aucun numéro commercial.</td>
+                                        <td colspan="13" class="empty">Aucun numéro commercial.</td>
                                     </tr>
                                 </tbody>
                             </table>
@@ -3221,19 +3222,12 @@
                 <div class="modal-body">
                     <div class="modal-form-grid">
                         <div class="field">
-                            <label for="commercial_numero_commercial">Commercial</label>
-                            <select id="commercial_numero_commercial" name="commercial" required>
-                                <option value="" disabled selected>— Sélectionner —</option>
-                                @forelse (($commerciauxUsers ?? []) as $commercialUser)
-                                    <option value="{{ $commercialUser }}">{{ $commercialUser }}</option>
-                                @empty
-                                    <option value="" disabled>Aucun commercial enregistré</option>
-                                @endforelse
-                            </select>
-                        </div>
-                        <div class="field">
                             <label for="commercial_numero_date">Date</label>
                             <input type="text" id="commercial_numero_date" name="date" placeholder="JJ/MM/AAAA" maxlength="10" inputmode="numeric" autocomplete="off" required>
+                        </div>
+                        <div class="field">
+                            <label for="commercial_numero_id_prospect">ID Prospect</label>
+                            <input type="text" id="commercial_numero_id_prospect" name="id_prospect" maxlength="255" placeholder="ID prospect" autocomplete="off">
                         </div>
                         <div class="field">
                             <label for="commercial_numero_nom_prospect">Nom Complet</label>
@@ -3254,6 +3248,17 @@
                         <div class="field">
                             <label for="commercial_numero_ville">Ville</label>
                             <input type="text" id="commercial_numero_ville" name="ville" maxlength="255" placeholder="Ville" autocomplete="off">
+                        </div>
+                        <div class="field">
+                            <label for="commercial_numero_commercial">Commercial</label>
+                            <select id="commercial_numero_commercial" name="commercial" required>
+                                <option value="" disabled selected>— Sélectionner —</option>
+                                @forelse (($commerciauxUsers ?? []) as $commercialUser)
+                                    <option value="{{ $commercialUser }}">{{ $commercialUser }}</option>
+                                @empty
+                                    <option value="" disabled>Aucun commercial enregistré</option>
+                                @endforelse
+                            </select>
                         </div>
                     </div>
                 </div>
@@ -5231,8 +5236,9 @@
                     <td>${escapeHtml(String(row.num || '—'))}</td>
                     <td>${escapeHtml(row.date || '')}</td>
                     <td>${escapeHtml(row.commercial || '')}</td>
-                    <td>${escapeHtml(row.telephone || '')}</td>
+                    <td>${escapeHtml(row.id_prospect || '')}</td>
                     <td>${escapeHtml(row.nom_prospect || '')}</td>
+                    <td>${escapeHtml(row.telephone || '')}</td>
                     <td>${escapeHtml(row.activite || '')}</td>
                     <td>${escapeHtml(row.type || '')}</td>
                     <td>${escapeHtml(row.ville || '')}</td>
@@ -5481,6 +5487,7 @@
             const filterCommercial = getFilterCommercialName();
             setCommercialSelectValue('commercial_numero_commercial', filterCommercial || '');
             document.getElementById('commercial_numero_date').value = new Date().toLocaleDateString('fr-FR', { day: '2-digit', month: '2-digit', year: 'numeric' });
+            document.getElementById('commercial_numero_id_prospect').value = '';
             document.getElementById('commercial_numero_nom_prospect').value = '';
             document.getElementById('commercial_numero_activite').value = '';
             document.getElementById('commercial_numero_type').value = '';
@@ -5499,6 +5506,7 @@
 
             const commercial = document.getElementById('commercial_numero_commercial')?.value.trim() || '';
             const date = document.getElementById('commercial_numero_date').value.trim();
+            const idProspect = document.getElementById('commercial_numero_id_prospect')?.value.trim() || '';
             const nomProspect = document.getElementById('commercial_numero_nom_prospect')?.value.trim() || '';
             const activite = document.getElementById('commercial_numero_activite')?.value.trim() || '';
             const type = document.getElementById('commercial_numero_type')?.value.trim() || '';
@@ -5514,6 +5522,7 @@
                 const fd = new FormData();
                 fd.append('commercial', commercial);
                 fd.append('date', date);
+                fd.append('id_prospect', idProspect);
                 fd.append('nom_prospect', nomProspect);
                 fd.append('activite', activite);
                 fd.append('type', type);
