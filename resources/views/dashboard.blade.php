@@ -1831,6 +1831,26 @@
 
         .modal-body { padding: 1rem 1.1rem; }
 
+        .modal-form-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 0.75rem;
+        }
+
+        .modal-form-grid .field {
+            margin-bottom: 0;
+        }
+
+        .modal-form-grid .field.span-2 {
+            grid-column: 1 / -1;
+        }
+
+        @media (max-width: 560px) {
+            .modal-form-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
         .modal-foot {
             display: flex;
             justify-content: flex-end;
@@ -3193,40 +3213,42 @@
             </div>
             <form id="commercialNumeroForm">
                 <div class="modal-body">
-                    <div class="field">
-                        <label for="commercial_numero_commercial">Commercial</label>
-                        <input type="hidden" id="commercial_numero_commercial" name="commercial" value="">
-                        <div class="commercial-pick-grid" id="commercial_numero_commercial_picker" role="listbox" aria-label="Choisir un commercial">
-                            @forelse (($commerciauxUsers ?? []) as $commercialUser)
-                                <button type="button" class="commercial-pick-btn" data-value="{{ $commercialUser }}">{{ $commercialUser }}</button>
-                            @empty
-                                <p class="commercial-pick-empty">Aucun commercial enregistré. Créez-en un dans Configuration → Utilisateur.</p>
-                            @endforelse
+                    <div class="modal-form-grid">
+                        <div class="field span-2">
+                            <label for="commercial_numero_commercial">Commercial</label>
+                            <input type="hidden" id="commercial_numero_commercial" name="commercial" value="">
+                            <div class="commercial-pick-grid" id="commercial_numero_commercial_picker" role="listbox" aria-label="Choisir un commercial">
+                                @forelse (($commerciauxUsers ?? []) as $commercialUser)
+                                    <button type="button" class="commercial-pick-btn" data-value="{{ $commercialUser }}">{{ $commercialUser }}</button>
+                                @empty
+                                    <p class="commercial-pick-empty">Aucun commercial enregistré. Créez-en un dans Configuration → Utilisateur.</p>
+                                @endforelse
+                            </div>
                         </div>
-                    </div>
-                    <div class="field">
-                        <label for="commercial_numero_date">Date</label>
-                        <input type="text" id="commercial_numero_date" name="date" placeholder="JJ/MM/AAAA" maxlength="10" inputmode="numeric" autocomplete="off" required>
-                    </div>
-                    <div class="field">
-                        <label for="commercial_numero_nom_prospect">Nom Prospect</label>
-                        <input type="text" id="commercial_numero_nom_prospect" name="nom_prospect" maxlength="255" placeholder="Nom du prospect" autocomplete="off">
-                    </div>
-                    <div class="field">
-                        <label for="commercial_numero_activite">Activité</label>
-                        <input type="text" id="commercial_numero_activite" name="activite" maxlength="255" placeholder="Activité" autocomplete="off">
-                    </div>
-                    <div class="field">
-                        <label for="commercial_numero_type">Type</label>
-                        <input type="text" id="commercial_numero_type" name="type" maxlength="255" placeholder="Type" autocomplete="off">
-                    </div>
-                    <div class="field">
-                        <label for="commercial_numero_ville">Ville</label>
-                        <input type="text" id="commercial_numero_ville" name="ville" maxlength="255" placeholder="Ville" autocomplete="off">
-                    </div>
-                    <div class="field">
-                        <label for="commercial_numero_telephone">Numéro</label>
-                        <input type="text" id="commercial_numero_telephone" name="telephone" maxlength="255" placeholder="Ex. 06…" inputmode="tel" autocomplete="off" required>
+                        <div class="field">
+                            <label for="commercial_numero_date">Date</label>
+                            <input type="text" id="commercial_numero_date" name="date" placeholder="JJ/MM/AAAA" maxlength="10" inputmode="numeric" autocomplete="off" required>
+                        </div>
+                        <div class="field">
+                            <label for="commercial_numero_nom_prospect">Nom Complet</label>
+                            <input type="text" id="commercial_numero_nom_prospect" name="nom_prospect" maxlength="255" placeholder="Nom complet" autocomplete="off">
+                        </div>
+                        <div class="field">
+                            <label for="commercial_numero_telephone">Contact</label>
+                            <input type="text" id="commercial_numero_telephone" name="telephone" maxlength="255" placeholder="Ex. 06…" inputmode="tel" autocomplete="off" required>
+                        </div>
+                        <div class="field">
+                            <label for="commercial_numero_activite">Activité</label>
+                            <input type="text" id="commercial_numero_activite" name="activite" maxlength="255" placeholder="Activité" autocomplete="off">
+                        </div>
+                        <div class="field">
+                            <label for="commercial_numero_type">Type</label>
+                            <input type="text" id="commercial_numero_type" name="type" maxlength="255" placeholder="Type" autocomplete="off">
+                        </div>
+                        <div class="field">
+                            <label for="commercial_numero_ville">Ville</label>
+                            <input type="text" id="commercial_numero_ville" name="ville" maxlength="255" placeholder="Ville" autocomplete="off">
+                        </div>
                     </div>
                 </div>
                 <div class="modal-foot">
