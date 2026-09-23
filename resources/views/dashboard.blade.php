@@ -1884,7 +1884,7 @@
 
         .commercial-pick-grid {
             display: grid;
-            grid-template-columns: 1fr;
+            grid-template-columns: 1fr 1fr;
             gap: 0.4rem;
             max-height: 220px;
             overflow: auto;
@@ -1892,6 +1892,12 @@
             border-radius: 10px;
             border: 1px solid rgba(110, 168, 255, 0.22);
             background: #0b1729;
+        }
+
+        @media (max-width: 560px) {
+            .commercial-pick-grid {
+                grid-template-columns: 1fr;
+            }
         }
 
         .commercial-pick-btn {
@@ -2615,7 +2621,7 @@
                             </div>
                         </div>
 
-                        <div class="search-bar" aria-label="Recherche commercial" style="grid-template-columns: repeat(5, minmax(0, 1fr)); margin-bottom:1rem;">
+                        <div class="search-bar" aria-label="Recherche commercial" style="grid-template-columns: repeat(2, minmax(0, 1fr)); margin-bottom:1rem;">
                             <div class="search-field">
                                 <label for="filter_commercial_page">Page</label>
                                 <select id="filter_commercial_page">
@@ -3214,16 +3220,16 @@
             <form id="commercialNumeroForm">
                 <div class="modal-body">
                     <div class="modal-form-grid">
-                        <div class="field span-2">
+                        <div class="field">
                             <label for="commercial_numero_commercial">Commercial</label>
-                            <input type="hidden" id="commercial_numero_commercial" name="commercial" value="">
-                            <div class="commercial-pick-grid" id="commercial_numero_commercial_picker" role="listbox" aria-label="Choisir un commercial">
+                            <select id="commercial_numero_commercial" name="commercial" required>
+                                <option value="" disabled selected>— Sélectionner —</option>
                                 @forelse (($commerciauxUsers ?? []) as $commercialUser)
-                                    <button type="button" class="commercial-pick-btn" data-value="{{ $commercialUser }}">{{ $commercialUser }}</button>
+                                    <option value="{{ $commercialUser }}">{{ $commercialUser }}</option>
                                 @empty
-                                    <p class="commercial-pick-empty">Aucun commercial enregistré. Créez-en un dans Configuration → Utilisateur.</p>
+                                    <option value="" disabled>Aucun commercial enregistré</option>
                                 @endforelse
-                            </div>
+                            </select>
                         </div>
                         <div class="field">
                             <label for="commercial_numero_date">Date</label>
@@ -3294,14 +3300,14 @@
                 <div class="modal-body">
                     <div class="field">
                         <label for="commercial_import_commercial">Commercial</label>
-                        <input type="hidden" id="commercial_import_commercial" name="commercial" value="">
-                        <div class="commercial-pick-grid" id="commercial_import_commercial_picker" role="listbox" aria-label="Choisir un commercial">
+                        <select id="commercial_import_commercial" name="commercial" required>
+                            <option value="" disabled selected>— Sélectionner —</option>
                             @forelse (($commerciauxUsers ?? []) as $commercialUser)
-                                <button type="button" class="commercial-pick-btn" data-value="{{ $commercialUser }}">{{ $commercialUser }}</button>
+                                <option value="{{ $commercialUser }}">{{ $commercialUser }}</option>
                             @empty
-                                <p class="commercial-pick-empty">Aucun commercial enregistré. Créez-en un dans Configuration → Utilisateur.</p>
+                                <option value="" disabled>Aucun commercial enregistré</option>
                             @endforelse
-                        </div>
+                        </select>
                     </div>
                     <div class="field">
                         <label for="commercialImportFile">Capture / Image</label>
@@ -5453,38 +5459,27 @@
         const commercialNumeroModal = document.getElementById('commercialNumeroModal');
         const commercialNumeroForm = document.getElementById('commercialNumeroForm');
 
-        function setCommercialPickerValue(inputId, value) {
-            const input = document.getElementById(inputId);
-            const picker = document.getElementById(`${inputId}_picker`);
-            if (input) input.value = value || '';
-            if (!picker) return;
-            picker.querySelectorAll('.commercial-pick-btn').forEach((btn) => {
-                const selected = (btn.dataset.value || '') === (value || '');
-                btn.classList.toggle('is-selected', selected);
-                btn.classList.toggle('active', selected);
+        function setCommercialSelectValue(selectId, value) {
+            const select = document.getElementById(selectId);
+            if (!select) return;
+            const target = (value || '').trim();
+            let matched = '';
+            Array.from(select.options).forEach((opt) => {
+                if (!opt.value) return;
+                if (opt.value === target || opt.value.toLowerCase() === target.toLowerCase()) {
+                    matched = opt.value;
+                }
             });
+            select.value = matched;
+            if (!matched && target === '') {
+                select.selectedIndex = 0;
+            }
+            select.dispatchEvent(new Event('change', { bubbles: true }));
         }
-
-        function bindCommercialPicker(inputId) {
-            const picker = document.getElementById(`${inputId}_picker`);
-            const input = document.getElementById(inputId);
-            if (!picker || !input || picker.dataset.bound === '1') return;
-            picker.dataset.bound = '1';
-            picker.addEventListener('click', (event) => {
-                const btn = event.target.closest('.commercial-pick-btn');
-                if (!btn) return;
-                event.preventDefault();
-                setCommercialPickerValue(inputId, btn.dataset.value || '');
-                input.dispatchEvent(new Event('change', { bubbles: true }));
-            });
-        }
-
-        bindCommercialPicker('commercial_numero_commercial');
-        bindCommercialPicker('commercial_import_commercial');
 
         function openCommercialNumeroModal() {
             const filterCommercial = getFilterCommercialName();
-            setCommercialPickerValue('commercial_numero_commercial', filterCommercial || '');
+            setCommercialSelectValue('commercial_numero_commercial', filterCommercial || '');
             document.getElementById('commercial_numero_date').value = new Date().toLocaleDateString('fr-FR', { day: '2-digit', month: '2-digit', year: 'numeric' });
             document.getElementById('commercial_numero_nom_prospect').value = '';
             document.getElementById('commercial_numero_activite').value = '';
@@ -5678,7 +5673,7 @@
 
         function openCommercialImportModal() {
             const filterCommercial = getFilterCommercialName();
-            setCommercialPickerValue('commercial_import_commercial', filterCommercial || '');
+            setCommercialSelectValue('commercial_import_commercial', filterCommercial || '');
             if (commercialImportFile) commercialImportFile.value = '';
             if (commercialImportModalStatus) commercialImportModalStatus.textContent = '';
             openModal(commercialImportModal);
