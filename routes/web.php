@@ -300,6 +300,8 @@ Route::middleware('auth.user')->get('/prospections/live', function () {
             'telephone' => $row['telephone'] ?? '',
             'nom_prospect' => $row['nom_prospect'] ?? '',
             'ville' => $row['ville'] ?? '',
+            'activite' => $row['activite'] ?? '',
+            'type' => $row['type'] ?? '',
             'projet' => $row['projet'] ?? '',
             'description' => $row['description'] ?? '',
             'remarque' => $row['remarque'] ?? '',
@@ -401,6 +403,9 @@ Route::middleware('auth.user')->post('/prospections/commercial/numeros', functio
         'date' => ['required', 'string', 'regex:/^\d{2}\/\d{2}\/\d{4}$/'],
         'telephone' => ['required', 'string', 'max:255'],
         'nom_prospect' => ['nullable', 'string', 'max:255'],
+        'activite' => ['nullable', 'string', 'max:255'],
+        'type' => ['nullable', 'string', 'max:255'],
+        'ville' => ['nullable', 'string', 'max:255'],
     ]);
 
     $rows = AppStore::get('prospections');
@@ -410,7 +415,12 @@ Route::middleware('auth.user')->post('/prospections/commercial/numeros', functio
         [$data['telephone']],
         $data['date'],
         false,
-        trim((string) ($data['nom_prospect'] ?? ''))
+        trim((string) ($data['nom_prospect'] ?? '')),
+        [
+            'activite' => trim((string) ($data['activite'] ?? '')),
+            'type' => trim((string) ($data['type'] ?? '')),
+            'ville' => trim((string) ($data['ville'] ?? '')),
+        ]
     );
 
     if ($request->expectsJson() || $request->ajax()) {

@@ -2651,6 +2651,8 @@
                                         <th>Commercial</th>
                                         <th>Numéro téléphone</th>
                                         <th>Nom Prospect</th>
+                                        <th>Activité</th>
+                                        <th>Type</th>
                                         <th>Ville</th>
                                         <th>Titre Projet</th>
                                         <th>Remarque</th>
@@ -2660,7 +2662,7 @@
                                 </thead>
                                 <tbody id="commercialNumerosBody">
                                     <tr class="empty-row" id="commercialNumerosEmpty">
-                                        <td colspan="10" class="empty">Aucun numéro commercial.</td>
+                                        <td colspan="12" class="empty">Aucun numéro commercial.</td>
                                     </tr>
                                 </tbody>
                             </table>
@@ -3209,6 +3211,18 @@
                     <div class="field">
                         <label for="commercial_numero_nom_prospect">Nom Prospect</label>
                         <input type="text" id="commercial_numero_nom_prospect" name="nom_prospect" maxlength="255" placeholder="Nom du prospect" autocomplete="off">
+                    </div>
+                    <div class="field">
+                        <label for="commercial_numero_activite">Activité</label>
+                        <input type="text" id="commercial_numero_activite" name="activite" maxlength="255" placeholder="Activité" autocomplete="off">
+                    </div>
+                    <div class="field">
+                        <label for="commercial_numero_type">Type</label>
+                        <input type="text" id="commercial_numero_type" name="type" maxlength="255" placeholder="Type" autocomplete="off">
+                    </div>
+                    <div class="field">
+                        <label for="commercial_numero_ville">Ville</label>
+                        <input type="text" id="commercial_numero_ville" name="ville" maxlength="255" placeholder="Ville" autocomplete="off">
                     </div>
                     <div class="field">
                         <label for="commercial_numero_telephone">Numéro</label>
@@ -5191,6 +5205,8 @@
                     <td>${escapeHtml(row.commercial || '')}</td>
                     <td>${escapeHtml(row.telephone || '')}</td>
                     <td>${escapeHtml(row.nom_prospect || '')}</td>
+                    <td>${escapeHtml(row.activite || '')}</td>
+                    <td>${escapeHtml(row.type || '')}</td>
                     <td>${escapeHtml(row.ville || '')}</td>
                     <td>${escapeHtml(row.projet || '')}</td>
                     <td class="cell-remarque-preview" title="${escapeHtml(row.remarque || '')}">${escapeHtml(row.remarque || '')}</td>
@@ -5449,6 +5465,9 @@
             setCommercialPickerValue('commercial_numero_commercial', filterCommercial || '');
             document.getElementById('commercial_numero_date').value = new Date().toLocaleDateString('fr-FR', { day: '2-digit', month: '2-digit', year: 'numeric' });
             document.getElementById('commercial_numero_nom_prospect').value = '';
+            document.getElementById('commercial_numero_activite').value = '';
+            document.getElementById('commercial_numero_type').value = '';
+            document.getElementById('commercial_numero_ville').value = '';
             document.getElementById('commercial_numero_telephone').value = '';
             openModal(commercialNumeroModal);
         }
@@ -5464,6 +5483,9 @@
             const commercial = document.getElementById('commercial_numero_commercial')?.value.trim() || '';
             const date = document.getElementById('commercial_numero_date').value.trim();
             const nomProspect = document.getElementById('commercial_numero_nom_prospect')?.value.trim() || '';
+            const activite = document.getElementById('commercial_numero_activite')?.value.trim() || '';
+            const type = document.getElementById('commercial_numero_type')?.value.trim() || '';
+            const ville = document.getElementById('commercial_numero_ville')?.value.trim() || '';
             const telephone = document.getElementById('commercial_numero_telephone').value.trim();
             if (!commercial) {
                 window.alert('Choisissez un commercial dans la liste.');
@@ -5476,17 +5498,26 @@
                 fd.append('commercial', commercial);
                 fd.append('date', date);
                 fd.append('nom_prospect', nomProspect);
+                fd.append('activite', activite);
+                fd.append('type', type);
+                fd.append('ville', ville);
                 fd.append('telephone', telephone);
-                fd.append('_token', document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '');
+                const token = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '';
+                fd.append('_token', token);
 
                 const response = await fetch('{{ route('prospections.commercial.store') }}', {
                     method: 'POST',
                     headers: {
                         'Accept': 'application/json',
                         'X-Requested-With': 'XMLHttpRequest',
+                        'X-CSRF-TOKEN': token,
                     },
                     body: fd,
+                    credentials: 'same-origin',
                 });
+                if (response.status === 419) {
+                    throw new Error('Session expirée. Rechargez la page (Ctrl+F5) puis reconnectez-vous.');
+                }
                 const data = await response.json().catch(() => ({}));
                 if (!response.ok) throw new Error(data.message || 'save_failed');
 

@@ -205,6 +205,8 @@ class ProspectionHelper
             'telephone' => self::normalizePhoneDisplay((string) ($data['telephone'] ?? '')) ?: trim((string) ($data['telephone'] ?? '')),
             'nom_prospect' => trim((string) ($data['nom_prospect'] ?? '')),
             'ville' => trim((string) ($data['ville'] ?? '')),
+            'activite' => trim((string) ($data['activite'] ?? '')),
+            'type' => trim((string) ($data['type'] ?? '')),
             'projet' => trim((string) ($data['projet'] ?? '')),
             'description' => trim((string) ($data['description'] ?? '')),
             'remarque' => trim((string) ($data['remarque'] ?? '')),
@@ -227,13 +229,18 @@ class ProspectionHelper
         int $page = 1,
         int $num = 0,
         string $batchId = '',
-        string $nomProspect = ''
+        string $nomProspect = '',
+        array $extras = []
     ): array {
         return self::createRelanceRow([
             'commercial' => $commercial,
             'telephone' => $telephone,
             'date' => $date,
             'nom_prospect' => $nomProspect,
+            'ville' => trim((string) ($extras['ville'] ?? '')),
+            'activite' => trim((string) ($extras['activite'] ?? '')),
+            'type' => trim((string) ($extras['type'] ?? '')),
+            'projet' => trim((string) ($extras['projet'] ?? '')),
             'from_commercial_import' => true,
             'page' => $page,
             'num' => $num,
@@ -286,7 +293,8 @@ class ProspectionHelper
         array $telephones,
         ?string $date = null,
         bool $forceNewPage = true,
-        string $nomProspect = ''
+        string $nomProspect = '',
+        array $extras = []
     ): array {
         $commercial = self::resolveCommercialName($commercial);
         $commercialUserId = self::resolveCommercialUserId($commercial);
@@ -380,7 +388,7 @@ class ProspectionHelper
             }
 
             $numOnPage++;
-            $row = self::createRow($commercial, $display, $date, $page, $numOnPage, $batchId, $nomProspect);
+            $row = self::createRow($commercial, $display, $date, $page, $numOnPage, $batchId, $nomProspect, $extras);
             if ($commercialUserId !== null) {
                 $row['commercial_user_id'] = $commercialUserId;
             }
