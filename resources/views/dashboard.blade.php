@@ -2675,7 +2675,7 @@
                                         <th>Num</th>
                                         <th>Date</th>
                                         <th>Commercial</th>
-                                        <th>ID Prospect</th>
+                                        <th>ID</th>
                                         <th>Nom Complet</th>
                                         <th>Contact</th>
                                         <th>Activité</th>
@@ -3226,8 +3226,19 @@
                             <input type="text" id="commercial_numero_date" name="date" placeholder="JJ/MM/AAAA" maxlength="10" inputmode="numeric" autocomplete="off" required>
                         </div>
                         <div class="field">
-                            <label for="commercial_numero_id_prospect">ID Prospect</label>
-                            <input type="text" id="commercial_numero_id_prospect" name="id_prospect" maxlength="255" placeholder="ID prospect" autocomplete="off">
+                            <label for="commercial_numero_commercial">Commercial</label>
+                            <select id="commercial_numero_commercial" name="commercial" required>
+                                <option value="" disabled selected>— Sélectionner —</option>
+                                @forelse (($commerciauxUsers ?? []) as $commercialUser)
+                                    <option value="{{ $commercialUser }}">{{ $commercialUser }}</option>
+                                @empty
+                                    <option value="" disabled>Aucun commercial enregistré</option>
+                                @endforelse
+                            </select>
+                        </div>
+                        <div class="field">
+                            <label for="commercial_numero_id_prospect">ID</label>
+                            <input type="text" id="commercial_numero_id_prospect" name="id_prospect" maxlength="255" placeholder="ID" autocomplete="off">
                         </div>
                         <div class="field">
                             <label for="commercial_numero_nom_prospect">Nom Complet</label>
@@ -3248,17 +3259,6 @@
                         <div class="field">
                             <label for="commercial_numero_ville">Ville</label>
                             <input type="text" id="commercial_numero_ville" name="ville" maxlength="255" placeholder="Ville" autocomplete="off">
-                        </div>
-                        <div class="field">
-                            <label for="commercial_numero_commercial">Commercial</label>
-                            <select id="commercial_numero_commercial" name="commercial" required>
-                                <option value="" disabled selected>— Sélectionner —</option>
-                                @forelse (($commerciauxUsers ?? []) as $commercialUser)
-                                    <option value="{{ $commercialUser }}">{{ $commercialUser }}</option>
-                                @empty
-                                    <option value="" disabled>Aucun commercial enregistré</option>
-                                @endforelse
-                            </select>
                         </div>
                     </div>
                 </div>
