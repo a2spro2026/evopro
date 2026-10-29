@@ -969,7 +969,41 @@ Route::middleware('auth.user')->put('/configuration/fiche-ste', function (Reques
         'cnss' => ['nullable', 'string', 'max:255'],
         'patente' => ['nullable', 'string', 'max:255'],
         'ice' => ['nullable', 'string', 'max:255'],
+        'statue' => ['nullable', 'string', 'max:255'],
+        'activite' => ['nullable', 'string', 'max:255'],
+        'fixe' => ['nullable', 'string', 'max:255'],
+        'logo' => ['nullable', 'image', 'max:4096'],
     ]);
+
+    $current = FicheSteHelper::get();
+    if ($request->hasFile('logo')) {
+        $file = $request->file('logo');
+        $ext = strtolower($file->getClientOriginalExtension() ?: 'png');
+        if (! in_array($ext, ['jpg', 'jpeg', 'png', 'webp'], true)) {
+            $ext = 'png';
+        }
+        foreach (['jpg', 'jpeg', 'png', 'webp'] as $old) {
+            $path = storage_path('app/public/fiche-ste-logo.'.$old);
+            if (is_file($path)) {
+                unlink($path);
+            }
+        }
+        $dir = storage_path('app/public');
+        if (! is_dir($dir)) {
+            mkdir($dir, 0775, true);
+        }
+        $file->move($dir, 'fiche-ste-logo.'.$ext);
+        $data['logo'] = 'storage/fiche-ste-logo.'.$ext;
+    } else {
+        $data['logo'] = $current['logo'] ?? '';
+    }
+    foreach (['nom_societe', 'statue', 'activite', 'contact', 'adresse', 'ville', 'email', 'rc', 'identifiant_fiscal', 'cnss', 'patente', 'ice', 'fixe'] as $key) {
+        if (trim((string) ($data[$key] ?? '')) === '') {
+            $data[$key] = $current[$key] ?? '';
+        }
+    }
+    $data['nom_gerant'] = $current['nom_gerant'] ?? '';
+    $data['whatsapp'] = $current['whatsapp'] ?? '';
 
     FicheSteHelper::save($data);
     $saved = FicheSteHelper::get();

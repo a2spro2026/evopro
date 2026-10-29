@@ -22,6 +22,10 @@ class FicheSteHelper
             'cnss' => '',
             'patente' => '',
             'ice' => '',
+            'statue' => '',
+            'activite' => '',
+            'fixe' => '',
+            'logo' => '',
         ];
     }
 
@@ -46,6 +50,10 @@ class FicheSteHelper
             'cnss' => trim((string) ($row['cnss'] ?? $defaults['cnss'])),
             'patente' => trim((string) ($row['patente'] ?? $defaults['patente'])),
             'ice' => trim((string) ($row['ice'] ?? $defaults['ice'])),
+            'statue' => trim((string) ($row['statue'] ?? $defaults['statue'])),
+            'activite' => trim((string) ($row['activite'] ?? $defaults['activite'])),
+            'fixe' => trim((string) ($row['fixe'] ?? $defaults['fixe'])),
+            'logo' => trim((string) ($row['logo'] ?? $defaults['logo'])),
         ];
     }
 

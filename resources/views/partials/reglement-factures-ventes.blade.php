@@ -152,11 +152,16 @@
     .fa-stat.regl,
     [data-theme="light"] .fa-stat.regl { background: linear-gradient(135deg, #f97316, #c2410c); color: #fff; }
     #frModal.fa-window {
-        position: static; inset: auto; z-index: auto; display: block;
-        margin: 1rem 0 0; padding: 0; background: transparent; overflow: visible;
+        position: fixed; top: 0; right: 0; bottom: 0; left: 272px; z-index: 40;
+        display: flex; align-items: center; justify-content: center;
+        margin: 0; padding: 1.25rem; background: rgba(0,0,0,0.45); overflow: auto;
     }
+    .shell.sidebar-hidden #frModal.fa-window { left: 0; }
     #frModal.fa-window[hidden] { display: none !important; }
-    #frModal .fa-sheet { margin-top: 0; }
+    #frModal .fa-sheet { margin: auto; }
+    @media (max-width: 900px) {
+        #frModal.fa-window { left: 0; }
+    }
 </style>
 <script>
 (function () {
@@ -310,10 +315,7 @@
         render(filteredRows());
     }
     function showSheet() {
-        const sheet = modal.querySelector('.fa-sheet');
-        if (sheet) sheet.style.marginTop = '';
         modal.hidden = false;
-        modal.scrollIntoView({ behavior: 'smooth', block: 'start' });
     }
     function paymentGroup(id) {
         return rows.filter((item) => String(item.id) === String(id)).sort((a, b) => Number(a.line_id) - Number(b.line_id));

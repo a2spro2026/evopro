@@ -43,6 +43,7 @@ class SupplierInvoiceController extends Controller
             [$lines, $totals] = $this->buildLines($data);
             $supplier = $this->resolveSupplier($data);
             $invoice = SupplierInvoice::create([
+                'reference' => $data['reference'],
                 'supplier_id' => $supplier->id,
                 'depot' => 'depot_a',
                 'invoice_date' => $data['invoice_date'],
@@ -64,12 +65,13 @@ class SupplierInvoiceController extends Controller
 
     public function update(Request $request, SupplierInvoice $supplierInvoice): JsonResponse
     {
-        $data = $this->validated($request);
+        $data = $this->validated($request, $supplierInvoice);
 
         $invoice = DB::transaction(function () use ($data, $supplierInvoice) {
             [$lines, $totals] = $this->buildLines($data);
             $supplier = $this->resolveSupplier($data);
             $supplierInvoice->update([
+                'reference' => $data['reference'],
                 'supplier_id' => $supplier->id,
                 'invoice_date' => $data['invoice_date'],
                 'total_ht' => $totals['total_ht'],
@@ -95,9 +97,14 @@ class SupplierInvoiceController extends Controller
         return response()->json(['message' => 'Facture supprimée']);
     }
 
-    private function validated(Request $request): array
+    private function validated(Request $request, ?SupplierInvoice $invoice = null): array
     {
+        $request->merge([
+            'reference' => trim((string) $request->input('reference')),
+        ]);
+
         return $request->validate([
+            'reference' => ['required', 'string', 'max:64', 'unique:supplier_invoices,reference'.($invoice ? ','.$invoice->id : '')],
             'supplier_id' => ['nullable', 'integer', 'exists:suppliers,id'],
             'supplier_name' => ['nullable', 'string', 'max:255', 'required_without:supplier_id'],
             'ice' => ['required', 'digits:15'],
@@ -109,6 +116,9 @@ class SupplierInvoiceController extends Controller
             'items.*.quantity' => ['required', 'numeric', 'min:0.001'],
             'items.*.unit_price' => ['required', 'numeric', 'min:0'],
             'items.*.remise' => ['nullable', 'numeric', 'min:0', 'max:100'],
+        ], [
+            'reference.required' => 'Saisissez la référence de la facture.',
+            'reference.unique' => 'Cette référence est déjà utilisée.',
         ]);
     }
 

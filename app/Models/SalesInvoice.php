@@ -60,6 +60,8 @@ class SalesInvoice extends Model
             'invoice_date_raw' => $this->invoice_date?->format('Y-m-d'),
             'client_id' => $this->customer_id,
             'client' => $this->customer?->name ?? '—',
+            'client_address' => $this->customer?->address,
+            'client_city' => $this->customer?->city,
             'ice' => $this->customer?->ice,
             'total_ht' => round((float) $this->total_ht, 2),
             'tva' => round((float) $this->tva, 2),

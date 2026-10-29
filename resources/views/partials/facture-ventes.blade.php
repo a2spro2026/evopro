@@ -58,16 +58,18 @@
                     <tr>
                         <th>Date</th>
                         <th>Réf</th>
-                        <th>Client</th>
+                        <th>ID Clt</th>
+                        <th>Nom client</th>
                         <th>Ice</th>
                         <th>Total HT</th>
                         <th>TVA</th>
                         <th>Total TTC</th>
+                        <th>Solde</th>
                         <th>Actions</th>
                     </tr>
                 </thead>
                 <tbody id="fvBody">
-                    <tr><td colspan="8">Aucune facture enregistrée</td></tr>
+                    <tr><td colspan="10">Aucune facture enregistrée</td></tr>
                 </tbody>
             </table>
         </div>
@@ -90,8 +92,12 @@
                         <label for="fvRef">Réf</label>
                         <input id="fvRef" readonly>
                     </div>
+                    <div class="fa-field fa-field-ref">
+                        <label for="fvClientId">ID Clt</label>
+                        <input id="fvClientId" readonly tabindex="-1">
+                    </div>
                     <div class="fa-field fa-supplier">
-                        <label for="fvSupplier">Client</label>
+                        <label for="fvSupplier">Nom client</label>
                         <input id="fvSupplier" required maxlength="255" autocomplete="off" placeholder="Liste ou saisie">
                         <div class="fa-supplier-menu" id="fvSupplierMenu" hidden></div>
                     </div>
@@ -200,6 +206,10 @@
         color: #e7d5d8; background: #1a1014; text-align: center; white-space: nowrap;
     }
     .fa-table td { padding: 0.7rem 0.55rem; text-align: center; border-top: 1px solid rgba(110, 18, 36, 0.35); font-size: 0.86rem; }
+    .fv-solde { font-weight: 800; font-variant-numeric: tabular-nums; }
+    .fv-solde.due { color: #f87171; }
+    .fv-solde.partial { color: #60a5fa; }
+    .fv-solde.paid { color: #4ade80; }
     .fa-table tbody tr:hover td { background: rgba(110, 18, 36, 0.32); }
     .fa-ref { color: #f0c9cf; font-weight: 700; font-family: ui-monospace, monospace; font-size: 0.78rem; }
     .fa-ttc { color: #e8b4bc; font-weight: 700; }
@@ -226,17 +236,18 @@
     .shell.sidebar-hidden .fa-window, .fa-window.at-edge { left: 0; }
     .fa-window[hidden] { display: none !important; }
     #fvModal.fa-window {
-        position: static; inset: auto; z-index: auto; display: block;
-        margin: 1rem 0 0; padding: 0; background: transparent; overflow: visible;
+        position: fixed; top: 0; right: 0; bottom: 0; left: 272px; z-index: 40;
+        display: flex; align-items: center; justify-content: center;
+        margin: 0; padding: 1.25rem; background: rgba(0,0,0,0.45); overflow: auto;
     }
+    .shell.sidebar-hidden #fvModal.fa-window { left: 0; }
     #fvModal.fa-window[hidden] { display: none !important; }
-    #fvModal .fa-sheet { margin-top: 0; }
     .fa-sheet {
         width: min(920px, 100%); margin-top: 1.5rem; border-radius: 16px; overflow: hidden;
         background: #0c0c0e; border: 1px solid #4a1824; color: #f4f5f6;
         box-shadow: 0 24px 60px rgba(0,0,0,0.45);
     }
-    #fvModal .fa-sheet { width: min(1220px, 100%); margin-top: 0; }
+    #fvModal .fa-sheet { width: min(1220px, 100%); margin: auto; }
     .fa-view { width: min(520px, 100%); }
     .fa-sheet-head {
         display: flex; align-items: center; justify-content: space-between; gap: 1rem;
@@ -247,7 +258,7 @@
     .fa-kicker { margin: 0; font-size: 0.62rem; letter-spacing: 0.12em; text-transform: uppercase; color: #e7c4c8; }
     .fa-form { padding: 1rem 1.15rem 0.4rem; }
     .fa-error { margin-bottom: 0.75rem; padding: 0.65rem 0.8rem; border-radius: 10px; background: rgba(127,29,29,0.35); color: #fecaca; border: 1px solid #7f1d1d; font-size: 0.82rem; }
-    .fa-grid { display: grid; grid-template-columns: minmax(0, 1.15fr) minmax(86px, 0.48fr) minmax(0, 1.55fr) minmax(148px, 1.15fr); gap: 0.75rem 0.85rem; }
+    .fa-grid { display: grid; grid-template-columns: minmax(0, 1fr) minmax(86px, 0.42fr) minmax(72px, 0.38fr) minmax(0, 1.35fr) minmax(130px, 1fr); gap: 0.75rem 0.85rem; }
     .fa-span-2 { grid-column: span 2; }
     .fa-field label {
         display: flex; flex-direction: column; align-items: center; gap: 0.28rem;
@@ -331,8 +342,8 @@
     .fa-view-row span { color: #94a3b8; }
     .fa-view-line { margin-top: 0.45rem; padding: 0.45rem 0.6rem; border: 1px solid #1e293b; border-radius: 8px; font-size: 0.78rem; }
     @media (max-width: 900px) {
-        .fa-window { left: 0; }
-        .fa-grid { grid-template-columns: minmax(0, 1.15fr) minmax(86px, 0.48fr) minmax(0, 1.55fr) minmax(120px, 1.15fr); }
+        .fa-window, #fvModal.fa-window { left: 0; }
+        .fa-grid { grid-template-columns: minmax(0, 1fr) minmax(86px, 0.42fr) minmax(72px, 0.38fr) minmax(0, 1.35fr) minmax(110px, 1fr); }
         .fa-span-2 { grid-column: span 2; }
         .fa-stats { grid-template-columns: 1fr; }
     }
@@ -359,6 +370,9 @@
     [data-theme="light"] .fa-table th { color: #5c1220; background: #f7eef0; }
     [data-theme="light"] .fa-table td { border-top-color: rgba(143, 36, 54, 0.14); }
     [data-theme="light"] .fa-table tbody tr:hover td { background: rgba(225, 6, 0, 0.06); }
+    [data-theme="light"] .fv-solde.due { color: #dc2626; }
+    [data-theme="light"] .fv-solde.partial { color: #1d4ed8; }
+    [data-theme="light"] .fv-solde.paid { color: #15803d; }
     [data-theme="light"] .fa-ref { color: #8f2436; }
     [data-theme="light"] .fa-ttc { color: #6e1224; }
     [data-theme="light"] .fa-icon { color: #64748b; }
@@ -556,6 +570,7 @@
         document.getElementById('fvRef').value = row?.reference || meta.next_ref || 'FV-0001';
         supplier.value = row?.client && row.client !== '—' ? row.client : '';
         supplier.dataset.id = row?.client_id ? String(row.client_id) : '';
+        document.getElementById('fvClientId').value = clientCode(supplier.dataset.id);
         supplierMenu.hidden = true;
         const selected = (meta.clients || []).find((item) => String(item.id) === String(supplier.dataset.id || ''));
         ice.value = String(row?.ice || selected?.ice || '').replace(/\D/g, '').slice(0, 15);
@@ -601,21 +616,35 @@
             return true;
         });
     }
+    function clientCode(id) {
+        const n = Number(id);
+        if (!n) return '';
+        return 'CLT' + String(n).padStart(4, '0');
+    }
+    function soldeClass(row) {
+        const balance = Number(row.balance);
+        const paid = Number(row.paid) || 0;
+        if (balance <= 0.009) return 'paid';
+        if (paid > 0.009) return 'partial';
+        return 'due';
+    }
     function render(list) {
         const total = list.reduce((sum, row) => sum + (Number(row.total_ttc) || 0), 0);
         document.getElementById('fvSumTtc').textContent = moneyFr(total);
         if (!list.length) {
-            body.innerHTML = `<tr><td colspan="8">${rows.length ? 'Aucune facture pour cette recherche.' : 'Aucune facture enregistrée'}</td></tr>`;
+            body.innerHTML = `<tr><td colspan="10">${rows.length ? 'Aucune facture pour cette recherche.' : 'Aucune facture enregistrée'}</td></tr>`;
             return;
         }
         body.innerHTML = list.map((row) => `<tr>
             <td>${esc(row.invoice_date)}</td>
             <td class="fa-ref">${esc(row.reference)}</td>
+            <td>${esc(clientCode(row.client_id) || '—')}</td>
             <td>${esc(row.client)}</td>
             <td>${esc(row.ice) || '—'}</td>
             <td>${esc(moneyFr(row.total_ht))}</td>
             <td>${esc(moneyFr(row.tva))}</td>
             <td class="fa-ttc">${esc(moneyFr(row.total_ttc))}</td>
+            <td class="fv-solde ${soldeClass(row)}">${esc(moneyFr(row.balance))}</td>
             <td><div class="fa-row-actions">
                 <button type="button" class="fa-icon see" data-act="voir" data-id="${row.id}" title="Voir">${eye}</button>
                 <button type="button" class="fa-icon edit" data-act="modifier" data-id="${row.id}" title="Modifier">${pencil}</button>
@@ -626,46 +655,144 @@
             </div></td>
         </tr>`).join('');
     }
+    function frenchInt(value) {
+        const n = Math.floor(Math.abs(Number(value) || 0));
+        const units = ['', 'UN', 'DEUX', 'TROIS', 'QUATRE', 'CINQ', 'SIX', 'SEPT', 'HUIT', 'NEUF', 'DIX', 'ONZE', 'DOUZE', 'TREIZE', 'QUATORZE', 'QUINZE', 'SEIZE'];
+        const under100 = (x) => {
+            if (x < 17) return units[x];
+            if (x < 20) return 'DIX-' + units[x - 10];
+            const tens = ['', '', 'VINGT', 'TRENTE', 'QUARANTE', 'CINQUANTE', 'SOIXANTE', 'SOIXANTE', 'QUATRE-VINGT', 'QUATRE-VINGT'];
+            const t = Math.floor(x / 10);
+            const r = x % 10;
+            if (t === 7 || t === 9) {
+                if (r === 0) return t === 7 ? 'SOIXANTE-DIX' : 'QUATRE-VINGT-DIX';
+                if (r === 1 && t === 7) return 'SOIXANTE ET ONZE';
+                return tens[t] + '-' + under100(10 + r);
+            }
+            if (r === 0) return t === 8 ? 'QUATRE-VINGTS' : tens[t];
+            if (r === 1 && t !== 8) return tens[t] + ' ET UN';
+            return tens[t] + '-' + units[r];
+        };
+        const under1000 = (x) => {
+            if (x < 100) return under100(x);
+            const c = Math.floor(x / 100);
+            const r = x % 100;
+            const cent = (c === 1 ? 'CENT' : units[c] + ' CENT') + (r === 0 && c > 1 ? 'S' : '');
+            return r ? cent + ' ' + under100(r) : cent;
+        };
+        if (!n) return 'ZÉRO';
+        const millions = Math.floor(n / 1000000);
+        const thousands = Math.floor((n % 1000000) / 1000);
+        const rest = n % 1000;
+        const parts = [];
+        if (millions) parts.push(millions === 1 ? 'UN MILLION' : under1000(millions) + ' MILLIONS');
+        if (thousands) parts.push(thousands === 1 ? 'MILLE' : under1000(thousands) + ' MILLE');
+        if (rest) parts.push(under1000(rest));
+        return parts.join(' ');
+    }
+    function amountWords(value) {
+        const centsTotal = Math.round((Number(value) || 0) * 100);
+        const dirhams = Math.floor(centsTotal / 100);
+        const cents = centsTotal % 100;
+        let text = frenchInt(dirhams) + ' DH';
+        if (cents) text += ' ' + String(cents).padStart(2, '0') + ' CTS';
+        return text;
+    }
     function printRow(row) {
         const company = window.ficheSteData || {};
+        const companyTitle = String(company.nom_societe || 'STE AUTO-SIHAP').trim() || 'STE AUTO-SIHAP';
+        const fallbackLogo = @json(asset('images/auto-sihap-marque.png'));
+        const siteRoot = @json(rtrim(url('/'), '/'));
+        const logoSrc = company.logo ? `${siteRoot}/${String(company.logo).replace(/^\/+/, '')}` : fallbackLogo;
+        const brandLines = [company.statue, company.activite].map((value) => String(value || '').trim()).filter(Boolean).map((value) => `<p>${esc(value)}</p>`).join('');
         const show = (value) => esc(String(value || '').trim() || '—');
-        const lines = (row.items || []).map((item) => `<tr><td>${esc(item.article_ref || '—')}</td><td>${esc(moneyDot(item.purchase_price || 0))}</td><td>${esc(item.description || '—')}</td><td>${esc(item.quantity)}</td><td>${esc(moneyDot(item.unit_price))}</td><td>${esc(item.remise)}%</td><td><strong>${esc(moneyDot(item.total))}</strong></td></tr>`).join('') || '<tr><td colspan="7">—</td></tr>';
+        const raw = (value) => esc(String(value || '').trim());
+        const qtyText = (value) => {
+            const n = Number(value) || 0;
+            return Number.isInteger(n) ? String(n) : String(n).replace('.', ',');
+        };
+        const clientLines = [row.client, row.client_address, row.client_city, row.ice].map((value) => String(value || '').trim()).filter(Boolean);
+        const lines = (row.items || []).map((item) => {
+            const qty = Number(item.quantity) || 0;
+            const remise = Number(item.remise) || 0;
+            const purchase = Number(item.purchase_price) || 0;
+            const saleTtc = Number(item.unit_price) || 0;
+            const lineTtc = Number(item.total) || qty * saleTtc;
+            const prixHt = purchase > 0
+                ? purchase / 1.2
+                : (remise > 0 && remise < 100 ? (saleTtc / 1.2) / (1 - remise / 100) : saleTtc / 1.2);
+            return `<tr>
+                <td class="ref">${esc(item.article_ref || '—')}</td>
+                <td class="desc">${esc(item.description || '—')}</td>
+                <td class="qty">${esc(qtyText(qty))}</td>
+                <td class="num">${esc(moneyFr(prixHt))}</td>
+                <td class="num">${esc(moneyFr(remise))}</td>
+                <td class="num">${esc(moneyFr(lineTtc / 1.2))}</td>
+            </tr>`;
+        }).join('') || '<tr><td colspan="6">—</td></tr>';
         const html = `<!DOCTYPE html><html><head><meta charset="utf-8"><title>Facture ${esc(row.reference)}</title>
             <style>
-                @page { margin: 14mm 12mm 24mm; }
+                @page { size: A4; margin: 12mm 12mm 18mm; }
+                * { box-sizing: border-box; }
                 html, body { margin: 0; padding: 0; }
-                body { font-family: Arial, sans-serif; color: #1a1214; padding: 18px 22px 92px; }
-                header { display: flex; align-items: center; gap: 16px; border-bottom: 3px solid #e10600; padding-bottom: 12px; }
-                header img { height: 78px; width: auto; object-fit: contain; }
-                header h1 { margin: 0; font-size: 26px; letter-spacing: 0.04em; }
-                header p { margin: 4px 0 0; font-size: 13px; color: #5c1220; }
-                table { width: 100%; border-collapse: collapse; margin-top: 14px; }
-                th, td { border: 1px solid #e7c9cf; padding: 8px; font-size: 12px; text-align: center; }
-                th { background: #f7eef0; }
-                footer { position: fixed; left: 0; right: 0; bottom: 0; padding: 8px 22px 12px; border-top: 2px solid #e10600; background: #fff; display: flex; flex-wrap: wrap; gap: 4px 14px; font-size: 11px; }
+                body { font-family: Arial, Helvetica, sans-serif; color: #1a1a1a; padding: 16px 22px 78px; }
+                .sheet { position: relative; z-index: 1; }
+                .watermark { position: fixed; inset: 0; display: flex; align-items: center; justify-content: center; overflow: hidden; pointer-events: none; }
+                .watermark span { font-size: 74px; font-weight: 800; letter-spacing: 0.04em; line-height: 1; white-space: nowrap; color: rgba(225, 6, 0, 0.22); transform: rotate(-28deg); text-transform: uppercase; }
+                .banner { width: 100%; display: flex; align-items: center; justify-content: flex-start; gap: 16px; margin: 0 0 12px; padding: 0 0 8px; background: transparent; border-bottom: 2px solid #e10600; }
+                .banner img { display: block; width: 148px; height: auto; flex: 0 0 auto; background: transparent; }
+                .banner h1 { margin: 0; color: #e10600; font-size: 28px; font-weight: 800; letter-spacing: 0.04em; text-transform: uppercase; }
+                .banner .brand p { margin: 2px 0 0; color: #5c1220; font-size: 12px; font-weight: 700; letter-spacing: 0.04em; text-transform: uppercase; }
+                .client { display: inline-block; min-width: 260px; max-width: 420px; border: 1px solid #8d98a3; padding: 8px 12px; font-size: 12px; line-height: 1.4; text-transform: uppercase; }
+                .meta, .lines, .totals { width: 100%; border-collapse: collapse; }
+                .meta { margin-top: 12px; }
+                .meta td { border: 1px solid #6d7580; padding: 5px 8px; font-size: 12px; }
+                .meta b { margin-right: 8px; }
+                .detail-title { margin: 14px 0 6px; color: #1a1a1a; font-size: 13px; font-weight: 800; letter-spacing: 0.04em; text-transform: uppercase; text-decoration: underline; text-underline-offset: 3px; }
+                .lines { margin-top: 0; }
+                .lines th { background: #d5dbe3; border: 1px solid #6d7580; padding: 5px 4px; font-size: 12px; text-align: center; }
+                .lines td { border: 1px solid #c5ccd4; padding: 3px 5px; font-size: 11px; }
+                .lines td.ref, .lines td.qty { text-align: center; }
+                .lines td.desc { text-align: left; text-transform: uppercase; }
+                .lines td.num, .totals td.num { text-align: right; font-variant-numeric: tabular-nums; }
+                .totals { margin-top: 10px; }
+                .totals td { border: 1px solid #6d7580; padding: 5px 8px; font-size: 12px; font-weight: 700; }
+                .totals td.lbl { background: #f4f6f8; width: 18%; }
+                .words { margin-top: 36px; font-size: 12px; font-style: italic; }
+                .words strong { display: block; margin-top: 8px; color: #1d4e9e; font-size: 15px; font-style: normal; letter-spacing: 0.03em; }
+                footer { position: fixed; left: 0; right: 0; bottom: 0; padding: 8px 18px 8px; border-top: 2px solid #e10600; text-align: center; font-size: 9px; line-height: 1.45; color: #333; background: #fff; }
             </style></head><body>
-            <header>
-                <img src="{{ asset('images/auto-sihap-logo.jpg') }}" alt="Logo">
-                <div>
-                    <h1>${show(company.nom_societe || 'AUTO SIHAP')}</h1>
-                    <p>Facture vente ${esc(row.reference)}</p>
+            <div class="watermark"><span>${esc(companyTitle)}</span></div>
+            <div class="sheet">
+                <div class="banner">
+                    <img src="${logoSrc}" alt="${esc(companyTitle)}">
+                    <div class="brand">
+                        <h1>${esc(companyTitle)}</h1>
+                        ${brandLines}
+                    </div>
                 </div>
-            </header>
-            <table><tr><th>Date</th><td>${esc(row.invoice_date)}</td><th>Client</th><td>${esc(row.client)}</td></tr>
-            <tr><th>Réf</th><td>${esc(row.reference)}</td><th>Ice client</th><td>${esc(row.ice || '—')}</td></tr>
-            <tr><th>Total HT</th><td>${esc(moneyFr(row.total_ht))}</td><th>TVA</th><td>${esc(moneyFr(row.tva))}</td></tr>
-            <tr><th>Total TTC</th><td colspan="3"><strong>${esc(moneyFr(row.total_ttc))}</strong></td></tr></table>
-            <table><thead><tr><th>Réf</th><th>Prix achat</th><th>Désignation</th><th>Qté</th><th>Prix/U</th><th>Remise</th><th>Sous-Total TTC</th></tr></thead><tbody>${lines}</tbody></table>
+                <div class="client">${clientLines.map((line) => `<div>${esc(line)}</div>`).join('') || '<div>—</div>'}</div>
+                <table class="meta"><tr>
+                    <td><b>ID Client :</b> ${esc(clientCode(row.client_id))}</td>
+                    <td><b>Facture N° :</b> ${esc(row.reference)}</td>
+                    <td><b>Date :</b> ${esc(row.invoice_date)}</td>
+                </tr></table>
+                <div class="detail-title">Détail Facture</div>
+                <table class="lines">
+                    <thead><tr><th>Référence</th><th>Désignation</th><th>Qté</th><th>Prix U.</th><th>R. (%)</th><th>Total</th></tr></thead>
+                    <tbody>${lines}</tbody>
+                </table>
+                <table class="totals"><tr>
+                    <td class="lbl">Total H.T.</td><td class="num">${esc(moneyFr(row.total_ht))}</td>
+                    <td class="lbl">T.V.A 20,00 %</td><td class="num">${esc(moneyFr(row.tva))}</td>
+                    <td class="lbl">Total T.T.C</td><td class="num">${esc(moneyFr(row.total_ttc))}</td>
+                </tr></table>
+                <div class="words">La présente facture s'élève à la somme de<strong>${esc(amountWords(row.total_ttc))}</strong></div>
+            </div>
             <footer>
-                <span>RC : ${show(company.rc)}</span>
-                <span>IF : ${show(company.identifiant_fiscal)}</span>
-                <span>CNSS : ${show(company.cnss)}</span>
-                <span>Patente : ${show(company.patente)}</span>
-                <span>ICE : ${show(company.ice)}</span>
-                <span>Email : ${show(company.email)}</span>
-                <span>N° Télé : ${show(company.contact)}</span>
-                <span>Adresse : ${show(company.adresse)}</span>
-                <span>Ville : ${show(company.ville)}</span>
+                <div>${raw(company.adresse)}${company.adresse && company.ville ? ' — ' : ''}${raw(company.ville)}</div>
+                <div>R.C. : ${show(company.rc)} &nbsp; I.F. : ${show(company.identifiant_fiscal)} &nbsp; Patente : ${show(company.patente)} &nbsp; C.N.S.S. : ${show(company.cnss)} &nbsp; I.C.E. : ${show(company.ice)}</div>
+                <div>N° Télé : ${show(company.contact)} &nbsp; N° Fixe : ${show(company.fixe)} &nbsp; Email : ${show(company.email)}</div>
             </footer>
             </body></html>`;
         const win = window.open('', '_blank', 'width=900,height=700');
@@ -685,8 +812,8 @@
         viewRow = row;
         document.getElementById('fvViewTitle').textContent = row.reference || '—';
         const fields = [
-            ['Réf', row.reference], ['Date', row.invoice_date], ['Client', row.client], ['Ice', row.ice],
-            ['Total HT', moneyFr(row.total_ht)], ['TVA', moneyFr(row.tva)], ['Total TTC', moneyFr(row.total_ttc)],
+            ['Réf', row.reference], ['Date', row.invoice_date], ['ID Clt', clientCode(row.client_id)], ['Nom client', row.client], ['Ice', row.ice],
+            ['Total HT', moneyFr(row.total_ht)], ['TVA', moneyFr(row.tva)], ['Total TTC', moneyFr(row.total_ttc)], ['Solde', moneyFr(row.balance)],
         ];
         const lines = (row.items || []).map((item) => `<div class="fa-view-line"><strong>${esc(moneyDot(item.purchase_price || 0))}  ${esc([item.article_ref, item.description].filter(Boolean).join(' — ') || '—')}</strong><div>${esc(item.quantity)} × ${esc(moneyDot(item.unit_price))}${Number(item.remise) > 0 ? ` (remise ${esc(item.remise)}%)` : ''} = <strong>${esc(moneyDot(item.total))}</strong></div></div>`).join('');
         document.getElementById('fvViewBody').innerHTML = fields.map(([label, value]) => `<div class="fa-view-row"><span>${esc(label)}</span><strong>${esc(value || '—')}</strong></div>`).join('') + lines;
@@ -704,9 +831,6 @@
     function openModal(row) {
         resetForm(row || null);
         modal.hidden = false;
-        const sheet = modal.querySelector('.fa-sheet');
-        if (sheet) sheet.style.marginTop = '';
-        modal.scrollIntoView({ behavior: 'smooth', block: 'start' });
     }
     function closeModal() { modal.hidden = true; editingId = null; }
     function supplierChoices(query) {
@@ -724,6 +848,7 @@
     function pickSupplier(item) {
         supplier.value = item?.name || '';
         supplier.dataset.id = item?.id ? String(item.id) : '';
+        document.getElementById('fvClientId').value = clientCode(supplier.dataset.id);
         ice.value = String(item?.ice || '').replace(/\D/g, '').slice(0, 15);
         supplierMenu.hidden = true;
     }
@@ -732,6 +857,7 @@
         const typed = supplier.value.trim().toLowerCase();
         const exact = (meta.clients || []).find((item) => String(item.name || '').trim().toLowerCase() === typed);
         supplier.dataset.id = exact ? String(exact.id) : '';
+        document.getElementById('fvClientId').value = clientCode(supplier.dataset.id);
         showSupplierMenu();
     });
     supplierMenu.addEventListener('click', (event) => {
@@ -866,6 +992,9 @@
             save.disabled = false;
         }
     });
-    load().catch((error) => { body.innerHTML = `<tr><td colspan="8">${esc(error.message)}</td></tr>`; });
+    document.querySelector('[data-panel="fa-vente"]')?.addEventListener('click', () => {
+        load().catch((error) => showError(error.message));
+    });
+    load().catch((error) => { body.innerHTML = `<tr><td colspan="10">${esc(error.message)}</td></tr>`; });
 })();
 </script>

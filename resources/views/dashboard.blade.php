@@ -61,6 +61,11 @@
 
         * { box-sizing: border-box; margin: 0; padding: 0; }
 
+        html, body {
+            height: 100%;
+            overflow: hidden;
+        }
+
         body {
             min-height: 100vh;
             font-family: 'Outfit', sans-serif;
@@ -267,7 +272,10 @@
         }
 
         .shell {
-            min-height: 100vh;
+            height: 100vh;
+            max-height: 100vh;
+            min-height: 0;
+            overflow: hidden;
             display: grid;
             grid-template-columns: 272px 1fr;
             transition: grid-template-columns 0.25s ease;
@@ -287,6 +295,11 @@
         .sidebar {
             display: flex;
             flex-direction: column;
+            height: 100vh;
+            max-height: 100vh;
+            min-height: 0;
+            overflow: hidden;
+            overscroll-behavior: none;
             border-right: 1px solid rgba(255, 255, 255, 0.06);
             background: linear-gradient(180deg, #050506 0%, #121214 42%, #050506 100%);
             box-shadow: 4px 0 24px rgba(0, 0, 0, 0.35), inset -1px 0 0 rgba(255, 255, 255, 0.04);
@@ -317,9 +330,9 @@
             position: relative;
             width: 100%;
             max-width: 220px;
-            padding: 0.7rem 0.55rem 0.65rem;
+            padding: 0.55rem 0.55rem 0.45rem;
             border-radius: 18px;
-            background: #050506;
+            background: #fff;
             border: 1px solid rgba(215, 219, 224, 0.28);
             box-shadow:
                 0 0 0 1px rgba(255, 255, 255, 0.04) inset,
@@ -371,6 +384,18 @@
             filter: drop-shadow(0 0 14px rgba(225, 6, 0, 0.35)) drop-shadow(0 8px 18px rgba(0, 0, 0, 0.5));
         }
 
+        .sidebar-brand-name {
+            position: relative;
+            z-index: 1;
+            margin: 0.35rem 0 0;
+            text-align: center;
+            color: #e10600;
+            font-size: 0.78rem;
+            font-weight: 800;
+            letter-spacing: 0.04em;
+            line-height: 1.2;
+        }
+
         .logo-shine {
             position: absolute;
             top: -60%;
@@ -404,14 +429,18 @@
 
         .nav-list {
             flex: 1;
+            min-height: 0;
             padding: 0.75rem 0.7rem 1rem;
             display: flex;
             flex-direction: column;
             gap: 0.35rem;
+            overflow-x: hidden;
             overflow-y: auto;
-            scrollbar-width: thin;
-            scrollbar-color: rgba(225, 6, 0, 0.45) transparent;
+            overscroll-behavior: contain;
+            scrollbar-width: none;
         }
+
+        .nav-list::-webkit-scrollbar { display: none; }
 
         .nav-section {
             display: flex;
@@ -1210,7 +1239,10 @@
             min-width: 0;
             display: flex;
             flex-direction: column;
-            min-height: 100vh;
+            height: 100vh;
+            max-height: 100vh;
+            min-height: 0;
+            overflow: hidden;
         }
 
         .topbar {
@@ -1218,6 +1250,11 @@
             align-items: center;
             justify-content: space-between;
             gap: 1rem;
+            flex-shrink: 0;
+            position: relative;
+            z-index: 25;
+            overflow: hidden;
+            overscroll-behavior: none;
             padding: 1rem 1.75rem;
             border-bottom: 1px solid var(--line);
             background: var(--topbar-bg);
@@ -1343,6 +1380,17 @@
             text-transform: none;
         }
 
+        .topbar-logo {
+            display: block;
+            height: 42px;
+            width: auto;
+            max-width: 120px;
+            object-fit: contain;
+            background: #fff;
+            border-radius: 8px;
+            padding: 2px 6px;
+        }
+
         .user-badge {
             padding: 0.45rem 0.75rem;
             border-radius: 999px;
@@ -1355,6 +1403,9 @@
 
         .content {
             flex: 1;
+            min-height: 0;
+            overflow: auto;
+            overscroll-behavior: contain;
             padding: 1.75rem;
         }
 
@@ -2101,6 +2152,183 @@
             border-top: 1px solid var(--line);
         }
 
+        .ste-card {
+            max-width: 1040px;
+            padding: 1.25rem 1.35rem 1.1rem;
+            border-radius: 18px;
+            border: 1px solid rgba(225, 6, 0, 0.22);
+            background:
+                linear-gradient(180deg, rgba(225, 6, 0, 0.08), transparent 88px),
+                rgba(255, 255, 255, 0.03);
+            box-shadow: 0 18px 40px rgba(0, 0, 0, 0.22);
+        }
+
+        .ste-head {
+            display: flex;
+            align-items: flex-end;
+            justify-content: space-between;
+            gap: 1rem;
+            margin-bottom: 1.1rem;
+            padding-bottom: 0.85rem;
+            border-bottom: 2px solid #e10600;
+        }
+
+        .ste-head h1 {
+            margin: 0;
+            font-size: 1.25rem;
+            font-weight: 750;
+            letter-spacing: -0.02em;
+        }
+
+        .ste-head p {
+            margin: 0.2rem 0 0;
+            color: var(--muted);
+            font-size: 0.78rem;
+            font-weight: 500;
+            text-transform: none;
+        }
+
+        .ste-top {
+            display: grid;
+            grid-template-columns: 220px minmax(0, 1fr);
+            gap: 1rem;
+            align-items: stretch;
+        }
+
+        .ste-block {
+            margin-top: 1rem;
+        }
+
+        .ste-top .ste-block { margin-top: 0; }
+
+        .ste-block h2 {
+            margin: 0 0 0.7rem;
+            font-size: 0.72rem;
+            font-weight: 750;
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+            color: #e10600;
+        }
+
+        .ste-grid {
+            display: grid;
+            grid-template-columns: repeat(6, minmax(0, 1fr));
+            gap: 0.75rem 0.8rem;
+        }
+
+        .ste-grid .field { margin-bottom: 0; }
+        .ste-span-2 { grid-column: span 2; }
+        .ste-span-3 { grid-column: span 3; }
+        .ste-span-4 { grid-column: span 4; }
+        .ste-span-6 { grid-column: span 6; }
+
+        .ste-logo {
+            display: flex;
+            flex-direction: column;
+            gap: 0.45rem;
+        }
+
+        .ste-kicker {
+            font-size: 0.72rem;
+            font-weight: 750;
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+            color: #e10600;
+        }
+
+        .ste-drop {
+            flex: 1;
+            min-height: 148px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 0.45rem;
+            padding: 0.75rem;
+            border-radius: 14px;
+            border: 1.5px dashed rgba(225, 6, 0, 0.45);
+            background: #fff;
+            color: #5c1220;
+            text-align: center;
+            cursor: pointer;
+        }
+
+        .ste-drop span {
+            font-size: 0.75rem;
+            font-weight: 700;
+            letter-spacing: 0.04em;
+            text-transform: uppercase;
+        }
+
+        .ste-file {
+            position: absolute;
+            width: 1px;
+            height: 1px;
+            padding: 0;
+            margin: -1px;
+            overflow: hidden;
+            clip: rect(0, 0, 0, 0);
+            border: 0;
+        }
+
+        #ficheSteLogoPreview {
+            display: block;
+            width: min(160px, 100%);
+            height: auto;
+            max-height: 92px;
+            object-fit: contain;
+            background: transparent;
+        }
+
+        #ficheSteLogoPreview[hidden] { display: none !important; }
+
+        .ste-card .field input {
+            min-height: 42px;
+            border-radius: 10px;
+            border-color: rgba(225, 6, 0, 0.18);
+            background: rgba(255, 255, 255, 0.04);
+        }
+
+        .ste-card .field input:focus {
+            outline: none;
+            border-color: #e10600;
+            box-shadow: 0 0 0 3px rgba(225, 6, 0, 0.16);
+        }
+
+        #ficheSteForm input[readonly] { opacity: 0.72; }
+
+        .ste-card .config-form-foot {
+            margin-top: 1rem;
+        }
+
+        .ste-card .btn-primary {
+            border-color: #e10600;
+            background: linear-gradient(135deg, #e10600, #9b0400);
+            color: #fff;
+        }
+
+        [data-theme="light"] .ste-card {
+            background: #fff;
+            border-color: rgba(143, 36, 54, 0.16);
+            box-shadow: 0 16px 36px rgba(15, 31, 53, 0.06);
+        }
+
+        [data-theme="light"] .ste-card .field input {
+            background: #fff;
+            color: #121214;
+            border-color: rgba(143, 36, 54, 0.22);
+        }
+
+        @media (max-width: 980px) {
+            .ste-top { grid-template-columns: 1fr; }
+            .ste-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+            .ste-span-2, .ste-span-3, .ste-span-4, .ste-span-6 { grid-column: 1 / -1; }
+        }
+
+        @media (max-width: 640px) {
+            .ste-grid { grid-template-columns: 1fr; }
+        }
+
         .prospection-view { display: none; }
         .prospection-view.active { display: block; }
 
@@ -2490,6 +2718,7 @@
         .print-sheet dd { margin: 0; }
 
         @media print {
+            html, body, .shell, .main, .content { height: auto; max-height: none; overflow: visible; }
             body * { visibility: hidden; }
             #clientPrintArea, #clientPrintArea * { visibility: visible; }
             #clientPrintArea { position: absolute; inset: 0; padding: 1rem; background: #fff; color: #111; }
@@ -2570,7 +2799,8 @@
                 <div class="logo-stage">
                     <div class="logo-glow" aria-hidden="true"></div>
                     <div class="logo-shine" aria-hidden="true"></div>
-                    <img src="{{ asset('images/auto-sihap-logo.jpg') }}" alt="AUTO SIHAP — Pièces auto" width="420" height="180">
+                    <img id="sidebarBrandLogo" data-brand-logo src="{{ !empty($ficheSte['logo']) ? url($ficheSte['logo']) : asset('images/auto-sihap-marque.png') }}" alt="{{ $ficheSte['nom_societe'] ?: 'AUTO SIHAP' }}">
+                    <p class="sidebar-brand-name" data-brand-name>{{ $ficheSte['nom_societe'] ?: 'AUTO SIHAP' }}</p>
                 </div>
             </div>
 
@@ -2620,9 +2850,10 @@
                             ['id' => 'p-etat', 'label' => 'État Paiement', 'cols' => ['Date', 'ID', 'Nom Complet', 'Salaire', 'Jan', 'Fév', 'Mar', 'Avr', 'Mai', 'Juin', 'Juil', 'Aoû', 'Sep', 'Oct', 'Nov', 'Déc', 'Total']],
                         ]],
                         ['id' => 'configuration', 'label' => 'Configuration', 'items' => [
-                            ['id' => 'cfg-users', 'label' => 'Utilisateur', 'cols' => ['ID', 'Nom Complet', 'Contact', 'Statut', 'État', 'Login', 'Mot de Passe', 'Actions']],
-                            ['id' => 'cfg-auth', 'label' => 'Autorisations', 'cols' => ['Menu / page', 'Voir', 'Ajouter', 'Modifier', 'Supprimer']],
-                            ['id' => 'cfg-transport', 'label' => 'Transport', 'cols' => ['ID', 'Nom Transport', 'Matricule']],
+                            ['id' => 'cfg-fiche', 'label' => 'Fiche Société', 'panel' => 'configuration', 'config' => 'fiche-ste'],
+                            ['id' => 'cfg-users', 'label' => 'Utilisateur', 'disabled' => true, 'panel' => 'configuration', 'config' => 'utilisateur'],
+                            ['id' => 'cfg-auth', 'label' => 'Autorisations', 'disabled' => true],
+                            ['id' => 'cfg-transport', 'label' => 'Transport', 'disabled' => true],
                         ]],
                     ];
                     $facturationIcons = [
@@ -2643,8 +2874,9 @@
                     </button>
                 </div>
                 @foreach ($activityNav as $group)
-                    <div class="nav-section {{ $group['id'] === 'facturation' ? '' : 'is-held' }}">
-                        <div class="nav-group {{ $group['id'] === 'facturation' ? 'expanded is-pinned' : 'is-held' }}" data-nav-group="{{ $group['id'] }}">
+                    @php $navLive = in_array($group['id'], ['facturation', 'configuration'], true); @endphp
+                    <div class="nav-section {{ $navLive ? '' : 'is-held' }}">
+                        <div class="nav-group {{ $group['id'] === 'facturation' ? 'expanded is-pinned' : ($navLive ? '' : 'is-held') }}" data-nav-group="{{ $group['id'] }}">
                             <button type="button" class="nav-item has-sublist" data-panel="{{ $group['id'] }}" data-toggle-group="{{ $group['id'] }}">
                                 <span class="nav-icon {{ $group['id'] }}" aria-hidden="true">
                                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/></svg>
@@ -2662,7 +2894,8 @@
                                     <button
                                         type="button"
                                         class="nav-subitem"
-                                        @if ($group['id'] !== 'facturation' || !empty($group['soon']) || !empty($item['disabled'])) disabled @else data-panel="{{ $item['id'] }}" @endif
+                                        @if (!$navLive || !empty($group['soon']) || !empty($item['disabled'])) disabled @else data-panel="{{ $item['panel'] ?? $item['id'] }}" @endif
+                                        @if ($navLive && !empty($item['config'])) data-config="{{ $item['config'] }}" @endif
                                     >
                                         @if (!empty($facturationIcons[$item['id']]))
                                             <span class="nav-subicon" aria-hidden="true">{!! $facturationIcons[$item['id']] !!}</span>
@@ -2696,8 +2929,9 @@
                             <rect x="3" y="3" width="18" height="18" rx="2"/><path d="M9 3v18"/><path d="M16 9l3 3-3 3"/>
                         </svg>
                     </button>
+                    <img class="topbar-logo" data-brand-logo src="{{ !empty($ficheSte['logo']) ? url($ficheSte['logo']) : asset('images/auto-sihap-marque.png') }}" alt="">
                     <div class="welcome">
-                        <strong>Bienvenue sur AUTO SIHAP</strong>
+                        <strong data-brand-welcome>Bienvenue sur {{ $ficheSte['nom_societe'] ?: 'AUTO SIHAP' }}</strong>
                         <small>La solution qui gère vos achats, vos ventes et votre stock.</small>
                     </div>
                 </div>
@@ -2730,7 +2964,7 @@
 
                 @foreach ($activityNav as $group)
                     @foreach ($group['items'] as $item)
-                        @if (empty($group['soon']) && empty($item['disabled']) && ! in_array($item['id'] ?? '', ['f-fiche', 'fa-achat', 'fa-fisc', 'fa-vente', 'fa-regl'], true))
+                        @if (empty($group['soon']) && empty($item['disabled']) && ! in_array($item['id'] ?? '', ['f-fiche', 'fa-achat', 'fa-fisc', 'fa-vente', 'fa-regl', 'cfg-fiche'], true))
                             <section class="panel" id="panel-{{ $item['id'] }}">
                                 <div class="content-head">
                                     <h1>{{ $item['label'] }}</h1>
@@ -3633,67 +3867,101 @@
                             </section>
 
                             <section class="config-section" id="config-fiche-ste">
-                                <div class="content-head" style="margin-bottom:1rem;">
-                                    <h1 style="font-size:1.15rem;">Fiche Ste</h1>
-                                </div>
+                                <form class="ste-card" method="post" action="{{ url('/configuration/fiche-ste') }}" id="ficheSteForm" enctype="multipart/form-data" novalidate>
+                                    @csrf
+                                    @method('PUT')
+                                    <header class="ste-head">
+                                        <div>
+                                            <h1>Fiche Société</h1>
+                                            <p>Ces informations sont imprimées sur la facture de vente.</p>
+                                        </div>
+                                    </header>
 
-                                <div class="config-form-panel">
-                                    <form method="post" action="{{ url('/configuration/fiche-ste') }}" id="ficheSteForm" novalidate>
-                                        @csrf
-                                        @method('PUT')
-                                        <div class="field">
-                                            <label for="fiche_ste_nom_societe">Nom Société</label>
-                                            <input type="text" id="fiche_ste_nom_societe" name="nom_societe" maxlength="255" value="{{ $ficheSte['nom_societe'] ?? '' }}">
+                                    <div class="ste-top">
+                                        <div class="ste-logo">
+                                            <span class="ste-kicker">Logo</span>
+                                            <label class="ste-drop" for="fiche_ste_logo">
+                                                <img id="ficheSteLogoPreview" alt="" hidden>
+                                                <span>Importer le logo</span>
+                                            </label>
+                                            <input class="ste-file" type="file" id="fiche_ste_logo" name="logo" accept="image/png,image/jpeg,image/webp" autocomplete="off">
                                         </div>
-                                        <div class="field">
-                                            <label for="fiche_ste_nom_gerant">Nom Gérant</label>
-                                            <input type="text" id="fiche_ste_nom_gerant" name="nom_gerant" maxlength="255" value="{{ $ficheSte['nom_gerant'] ?? '' }}">
+                                        <div class="ste-block">
+                                            <h2>Société</h2>
+                                            <div class="ste-grid">
+                                                <div class="field ste-span-4">
+                                                    <label for="fiche_ste_nom_societe">Nom Société</label>
+                                                    <input type="text" id="fiche_ste_nom_societe" name="nom_societe" maxlength="255" value="" autocomplete="off">
+                                                </div>
+                                                <div class="field ste-span-2">
+                                                    <label for="fiche_ste_statue">Statue</label>
+                                                    <input type="text" id="fiche_ste_statue" name="statue" maxlength="255" value="" autocomplete="off">
+                                                </div>
+                                                <div class="field ste-span-6">
+                                                    <label for="fiche_ste_activite">Activité</label>
+                                                    <input type="text" id="fiche_ste_activite" name="activite" maxlength="255" value="" autocomplete="off">
+                                                </div>
+                                            </div>
                                         </div>
-                                        <div class="field">
-                                            <label for="fiche_ste_contact">Contact</label>
-                                            <input type="text" id="fiche_ste_contact" name="contact" maxlength="255" value="{{ $ficheSte['contact'] ?? '' }}" inputmode="tel" autocomplete="off">
+                                    </div>
+
+                                    <div class="ste-block">
+                                        <h2>Identifiants</h2>
+                                        <div class="ste-grid">
+                                            <div class="field">
+                                                <label for="fiche_ste_rc">RC</label>
+                                                <input type="text" id="fiche_ste_rc" name="rc" maxlength="255" value="" autocomplete="off">
+                                            </div>
+                                            <div class="field">
+                                                <label for="fiche_ste_if">IF</label>
+                                                <input type="text" id="fiche_ste_if" name="identifiant_fiscal" maxlength="255" value="" autocomplete="off">
+                                            </div>
+                                            <div class="field">
+                                                <label for="fiche_ste_patente">Patente</label>
+                                                <input type="text" id="fiche_ste_patente" name="patente" maxlength="255" value="" autocomplete="off">
+                                            </div>
+                                            <div class="field">
+                                                <label for="fiche_ste_cnss">CNSS</label>
+                                                <input type="text" id="fiche_ste_cnss" name="cnss" maxlength="255" value="" autocomplete="off">
+                                            </div>
+                                            <div class="field ste-span-2">
+                                                <label for="fiche_ste_ice">ICE</label>
+                                                <input type="text" id="fiche_ste_ice" name="ice" maxlength="255" value="" autocomplete="off">
+                                            </div>
                                         </div>
-                                        <div class="field">
-                                            <label for="fiche_ste_ville">Ville</label>
-                                            <input type="text" id="fiche_ste_ville" name="ville" maxlength="255" value="{{ $ficheSte['ville'] ?? '' }}">
+                                    </div>
+
+                                    <div class="ste-block">
+                                        <h2>Coordonnées</h2>
+                                        <div class="ste-grid">
+                                            <div class="field ste-span-2">
+                                                <label for="fiche_ste_contact">N° Télé</label>
+                                                <input type="text" id="fiche_ste_contact" name="contact" maxlength="255" value="" inputmode="tel" autocomplete="off">
+                                            </div>
+                                            <div class="field ste-span-2">
+                                                <label for="fiche_ste_fixe">N° Fixe</label>
+                                                <input type="text" id="fiche_ste_fixe" name="fixe" maxlength="255" value="" inputmode="tel" autocomplete="off">
+                                            </div>
+                                            <div class="field ste-span-2">
+                                                <label for="fiche_ste_email">Email</label>
+                                                <input type="text" id="fiche_ste_email" name="email" maxlength="255" value="" autocomplete="off">
+                                            </div>
+                                            <div class="field ste-span-4">
+                                                <label for="fiche_ste_adresse">Adresse</label>
+                                                <input type="text" id="fiche_ste_adresse" name="adresse" maxlength="255" value="" autocomplete="off">
+                                            </div>
+                                            <div class="field ste-span-2">
+                                                <label for="fiche_ste_ville">Ville</label>
+                                                <input type="text" id="fiche_ste_ville" name="ville" maxlength="255" value="" autocomplete="off">
+                                            </div>
                                         </div>
-                                        <div class="field">
-                                            <label for="fiche_ste_whatsapp">WhatsApp</label>
-                                            <input type="text" id="fiche_ste_whatsapp" name="whatsapp" maxlength="255" value="{{ $ficheSte['whatsapp'] ?? '' }}" inputmode="tel" autocomplete="off">
-                                        </div>
-                                        <div class="field">
-                                            <label for="fiche_ste_email">E-mail</label>
-                                            <input type="text" id="fiche_ste_email" name="email" maxlength="255" value="{{ $ficheSte['email'] ?? '' }}" autocomplete="off">
-                                        </div>
-                                        <div class="field">
-                                            <label for="fiche_ste_adresse">Adresse</label>
-                                            <input type="text" id="fiche_ste_adresse" name="adresse" maxlength="255" value="{{ $ficheSte['adresse'] ?? '' }}">
-                                        </div>
-                                        <div class="field">
-                                            <label for="fiche_ste_rc">RC</label>
-                                            <input type="text" id="fiche_ste_rc" name="rc" maxlength="255" value="{{ $ficheSte['rc'] ?? '' }}">
-                                        </div>
-                                        <div class="field">
-                                            <label for="fiche_ste_if">IF</label>
-                                            <input type="text" id="fiche_ste_if" name="identifiant_fiscal" maxlength="255" value="{{ $ficheSte['identifiant_fiscal'] ?? '' }}">
-                                        </div>
-                                        <div class="field">
-                                            <label for="fiche_ste_cnss">CNSS</label>
-                                            <input type="text" id="fiche_ste_cnss" name="cnss" maxlength="255" value="{{ $ficheSte['cnss'] ?? '' }}">
-                                        </div>
-                                        <div class="field">
-                                            <label for="fiche_ste_patente">Patente</label>
-                                            <input type="text" id="fiche_ste_patente" name="patente" maxlength="255" value="{{ $ficheSte['patente'] ?? '' }}">
-                                        </div>
-                                        <div class="field">
-                                            <label for="fiche_ste_ice">ICE</label>
-                                            <input type="text" id="fiche_ste_ice" name="ice" maxlength="255" value="{{ $ficheSte['ice'] ?? '' }}">
-                                        </div>
-                                        <div class="config-form-foot">
-                                            <button type="button" class="btn-primary" id="btnFicheSteFermer">Fermer</button>
-                                        </div>
-                                    </form>
-                                </div>
+                                    </div>
+
+                                    <div class="config-form-foot">
+                                        <button type="button" class="btn-ghost" id="btnFicheSteModifier">Modifier</button>
+                                        <button type="button" class="btn-primary" id="btnFicheSteEnregistrer">Enregistrer</button>
+                                    </div>
+                                </form>
                             </section>
                     </div>
                 </section>
@@ -5495,10 +5763,11 @@
 
                 if (data.fiche_ste) {
                     Object.assign(ficheSteData, data.fiche_ste);
+                    applyFicheBrand();
                 }
 
                 if (closeAfterSave) {
-                    showConfigSection('utilisateur');
+                    setFicheSteLocked(true);
                 }
 
                 return true;
@@ -5508,7 +5777,43 @@
             }
         }
 
-        document.getElementById('btnFicheSteFermer')?.addEventListener('click', () => saveFicheSte(true));
+        function applyFicheBrand() {
+            const name = String(ficheSteData.nom_societe || '').trim() || 'AUTO SIHAP';
+            const fallback = @json(asset('images/auto-sihap-marque.png'));
+            const root = @json(rtrim(url('/'), '/'));
+            const logo = ficheSteData.logo ? `${root}/${String(ficheSteData.logo).replace(/^\/+/, '')}` : fallback;
+            document.querySelectorAll('[data-brand-logo]').forEach((img) => { img.src = logo; });
+            document.querySelectorAll('[data-brand-name]').forEach((node) => { node.textContent = name; });
+            document.querySelectorAll('[data-brand-welcome]').forEach((node) => { node.textContent = `Bienvenue sur ${name}`; });
+        }
+
+        function setFicheSteLocked(locked) {
+            const form = document.getElementById('ficheSteForm');
+            if (!form) return;
+            form.querySelectorAll('input').forEach((input) => {
+                if (input.type === 'hidden' || input.name === '_method' || input.name === '_token') return;
+                if (input.type === 'file') input.disabled = locked;
+                else input.readOnly = locked;
+            });
+            const save = document.getElementById('btnFicheSteEnregistrer');
+            if (save) save.disabled = locked;
+        }
+
+        document.getElementById('btnFicheSteModifier')?.addEventListener('click', () => setFicheSteLocked(false));
+        document.getElementById('btnFicheSteEnregistrer')?.addEventListener('click', () => saveFicheSte(true));
+        document.getElementById('fiche_ste_logo')?.addEventListener('change', (event) => {
+            const file = event.target.files?.[0];
+            const preview = document.getElementById('ficheSteLogoPreview');
+            if (!file || !preview) return;
+            preview.src = URL.createObjectURL(file);
+            preview.hidden = false;
+        });
+        document.querySelectorAll('#ficheSteForm input').forEach((input) => {
+            if (input.type === 'hidden' || input.name === '_method' || input.name === '_token') return;
+            input.value = '';
+        });
+        setFicheSteLocked(false);
+        applyFicheBrand();
 
         const utilisateurSidePanel = document.getElementById('utilisateurSidePanel');
         const utilisateurForm = document.getElementById('utilisateurForm');

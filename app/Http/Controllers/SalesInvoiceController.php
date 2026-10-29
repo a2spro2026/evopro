@@ -14,11 +14,25 @@ class SalesInvoiceController extends Controller
 {
     public function index(): JsonResponse
     {
+        $paidByInvoice = DB::table('sales_invoice_payment_lines as l')
+            ->join('sales_invoice_payments as p', 'p.id', '=', 'l.sales_invoice_payment_id')
+            ->groupBy('p.sales_invoice_id')
+            ->selectRaw('p.sales_invoice_id as invoice_id, SUM(l.amount) as paid')
+            ->get()
+            ->mapWithKeys(fn ($row) => [(int) $row->invoice_id => round((float) $row->paid, 2)]);
+
         $rows = SalesInvoice::query()
             ->with(['customer', 'items'])
             ->orderByDesc('id')
             ->get()
-            ->map->toFicheArray()
+            ->map(function (SalesInvoice $invoice) use ($paidByInvoice) {
+                $row = $invoice->toFicheArray();
+                $paid = round((float) ($paidByInvoice[$invoice->id] ?? 0), 2);
+                $row['paid'] = $paid;
+                $row['balance'] = round($row['total_ttc'] - $paid, 2);
+
+                return $row;
+            })
             ->values();
 
         $next = (SalesInvoice::max('id') ?? 0) + 1;

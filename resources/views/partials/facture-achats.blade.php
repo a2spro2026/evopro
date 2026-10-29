@@ -88,7 +88,7 @@
                     </div>
                     <div class="fa-field fa-field-ref">
                         <label for="faRef">Réf</label>
-                        <input id="faRef" readonly>
+                        <input id="faRef" required maxlength="64" autocomplete="off" placeholder="Saisir la référence">
                     </div>
                     <div class="fa-field fa-supplier">
                         <label for="faSupplier">Fournisseur</label>
@@ -223,17 +223,18 @@
     .shell.sidebar-hidden .fa-window, .fa-window.at-edge { left: 0; }
     .fa-window[hidden] { display: none !important; }
     #faModal.fa-window {
-        position: static; inset: auto; z-index: auto; display: block;
-        margin: 1rem 0 0; padding: 0; background: transparent; overflow: visible;
+        position: fixed; top: 0; right: 0; bottom: 0; left: 272px; z-index: 40;
+        display: flex; align-items: center; justify-content: center;
+        margin: 0; padding: 1.25rem; background: rgba(0,0,0,0.45); overflow: auto;
     }
+    .shell.sidebar-hidden #faModal.fa-window { left: 0; }
     #faModal.fa-window[hidden] { display: none !important; }
-    #faModal .fa-sheet { margin-top: 0; }
     .fa-sheet {
         width: min(920px, 100%); margin-top: 1.5rem; border-radius: 16px; overflow: hidden;
         background: #0c0c0e; border: 1px solid #4a1824; color: #f4f5f6;
         box-shadow: 0 24px 60px rgba(0,0,0,0.45);
     }
-    #faModal .fa-sheet { width: min(1220px, 100%); margin-top: 0; }
+    #faModal .fa-sheet { width: min(1220px, 100%); margin: auto; }
     .fa-view { width: min(520px, 100%); }
     .fa-sheet-head {
         display: flex; align-items: center; justify-content: space-between; gap: 1rem;
@@ -244,7 +245,7 @@
     .fa-kicker { margin: 0; font-size: 0.62rem; letter-spacing: 0.12em; text-transform: uppercase; color: #e7c4c8; }
     .fa-form { padding: 1rem 1.15rem 0.4rem; }
     .fa-error { margin-bottom: 0.75rem; padding: 0.65rem 0.8rem; border-radius: 10px; background: rgba(127,29,29,0.35); color: #fecaca; border: 1px solid #7f1d1d; font-size: 0.82rem; }
-    .fa-grid { display: grid; grid-template-columns: minmax(0, 1.15fr) minmax(86px, 0.48fr) minmax(0, 1.55fr) minmax(148px, 1.15fr); gap: 0.75rem 0.85rem; }
+    .fa-grid { display: grid; grid-template-columns: minmax(0, 1.15fr) minmax(120px, 0.7fr) minmax(0, 1.55fr) minmax(148px, 1.15fr); gap: 0.75rem 0.85rem; }
     .fa-span-2 { grid-column: span 2; }
     .fa-field label {
         display: flex; flex-direction: column; align-items: center; gap: 0.28rem;
@@ -323,7 +324,7 @@
     .fa-view-row span { color: #94a3b8; }
     .fa-view-line { margin-top: 0.45rem; padding: 0.45rem 0.6rem; border: 1px solid #1e293b; border-radius: 8px; font-size: 0.78rem; }
     @media (max-width: 900px) {
-        .fa-window { left: 0; }
+        .fa-window, #faModal.fa-window { left: 0; }
         .fa-grid { grid-template-columns: minmax(0, 1.15fr) minmax(86px, 0.48fr) minmax(0, 1.55fr) minmax(120px, 1.15fr); }
         .fa-span-2 { grid-column: span 2; }
         .fa-stats { grid-template-columns: 1fr; }
@@ -409,7 +410,7 @@
         editingId = row?.id || null;
         document.getElementById('faModalTitle').textContent = row ? `Modifier ${row.reference}` : 'Nouvelle facture achat';
         document.getElementById('faDate').value = row?.invoice_date_raw || meta.date || '';
-        document.getElementById('faRef').value = row?.reference || meta.next_ref || 'FA-0001';
+        document.getElementById('faRef').value = row?.reference || '';
         supplier.value = row?.fournisseur && row.fournisseur !== '—' ? row.fournisseur : '';
         supplier.dataset.id = row?.supplier_id ? String(row.supplier_id) : '';
         supplierMenu.hidden = true;
@@ -526,9 +527,6 @@
     function openModal(row) {
         resetForm(row || null);
         modal.hidden = false;
-        const sheet = modal.querySelector('.fa-sheet');
-        if (sheet) sheet.style.marginTop = '';
-        modal.scrollIntoView({ behavior: 'smooth', block: 'start' });
     }
     function closeModal() { modal.hidden = true; editingId = null; }
     function supplierChoices(query) {
@@ -629,6 +627,8 @@
             unit_price: Number(String(row.querySelector('[data-f="price"]').value).replace(',', '.')),
             remise: Number(String(row.querySelector('[data-f="remise"]').value).replace(',', '.')) || 0,
         }));
+        const reference = document.getElementById('faRef').value.trim();
+        if (!reference) { showError('Saisissez la référence de la facture.'); return; }
         const supplierName = supplier.value.trim();
         if (!supplierName) { showError('Saisissez un fournisseur.'); return; }
         const known = (meta.suppliers || []).find((item) => String(item.name || '').trim().toLowerCase() === supplierName.toLowerCase());
@@ -642,6 +642,7 @@
                 method: editingId ? 'PUT' : 'POST',
                 headers: { 'Content-Type': 'application/json', 'Accept': 'application/json', 'X-CSRF-TOKEN': csrf },
                 body: JSON.stringify({
+                    reference,
                     supplier_id: supplierId || null,
                     supplier_name: supplierName,
                     ice: ice.value,

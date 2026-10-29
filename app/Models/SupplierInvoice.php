@@ -9,6 +9,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 class SupplierInvoice extends Model
 {
     protected $fillable = [
+        'reference',
         'supplier_id',
         'depot',
         'invoice_date',
@@ -43,6 +44,11 @@ class SupplierInvoice extends Model
 
     public function getReferenceAttribute(): string
     {
+        $stored = trim((string) ($this->attributes['reference'] ?? ''));
+        if ($stored !== '') {
+            return $stored;
+        }
+
         return 'FA-'.str_pad((string) $this->id, 4, '0', STR_PAD_LEFT);
     }
 
