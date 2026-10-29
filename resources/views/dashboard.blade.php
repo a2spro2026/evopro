@@ -10,33 +10,33 @@
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
         :root {
-            --bg: #07111f;
-            --sidebar: #091525;
-            --panel: rgba(14, 28, 48, 0.88);
-            --line: rgba(110, 168, 255, 0.18);
-            --accent: #3b9eff;
-            --accent-soft: #7ec4ff;
-            --text: #f4f8ff;
-            --muted: rgba(210, 224, 245, 0.68);
-            --topbar-bg: rgba(9, 21, 37, 0.92);
+            --bg: #070708;
+            --sidebar: #0a0a0c;
+            --panel: rgba(18, 18, 20, 0.92);
+            --line: rgba(197, 201, 206, 0.16);
+            --accent: #e10600;
+            --accent-soft: #d7dbe0;
+            --text: #f6f7f8;
+            --muted: rgba(215, 219, 224, 0.68);
+            --topbar-bg: rgba(10, 10, 12, 0.94);
             --input-bg: rgba(255, 255, 255, 0.04);
-            --hover-bg: rgba(59, 158, 255, 0.1);
+            --hover-bg: rgba(225, 6, 0, 0.12);
             --table-head: rgba(9, 21, 37, 0.95);
             --shadow: rgba(0, 0, 0, 0.35);
         }
 
         [data-theme="light"] {
-            --bg: #edf3fb;
-            --sidebar: #f7faff;
+            --bg: #f4f4f5;
+            --sidebar: #ffffff;
             --panel: rgba(255, 255, 255, 0.95);
-            --line: rgba(59, 120, 200, 0.2);
-            --accent: #1a7fd4;
-            --accent-soft: #3b9eff;
-            --text: #0f1f35;
-            --muted: rgba(30, 50, 80, 0.62);
-            --topbar-bg: rgba(255, 255, 255, 0.92);
-            --input-bg: rgba(15, 31, 53, 0.04);
-            --hover-bg: rgba(59, 158, 255, 0.12);
+            --line: rgba(225, 6, 0, 0.16);
+            --accent: #e10600;
+            --accent-soft: #9b0400;
+            --text: #121214;
+            --muted: rgba(18, 18, 20, 0.62);
+            --topbar-bg: rgba(255, 255, 255, 0.94);
+            --input-bg: rgba(18, 18, 20, 0.04);
+            --hover-bg: rgba(225, 6, 0, 0.08);
             --table-head: rgba(237, 243, 251, 0.98);
             --shadow: rgba(15, 31, 53, 0.08);
         }
@@ -287,8 +287,9 @@
         .sidebar {
             display: flex;
             flex-direction: column;
-            border-right: 1px solid var(--line);
-            background: linear-gradient(180deg, color-mix(in srgb, var(--sidebar) 98%, transparent), color-mix(in srgb, var(--bg) 98%, transparent));
+            border-right: 1px solid rgba(255, 255, 255, 0.06);
+            background: linear-gradient(180deg, #050506 0%, #121214 42%, #050506 100%);
+            box-shadow: 4px 0 24px rgba(0, 0, 0, 0.35), inset -1px 0 0 rgba(255, 255, 255, 0.04);
             transition: opacity 0.25s ease, border-color 0.25s ease;
         }
 
@@ -307,8 +308,8 @@
             position: absolute;
             inset: 0;
             background:
-                radial-gradient(ellipse 90% 70% at 50% 35%, rgba(59, 158, 255, 0.2), transparent 68%),
-                radial-gradient(circle at 20% 80%, rgba(155, 123, 255, 0.08), transparent 45%);
+                radial-gradient(ellipse 90% 70% at 50% 40%, rgba(225, 6, 0, 0.22), transparent 68%),
+                radial-gradient(circle at 80% 80%, rgba(215, 219, 224, 0.08), transparent 45%);
             pointer-events: none;
         }
 
@@ -318,14 +319,13 @@
             max-width: 220px;
             padding: 0.7rem 0.55rem 0.65rem;
             border-radius: 18px;
-            background:
-                linear-gradient(155deg, rgba(18, 42, 78, 0.85) 0%, rgba(10, 24, 48, 0.92) 55%, rgba(14, 32, 62, 0.88) 100%);
-            border: 1px solid rgba(126, 196, 255, 0.32);
+            background: #050506;
+            border: 1px solid rgba(215, 219, 224, 0.28);
             box-shadow:
                 0 0 0 1px rgba(255, 255, 255, 0.04) inset,
-                0 0 28px rgba(59, 158, 255, 0.28),
-                0 0 56px rgba(59, 158, 255, 0.12),
-                0 10px 28px rgba(0, 0, 0, 0.35);
+                0 0 22px rgba(225, 6, 0, 0.28),
+                0 0 40px rgba(215, 219, 224, 0.08),
+                0 10px 28px rgba(0, 0, 0, 0.45);
             overflow: hidden;
             isolation: isolate;
             transition: box-shadow 0.35s ease, transform 0.35s ease, border-color 0.35s ease;
@@ -333,12 +333,12 @@
 
         .logo-stage:hover {
             transform: translateY(-1px);
-            border-color: rgba(158, 210, 255, 0.5);
+            border-color: rgba(225, 6, 0, 0.55);
             box-shadow:
                 0 0 0 1px rgba(255, 255, 255, 0.06) inset,
-                0 0 36px rgba(94, 176, 255, 0.42),
-                0 0 72px rgba(59, 158, 255, 0.2),
-                0 14px 32px rgba(0, 0, 0, 0.38);
+                0 0 28px rgba(225, 6, 0, 0.4),
+                0 0 48px rgba(215, 219, 224, 0.12),
+                0 14px 32px rgba(0, 0, 0, 0.45);
         }
 
         .logo-glow {
@@ -346,8 +346,8 @@
             inset: -25%;
             z-index: 0;
             background:
-                radial-gradient(circle at 50% 28%, rgba(126, 196, 255, 0.55), transparent 52%),
-                radial-gradient(circle at 72% 78%, rgba(155, 123, 255, 0.22), transparent 40%);
+                radial-gradient(circle at 50% 42%, rgba(225, 6, 0, 0.4), transparent 52%),
+                radial-gradient(circle at 72% 78%, rgba(215, 219, 224, 0.16), transparent 40%);
             filter: blur(8px);
             animation: logoPulse 4.5s ease-in-out infinite;
             pointer-events: none;
@@ -362,25 +362,13 @@
             margin: 0;
             padding: 0;
             object-fit: contain;
-            filter:
-                brightness(1.18)
-                contrast(1.1)
-                saturate(1.35)
-                drop-shadow(0 0 10px rgba(126, 196, 255, 0.75))
-                drop-shadow(0 0 22px rgba(59, 158, 255, 0.45))
-                drop-shadow(0 4px 14px rgba(0, 0, 0, 0.35));
+            filter: drop-shadow(0 6px 16px rgba(0, 0, 0, 0.45));
             transition: transform 0.35s ease, filter 0.35s ease;
         }
 
         .logo-stage:hover img {
             transform: scale(1.03);
-            filter:
-                brightness(1.28)
-                contrast(1.12)
-                saturate(1.45)
-                drop-shadow(0 0 14px rgba(158, 220, 255, 0.9))
-                drop-shadow(0 0 32px rgba(94, 176, 255, 0.6))
-                drop-shadow(0 6px 18px rgba(0, 0, 0, 0.4));
+            filter: drop-shadow(0 0 14px rgba(225, 6, 0, 0.35)) drop-shadow(0 8px 18px rgba(0, 0, 0, 0.5));
         }
 
         .logo-shine {
@@ -422,7 +410,7 @@
             gap: 0.35rem;
             overflow-y: auto;
             scrollbar-width: thin;
-            scrollbar-color: rgba(110, 168, 255, 0.35) transparent;
+            scrollbar-color: rgba(225, 6, 0, 0.45) transparent;
         }
 
         .nav-section {
@@ -431,7 +419,7 @@
             gap: 0.28rem;
             margin-top: 0.55rem;
             padding-top: 0.55rem;
-            border-top: 1px solid rgba(110, 168, 255, 0.1);
+            border-top: 1px solid rgba(215, 219, 224, 0.1);
         }
 
         .nav-section:first-child {
@@ -449,7 +437,7 @@
             font-weight: 700;
             letter-spacing: 0.08em;
             text-transform: uppercase;
-            color: rgba(158, 190, 230, 0.55);
+            color: rgba(215, 219, 224, 0.55);
             user-select: none;
         }
 
@@ -457,7 +445,7 @@
             content: '';
             flex: 1;
             height: 1px;
-            background: linear-gradient(90deg, rgba(110, 168, 255, 0.22), transparent 85%);
+            background: linear-gradient(90deg, rgba(225, 6, 0, 0.35), transparent 85%);
         }
 
         .nav-item {
@@ -495,16 +483,14 @@
         }
 
         .nav-item:hover {
-            background: rgba(59, 158, 255, 0.1);
+            background: rgba(225, 6, 0, 0.12);
             color: var(--text);
         }
 
         .nav-item.active {
-            background: linear-gradient(135deg, rgba(59, 158, 255, 0.2), rgba(59, 158, 255, 0.1));
+            background: linear-gradient(135deg, #e10600, #9b0400);
             color: #fff;
-            box-shadow:
-                inset 0 0 0 1px rgba(110, 168, 255, 0.28),
-                0 6px 16px rgba(20, 60, 120, 0.18);
+            box-shadow: 0 4px 15px rgba(225, 6, 0, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.2);
         }
 
         .nav-item.active::before {
@@ -515,30 +501,67 @@
             bottom: 20%;
             width: 3px;
             border-radius: 0 3px 3px 0;
-            background: linear-gradient(180deg, #7ec4ff, #3b9eff);
-            box-shadow: 0 0 10px rgba(59, 158, 255, 0.55);
+            background: linear-gradient(180deg, #f4f5f6, #e10600);
+            box-shadow: 0 0 10px rgba(225, 6, 0, 0.55);
         }
 
         .nav-group {
+            position: relative;
             display: flex;
             flex-direction: column;
             gap: 0;
-            border-radius: 14px;
-            transition: background 0.25s ease, box-shadow 0.25s ease;
+            margin: 0 0.15rem 0.65rem;
+            padding: 0.45rem 0.4rem 0.25rem 0.7rem;
+            border-radius: 16px;
+            overflow: hidden;
+            background: linear-gradient(145deg, rgba(255, 255, 255, 0.07) 0%, rgba(255, 255, 255, 0.025) 55%, rgba(8, 8, 10, 0.55) 100%);
+            box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.06), 0 8px 20px rgba(0, 0, 0, 0.12);
+        }
+
+        .nav-group::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: 4px;
+            background: rgba(255, 255, 255, 0.35);
+        }
+
+        .nav-group[data-nav-group]::before { background: linear-gradient(180deg, #f4f5f6, #e10600); }
+
+        .nav-group > .nav-item,
+        .nav-group.expanded > .nav-item,
+        .nav-group > .nav-item.active,
+        .nav-group.expanded > .nav-item.active {
+            background: transparent;
+            box-shadow: none;
+            color: #fff;
+        }
+
+        .nav-group > .nav-item.active::before { display: none; }
+
+        .nav-group .nav-item-text::before {
+            content: 'Module';
+            display: block;
+            margin-bottom: 0.15rem;
+            font-size: 0.62rem;
+            font-weight: 700;
+            letter-spacing: 0.16em;
+            text-transform: uppercase;
+            color: rgba(255, 255, 255, 0.45);
         }
 
         .nav-group.expanded {
-            background: rgba(8, 22, 42, 0.55);
-            box-shadow:
-                inset 0 0 0 1px rgba(110, 168, 255, 0.12),
-                0 8px 22px rgba(0, 0, 0, 0.16);
-            padding: 0.2rem;
-            margin: 0.1rem 0;
+            background: linear-gradient(145deg, rgba(255, 255, 255, 0.09) 0%, rgba(255, 255, 255, 0.03) 55%, rgba(8, 8, 10, 0.55) 100%);
+            box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08), 0 10px 24px rgba(0, 0, 0, 0.18);
+            padding: 0.45rem 0.4rem 0.35rem 0.7rem;
+            margin: 0 0.15rem 0.65rem;
         }
 
         [data-theme="light"] .nav-group.expanded {
-            background: rgba(59, 120, 200, 0.06);
-            box-shadow: inset 0 0 0 1px rgba(59, 120, 200, 0.12);
+            background: rgba(225, 6, 0, 0.06);
+            box-shadow: inset 0 0 0 1px rgba(225, 6, 0, 0.14);
         }
 
         .nav-group.expanded > .nav-item {
@@ -546,7 +569,7 @@
         }
 
         .nav-group.expanded > .nav-item.active {
-            background: linear-gradient(135deg, rgba(59, 158, 255, 0.18), rgba(59, 158, 255, 0.08));
+            background: linear-gradient(135deg, rgba(225, 6, 0, 0.22), rgba(225, 6, 0, 0.08));
         }
 
         .nav-sublist {
@@ -555,7 +578,7 @@
             gap: 0.18rem;
             padding: 0.15rem 0.2rem 0.35rem 0.55rem;
             margin: 0 0.15rem 0.15rem 0.85rem;
-            border-left: 2px solid rgba(110, 168, 255, 0.18);
+            border-left: 2px solid rgba(215, 219, 224, 0.18);
             position: relative;
         }
 
@@ -578,7 +601,7 @@
             border: none;
             border-radius: 10px;
             background: transparent;
-            color: var(--muted);
+            color: rgba(244, 245, 246, 0.86);
             font-family: inherit;
             font-size: 0.8rem;
             font-weight: 600;
@@ -595,25 +618,25 @@
             top: 50%;
             width: 0.45rem;
             height: 2px;
-            background: rgba(110, 168, 255, 0.28);
+            background: rgba(215, 219, 224, 0.35);
             transform: translateY(-50%);
         }
 
         .nav-subitem:hover {
-            background: rgba(59, 158, 255, 0.1);
-            color: var(--text);
+            background: rgba(225, 6, 0, 0.12);
+            color: #fff;
             transform: translateX(2px);
         }
 
         .nav-subitem.active {
-            background: linear-gradient(135deg, rgba(59, 158, 255, 0.2), rgba(94, 176, 255, 0.08));
+            background: linear-gradient(90deg, rgba(225, 6, 0, 0.42), rgba(225, 6, 0, 0.12));
             color: #fff;
-            box-shadow: inset 0 0 0 1px rgba(110, 168, 255, 0.22);
+            box-shadow: inset 0 0 0 1px rgba(225, 6, 0, 0.4);
         }
 
         .nav-subitem.active::before {
-            background: #7ec4ff;
-            box-shadow: 0 0 8px rgba(126, 196, 255, 0.65);
+            background: #e10600;
+            box-shadow: 0 0 8px rgba(225, 6, 0, 0.65);
             width: 0.55rem;
         }
 
@@ -631,7 +654,7 @@
         .nav-item:hover .nav-icon,
         .nav-item.active .nav-icon {
             transform: scale(1.04);
-            box-shadow: 0 0 12px rgba(59, 158, 255, 0.18);
+            box-shadow: 0 0 12px rgba(225, 6, 0, 0.22);
         }
 
         .nav-icon svg { width: 16px; height: 16px; }
@@ -648,25 +671,111 @@
 
         .nav-subicon svg { width: 13px; height: 13px; }
 
-        .nav-subicon.relance { background: rgba(240, 180, 41, 0.12); color: #ffc857; border-color: rgba(240, 180, 41, 0.22); }
-        .nav-subicon.commercial { background: rgba(61, 207, 138, 0.12); color: #7ee8b0; border-color: rgba(61, 207, 138, 0.22); }
-        .nav-subicon.entrants { background: rgba(126, 196, 255, 0.12); color: #9ad4ff; border-color: rgba(126, 196, 255, 0.22); }
-        .nav-subicon.utilisateur { background: rgba(126, 196, 255, 0.12); color: #9ad4ff; border-color: rgba(126, 196, 255, 0.22); }
-        .nav-subicon.fiche-ste { background: rgba(155, 123, 255, 0.12); color: #c4b0ff; border-color: rgba(155, 123, 255, 0.22); }
-        .nav-subicon.projet { background: rgba(155, 123, 255, 0.12); color: #c4b0ff; border-color: rgba(155, 123, 255, 0.22); }
-        .nav-subicon.client { background: rgba(126, 196, 255, 0.12); color: #9ad4ff; border-color: rgba(126, 196, 255, 0.22); }
-        .nav-subicon.paiement { background: rgba(61, 207, 138, 0.12); color: #7ee8b0; border-color: rgba(61, 207, 138, 0.22); }
-        .nav-subicon.bon-charge { background: rgba(240, 113, 120, 0.12); color: #ff9aa0; border-color: rgba(240, 113, 120, 0.22); }
-        .nav-subicon.balance-charges { background: rgba(240, 180, 41, 0.12); color: #ffc857; border-color: rgba(240, 180, 41, 0.22); }
-        .nav-subicon.paie-commerciaux { background: rgba(61, 207, 138, 0.12); color: #7ee8b0; border-color: rgba(61, 207, 138, 0.22); }
+        .nav-icon,
+        .nav-subicon {
+            background: rgba(215, 219, 224, 0.08);
+            color: #d7dbe0;
+            border-color: rgba(215, 219, 224, 0.22);
+        }
 
-        .nav-icon.dashboard { background: rgba(59, 158, 255, 0.14); color: #9ad4ff; border-color: rgba(126, 196, 255, 0.25); }
-        .nav-icon.prospection { background: rgba(240, 180, 41, 0.14); color: #ffc857; border-color: rgba(240, 180, 41, 0.25); }
-        .nav-icon.client { background: rgba(126, 196, 255, 0.14); color: #9ad4ff; border-color: rgba(126, 196, 255, 0.25); }
-        .nav-icon.projet { background: rgba(155, 123, 255, 0.14); color: #c4b0ff; border-color: rgba(155, 123, 255, 0.25); }
-        .nav-icon.paiement { background: rgba(61, 207, 138, 0.14); color: #7ee8b0; border-color: rgba(61, 207, 138, 0.25); }
-        .nav-icon.charge { background: rgba(240, 113, 120, 0.14); color: #ff9aa0; border-color: rgba(240, 113, 120, 0.25); }
-        .nav-icon.config { background: rgba(77, 212, 234, 0.14); color: #7ee8f5; border-color: rgba(77, 212, 234, 0.25); }
+        .nav-soon {
+            margin-left: auto;
+            padding: 0.12rem 0.4rem;
+            border-radius: 999px;
+            font-size: 0.58rem;
+            letter-spacing: 0.04em;
+            color: rgba(255, 255, 255, 0.55);
+            border: 1px solid rgba(255, 255, 255, 0.14);
+            background: rgba(255, 255, 255, 0.06);
+        }
+
+        .nav-subitem:disabled {
+            opacity: 0.45;
+            cursor: not-allowed;
+        }
+
+        .nav-section.is-held,
+        .nav-group.is-held {
+            filter: grayscale(1);
+            opacity: 0.42;
+        }
+
+        .nav-item.is-held,
+        .nav-group.is-held > .nav-item,
+        .nav-group.is-held > .nav-item.active,
+        .nav-group.is-held.expanded > .nav-item.active {
+            background: transparent;
+            box-shadow: none;
+            color: #9aa0a8;
+            cursor: default;
+        }
+
+        .nav-item.nav-dashboard {
+            margin: 0.1rem 0.1rem 0.2rem;
+            padding: 0.82rem 0.9rem 0.82rem 1rem;
+            border-radius: 16px;
+            color: #fff;
+            font-weight: 650;
+            letter-spacing: 0.03em;
+            background:
+                linear-gradient(145deg, rgba(225, 6, 0, 0.28) 0%, rgba(255, 255, 255, 0.07) 46%, rgba(8, 8, 10, 0.55) 100%);
+            box-shadow:
+                inset 0 1px 0 rgba(255, 255, 255, 0.16),
+                inset 0 0 0 1px rgba(225, 6, 0, 0.38),
+                0 10px 22px rgba(0, 0, 0, 0.28);
+            overflow: hidden;
+        }
+
+        .nav-item.nav-dashboard::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: 4px;
+            border-radius: 4px 0 0 4px;
+            background: linear-gradient(180deg, #f4f5f6, #e10600);
+            box-shadow: 0 0 12px rgba(225, 6, 0, 0.55);
+        }
+
+        .nav-item.nav-dashboard .nav-icon {
+            background: linear-gradient(145deg, #e10600, #9b0400);
+            color: #fff;
+            border-color: rgba(255, 255, 255, 0.22);
+            box-shadow: 0 6px 14px rgba(225, 6, 0, 0.38);
+        }
+
+        .nav-item.nav-dashboard:hover {
+            color: #fff;
+            transform: translateY(-1px);
+            background:
+                linear-gradient(145deg, rgba(225, 6, 0, 0.4) 0%, rgba(255, 255, 255, 0.09) 46%, rgba(8, 8, 10, 0.5) 100%);
+            box-shadow:
+                inset 0 1px 0 rgba(255, 255, 255, 0.2),
+                inset 0 0 0 1px rgba(225, 6, 0, 0.5),
+                0 14px 26px rgba(225, 6, 0, 0.22);
+        }
+
+        .nav-item.nav-dashboard.active {
+            color: #fff;
+            background: linear-gradient(135deg, #e10600 0%, #9b0400 58%, #5c0200 100%);
+            box-shadow:
+                inset 0 1px 0 rgba(255, 255, 255, 0.28),
+                0 10px 24px rgba(225, 6, 0, 0.42);
+        }
+
+        .nav-item.nav-dashboard.active .nav-icon,
+        .nav-item.nav-dashboard:hover .nav-icon {
+            background: rgba(255, 255, 255, 0.16);
+            color: #fff;
+            border-color: rgba(255, 255, 255, 0.32);
+            box-shadow: none;
+            transform: none;
+        }
+
+        .nav-group.is-held .nav-subitem {
+            cursor: not-allowed;
+        }
 
         .panel-placeholder {
             margin-top: 1rem;
@@ -694,6 +803,245 @@
             line-height: 1.45;
         }
 
+        .procar-table-card {
+            margin-top: 0.8rem;
+            overflow: hidden;
+            border-radius: 16px;
+            border: 1px solid rgba(148, 163, 184, 0.28);
+            background: rgba(248, 250, 252, 0.96);
+            box-shadow: 0 12px 30px rgba(0, 0, 0, 0.16);
+        }
+
+        .procar-table-bar {
+            padding: 0.85rem 1.15rem;
+            background: linear-gradient(90deg, #0a0a0c, #e10600 72%, #9b0400);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+        }
+
+        .procar-table-bar h3 {
+            margin: 0;
+            color: #fff;
+            font-size: 0.82rem;
+            font-weight: 800;
+            letter-spacing: 0.06em;
+            text-transform: uppercase;
+        }
+
+        .procar-table-scroll { overflow: auto; }
+
+        .procar-table {
+            width: 100%;
+            border-collapse: collapse;
+            min-width: 760px;
+            color: #0f172a;
+        }
+
+        .procar-table th {
+            padding: 0.75rem 0.7rem;
+            background: #f1f5f9;
+            border-bottom: 1px solid #e2e8f0;
+            font-size: 0.68rem;
+            font-weight: 800;
+            letter-spacing: 0.05em;
+            text-transform: uppercase;
+            text-align: center;
+            color: #64748b;
+            white-space: nowrap;
+        }
+
+        .procar-table td {
+            padding: 1.4rem 0.7rem;
+            text-align: center;
+            color: #94a3b8;
+            font-size: 0.86rem;
+        }
+
+        .procar-soon {
+            margin-top: 0.8rem;
+            padding: 3rem 1.2rem;
+            text-align: center;
+            color: #94a3b8;
+            border-radius: 16px;
+            border: 2px dashed rgba(148, 163, 184, 0.45);
+            background: rgba(248, 250, 252, 0.9);
+        }
+
+        .ff-card {
+            margin-bottom: 0.9rem;
+            padding: 1rem 1rem 0.85rem;
+            border-radius: 16px;
+            border: 1px solid rgba(148, 163, 184, 0.28);
+            background: rgba(248, 250, 252, 0.96);
+            color: #0f172a;
+        }
+
+        .ff-error {
+            margin-bottom: 0.7rem;
+            padding: 0.55rem 0.7rem;
+            border-radius: 10px;
+            background: #fef2f2;
+            color: #b91c1c;
+            border: 1px solid #fecaca;
+            font-size: 0.8rem;
+        }
+
+        .ff-grid {
+            display: grid;
+            grid-template-columns: 78px 86px 1.2fr 0.9fr 1fr 1fr 0.7fr 0.75fr 0.8fr;
+            gap: 0.45rem;
+            align-items: end;
+        }
+
+        .ff-grid label {
+            display: block;
+            margin-bottom: 0.2rem;
+            font-size: 0.68rem;
+            font-weight: 700;
+            color: #64748b;
+        }
+
+        .ff-grid input,
+        .ff-grid select {
+            width: 100%;
+            height: 32px;
+            border-radius: 8px;
+            border: 1px solid #e2e8f0;
+            background: #fff;
+            color: #0f172a;
+            text-align: center;
+            font-size: 0.75rem;
+            font-family: inherit;
+        }
+
+        .ff-grid input[readonly] {
+            background: #f1f5f9;
+            color: #475569;
+        }
+
+        .ff-grid input.is-solde {
+            border-color: #f87171;
+            color: #dc2626;
+            font-weight: 700;
+            background: #fef2f2;
+        }
+
+        .ff-bar {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 0.5rem;
+            margin-top: 0.85rem;
+            padding-top: 0.75rem;
+            border-top: 1px solid #e2e8f0;
+        }
+
+        .ff-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.35rem;
+            height: 34px;
+            padding: 0 0.8rem;
+            border-radius: 10px;
+            border: none;
+            font-family: inherit;
+            font-size: 0.78rem;
+            font-weight: 700;
+            cursor: pointer;
+        }
+
+        .ff-btn.primary { background: #e10600; color: #fff; }
+        .ff-btn.muted { background: #e2e8f0; color: #334155; }
+        .ff-btn.secondary { background: #dbeafe; color: #1e3a8a; }
+
+        .ff-total {
+            margin-left: auto;
+            display: flex;
+            align-items: center;
+            gap: 0.55rem;
+            padding: 0.35rem 0.7rem;
+            border-radius: 12px;
+            border: 1px solid #e2e8f0;
+            background: #f8fafc;
+        }
+
+        .ff-total.is-due {
+            background: #fef2f2;
+            border-color: #fecaca;
+        }
+
+        .ff-total small {
+            display: block;
+            font-size: 0.62rem;
+            font-weight: 700;
+            letter-spacing: 0.04em;
+            text-transform: uppercase;
+            color: #64748b;
+        }
+
+        .ff-total strong { font-size: 0.95rem; color: #0a1628; }
+        .ff-total.is-due strong { color: #dc2626; }
+
+        .ff-icon {
+            width: 28px;
+            height: 28px;
+            border: none;
+            border-radius: 8px;
+            background: transparent;
+            color: #94a3b8;
+            cursor: pointer;
+        }
+
+        .ff-icon:hover { background: #eff6ff; color: #1d4ed8; }
+        .ff-icon.edit:hover { background: #fffbeb; color: #d97706; }
+        .ff-icon.del:hover { background: #fef2f2; color: #dc2626; }
+        .ff-icon.print:hover { background: #f1f5f9; color: #334155; }
+        .ff-icon.pdf:hover { background: #fff7ed; color: #ea580c; }
+
+        .ff-modal {
+            position: fixed;
+            inset: 0;
+            z-index: 80;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 1rem;
+            background: rgba(0, 0, 0, 0.5);
+        }
+
+        .ff-modal[hidden] { display: none; }
+
+        .ff-modal-card {
+            width: min(440px, 100%);
+            border-radius: 16px;
+            overflow: hidden;
+            background: #fff;
+            color: #0f172a;
+        }
+
+        .ff-modal-head {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.9rem 1rem;
+            background: linear-gradient(90deg, #0a0a0c, #e10600);
+            color: #fff;
+        }
+
+        .ff-modal-body { padding: 0.4rem 1rem 0.8rem; }
+        .ff-modal-row {
+            display: flex;
+            justify-content: space-between;
+            gap: 1rem;
+            padding: 0.45rem 0;
+            border-bottom: 1px solid #f1f5f9;
+            font-size: 0.84rem;
+        }
+        .ff-modal-row span { color: #64748b; }
+
+        @media (max-width: 1100px) {
+            .ff-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+        }
+
         [data-theme="light"] .panel-placeholder {
             background:
                 linear-gradient(145deg, rgba(255, 255, 255, 0.9), rgba(235, 244, 255, 0.75)),
@@ -718,6 +1066,144 @@
             font-size: 0.85rem;
             font-weight: 600;
             cursor: pointer;
+        }
+
+        [data-theme="light"] .sidebar {
+            background: linear-gradient(180deg, #ffffff 0%, #f6f4f5 48%, #ffffff 100%);
+            border-right-color: rgba(143, 36, 54, 0.16);
+            box-shadow: 4px 0 24px rgba(15, 31, 53, 0.06);
+        }
+
+        [data-theme="light"] .sidebar-brand {
+            border-bottom-color: rgba(143, 36, 54, 0.12);
+        }
+
+        [data-theme="light"] .sidebar-brand::before {
+            background: radial-gradient(ellipse 90% 70% at 50% 40%, rgba(225, 6, 0, 0.08), transparent 68%);
+        }
+
+        [data-theme="light"] .nav-section {
+            border-top-color: rgba(18, 18, 20, 0.08);
+        }
+
+        [data-theme="light"] .nav-section-label {
+            color: rgba(18, 18, 20, 0.48);
+        }
+
+        [data-theme="light"] .nav-group,
+        [data-theme="light"] .nav-group.expanded {
+            background: #fff;
+            box-shadow: inset 0 0 0 1px rgba(143, 36, 54, 0.14);
+        }
+
+        [data-theme="light"] .nav-group::before {
+            background: rgba(143, 36, 54, 0.35);
+        }
+
+        [data-theme="light"] .nav-group > .nav-item,
+        [data-theme="light"] .nav-group.expanded > .nav-item,
+        [data-theme="light"] .nav-group > .nav-item.active,
+        [data-theme="light"] .nav-group.expanded > .nav-item.active {
+            color: #3a1218;
+        }
+
+        [data-theme="light"] .nav-group .nav-item-text::before {
+            color: rgba(92, 18, 32, 0.55);
+        }
+
+        [data-theme="light"] .nav-sublist {
+            border-left-color: rgba(143, 36, 54, 0.22);
+        }
+
+        [data-theme="light"] .nav-subitem {
+            color: rgba(26, 18, 20, 0.84);
+        }
+
+        [data-theme="light"] .nav-subitem::before {
+            background: rgba(92, 18, 32, 0.35);
+        }
+
+        [data-theme="light"] .nav-subitem:hover {
+            background: rgba(225, 6, 0, 0.08);
+            color: #5c1220;
+        }
+
+        [data-theme="light"] .nav-subitem.active {
+            background: linear-gradient(90deg, rgba(225, 6, 0, 0.14), rgba(225, 6, 0, 0.04));
+            color: #5c1220;
+            box-shadow: inset 0 0 0 1px rgba(225, 6, 0, 0.22);
+        }
+
+        [data-theme="light"] .nav-icon,
+        [data-theme="light"] .nav-subicon {
+            background: rgba(143, 36, 54, 0.08);
+            color: #5c1220;
+            border-color: rgba(143, 36, 54, 0.18);
+        }
+
+        [data-theme="light"] .nav-soon {
+            color: rgba(92, 18, 32, 0.72);
+            border-color: rgba(143, 36, 54, 0.2);
+            background: rgba(143, 36, 54, 0.06);
+        }
+
+        [data-theme="light"] .nav-item.is-held,
+        [data-theme="light"] .nav-group.is-held > .nav-item,
+        [data-theme="light"] .nav-group.is-held > .nav-item.active,
+        [data-theme="light"] .nav-group.is-held.expanded > .nav-item.active {
+            color: #8a8084;
+        }
+
+        [data-theme="light"] .nav-item.nav-dashboard {
+            color: #5c1220;
+            background: linear-gradient(145deg, #fff 0%, #fff5f6 55%, #f8e8eb 100%);
+            box-shadow:
+                inset 0 1px 0 rgba(255, 255, 255, 0.9),
+                inset 0 0 0 1px rgba(225, 6, 0, 0.22),
+                0 8px 18px rgba(143, 36, 54, 0.1);
+        }
+
+        [data-theme="light"] .nav-item.nav-dashboard .nav-icon {
+            background: linear-gradient(145deg, #e10600, #9b0400);
+            color: #fff;
+            border-color: rgba(255, 255, 255, 0.4);
+        }
+
+        [data-theme="light"] .nav-item.nav-dashboard:hover {
+            color: #5c1220;
+            background: linear-gradient(145deg, #fff 0%, #fdecee 48%, #f3d5db 100%);
+            box-shadow:
+                inset 0 0 0 1px rgba(225, 6, 0, 0.32),
+                0 12px 22px rgba(143, 36, 54, 0.14);
+        }
+
+        [data-theme="light"] .nav-item.nav-dashboard.active {
+            color: #fff;
+            background: linear-gradient(135deg, #e10600 0%, #9b0400 58%, #5c0200 100%);
+            box-shadow:
+                inset 0 1px 0 rgba(255, 255, 255, 0.28),
+                0 10px 24px rgba(225, 6, 0, 0.32);
+        }
+
+        [data-theme="light"] .nav-item.nav-dashboard.active .nav-icon {
+            background: rgba(255, 255, 255, 0.18);
+            color: #fff;
+            border-color: rgba(255, 255, 255, 0.35);
+        }
+
+        [data-theme="light"] .nav-item.nav-dashboard:hover:not(.active) .nav-icon {
+            background: linear-gradient(145deg, #e10600, #9b0400);
+            color: #fff;
+        }
+
+        [data-theme="light"] .sidebar-foot {
+            border-top-color: rgba(143, 36, 54, 0.12);
+        }
+
+        [data-theme="light"] .btn-logout {
+            border-color: rgba(143, 36, 54, 0.28);
+            background: rgba(225, 6, 0, 0.06);
+            color: #8f2436;
         }
 
         .main {
@@ -1664,6 +2150,7 @@
         }
 
         .user-statue-badge.administrateur { color: #7ec4ff; border-color: rgba(126, 196, 255, 0.35); }
+        .user-statue-badge.gerant { color: #e8b4bc; border-color: rgba(143, 36, 54, 0.55); }
         .user-statue-badge.assistante { color: #ffc857; border-color: rgba(240, 180, 41, 0.35); }
         .user-statue-badge.commercial { color: #3dcf8a; border-color: rgba(61, 207, 138, 0.35); }
 
@@ -2080,169 +2567,101 @@
                 <div class="logo-stage">
                     <div class="logo-glow" aria-hidden="true"></div>
                     <div class="logo-shine" aria-hidden="true"></div>
-                    <img src="{{ asset('images/evopro-logo.png') }}" alt="EvoPro — Prospection. Convertir. Gagner." width="210" height="205">
+                    <img src="{{ asset('images/auto-sihap-logo.jpg') }}" alt="AUTO SIHAP — Pièces auto" width="420" height="180">
                 </div>
             </div>
 
             <nav class="nav-list">
-                @if ($isAdministrateur ?? false)
+                @php
+                    $activityNav = [
+                        ['id' => 'fournisseurs', 'label' => 'Fournisseur', 'items' => [
+                            ['id' => 'f-fiche', 'label' => 'Fiche Fournisseur', 'cols' => ['ID', 'Nom Fournisseur', 'Contact', 'Adresse', 'Ville', 'Règlement', 'Échéance', 'Solde Initial', 'Actions']],
+                            ['id' => 'f-bon', 'label' => 'Bon Achats', 'cols' => ['Date', 'N° B-A', 'Fournisseur', 'N° Frns', 'Qté totale', 'Total', 'Paiement', 'Échéance', 'Actions']],
+                            ['id' => 'f-regl', 'label' => 'Règlement Achats', 'cols' => ['Réf', 'Date', 'Fournisseur', 'Type', 'Nom de Tiré', 'N°', 'Bnq', 'Date Décaiss', 'Montant', 'Statut', 'Action']],
+                            ['id' => 'f-bal', 'label' => 'Balance', 'cols' => ['Date', 'Fournisseur', 'Total Achats', 'Montant Payé', 'Solde', 'Reliquat']],
+                            ['id' => 'f-rel', 'label' => 'Relevé Compte', 'cols' => ['Opération', 'Date', 'N° Bn', 'Qte', 'Débit', 'Crédit', 'Solde', 'Type Rég', 'N° Rég', 'Nom Tiré', 'Date Encaiss', 'Payé', 'Dévalidé', 'Impayé', 'Reporté']],
+                        ]],
+                        ['id' => 'stock', 'label' => 'Stock', 'items' => [
+                            ['id' => 's-prod', 'label' => 'Fiche Produit', 'cols' => ['Code', 'Réf Prod', 'Code Barre', 'Désignation', 'Famille', 'Marque', 'Quantité', 'Stock', "Prix d'achat", 'U', 'Prix/U', 'Statut', 'État', 'Actions']],
+                            ['id' => 's-mvt', 'label' => 'Mouvement Stock', 'cols' => ['Réf', 'Désignation', 'Stock Initial', 'Achat', 'Vente', 'Stock Actuel']],
+                            ['id' => 's-ret', 'label' => 'Etat Retour', 'cols' => ['Date', 'N° Retour', 'N° Bon source', 'Client', 'Produit', 'Code-barres', 'Qté', 'Motif', 'Utilisateur', 'Actions']],
+                        ]],
+                        ['id' => 'catalogue', 'label' => 'Catalogue', 'soon' => true, 'items' => [
+                            ['id' => 'cat-liste', 'label' => 'Catalogue'],
+                            ['id' => 'cat-config', 'label' => 'Config Catalogue'],
+                        ]],
+                        ['id' => 'clients', 'label' => 'Client', 'items' => [
+                            ['id' => 'c-fiche', 'label' => 'Fiche Client', 'cols' => ['CR', 'Nom Client', 'Contact', 'Ville', 'Adresse', 'Régl', 'Échéance', 'Solde Initial', 'Actions']],
+                            ['id' => 'c-bon', 'label' => 'Bon Commercial', 'disabled' => true],
+                            ['id' => 'c-bl', 'label' => 'Bon Livraison', 'cols' => ['Date', 'N° B-V', 'Client', 'Ville', 'Adresse Livraison', 'Qté totale', 'Total', 'Paiement', 'Échéance', 'Statut', 'Actions']],
+                            ['id' => 'c-regl', 'label' => 'Règlement Client', 'cols' => ['Réf', 'Date', 'Client', 'Type', 'Nom de Tiré', 'N°', 'Bnq', 'Date Décaiss', 'Montant', 'Statut', 'Action']],
+                            ['id' => 'c-bal', 'label' => 'Balance Clients', 'cols' => ['Date', 'Client', 'Total Ventes', 'Montant Payé', 'Solde', 'Reliquat']],
+                            ['id' => 'c-rel', 'label' => 'Relevé Compte Client', 'cols' => ['Opération', 'Date', 'N° Bn', 'Client Livré', 'Ville Liv', 'Qte', 'Débit', 'Crédit', 'Solde', 'Type Rég', 'N° Rég', 'Nom Tiré', 'Date Encaiss', 'Payé', 'Dévalidé', 'Impayé', 'Reporté']],
+                            ['id' => 'c-jour', 'label' => 'Etat Journalier', 'cols' => ['Date', 'Réf', 'Code barre', 'Désignation', 'Qté', 'Prix achat', 'Prix vente', 'Marge', 'Stock actuel']],
+                        ]],
+                        ['id' => 'facturation', 'label' => 'Facturation', 'items' => [
+                            ['id' => 'fa-achat', 'label' => 'Factures Achats', 'cols' => ['Date', 'Réf', 'Fournisseur', 'Destination', 'Total HT', 'TVA', 'Total TTC', 'Statut', 'Actions']],
+                            ['id' => 'fa-fisc', 'label' => 'Mouvement Fiscal', 'cols' => ['Réf', 'Désignation', 'Achat', 'Vente', 'Stock restant']],
+                            ['id' => 'fa-vente', 'label' => 'Facture Ventes'],
+                            ['id' => 'fa-regl', 'label' => 'Régl Fact/Vente', 'cols' => ['Date', 'N° Règlement', 'N° Facture', 'Client', 'Mode', 'Référence', 'Montant', 'Solde Facture', 'Actions']],
+                            ['id' => 'fa-bal', 'label' => 'Balance'],
+                        ]],
+                        ['id' => 'monetaire', 'label' => 'Suivi Monétaire', 'items' => [
+                            ['id' => 'm-trans', 'label' => 'Transaction et Charges', 'cols' => ['Date', 'Bénéficiaire', 'Montant', 'Coffre', 'Type', 'Statut', 'Motif', 'Actions']],
+                            ['id' => 'm-charge', 'label' => 'Charge', 'cols' => ['Date', 'Réf', 'Désignation', 'Bénéficiaire', 'Type Rég', 'N°', 'Bnq', 'Tiré', 'Date Décaiss', 'Remarque', 'Actions']],
+                            ['id' => 'm-treso', 'label' => 'Rapport Trésorerie', 'cols' => ['Date', 'Opération', 'Débit', 'Crédit', 'Caisse', 'Date Décaiss', 'Date Encaiss']],
+                        ]],
+                        ['id' => 'personnel', 'label' => 'Personnels', 'items' => [
+                            ['id' => 'p-fiche', 'label' => 'Fiche Personnel', 'cols' => ['Date', 'ID', 'Nom Complet', 'Statut', 'Type contrat', 'Rémunération', 'Échéance', 'Actions']],
+                            ['id' => 'p-sal', 'label' => 'Salaire', 'cols' => ['ID', 'Nom Complet', 'Statut', 'Date Début', 'Type Contrat', 'Salaire', 'Actions']],
+                            ['id' => 'p-etat', 'label' => 'État Paiement', 'cols' => ['Date', 'ID', 'Nom Complet', 'Salaire', 'Jan', 'Fév', 'Mar', 'Avr', 'Mai', 'Juin', 'Juil', 'Aoû', 'Sep', 'Oct', 'Nov', 'Déc', 'Total']],
+                        ]],
+                        ['id' => 'configuration', 'label' => 'Configuration', 'items' => [
+                            ['id' => 'cfg-users', 'label' => 'Utilisateur', 'cols' => ['ID', 'Nom Complet', 'Contact', 'Statut', 'État', 'Login', 'Mot de Passe', 'Actions']],
+                            ['id' => 'cfg-auth', 'label' => 'Autorisations', 'cols' => ['Menu / page', 'Voir', 'Ajouter', 'Modifier', 'Supprimer']],
+                            ['id' => 'cfg-transport', 'label' => 'Transport', 'cols' => ['ID', 'Nom Transport', 'Matricule']],
+                        ]],
+                    ];
+                @endphp
                 <div class="nav-section">
                     <div class="nav-section-label">Vue d’ensemble</div>
-                    <button type="button" class="nav-item {{ ($defaultPanel ?? 'dashboard') === 'dashboard' ? 'active' : '' }}" data-panel="dashboard">
+                    <button type="button" class="nav-item nav-dashboard" data-panel="dashboard">
                         <span class="nav-icon dashboard" aria-hidden="true">
                             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/></svg>
                         </span>
                         Tableau de Bord
                     </button>
                 </div>
-                @endif
-
-                <div class="nav-section">
-                    <div class="nav-section-label">Activité</div>
-                @if ($isCommercialRole ?? false)
-                <button type="button" class="nav-item {{ ($defaultPanel ?? '') === 'prospection' ? 'active' : '' }}" data-panel="prospection">
-                    <span class="nav-icon prospection" aria-hidden="true">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
-                    </span>
-                    <span class="nav-item-text">Relance</span>
-                </button>
-                @else
-                <div class="nav-group {{ ($defaultPanel ?? '') === 'prospection' ? 'expanded' : '' }}" data-nav-group="prospection">
-                    <button type="button" class="nav-item has-sublist {{ ($defaultPanel ?? '') === 'prospection' ? 'active' : '' }}" data-panel="prospection" data-toggle-group="prospection">
-                        <span class="nav-icon prospection" aria-hidden="true">
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
-                        </span>
-                        <span class="nav-item-text">Prospection</span>
-                        <span class="nav-chevron" aria-hidden="true">
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>
-                        </span>
-                    </button>
-                    <div class="nav-sublist" aria-label="Sous-menu prospection">
-                        <button type="button" class="nav-subitem {{ ($defaultPanel ?? '') === 'prospection' ? 'active' : '' }}" data-panel="prospection" data-prospection="liste">
-                            <span class="nav-subicon relance" aria-hidden="true">
-                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
-                            </span>
-                            Relance
-                        </button>
-                        @if ($canManageProspectionCommercial ?? false)
-                            <button type="button" class="nav-subitem" data-panel="prospection" data-prospection="commercial">
-                                <span class="nav-subicon commercial" aria-hidden="true">
-                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M19 8v6"/><path d="M22 11h-6"/></svg>
+                @foreach ($activityNav as $group)
+                    <div class="nav-section {{ $group['id'] === 'facturation' ? '' : 'is-held' }}">
+                        <div class="nav-group {{ $group['id'] === 'facturation' ? 'expanded is-pinned' : 'is-held' }}" data-nav-group="{{ $group['id'] }}">
+                            <button type="button" class="nav-item has-sublist" data-panel="{{ $group['id'] }}" data-toggle-group="{{ $group['id'] }}">
+                                <span class="nav-icon {{ $group['id'] }}" aria-hidden="true">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/></svg>
                                 </span>
-                                Commercial
-                            </button>
-                            <button type="button" class="nav-subitem" data-panel="prospection" data-prospection="entrants">
-                                <span class="nav-subicon entrants" aria-hidden="true">
-                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/><path d="M14 5h7"/><path d="M17.5 2v6"/></svg>
+                                <span class="nav-item-text">{{ $group['label'] }}</span>
+                                @if (!empty($group['soon']))
+                                    <span class="nav-soon">Bientôt</span>
+                                @endif
+                                <span class="nav-chevron" aria-hidden="true">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>
                                 </span>
-                                Numéros entrants
                             </button>
-                        @endif
+                            <div class="nav-sublist" aria-label="Sous-menu {{ $group['label'] }}">
+                                @foreach ($group['items'] as $item)
+                                    <button
+                                        type="button"
+                                        class="nav-subitem"
+                                        @if ($group['id'] !== 'facturation' || !empty($group['soon']) || !empty($item['disabled'])) disabled @else data-panel="{{ $item['id'] }}" @endif
+                                    >
+                                        {{ $item['label'] }}
+                                    </button>
+                                @endforeach
+                            </div>
+                        </div>
                     </div>
-                </div>
-                @endif
-                </div>
+                @endforeach
 
-                @if ($isAdministrateur ?? false)
-                <div class="nav-section">
-                    <div class="nav-section-label">Projets & clients</div>
-                <div class="nav-group" data-nav-group="projet">
-                    <button type="button" class="nav-item has-sublist" data-panel="projet" data-toggle-group="projet">
-                        <span class="nav-icon projet" aria-hidden="true">
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7h18"/><path d="M3 12h18"/><path d="M8 7v10"/><path d="M16 7v10"/></svg>
-                        </span>
-                        <span class="nav-item-text">Projet</span>
-                        <span class="nav-chevron" aria-hidden="true">
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>
-                        </span>
-                    </button>
-                    <div class="nav-sublist" aria-label="Sous-menu projet">
-                        <button type="button" class="nav-subitem" data-panel="projet">
-                            <span class="nav-subicon projet" aria-hidden="true">
-                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7h18"/><path d="M3 12h18"/><path d="M8 7v10"/><path d="M16 7v10"/></svg>
-                            </span>
-                            État Projet
-                        </button>
-                        <button type="button" class="nav-subitem" data-panel="client">
-                            <span class="nav-subicon client" aria-hidden="true">
-                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>
-                            </span>
-                            Fiche Client
-                        </button>
-                        <button type="button" class="nav-subitem" data-panel="paiement">
-                            <span class="nav-subicon paiement" aria-hidden="true">
-                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="5" width="20" height="14" rx="2"/><path d="M2 10h20"/></svg>
-                            </span>
-                            Paiement
-                        </button>
-                    </div>
-                </div>
-                </div>
-
-                <div class="nav-section">
-                    <div class="nav-section-label">Finances</div>
-                <div class="nav-group" data-nav-group="charge">
-                    <button type="button" class="nav-item has-sublist" data-panel="charge" data-toggle-group="charge">
-                        <span class="nav-icon charge" aria-hidden="true">
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 8v8"/><path d="M8 12h8"/></svg>
-                        </span>
-                        <span class="nav-item-text">Charge</span>
-                        <span class="nav-chevron" aria-hidden="true">
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>
-                        </span>
-                    </button>
-                    <div class="nav-sublist" aria-label="Sous-menu charge">
-                        <button type="button" class="nav-subitem" data-panel="bon-charge">
-                            <span class="nav-subicon bon-charge" aria-hidden="true">
-                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/><path d="M8 13h8"/><path d="M8 17h6"/></svg>
-                            </span>
-                            Bon Charge
-                        </button>
-                        <button type="button" class="nav-subitem" data-panel="balance-charges">
-                            <span class="nav-subicon balance-charges" aria-hidden="true">
-                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v18"/><path d="M5 8h4l2 4 2-8 2 4h4"/><path d="M5 16h14"/></svg>
-                            </span>
-                            Balance Charges
-                        </button>
-                        <button type="button" class="nav-subitem" data-panel="paie-commerciaux">
-                            <span class="nav-subicon paie-commerciaux" aria-hidden="true">
-                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
-                            </span>
-                            Paie Commerciaux
-                        </button>
-                    </div>
-                </div>
-                </div>
-
-                <div class="nav-section">
-                    <div class="nav-section-label">Système</div>
-                <div class="nav-group" data-nav-group="configuration">
-                    <button type="button" class="nav-item has-sublist" data-panel="configuration" data-toggle-group="configuration">
-                        <span class="nav-icon config" aria-hidden="true">
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9c.3.6.9 1 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg>
-                        </span>
-                        <span class="nav-item-text">Configuration</span>
-                        <span class="nav-chevron" aria-hidden="true">
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>
-                        </span>
-                    </button>
-                    <div class="nav-sublist" aria-label="Sous-menu configuration">
-                        <button type="button" class="nav-subitem" data-panel="configuration" data-config="utilisateur">
-                            <span class="nav-subicon utilisateur" aria-hidden="true">
-                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>
-                            </span>
-                            Utilisateur
-                        </button>
-                        <button type="button" class="nav-subitem" data-panel="configuration" data-config="fiche-ste">
-                            <span class="nav-subicon fiche-ste" aria-hidden="true">
-                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21h18"/><path d="M5 21V7l8-4v18"/><path d="M19 21V11l-6-4"/><path d="M9 9v.01"/><path d="M9 12v.01"/><path d="M9 15v.01"/><path d="M9 18v.01"/></svg>
-                            </span>
-                            Fiche Ste
-                        </button>
-                    </div>
-                </div>
-                </div>
-                @endif
             </nav>
 
             <div class="sidebar-foot">
@@ -2269,21 +2688,6 @@
                     </div>
                 </div>
 
-                @if ($canViewCommercialPresence ?? false)
-                <div class="commercial-presence-bar" id="commercialPresenceBar" aria-label="Présence des commerciaux">
-                    @foreach (($commerciauxPresenceUsers ?? []) as $commercialUser)
-                        <span
-                            class="presence-pill"
-                            data-commercial-key="{{ mb_strtolower($commercialUser['id'] ?? '') }}"
-                            title="{{ $commercialUser['nom_complet'] ?? '' }} — Hors ligne"
-                        >
-                            <span class="presence-dot offline" aria-hidden="true"></span>
-                            <span class="presence-label">{{ $commercialUser['nom_complet'] ?? '' }}</span>
-                        </span>
-                    @endforeach
-                </div>
-                @endif
-
                 <div class="topbar-actions">
                     <button type="button" class="topbar-btn" id="themeToggle" data-toggle="theme" aria-label="Basculer mode clair ou sombre" title="Mode clair / sombre">
                         <svg class="icon-dark" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
@@ -2293,37 +2697,61 @@
                             <circle cx="12" cy="12" r="4"/><path d="M12 2v2"/><path d="M12 20v2"/><path d="m4.93 4.93 1.41 1.41"/><path d="m17.66 17.66 1.41 1.41"/><path d="M2 12h2"/><path d="M20 12h2"/><path d="m6.34 17.66-1.41 1.41"/><path d="m19.07 4.93-1.41 1.41"/>
                         </svg>
                     </button>
-                    <div class="user-badge">{{ strtoupper($authUserStatue ?: '—') }}</div>
+                    <div class="user-badge">{{ $authUserStatue !== '' ? \App\Support\UtilisateurHelper::statueLabel($authUserStatue) : '—' }}</div>
                 </div>
             </header>
 
             <main class="content">
-                <section class="panel {{ ($defaultPanel ?? 'dashboard') === 'dashboard' ? 'active' : '' }}" id="panel-dashboard">
+                <section class="panel active" id="panel-dashboard">
                     <div class="content-head">
                         <h1>Tableau de Bord</h1>
                     </div>
-
-                    <div class="cards" aria-label="Statistiques">
-                        <article class="card-stat confirme">
-                            <small>Projets Confirmé</small>
-                            <strong>{{ $dashboardCounts['confirme'] ?? 0 }}</strong>
-                        </article>
-                        <article class="card-stat attente">
-                            <small>Projets En Attente</small>
-                            <strong>{{ $dashboardCounts['attente'] ?? 0 }}</strong>
-                        </article>
-                        <article class="card-stat annule">
-                            <small>Projet Annulés</small>
-                            <strong>{{ $dashboardCounts['annule'] ?? 0 }}</strong>
-                        </article>
-                        <article class="card-stat charges">
-                            <small>Total Charges</small>
-                            <strong>{{ number_format($totalCharges ?? 0, 2, '.', ' ') }}</strong>
-                        </article>
-                    </div>
                 </section>
 
-                <section class="panel {{ ($defaultPanel ?? 'dashboard') === 'prospection' ? 'active' : '' }}" id="panel-prospection">
+                @include('partials.fiche-fournisseur')
+                @include('partials.facture-achats')
+                @include('partials.mouvement-fiscal')
+                @include('partials.facture-ventes')
+                @include('partials.reglement-factures-ventes')
+
+                @foreach ($activityNav as $group)
+                    @foreach ($group['items'] as $item)
+                        @if (empty($group['soon']) && empty($item['disabled']) && ! in_array($item['id'] ?? '', ['f-fiche', 'fa-achat', 'fa-fisc', 'fa-vente', 'fa-regl'], true))
+                            <section class="panel" id="panel-{{ $item['id'] }}">
+                                <div class="content-head">
+                                    <h1>{{ $item['label'] }}</h1>
+                                </div>
+                                @if (!empty($item['cols']))
+                                    <div class="procar-table-card">
+                                        <div class="procar-table-bar">
+                                            <h3>{{ $item['label'] }}</h3>
+                                        </div>
+                                        <div class="procar-table-scroll">
+                                            <table class="procar-table">
+                                                <thead>
+                                                    <tr>
+                                                        @foreach ($item['cols'] as $col)
+                                                            <th>{{ $col }}</th>
+                                                        @endforeach
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    <tr>
+                                                        <td colspan="{{ count($item['cols']) }}">Aucune donnée pour le moment.</td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                @else
+                                    <div class="procar-soon">Le contenu de ce module sera bientôt disponible.</div>
+                                @endif
+                            </section>
+                        @endif
+                    @endforeach
+                @endforeach
+
+                <section class="panel" id="panel-prospection">
                     <div class="content-head">
                         <h1>{{ ($isCommercialRole ?? false) || ($isAssistante ?? false) ? 'Tableau de relance' : 'Prospection' }}</h1>
                     </div>
@@ -3223,6 +3651,30 @@
                                             <label for="fiche_ste_email">E-mail</label>
                                             <input type="text" id="fiche_ste_email" name="email" maxlength="255" value="{{ $ficheSte['email'] ?? '' }}" autocomplete="off">
                                         </div>
+                                        <div class="field">
+                                            <label for="fiche_ste_adresse">Adresse</label>
+                                            <input type="text" id="fiche_ste_adresse" name="adresse" maxlength="255" value="{{ $ficheSte['adresse'] ?? '' }}">
+                                        </div>
+                                        <div class="field">
+                                            <label for="fiche_ste_rc">RC</label>
+                                            <input type="text" id="fiche_ste_rc" name="rc" maxlength="255" value="{{ $ficheSte['rc'] ?? '' }}">
+                                        </div>
+                                        <div class="field">
+                                            <label for="fiche_ste_if">IF</label>
+                                            <input type="text" id="fiche_ste_if" name="identifiant_fiscal" maxlength="255" value="{{ $ficheSte['identifiant_fiscal'] ?? '' }}">
+                                        </div>
+                                        <div class="field">
+                                            <label for="fiche_ste_cnss">CNSS</label>
+                                            <input type="text" id="fiche_ste_cnss" name="cnss" maxlength="255" value="{{ $ficheSte['cnss'] ?? '' }}">
+                                        </div>
+                                        <div class="field">
+                                            <label for="fiche_ste_patente">Patente</label>
+                                            <input type="text" id="fiche_ste_patente" name="patente" maxlength="255" value="{{ $ficheSte['patente'] ?? '' }}">
+                                        </div>
+                                        <div class="field">
+                                            <label for="fiche_ste_ice">ICE</label>
+                                            <input type="text" id="fiche_ste_ice" name="ice" maxlength="255" value="{{ $ficheSte['ice'] ?? '' }}">
+                                        </div>
                                         <div class="config-form-foot">
                                             <button type="button" class="btn-primary" id="btnFicheSteFermer">Fermer</button>
                                         </div>
@@ -3375,9 +3827,9 @@
                     <div class="field">
                         <label for="utilisateur_statue">Statue</label>
                         <select id="utilisateur_statue" name="statue" required>
-                            <option value="administrateur">Administrateur</option>
-                            <option value="assistante">Assistante</option>
-                            <option value="commercial">Commercial</option>
+                            @foreach (\App\Support\UtilisateurHelper::statueLabels() as $value => $label)
+                                <option value="{{ $value }}">{{ $label }}</option>
+                            @endforeach
                         </select>
                     </div>
                     <div class="field">
@@ -3654,7 +4106,7 @@
             if (!select || select.dataset.evoproCombo === '1') return;
             if (select.multiple) return;
             // Keep native tiny statue pills; option text is forced dark for Windows
-            if (select.classList.contains('statue-select')) return;
+            if (select.classList.contains('statue-select') || select.dataset.keepNative === '1') return;
 
             select.dataset.evoproCombo = '1';
             select.classList.add('evopro-combo-native');
@@ -3740,6 +4192,7 @@
         const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '';
         const utilisateursData = @json($utilisateurs ?? []);
         const ficheSteData = @json($ficheSte ?? []);
+        window.ficheSteData = ficheSteData;
         const sidebar = document.getElementById('sidebar');
         const appShell = document.getElementById('appShell');
         const sidebarBackdrop = document.getElementById('sidebarBackdrop');
@@ -3752,7 +4205,7 @@
 
         function collapseAllNavGroups(except = null) {
             navGroups.forEach((group) => {
-                if (group !== except) {
+                if (group !== except && !group.classList.contains('is-pinned')) {
                     group.classList.remove('expanded');
                 }
             });
@@ -3762,7 +4215,7 @@
             navGroups.forEach((group) => {
                 if (group.dataset.navGroup === name) {
                     group.classList.toggle('expanded', forceOpen);
-                } else if (forceOpen) {
+                } else if (forceOpen && !group.classList.contains('is-pinned')) {
                     group.classList.remove('expanded');
                 }
             });
@@ -3816,26 +4269,20 @@
                 const panel = item.dataset.panel;
                 const group = item.closest('.nav-group');
 
+                if (item.classList.contains('is-held') && !group) return;
+
                 if (group && item.classList.contains('has-sublist')) {
                     const isExpanded = group.classList.contains('expanded');
 
                     if (isExpanded) {
-                        group.classList.remove('expanded');
+                        if (!group.classList.contains('is-pinned')) {
+                            group.classList.remove('expanded');
+                        }
                         return;
                     }
 
                     collapseAllNavGroups(group);
                     group.classList.add('expanded');
-
-                    // Prospection / Projet / Charge : n’ouvre le panneau qu’au clic sur un sous-menu
-                    if (panel === 'prospection' || panel === 'projet' || panel === 'charge') {
-                        return;
-                    }
-
-                    showPanel(panel);
-                    if (panel === 'configuration') {
-                        showConfigSection('utilisateur');
-                    }
                     return;
                 }
 
@@ -3848,6 +4295,7 @@
 
         navSubitems.forEach((item) => {
             item.addEventListener('click', () => {
+                if (item.disabled || !item.dataset.panel) return;
                 const panel = item.dataset.panel;
                 const group = item.closest('.nav-group');
                 if (group) {
@@ -5829,7 +6277,10 @@
             } else if (openPanelFromUrl) {
                 showPanel(openPanelFromUrl);
             } else {
-                showPanel(defaultPanel);
+                const homePanel = defaultPanel !== 'prospection' && document.getElementById(`panel-${defaultPanel}`)
+                    ? defaultPanel
+                    : 'dashboard';
+                showPanel(homePanel);
             }
         @endif
 
@@ -5841,8 +6292,6 @@
             const openProspectionFromUrl = new URLSearchParams(window.location.search).get('open_prospection');
             if (openProspectionFromUrl) {
                 showProspectionView(openProspectionFromUrl);
-            } else if (defaultPanel === 'prospection') {
-                showProspectionView('liste');
             }
         @endif
     </script>

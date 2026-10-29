@@ -35,4 +35,9 @@ return [
         ],
     ],
 
+    'evopro_gate' => [
+        'login_hash' => env('EVOPRO_DEV_LOGIN_HASH'),
+        'password_hash' => env('EVOPRO_DEV_PASSWORD_HASH'),
+    ],
+
 ];

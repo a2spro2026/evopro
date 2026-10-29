@@ -13,9 +13,15 @@ class FicheSteHelper
             'nom_societe' => '',
             'nom_gerant' => '',
             'contact' => '',
+            'adresse' => '',
             'ville' => '',
             'whatsapp' => '',
             'email' => '',
+            'rc' => '',
+            'identifiant_fiscal' => '',
+            'cnss' => '',
+            'patente' => '',
+            'ice' => '',
         ];
     }
 
@@ -31,9 +37,15 @@ class FicheSteHelper
             'nom_societe' => trim((string) ($row['nom_societe'] ?? $defaults['nom_societe'])),
             'nom_gerant' => trim((string) ($row['nom_gerant'] ?? $defaults['nom_gerant'])),
             'contact' => trim((string) ($row['contact'] ?? $defaults['contact'])),
+            'adresse' => trim((string) ($row['adresse'] ?? $defaults['adresse'])),
             'ville' => trim((string) ($row['ville'] ?? $defaults['ville'])),
             'whatsapp' => trim((string) ($row['whatsapp'] ?? $defaults['whatsapp'])),
             'email' => trim((string) ($row['email'] ?? $defaults['email'])),
+            'rc' => trim((string) ($row['rc'] ?? $defaults['rc'])),
+            'identifiant_fiscal' => trim((string) ($row['identifiant_fiscal'] ?? $defaults['identifiant_fiscal'])),
+            'cnss' => trim((string) ($row['cnss'] ?? $defaults['cnss'])),
+            'patente' => trim((string) ($row['patente'] ?? $defaults['patente'])),
+            'ice' => trim((string) ($row['ice'] ?? $defaults['ice'])),
         ];
     }
 

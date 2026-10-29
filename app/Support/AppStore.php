@@ -172,9 +172,15 @@ class AppStore
                 'nom_societe' => '',
                 'nom_gerant' => '',
                 'contact' => '',
+                'adresse' => '',
                 'ville' => '',
                 'whatsapp' => '',
                 'email' => '',
+                'rc' => '',
+                'identifiant_fiscal' => '',
+                'cnss' => '',
+                'patente' => '',
+                'ice' => '',
             ],
         ];
     }
