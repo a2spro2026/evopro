@@ -69,6 +69,7 @@ class SalesInvoice extends Model
                 'article_ref' => $item->article_ref,
                 'description' => $item->description,
                 'quantity' => (float) $item->quantity,
+                'purchase_price' => (float) $item->purchase_price,
                 'unit_price' => (float) $item->unit_price,
                 'remise' => (float) $item->remise,
                 'total' => (float) $item->total,

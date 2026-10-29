@@ -39,6 +39,7 @@ class SalesInvoiceController extends Controller
                         'reference' => $row['reference'],
                         'designation' => $row['designation'],
                         'stock' => $row['stock'],
+                        'purchase_price' => $this->purchasePrices()[$row['key']] ?? 0,
                     ])
                     ->values(),
             ],
@@ -170,30 +171,49 @@ class SalesInvoiceController extends Controller
     {
         $lines = [];
         $base = 0;
+        $prices = $this->purchasePrices();
         foreach ($data['items'] as $item) {
             $remise = min(100, max(0, (float) ($item['remise'] ?? 0)));
-            $line = round((float) $item['quantity'] * (float) $item['unit_price'] * (1 - $remise / 100), 2);
+            $key = FiscalMovementController::lineKey($item['article_ref'] ?? '', $item['description'] ?? '');
+            $purchase = round((float) ($prices[$key] ?? 0), 2);
+            $sale = round($purchase * (1 - $remise / 100), 2);
+            $line = round((float) $item['quantity'] * $sale, 2);
             $base += $line;
             $lines[] = [
                 'article_ref' => $item['article_ref'] ?? null,
                 'description' => $item['description'],
                 'quantity' => $item['quantity'],
-                'unit_price' => $item['unit_price'],
+                'purchase_price' => $purchase,
+                'unit_price' => $sale,
                 'remise' => $remise,
                 'total' => $line,
             ];
         }
 
-        if (isset($data['total_ttc']) && (float) $data['total_ttc'] > 0) {
-            $totalTtc = round((float) $data['total_ttc'], 2);
-            $totalHt = round($totalTtc / 1.2, 2);
-            $tva = round($totalTtc - $totalHt, 2);
-        } else {
-            $totalHt = round($base, 2);
-            $tva = round($totalHt * 0.20, 2);
-            $totalTtc = round($totalHt + $tva, 2);
-        }
+        $totalTtc = round($base, 2);
+        $totalHt = round($totalTtc / 1.2, 2);
+        $tva = round($totalTtc - $totalHt, 2);
 
         return [$lines, ['total_ht' => $totalHt, 'tva' => $tva, 'total_ttc' => $totalTtc]];
+    }
+
+    /**
+     * @return array<string, float>
+     */
+    private function purchasePrices(): array
+    {
+        $prices = [];
+        $lines = DB::table('supplier_invoice_items as i')
+            ->join('supplier_invoices as f', 'f.id', '=', 'i.supplier_invoice_id')
+            ->where('f.status', '!=', 'annulee')
+            ->orderBy('f.invoice_date')
+            ->orderBy('i.id')
+            ->get(['i.article_ref', 'i.description', 'i.unit_price']);
+
+        foreach ($lines as $line) {
+            $prices[FiscalMovementController::lineKey($line->article_ref, $line->description)] = round((float) $line->unit_price, 2);
+        }
+
+        return $prices;
     }
 }

@@ -111,6 +111,7 @@
                     <table class="fa-lines">
                         <colgroup>
                             <col class="c-ref">
+                            <col class="c-achat">
                             <col class="c-desc">
                             <col class="c-qty">
                             <col class="c-price">
@@ -121,6 +122,7 @@
                         <thead>
                             <tr>
                                 <th>Réf</th>
+                                <th>Prix achat</th>
                                 <th>Désignation</th>
                                 <th>Qté</th>
                                 <th>Prix/U</th>
@@ -272,6 +274,7 @@
     .fa-lines-wrap { max-height: 280px; overflow: auto; border: 1px solid #334155; border-radius: 10px; }
     .fa-lines { width: 100%; border-collapse: collapse; table-layout: fixed; }
     .fa-lines .c-ref { width: 128px; }
+    .fa-lines .c-achat { width: 92px; }
     .fa-lines .c-qty { width: 62px; }
     .fa-lines .c-price { width: 78px; }
     .fa-lines .c-remise { width: 68px; }
@@ -460,10 +463,25 @@
         return Number.isFinite(n) ? n : 0;
     }
     function lineAmount(row) {
-        const qty = parseNum(row.querySelector('[data-f="qty"]').value);
-        const price = parseNum(row.querySelector('[data-f="price"]').value);
-        const remise = Math.min(100, Math.max(0, parseNum(row.querySelector('[data-f="remise"]').value)));
-        return qty * price * (1 - remise / 100);
+        return parseNum(row.querySelector('[data-f="qty"]').value) * parseNum(row.querySelector('[data-f="price"]').value);
+    }
+    function saleUnit(achat, remise) {
+        const rate = Math.min(100, Math.max(0, remise));
+        return Math.round(achat * (1 - rate / 100) * 100) / 100;
+    }
+    function refreshLine(row) {
+        const option = row.querySelector('[data-f="desc"]')?.selectedOptions[0];
+        const achatInput = row.querySelector('[data-f="achat"]');
+        const priceInput = row.querySelector('[data-f="price"]');
+        if (!option || !option.value) {
+            achatInput.value = '';
+            priceInput.value = '';
+            return;
+        }
+        const achat = parseNum(option.dataset.achat);
+        const remise = parseNum(row.querySelector('[data-f="remise"]').value);
+        achatInput.value = moneyDot(achat);
+        priceInput.value = moneyDot(saleUnit(achat, remise));
     }
     function stockKey(item) {
         const ref = String(item?.article_ref || item?.reference || '').trim().toLowerCase();
@@ -475,15 +493,22 @@
         if (extra && (extra.article_ref || extra.description)) {
             const key = stockKey(extra);
             if (!list.some((item) => item.key === key)) {
-                list.push({ key, reference: extra.article_ref || '', designation: extra.description || '' });
+                list.push({
+                    key,
+                    reference: extra.article_ref || '',
+                    designation: extra.description || '',
+                    purchase_price: extra.purchase_price || 0,
+                });
             }
         }
         return list;
     }
     function stockOptions(list, selected, field) {
         const options = list.map((item) => {
-            const label = field === 'ref' ? (item.reference || '—') : (item.designation || '—');
-            return `<option value="${esc(item.key)}" data-ref="${esc(item.reference)}" data-desc="${esc(item.designation)}"${item.key === selected ? ' selected' : ''}>${esc(label)}</option>`;
+            const label = field === 'ref'
+                ? (item.reference || '—')
+                : `${moneyDot(item.purchase_price || 0)}  ${item.designation || '—'}`;
+            return `<option value="${esc(item.key)}" data-ref="${esc(item.reference)}" data-desc="${esc(item.designation)}" data-achat="${esc(item.purchase_price || 0)}"${item.key === selected ? ' selected' : ''}>${esc(label)}</option>`;
         }).join('');
         const placeholder = field === 'ref' ? 'Réf' : 'Désignation';
         return `<option value="">${placeholder}</option>${options}`;
@@ -493,12 +518,14 @@
         const selected = item?.article_ref || item?.description ? stockKey(item) : '';
         const choices = stockChoices(item);
         tr.innerHTML = `<td><select data-f="ref" data-keep-native="1">${stockOptions(choices, selected, 'ref')}</select></td>
+            <td><input data-f="achat" readonly tabindex="-1" value=""></td>
             <td><select data-f="desc" data-keep-native="1" required>${stockOptions(choices, selected, 'desc')}</select></td>
             <td><input data-f="qty" required inputmode="decimal" value="${esc(item?.quantity ?? 1)}"></td>
-            <td><input data-f="price" required inputmode="decimal" placeholder="0.00" value="${item?.unit_price != null && item.unit_price !== '' ? esc(moneyDot(item.unit_price)) : ''}"></td>
+            <td><input data-f="price" required readonly tabindex="-1" inputmode="decimal" placeholder="0.00" value=""></td>
             <td><div class="fa-remise"><input data-f="remise" inputmode="decimal" value="${esc(item?.remise ?? 0)}"><span>%</span></div></td>
             <td><input data-f="sub" readonly tabindex="-1" value="0.00"></td>
             <td><button type="button" class="fa-line-x" data-remove title="Retirer">×</button></td>`;
+        refreshLine(tr);
         return tr;
     }
     function recalc() {
@@ -596,7 +623,7 @@
     function printRow(row) {
         const company = window.ficheSteData || {};
         const show = (value) => esc(String(value || '').trim() || '—');
-        const lines = (row.items || []).map((item) => `<tr><td>${esc(item.article_ref || '—')}</td><td>${esc(item.description || '—')}</td><td>${esc(item.quantity)}</td><td>${esc(moneyDot(item.unit_price))}</td><td>${esc(item.remise)}%</td><td><strong>${esc(moneyDot(item.total))}</strong></td></tr>`).join('') || '<tr><td colspan="6">—</td></tr>';
+        const lines = (row.items || []).map((item) => `<tr><td>${esc(item.article_ref || '—')}</td><td>${esc(moneyDot(item.purchase_price || 0))}</td><td>${esc(item.description || '—')}</td><td>${esc(item.quantity)}</td><td>${esc(moneyDot(item.unit_price))}</td><td>${esc(item.remise)}%</td><td><strong>${esc(moneyDot(item.total))}</strong></td></tr>`).join('') || '<tr><td colspan="7">—</td></tr>';
         const html = `<!DOCTYPE html><html><head><meta charset="utf-8"><title>Facture ${esc(row.reference)}</title>
             <style>
                 @page { margin: 14mm 12mm 24mm; }
@@ -622,7 +649,7 @@
             <tr><th>Réf</th><td>${esc(row.reference)}</td><th>Ice client</th><td>${esc(row.ice || '—')}</td></tr>
             <tr><th>Total HT</th><td>${esc(moneyFr(row.total_ht))}</td><th>TVA</th><td>${esc(moneyFr(row.tva))}</td></tr>
             <tr><th>Total TTC</th><td colspan="3"><strong>${esc(moneyFr(row.total_ttc))}</strong></td></tr></table>
-            <table><thead><tr><th>Réf</th><th>Désignation</th><th>Qté</th><th>Prix/U</th><th>Remise</th><th>Sous-Total TTC</th></tr></thead><tbody>${lines}</tbody></table>
+            <table><thead><tr><th>Réf</th><th>Prix achat</th><th>Désignation</th><th>Qté</th><th>Prix/U</th><th>Remise</th><th>Sous-Total TTC</th></tr></thead><tbody>${lines}</tbody></table>
             <footer>
                 <span>RC : ${show(company.rc)}</span>
                 <span>IF : ${show(company.identifiant_fiscal)}</span>
@@ -655,7 +682,7 @@
             ['Réf', row.reference], ['Date', row.invoice_date], ['Client', row.client], ['Ice', row.ice],
             ['Total HT', moneyFr(row.total_ht)], ['TVA', moneyFr(row.tva)], ['Total TTC', moneyFr(row.total_ttc)],
         ];
-        const lines = (row.items || []).map((item) => `<div class="fa-view-line"><strong>${esc([item.article_ref, item.description].filter(Boolean).join(' — ') || '—')}</strong><div>${esc(item.quantity)} × ${esc(moneyDot(item.unit_price))}${Number(item.remise) > 0 ? ` (−${esc(item.remise)}%)` : ''} = <strong>${esc(moneyDot(item.total))}</strong></div></div>`).join('');
+        const lines = (row.items || []).map((item) => `<div class="fa-view-line"><strong>${esc(moneyDot(item.purchase_price || 0))}  ${esc([item.article_ref, item.description].filter(Boolean).join(' — ') || '—')}</strong><div>${esc(item.quantity)} × ${esc(moneyDot(item.unit_price))}${Number(item.remise) > 0 ? ` (remise ${esc(item.remise)}%)` : ''} = <strong>${esc(moneyDot(item.total))}</strong></div></div>`).join('');
         document.getElementById('fvViewBody').innerHTML = fields.map(([label, value]) => `<div class="fa-view-row"><span>${esc(label)}</span><strong>${esc(value || '—')}</strong></div>`).join('') + lines;
         view.hidden = false;
     }
@@ -742,7 +769,11 @@
     document.getElementById('fvViewPdf').addEventListener('click', () => { if (viewRow) printRow(viewRow); });
     modal.addEventListener('click', (event) => { if (event.target === modal) closeModal(); });
     view.addEventListener('click', (event) => { if (event.target === view) view.hidden = true; });
-    linesBody.addEventListener('input', recalc);
+    linesBody.addEventListener('input', (event) => {
+        const row = event.target.closest('tr');
+        if (row) refreshLine(row);
+        recalc();
+    });
     linesBody.addEventListener('change', (event) => {
         const row = event.target.closest('tr');
         if (row && event.target.matches('[data-f="ref"], [data-f="desc"]')) {
@@ -750,6 +781,7 @@
             row.querySelector('[data-f="ref"]').value = key;
             row.querySelector('[data-f="desc"]').value = key;
         }
+        if (row) refreshLine(row);
         recalc();
     });
     linesBody.addEventListener('focusout', (event) => {

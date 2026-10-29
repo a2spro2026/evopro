@@ -12,6 +12,7 @@ class SalesInvoiceItem extends Model
         'article_ref',
         'description',
         'quantity',
+        'purchase_price',
         'unit_price',
         'remise',
         'total',
@@ -21,6 +22,7 @@ class SalesInvoiceItem extends Model
     {
         return [
             'quantity' => 'decimal:3',
+            'purchase_price' => 'decimal:2',
             'unit_price' => 'decimal:2',
             'remise' => 'decimal:2',
             'total' => 'decimal:2',
