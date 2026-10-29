@@ -151,6 +151,12 @@
     #panel-fa-regl .fa-filters select.fa-name { width: 240px; }
     .fa-stat.regl,
     [data-theme="light"] .fa-stat.regl { background: linear-gradient(135deg, #f97316, #c2410c); color: #fff; }
+    #frModal.fa-window {
+        position: static; inset: auto; z-index: auto; display: block;
+        margin: 1rem 0 0; padding: 0; background: transparent; overflow: visible;
+    }
+    #frModal.fa-window[hidden] { display: none !important; }
+    #frModal .fa-sheet { margin-top: 0; }
 </style>
 <script>
 (function () {
@@ -303,12 +309,11 @@
         fillClients();
         render(filteredRows());
     }
-    function placeSheet() {
-        const card = document.querySelector('#panel-fa-regl .fr-card');
+    function showSheet() {
         const sheet = modal.querySelector('.fa-sheet');
-        if (!card || !sheet) return;
-        const top = card.getBoundingClientRect().bottom + 16;
-        sheet.style.marginTop = Math.max(16, top - 20) + 'px';
+        if (sheet) sheet.style.marginTop = '';
+        modal.hidden = false;
+        modal.scrollIntoView({ behavior: 'smooth', block: 'start' });
     }
     function paymentGroup(id) {
         return rows.filter((item) => String(item.id) === String(id)).sort((a, b) => Number(a.line_id) - Number(b.line_id));
@@ -330,7 +335,7 @@
         recalc();
         view.hidden = true;
         modal.hidden = false;
-        placeSheet();
+        showSheet();
     }
     function openEdit(group) {
         const head = group[0];
@@ -350,7 +355,7 @@
         recalc();
         view.hidden = true;
         modal.hidden = false;
-        placeSheet();
+        showSheet();
     }
     function openView(group) {
         const head = group[0];
@@ -382,7 +387,6 @@
     document.querySelector('[data-panel="fa-regl"]')?.addEventListener('click', () => { closeModal(); closeView(); });
     document.getElementById('frAdd').addEventListener('click', () => { linesBody.appendChild(lineRow()); recalc(); });
     modal.addEventListener('click', (event) => { if (event.target === modal) closeModal(); });
-    window.addEventListener('resize', () => { if (!modal.hidden) placeSheet(); });
     linesBody.addEventListener('input', recalc);
     linesBody.addEventListener('change', (event) => {
         const row = event.target.closest('tr');

@@ -225,6 +225,12 @@
     }
     .shell.sidebar-hidden .fa-window, .fa-window.at-edge { left: 0; }
     .fa-window[hidden] { display: none !important; }
+    #fvModal.fa-window {
+        position: static; inset: auto; z-index: auto; display: block;
+        margin: 1rem 0 0; padding: 0; background: transparent; overflow: visible;
+    }
+    #fvModal.fa-window[hidden] { display: none !important; }
+    #fvModal .fa-sheet { margin-top: 0; }
     .fa-sheet {
         width: min(920px, 100%); margin-top: 1.5rem; border-radius: 16px; overflow: hidden;
         background: #0c0c0e; border: 1px solid #4a1824; color: #f4f5f6;
@@ -695,19 +701,13 @@
         fillNames();
         render(filteredRows());
     }
-    function placeSheet() {
-        const card = document.querySelector('#panel-fa-vente .fa-card');
-        const sheet = modal.querySelector('.fa-sheet');
-        if (!card || !sheet) return;
-        const top = card.getBoundingClientRect().bottom + 16;
-        sheet.style.marginTop = Math.max(16, top - 20) + 'px';
-    }
     function openModal(row) {
         resetForm(row || null);
         modal.hidden = false;
-        placeSheet();
+        const sheet = modal.querySelector('.fa-sheet');
+        if (sheet) sheet.style.marginTop = '';
+        modal.scrollIntoView({ behavior: 'smooth', block: 'start' });
     }
-    window.addEventListener('resize', () => { if (!modal.hidden) placeSheet(); });
     function closeModal() { modal.hidden = true; editingId = null; }
     function supplierChoices(query) {
         const q = query.trim().toLowerCase();
