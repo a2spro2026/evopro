@@ -49,8 +49,8 @@
 </section>
 <style>
     #panel-fa-fisc .mf-sub { text-transform: none; color: var(--muted); margin-top: 0.35rem; }
-    #panel-fa-fisc .mf-head { display: flex; align-items: flex-end; justify-content: space-between; gap: 1rem; }
-    .mf-toolbar { display: flex; align-items: center; gap: 0.85rem; margin-bottom: 1rem; }
+    .mf-toolbar { display: flex; align-items: center; gap: 0.85rem; margin-bottom: 1rem; flex: 0 0 auto; }
+    #panel-fa-fisc .mf-head { display: flex; align-items: flex-end; justify-content: space-between; gap: 1rem; flex: 0 0 auto; }
     .mf-filters { display: flex; align-items: center; gap: 0.75rem; flex: 0 1 auto; min-width: 0; }
     .mf-filters label {
         display: flex; align-items: center; gap: 0.4rem; font-size: 0.62rem; font-weight: 800;
@@ -74,14 +74,16 @@
     .mf-stat.buy { background: linear-gradient(135deg, #e10600, #9b0400); }
     .mf-stat.sell { background: linear-gradient(135deg, #16a34a, #14532d); }
     .mf-stat.stock { color: #1a1204; background: linear-gradient(135deg, #facc15, #eab308); }
-    .mf-card { border-radius: 16px; overflow: hidden; border: 1px solid rgba(143, 36, 54, 0.45); background: #0a0a0c; }
-    .mf-bar { padding: 0.8rem 1.1rem; color: #fff; background: linear-gradient(90deg, #0a0a0c, #5c1220 58%, #8f2436); }
+    .mf-card { border-radius: 16px; overflow: hidden; border: 1px solid rgba(143, 36, 54, 0.45); background: #0a0a0c; flex: 1; min-height: 0; display: flex; flex-direction: column; }
+    .mf-bar { padding: 0.8rem 1.1rem; color: #fff; background: linear-gradient(90deg, #0a0a0c, #5c1220 58%, #8f2436); flex: 0 0 auto; }
     .mf-bar h3 { margin: 0; font-size: 0.82rem; letter-spacing: 0.06em; text-transform: uppercase; }
-    .mf-scroll { overflow: auto; min-height: 220px; }
-    .mf-table { width: 100%; border-collapse: collapse; min-width: 720px; color: #e2e8f0; }
+    .mf-scroll { flex: 1; min-height: 0; overflow: auto; }
+    .mf-table { width: 100%; border-collapse: separate; border-spacing: 0; min-width: 720px; color: #e2e8f0; }
     .mf-table th {
+        position: sticky; top: 0; z-index: 2;
         padding: 0.75rem 0.6rem; font-size: 0.68rem; letter-spacing: 0.08em; text-transform: uppercase;
         color: #e7d5d8; background: #1a1014; text-align: center;
+        box-shadow: inset 0 -1px 0 rgba(110, 18, 36, 0.45);
     }
     .mf-table td { padding: 0.7rem 0.6rem; text-align: center; border-top: 1px solid rgba(110, 18, 36, 0.35); }
     .mf-table td.desc { text-align: center; }
@@ -110,7 +112,10 @@
         background: linear-gradient(90deg, #fff, #f8e8eb 58%, #f3d5db);
     }
     [data-theme="light"] .mf-table { color: #1a1214; }
-    [data-theme="light"] .mf-table th { color: #5c1220; background: #f7eef0; }
+    [data-theme="light"] .mf-table th { color: #5c1220; background: #f7eef0; box-shadow: inset 0 -1px 0 rgba(143, 36, 54, 0.18); }
+    body:has(#panel-fa-fisc.active) .main { height: 100vh; max-height: 100vh; min-height: 0; overflow: hidden; }
+    body:has(#panel-fa-fisc.active) .content { display: flex; flex-direction: column; min-height: 0; overflow: hidden; }
+    #panel-fa-fisc.panel.active { display: flex; flex-direction: column; flex: 1; min-height: 0; overflow: hidden; }
     [data-theme="light"] .mf-table td { border-top-color: rgba(143, 36, 54, 0.14); }
     [data-theme="light"] .mf-table tbody tr:hover td { background: rgba(225, 6, 0, 0.06); }
     [data-theme="light"] .mf-table .buy { color: #8f2436; }
