@@ -660,16 +660,16 @@
         .nav-icon svg { width: 16px; height: 16px; }
 
         .nav-subicon {
-            width: 24px;
-            height: 24px;
-            border-radius: 7px;
+            width: 26px;
+            height: 26px;
+            border-radius: 8px;
             display: grid;
             place-items: center;
             flex-shrink: 0;
             border: 1px solid transparent;
         }
 
-        .nav-subicon svg { width: 13px; height: 13px; }
+        .nav-subicon svg { width: 15px; height: 15px; }
 
         .nav-icon,
         .nav-subicon {
@@ -1324,20 +1324,23 @@
         .welcome {
             display: flex;
             flex-direction: column;
-            gap: 0.15rem;
+            gap: 0.12rem;
+            text-transform: none;
         }
 
         .welcome small {
             color: var(--muted);
             font-size: 0.78rem;
-            letter-spacing: 0.04em;
-            text-transform: uppercase;
+            font-weight: 500;
+            letter-spacing: 0.01em;
+            text-transform: none;
         }
 
         .welcome strong {
-            font-size: 1.15rem;
-            font-weight: 600;
-            letter-spacing: -0.02em;
+            font-size: 1.05rem;
+            font-weight: 650;
+            letter-spacing: 0.01em;
+            text-transform: none;
         }
 
         .user-badge {
@@ -2622,6 +2625,13 @@
                             ['id' => 'cfg-transport', 'label' => 'Transport', 'cols' => ['ID', 'Nom Transport', 'Matricule']],
                         ]],
                     ];
+                    $facturationIcons = [
+                        'fa-achat' => '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><path d="M12 18v-6"/><path d="m9 15 3 3 3-3"/></svg>',
+                        'fa-fisc' => '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m16 3 4 4-4 4"/><path d="M20 7H4"/><path d="m8 21-4-4 4-4"/><path d="M4 17h16"/></svg>',
+                        'fa-vente' => '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><path d="M12 12v6"/><path d="m9 15 3-3 3 3"/></svg>',
+                        'fa-regl' => '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="6" width="20" height="12" rx="2"/><circle cx="12" cy="12" r="2"/><path d="M6 12h.01M18 12h.01"/></svg>',
+                        'fa-bal' => '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m16 16 3-8 3 8c-.87.65-1.92 1-3 1s-2.13-.35-3-1Z"/><path d="m2 16 3-8 3 8c-.87.65-1.92 1-3 1s-2.13-.35-3-1Z"/><path d="M7 21h10"/><path d="M12 3v18"/><path d="M3 7h2c2 0 5-1 7-2 2 1 5 2 7 2h2"/></svg>',
+                    ];
                 @endphp
                 <div class="nav-section">
                     <div class="nav-section-label">Vue d’ensemble</div>
@@ -2654,6 +2664,9 @@
                                         class="nav-subitem"
                                         @if ($group['id'] !== 'facturation' || !empty($group['soon']) || !empty($item['disabled'])) disabled @else data-panel="{{ $item['id'] }}" @endif
                                     >
+                                        @if (!empty($facturationIcons[$item['id']]))
+                                            <span class="nav-subicon" aria-hidden="true">{!! $facturationIcons[$item['id']] !!}</span>
+                                        @endif
                                         {{ $item['label'] }}
                                     </button>
                                 @endforeach
@@ -2684,7 +2697,8 @@
                         </svg>
                     </button>
                     <div class="welcome">
-                        <strong>Bienvenu {{ $welcomeName }}</strong>
+                        <strong>Bienvenue sur AUTO SIHAP</strong>
+                        <small>La solution qui gère vos achats, vos ventes et votre stock.</small>
                     </div>
                 </div>
 
