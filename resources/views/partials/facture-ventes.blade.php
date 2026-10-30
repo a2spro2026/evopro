@@ -248,7 +248,21 @@
         box-shadow: 0 24px 60px rgba(0,0,0,0.45);
     }
     #fvModal .fa-sheet { width: min(1220px, 100%); margin: auto; }
-    .fa-view { width: min(520px, 100%); }
+    .fa-view { width: min(860px, 100%); margin: auto; }
+    #fvView.fa-window { align-items: center; }
+    .fa-view-body { padding: 0.9rem 1.15rem 1rem; max-height: min(68vh, 640px); overflow: auto; }
+    .fa-view-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0 1.4rem; }
+    .fa-view-row { display: flex; justify-content: space-between; gap: 1rem; padding: 0.42rem 0; border-bottom: 1px solid #1e293b; font-size: 0.84rem; }
+    .fa-view-row span { color: #94a3b8; }
+    .fa-view-row strong { text-align: right; }
+    .fa-view-totals { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 0.5rem; margin-top: 0.85rem; }
+    .fa-view-totals div { border: 1px solid #334155; border-radius: 10px; padding: 0.45rem 0.5rem; text-align: center; background: #1e293b; }
+    .fa-view-totals small { display: block; color: #94a3b8; font-size: 0.62rem; font-weight: 800; letter-spacing: 0.05em; }
+    .fa-view-totals strong { display: block; margin-top: 0.15rem; font-size: 0.92rem; }
+    .fa-view-table { width: 100%; border-collapse: collapse; margin-top: 0.85rem; }
+    .fa-view-table th, .fa-view-table td { padding: 0.48rem 0.45rem; border-bottom: 1px solid #1e293b; font-size: 0.78rem; text-align: center; vertical-align: middle; }
+    .fa-view-table th { color: #94a3b8; font-size: 0.66rem; letter-spacing: 0.05em; font-weight: 800; }
+    .fa-view-table td.left { text-align: left; }
     .fa-sheet-head {
         display: flex; align-items: center; justify-content: space-between; gap: 1rem;
         padding: 0.9rem 1.15rem; color: #fff;
@@ -337,15 +351,12 @@
     .fa-btn { height: 36px; padding: 0 1rem; border-radius: 999px; border: none; font-family: inherit; font-weight: 700; font-size: 0.78rem; cursor: pointer; }
     .fa-btn.ghost { background: #1e293b; color: #e2e8f0; border: 1px solid #475569; }
     .fa-btn.primary { background: linear-gradient(180deg, #8f2436, #5c1220); color: #fff; }
-    .fa-view-body { padding: 0.9rem 1.15rem; max-height: 50vh; overflow: auto; }
-    .fa-view-row { display: flex; justify-content: space-between; gap: 1rem; padding: 0.4rem 0; border-bottom: 1px solid #1e293b; font-size: 0.84rem; }
-    .fa-view-row span { color: #94a3b8; }
-    .fa-view-line { margin-top: 0.45rem; padding: 0.45rem 0.6rem; border: 1px solid #1e293b; border-radius: 8px; font-size: 0.78rem; }
     @media (max-width: 900px) {
         .fa-window, #fvModal.fa-window { left: 0; }
         .fa-grid { grid-template-columns: minmax(0, 1fr) minmax(86px, 0.42fr) minmax(72px, 0.38fr) minmax(0, 1.35fr) minmax(110px, 1fr); }
         .fa-span-2 { grid-column: span 2; }
         .fa-stats { grid-template-columns: 1fr; }
+        .fa-view-grid, .fa-view-totals { grid-template-columns: 1fr 1fr; }
     }
     [data-theme="light"] .fa-stat { color: #3a1218; box-shadow: 0 8px 20px rgba(15, 31, 53, 0.06); }
     [data-theme="light"] .fa-stat.slate { background: linear-gradient(135deg, #ffffff, #f4f4f5); }
@@ -402,8 +413,12 @@
     [data-theme="light"] .fa-lines td { color: #1a1214; border-top-color: #f0dde1; }
     [data-theme="light"] .fa-lines-wrap,
     [data-theme="light"] .fa-view-row,
-    [data-theme="light"] .fa-view-line,
+    [data-theme="light"] .fa-view-table th,
+    [data-theme="light"] .fa-view-table td,
     [data-theme="light"] .fa-view .fa-actions { border-color: #f0dde1; }
+    [data-theme="light"] .fa-view-totals div { background: #fff; border-color: #e7c9cf; }
+    [data-theme="light"] .fa-view-totals small,
+    [data-theme="light"] .fa-view-table th { color: #8f2436; }
     [data-theme="light"] .fa-sheet .evopro-combo-menu,
     [data-theme="light"] .fa-supplier-menu { background: #fff; border-color: #e4c5cb; }
     [data-theme="light"] .fa-sheet .evopro-combo-option,
@@ -483,11 +498,10 @@
         return Number.isFinite(n) ? n : 0;
     }
     function lineAmount(row) {
-        return parseNum(row.querySelector('[data-f="qty"]').value) * parseNum(row.querySelector('[data-f="price"]').value);
-    }
-    function saleUnit(achat, remise) {
-        const rate = Math.min(100, Math.max(0, remise));
-        return Math.round(achat * (1 - rate / 100) * 100) / 100;
+        const qty = parseNum(row.querySelector('[data-f="qty"]').value);
+        const price = parseNum(row.querySelector('[data-f="price"]').value);
+        const remise = Math.min(100, Math.max(0, parseNum(row.querySelector('[data-f="remise"]').value)));
+        return Math.round(qty * price * (1 - remise / 100) * 100) / 100;
     }
     function refreshLine(row) {
         const option = row.querySelector('[data-f="desc"]')?.selectedOptions[0];
@@ -499,9 +513,8 @@
             return;
         }
         const achat = parseNum(option.dataset.achat);
-        const remise = parseNum(row.querySelector('[data-f="remise"]').value);
         achatInput.value = moneyDot(achat);
-        priceInput.value = moneyDot(saleUnit(achat, remise));
+        priceInput.value = moneyDot(achat);
     }
     function stockKey(item) {
         const ref = String(item?.article_ref || item?.reference || '').trim().toLowerCase();
@@ -718,14 +731,14 @@
             const purchase = Number(item.purchase_price) || 0;
             const saleTtc = Number(item.unit_price) || 0;
             const lineTtc = Number(item.total) || qty * saleTtc;
-            const prixHt = purchase > 0
-                ? purchase / 1.2
-                : (remise > 0 && remise < 100 ? (saleTtc / 1.2) / (1 - remise / 100) : saleTtc / 1.2);
+            const prixTtc = purchase > 0
+                ? purchase
+                : (remise > 0 && remise < 100 ? saleTtc / (1 - remise / 100) : saleTtc);
             return `<tr>
                 <td class="ref">${esc(item.article_ref || '—')}</td>
                 <td class="desc">${esc(item.description || '—')}</td>
                 <td class="qty">${esc(qtyText(qty))}</td>
-                <td class="num">${esc(moneyFr(prixHt))}</td>
+                <td class="num">${esc(moneyFr(prixTtc))}</td>
                 <td class="num">${esc(moneyFr(remise))}</td>
                 <td class="num">${esc(moneyFr(lineTtc / 1.2))}</td>
             </tr>`;
@@ -735,8 +748,8 @@
                 @page { size: A4; margin: 12mm 12mm 18mm; }
                 * { box-sizing: border-box; }
                 html, body { margin: 0; padding: 0; }
-                body { font-family: Arial, Helvetica, sans-serif; color: #1a1a1a; padding: 16px 22px 78px; }
-                .sheet { position: relative; z-index: 1; }
+                body { font-family: Arial, Helvetica, sans-serif; color: #1a1a1a; padding: 16px 22px 0; min-height: 100vh; }
+                .sheet { position: relative; z-index: 1; min-height: calc(100vh - 118px); padding-bottom: 12px; }
                 .watermark { position: fixed; inset: 0; display: flex; align-items: center; justify-content: center; overflow: hidden; pointer-events: none; }
                 .watermark span { font-size: 74px; font-weight: 800; letter-spacing: 0.04em; line-height: 1; white-space: nowrap; color: rgba(225, 6, 0, 0.22); transform: rotate(-28deg); text-transform: uppercase; }
                 .banner { width: 100%; display: flex; align-items: center; justify-content: flex-start; gap: 16px; margin: 0 0 12px; padding: 0 0 8px; background: transparent; border-bottom: 2px solid #e10600; }
@@ -758,8 +771,8 @@
                 .totals { margin-top: 10px; }
                 .totals td { border: 1px solid #6d7580; padding: 5px 8px; font-size: 12px; font-weight: 700; }
                 .totals td.lbl { background: #f4f6f8; width: 18%; }
-                .words { margin-top: 36px; font-size: 12px; font-style: italic; }
-                .words strong { display: block; margin-top: 8px; color: #1d4e9e; font-size: 15px; font-style: normal; letter-spacing: 0.03em; }
+                .words { position: fixed; left: 22px; right: 22px; bottom: 62px; margin: 0; font-size: 12px; font-style: italic; background: #fff; }
+                .words strong { display: block; margin-top: 6px; color: #1d4e9e; font-size: 15px; font-style: normal; letter-spacing: 0.03em; }
                 footer { position: fixed; left: 0; right: 0; bottom: 0; padding: 8px 18px 8px; border-top: 2px solid #e10600; text-align: center; font-size: 9px; line-height: 1.45; color: #333; background: #fff; }
             </style></head><body>
             <div class="watermark"><span>${esc(companyTitle)}</span></div>
@@ -787,8 +800,8 @@
                     <td class="lbl">T.V.A 20,00 %</td><td class="num">${esc(moneyFr(row.tva))}</td>
                     <td class="lbl">Total T.T.C</td><td class="num">${esc(moneyFr(row.total_ttc))}</td>
                 </tr></table>
-                <div class="words">La présente facture s'élève à la somme de<strong>${esc(amountWords(row.total_ttc))}</strong></div>
             </div>
+            <div class="words">La présente facture s'élève à la somme de<strong>${esc(amountWords(row.total_ttc))}</strong></div>
             <footer>
                 <div>${raw(company.adresse)}${company.adresse && company.ville ? ' — ' : ''}${raw(company.ville)}</div>
                 <div>R.C. : ${show(company.rc)} &nbsp; I.F. : ${show(company.identifiant_fiscal)} &nbsp; Patente : ${show(company.patente)} &nbsp; C.N.S.S. : ${show(company.cnss)} &nbsp; I.C.E. : ${show(company.ice)}</div>
@@ -811,12 +824,33 @@
     function openView(row) {
         viewRow = row;
         document.getElementById('fvViewTitle').textContent = row.reference || '—';
-        const fields = [
-            ['Réf', row.reference], ['Date', row.invoice_date], ['ID Clt', clientCode(row.client_id)], ['Nom client', row.client], ['Ice', row.ice],
-            ['Total HT', moneyFr(row.total_ht)], ['TVA', moneyFr(row.tva)], ['Total TTC', moneyFr(row.total_ttc)], ['Solde', moneyFr(row.balance)],
+        const info = [
+            ['Réf', row.reference], ['Date', row.invoice_date], ['ID Clt', clientCode(row.client_id)],
+            ['Nom client', row.client], ['Ice', row.ice],
         ];
-        const lines = (row.items || []).map((item) => `<div class="fa-view-line"><strong>${esc(moneyDot(item.purchase_price || 0))}  ${esc([item.article_ref, item.description].filter(Boolean).join(' — ') || '—')}</strong><div>${esc(item.quantity)} × ${esc(moneyDot(item.unit_price))}${Number(item.remise) > 0 ? ` (remise ${esc(item.remise)}%)` : ''} = <strong>${esc(moneyDot(item.total))}</strong></div></div>`).join('');
-        document.getElementById('fvViewBody').innerHTML = fields.map(([label, value]) => `<div class="fa-view-row"><span>${esc(label)}</span><strong>${esc(value || '—')}</strong></div>`).join('') + lines;
+        const lines = (row.items || []).map((item) => {
+            const prix = Number(item.purchase_price) > 0 ? item.purchase_price : item.unit_price;
+            return `<tr>
+                <td>${esc(item.article_ref || '—')}</td>
+                <td class="left">${esc(item.description || '—')}</td>
+                <td>${esc(item.quantity)}</td>
+                <td>${esc(moneyFr(prix))}</td>
+                <td>${esc(moneyFr(item.remise || 0))} %</td>
+                <td>${esc(moneyFr(item.total))}</td>
+            </tr>`;
+        }).join('') || '<tr><td colspan="6">—</td></tr>';
+        document.getElementById('fvViewBody').innerHTML = `
+            <div class="fa-view-grid">${info.map(([label, value]) => `<div class="fa-view-row"><span>${esc(label)}</span><strong>${esc(value || '—')}</strong></div>`).join('')}</div>
+            <div class="fa-view-totals">
+                <div><small>Total HT</small><strong>${esc(moneyFr(row.total_ht))}</strong></div>
+                <div><small>TVA</small><strong>${esc(moneyFr(row.tva))}</strong></div>
+                <div><small>Total TTC</small><strong>${esc(moneyFr(row.total_ttc))}</strong></div>
+                <div><small>Solde</small><strong>${esc(moneyFr(row.balance))}</strong></div>
+            </div>
+            <table class="fa-view-table">
+                <thead><tr><th>Réf</th><th>Désignation</th><th>Qté</th><th>Prix/U</th><th>Remise</th><th>Total</th></tr></thead>
+                <tbody>${lines}</tbody>
+            </table>`;
         view.hidden = false;
     }
     async function load() {

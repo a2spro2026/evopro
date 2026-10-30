@@ -190,15 +190,14 @@ class SalesInvoiceController extends Controller
             $remise = min(100, max(0, (float) ($item['remise'] ?? 0)));
             $key = FiscalMovementController::lineKey($item['article_ref'] ?? '', $item['description'] ?? '');
             $purchase = round((float) ($prices[$key] ?? 0), 2);
-            $sale = round($purchase * (1 - $remise / 100), 2);
-            $line = round((float) $item['quantity'] * $sale, 2);
+            $line = round((float) $item['quantity'] * $purchase * (1 - $remise / 100), 2);
             $base += $line;
             $lines[] = [
                 'article_ref' => $item['article_ref'] ?? null,
                 'description' => $item['description'],
                 'quantity' => $item['quantity'],
                 'purchase_price' => $purchase,
-                'unit_price' => $sale,
+                'unit_price' => $purchase,
                 'remise' => $remise,
                 'total' => $line,
             ];
