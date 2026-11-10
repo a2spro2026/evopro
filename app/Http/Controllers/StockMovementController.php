@@ -10,36 +10,34 @@ use Illuminate\Support\Facades\Schema;
 
 class StockMovementController extends Controller
 {
+    public static function lineKey(mixed $reference, mixed $description): string
+    {
+        $ref = mb_strtolower(trim((string) $reference));
+        if ($ref !== '') {
+            return 'ref:'.$ref;
+        }
+
+        return 'desc:'.mb_strtolower(trim((string) $description));
+    }
+
     public static function products()
     {
-        if (! Schema::hasTable('purchase_order_items')) {
+        if (! Schema::hasTable('purchase_order_items') && ! Schema::hasTable('supplier_invoice_items')) {
             return collect();
         }
 
         $rows = [];
-        $lines = DB::table('purchase_order_items as i')
-            ->join('purchase_orders as o', 'o.id', '=', 'i.purchase_order_id')
-            ->orderBy('o.order_date')
-            ->orderBy('i.id')
-            ->get(['i.article_ref', 'i.barcode', 'i.equiv', 'i.description', 'i.brand', 'i.family', 'i.quantity', 'i.unit_price', 'o.order_date']);
-
-        foreach ($lines as $line) {
-            $key = FiscalMovementController::lineKey($line->article_ref, $line->description);
+        foreach (self::purchaseLines() as $line) {
+            $key = self::lineKey($line->article_ref, $line->description);
             $rows[$key] ??= self::blankRow($line);
             $rows[$key]['achat'] += (float) $line->quantity;
-            self::addMonth($rows[$key], $line->order_date ?? null, 'achat', (float) $line->quantity);
+            self::addMonth($rows[$key], $line->sort_date ?? null, 'achat', (float) $line->quantity);
             $rows[$key]['purchase_price'] = round((float) $line->unit_price, 2);
-            if (trim((string) $line->barcode) !== '') {
-                $rows[$key]['barcode'] = trim((string) $line->barcode);
-            }
-            if (trim((string) $line->equiv) !== '') {
-                $rows[$key]['equiv'] = trim((string) $line->equiv);
-            }
-            if (trim((string) ($line->brand ?? '')) !== '') {
-                $rows[$key]['brand'] = trim((string) $line->brand);
-            }
-            if (trim((string) ($line->family ?? '')) !== '') {
-                $rows[$key]['family'] = trim((string) $line->family);
+            foreach (['barcode', 'equiv', 'brand', 'family'] as $field) {
+                $value = trim((string) ($line->{$field} ?? ''));
+                if ($value !== '') {
+                    $rows[$key][$field] = $value;
+                }
             }
         }
 
@@ -50,7 +48,7 @@ class StockMovementController extends Controller
                 ->get(['i.article_ref', 'i.description', 'i.quantity', 'f.invoice_date']);
 
             foreach ($sales as $line) {
-                $key = FiscalMovementController::lineKey($line->article_ref, $line->description);
+                $key = self::lineKey($line->article_ref, $line->description);
                 if (! isset($rows[$key])) {
                     continue;
                 }
@@ -67,7 +65,7 @@ class StockMovementController extends Controller
                 ->get(['i.article_ref', 'i.description', 'i.quantity', 'o.order_date']);
 
             foreach ($deliveries as $line) {
-                $key = FiscalMovementController::lineKey($line->article_ref, $line->description);
+                $key = self::lineKey($line->article_ref, $line->description);
                 if (! isset($rows[$key])) {
                     continue;
                 }
@@ -130,6 +128,41 @@ class StockMovementController extends Controller
         return response()->json(['data' => $data]);
     }
 
+    private static function purchaseLines()
+    {
+        $lines = collect();
+
+        if (Schema::hasTable('purchase_order_items')) {
+            $orders = DB::table('purchase_order_items as i')
+                ->join('purchase_orders as o', 'o.id', '=', 'i.purchase_order_id')
+                ->get(['i.id', 'i.article_ref', 'i.barcode', 'i.equiv', 'i.description', 'i.brand', 'i.family', 'i.quantity', 'i.unit_price', 'o.order_date']);
+            foreach ($orders as $line) {
+                $line->sort_date = $line->order_date;
+                $lines->push($line);
+            }
+        }
+
+        if (Schema::hasTable('supplier_invoice_items')) {
+            $invoices = DB::table('supplier_invoice_items as i')
+                ->join('supplier_invoices as f', 'f.id', '=', 'i.supplier_invoice_id')
+                ->where('f.status', '!=', 'annulee')
+                ->get(['i.id', 'i.article_ref', 'i.description', 'i.quantity', 'i.unit_price', 'f.invoice_date']);
+            foreach ($invoices as $line) {
+                $line->sort_date = $line->invoice_date;
+                $line->barcode = '';
+                $line->equiv = '';
+                $line->brand = '';
+                $line->family = '';
+                $lines->push($line);
+            }
+        }
+
+        return $lines->sortBy([
+            ['sort_date', 'asc'],
+            ['id', 'asc'],
+        ])->values();
+    }
+
     private static function blankMonths(): array
     {
         $months = [];
@@ -143,7 +176,7 @@ class StockMovementController extends Controller
     private static function blankRow(object $line): array
     {
         return [
-            'key' => FiscalMovementController::lineKey($line->article_ref, $line->description),
+            'key' => self::lineKey($line->article_ref, $line->description),
             'reference' => trim((string) $line->article_ref),
             'barcode' => trim((string) ($line->barcode ?? '')),
             'equiv' => trim((string) ($line->equiv ?? '')),

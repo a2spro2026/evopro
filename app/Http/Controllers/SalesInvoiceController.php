@@ -46,12 +46,10 @@ class SalesInvoiceController extends Controller
                 'total_ht' => round($rows->sum('total_ht'), 2),
                 'total_ttc' => round($rows->sum('total_ttc'), 2),
                 'clients' => Customer::query()->orderBy('name')->get(['id', 'name', 'ice']),
-                'stock' => $this->fiscalCatalog()->values(),
-                'stock_moves' => StockMovementController::products()->map(fn (array $row) => [
+                'products' => StockMovementController::products()->map(fn (array $row) => [
                     'key' => $row['key'],
                     'reference' => $row['reference'],
                     'designation' => $row['designation'],
-                    'stock' => $row['stock'],
                     'purchase_price' => $row['purchase_price'],
                 ])->values(),
             ],
@@ -132,24 +130,17 @@ class SalesInvoiceController extends Controller
             'items.*.quantity' => ['required', 'numeric', 'min:0.001'],
             'items.*.unit_price' => ['required', 'numeric', 'min:0'],
             'items.*.remise' => ['nullable', 'numeric', 'min:0', 'max:100'],
-            'items.*.source' => ['nullable', 'in:fiscal,stock'],
         ]);
 
-        $fiscal = $this->fiscalCatalog()->keyBy('key');
-        $stock = StockMovementController::products()->keyBy('key');
+        $catalog = StockMovementController::products()->keyBy('key');
 
         foreach ($data['items'] as $index => $item) {
-            $source = ($item['source'] ?? 'fiscal') === 'stock' ? 'stock' : 'fiscal';
-            $catalog = $source === 'stock' ? $stock : $fiscal;
-            $product = $catalog->get(FiscalMovementController::lineKey($item['article_ref'] ?? '', $item['description'] ?? ''));
+            $product = $catalog->get(StockMovementController::lineKey($item['article_ref'] ?? '', $item['description'] ?? ''));
             if (! $product) {
                 throw ValidationException::withMessages([
-                    "items.$index.description" => $source === 'stock'
-                        ? 'Choisissez un produit du mouvement stock.'
-                        : 'Choisissez un produit du mouvement fiscal.',
+                    "items.$index.description" => 'Choisissez un article de la fiche produit.',
                 ]);
             }
-            $data['items'][$index]['source'] = $source;
             $data['items'][$index]['article_ref'] = $product['reference'] !== '' ? $product['reference'] : null;
             $data['items'][$index]['description'] = $product['designation'];
             $data['items'][$index]['purchase_price'] = round((float) ($product['purchase_price'] ?? 0), 2);
@@ -210,41 +201,5 @@ class SalesInvoiceController extends Controller
         $tva = round($totalTtc - $totalHt, 2);
 
         return [$lines, ['total_ht' => $totalHt, 'tva' => $tva, 'total_ttc' => $totalTtc]];
-    }
-
-    private function fiscalCatalog()
-    {
-        $prices = $this->purchasePrices();
-
-        return FiscalMovementController::movements()
-            ->filter(fn (array $row) => $row['achat'] > 0 && ($row['reference'] !== '' || $row['designation'] !== ''))
-            ->map(fn (array $row) => [
-                'key' => $row['key'],
-                'reference' => $row['reference'],
-                'designation' => $row['designation'],
-                'stock' => $row['stock'],
-                'purchase_price' => $prices[$row['key']] ?? 0,
-            ])
-            ->values();
-    }
-
-    /**
-     * @return array<string, float>
-     */
-    private function purchasePrices(): array
-    {
-        $prices = [];
-        $lines = DB::table('supplier_invoice_items as i')
-            ->join('supplier_invoices as f', 'f.id', '=', 'i.supplier_invoice_id')
-            ->where('f.status', '!=', 'annulee')
-            ->orderBy('f.invoice_date')
-            ->orderBy('i.id')
-            ->get(['i.article_ref', 'i.description', 'i.unit_price']);
-
-        foreach ($lines as $line) {
-            $prices[FiscalMovementController::lineKey($line->article_ref, $line->description)] = round((float) $line->unit_price, 2);
-        }
-
-        return $prices;
     }
 }

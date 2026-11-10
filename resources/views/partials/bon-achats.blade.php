@@ -717,6 +717,10 @@
         closeModal();
     });
     document.getElementById('baAddLine').addEventListener('click', () => {
+        if (linesBody.querySelectorAll('tr').length >= 50) {
+            showError('Un bon comprend au maximum 50 articles.');
+            return;
+        }
         linesBody.appendChild(lineRow());
         recalc();
     });
@@ -830,6 +834,10 @@
         event.preventDefault();
         if (mode === 'view') return;
         showError('');
+        if (linesBody.querySelectorAll('tr').length > 50) {
+            showError('Un bon comprend au maximum 50 articles.');
+            return;
+        }
         const date = document.getElementById('baDate').value;
         const ref = document.getElementById('baRef').value.trim();
         const supplier = document.getElementById('baSupplier').value.trim();

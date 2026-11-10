@@ -116,7 +116,6 @@
                 <div class="fa-lines-wrap">
                     <table class="fa-lines">
                         <colgroup>
-                            <col class="c-source">
                             <col class="c-ref">
                             <col class="c-achat">
                             <col class="c-desc">
@@ -128,7 +127,6 @@
                         </colgroup>
                         <thead>
                             <tr>
-                                <th>Source</th>
                                 <th>Réf</th>
                                 <th>Prix achat</th>
                                 <th>Désignation</th>
@@ -308,8 +306,7 @@
     .fa-add-line { border: none; background: transparent; color: #e8b4bc; font-weight: 800; font-size: 0.78rem; cursor: pointer; font-family: inherit; }
     .fa-lines-wrap { max-height: 280px; overflow: auto; border: 1px solid #334155; border-radius: 10px; }
     .fa-lines { width: 100%; border-collapse: collapse; table-layout: fixed; }
-    .fa-lines .c-source { width: 158px; }
-    .fa-lines .c-ref { width: 110px; }
+    .fa-lines .c-ref { width: 140px; }
     .fa-lines .c-achat { width: 92px; }
     .fa-lines .c-qty { width: 62px; }
     .fa-lines .c-price { width: 78px; }
@@ -470,7 +467,7 @@
     const supplier = document.getElementById('fvSupplier');
     const supplierMenu = document.getElementById('fvSupplierMenu');
     const ice = document.getElementById('fvIce');
-    let meta = { next_ref: 'FV-0001', date: '', clients: [], stock: [], stock_moves: [], count: 0, total_ht: 0, total_ttc: 0 };
+    let meta = { next_ref: 'FV-0001', date: '', clients: [], products: [], count: 0, total_ht: 0, total_ttc: 0 };
     let rows = [];
     let editingId = null;
     let viewRow = null;
@@ -526,18 +523,8 @@
         if (ref) return 'ref:' + ref;
         return 'desc:' + String(item?.description || item?.designation || '').trim().toLowerCase();
     }
-    function catalogFor(source) {
-        return source === 'stock' ? (meta.stock_moves || []) : (meta.stock || []);
-    }
-    function inferSource(item) {
-        if (!item || !(item.article_ref || item.description)) return 'fiscal';
-        const key = stockKey(item);
-        const inStock = (meta.stock_moves || []).some((row) => row.key === key);
-        const inFiscal = (meta.stock || []).some((row) => row.key === key);
-        return inStock && !inFiscal ? 'stock' : 'fiscal';
-    }
-    function stockChoices(extra, source) {
-        const list = [...catalogFor(source)];
+    function stockChoices(extra) {
+        const list = [...(meta.products || [])];
         if (extra && (extra.article_ref || extra.description)) {
             const key = stockKey(extra);
             if (!list.some((item) => item.key === key)) {
@@ -563,14 +550,9 @@
     }
     function lineRow(item) {
         const tr = document.createElement('tr');
-        const source = inferSource(item);
         const selected = item?.article_ref || item?.description ? stockKey(item) : '';
-        const choices = stockChoices(item, source);
-        tr.innerHTML = `<td><select data-f="source" data-keep-native="1">
-                <option value="fiscal"${source === 'fiscal' ? ' selected' : ''}>Mouvement fiscal</option>
-                <option value="stock"${source === 'stock' ? ' selected' : ''}>Mouvement stock</option>
-            </select></td>
-            <td><select data-f="ref" data-keep-native="1">${stockOptions(choices, selected, 'ref')}</select></td>
+        const choices = stockChoices(item);
+        tr.innerHTML = `<td><select data-f="ref" data-keep-native="1">${stockOptions(choices, selected, 'ref')}</select></td>
             <td><input data-f="achat" readonly tabindex="-1" value=""></td>
             <td><select data-f="desc" data-keep-native="1" required>${stockOptions(choices, selected, 'desc')}</select></td>
             <td><input data-f="qty" required inputmode="decimal" value="${esc(item?.quantity ?? 1)}"></td>
@@ -580,14 +562,6 @@
             <td><button type="button" class="fa-line-x" data-remove title="Retirer">×</button></td>`;
         refreshLine(tr);
         return tr;
-    }
-    function refillRow(row) {
-        const source = row.querySelector('[data-f="source"]').value === 'stock' ? 'stock' : 'fiscal';
-        const current = row.querySelector('[data-f="desc"]').value;
-        const choices = stockChoices(null, source);
-        const selected = choices.some((item) => item.key === current) ? current : '';
-        row.querySelector('[data-f="ref"]').innerHTML = stockOptions(choices, selected, 'ref');
-        row.querySelector('[data-f="desc"]').innerHTML = stockOptions(choices, selected, 'desc');
     }
     function recalc() {
         let ttc = 0;
@@ -979,7 +953,6 @@
     });
     linesBody.addEventListener('change', (event) => {
         const row = event.target.closest('tr');
-        if (row && event.target.matches('[data-f="source"]')) refillRow(row);
         if (row && event.target.matches('[data-f="ref"], [data-f="desc"]')) {
             const key = event.target.value;
             row.querySelector('[data-f="ref"]').value = key;
@@ -1034,7 +1007,6 @@
             quantity: Number(String(row.querySelector('[data-f="qty"]').value).replace(',', '.')),
             unit_price: Number(String(row.querySelector('[data-f="price"]').value).replace(',', '.')),
             remise: Number(String(row.querySelector('[data-f="remise"]').value).replace(',', '.')) || 0,
-            source: row.querySelector('[data-f="source"]').value === 'stock' ? 'stock' : 'fiscal',
             };
         });
         const supplierName = supplier.value.trim();
@@ -1042,7 +1014,7 @@
         const known = (meta.clients || []).find((item) => String(item.name || '').trim().toLowerCase() === supplierName.toLowerCase());
         const supplierId = supplier.dataset.id || (known ? String(known.id) : '');
         if (!/^\d{15}$/.test(ice.value)) { showError('L’ICE doit contenir 15 chiffres.'); return; }
-        if (!items.length || items.some((item) => !item.description)) { showError('Choisissez la source, la réf et la désignation.'); return; }
+        if (!items.length || items.some((item) => !item.description)) { showError('Choisissez la réf et la désignation dans la fiche produit.'); return; }
         const totalTtc = recalc();
         save.disabled = true;
         try {

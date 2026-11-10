@@ -6,7 +6,6 @@ use App\Http\Controllers\ClientPaymentController;
 use App\Http\Controllers\DeliveryOrderController;
 use App\Http\Controllers\PurchaseOrderController;
 use App\Http\Controllers\SupplierController;
-use App\Http\Controllers\FiscalMovementController;
 use App\Http\Controllers\SalesInvoiceController;
 use App\Http\Controllers\StockMovementController;
 use App\Http\Controllers\SalesInvoicePaymentController;
@@ -1231,7 +1230,6 @@ Route::middleware('auth.user')->get('/factures-achats', [SupplierInvoiceControll
 Route::middleware('auth.user')->post('/factures-achats', [SupplierInvoiceController::class, 'store'])->name('factures-achats.store');
 Route::middleware('auth.user')->put('/factures-achats/{supplierInvoice}', [SupplierInvoiceController::class, 'update'])->name('factures-achats.update');
 Route::middleware('auth.user')->delete('/factures-achats/{supplierInvoice}', [SupplierInvoiceController::class, 'destroy'])->name('factures-achats.destroy');
-Route::middleware('auth.user')->get('/mouvement-fiscal', [FiscalMovementController::class, 'index'])->name('mouvement-fiscal.index');
 Route::middleware('auth.user')->get('/bons-achats', [PurchaseOrderController::class, 'index'])->name('bons-achats.index');
 Route::middleware('auth.user')->post('/bons-achats', [PurchaseOrderController::class, 'store'])->name('bons-achats.store');
 Route::middleware('auth.user')->put('/bons-achats/{purchaseOrder}', [PurchaseOrderController::class, 'update'])->name('bons-achats.update');

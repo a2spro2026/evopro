@@ -109,7 +109,7 @@ class DeliveryOrderController extends Controller
             'client_name' => ['required', 'string', 'max:255'],
             'payment_type' => ['nullable', 'in:Esp,Chq,Eff,Vir,Vers'],
             'due_term' => ['nullable', 'string', 'max:20'],
-            'items' => ['required', 'array', 'min:1'],
+            'items' => ['required', 'array', 'min:1', 'max:50'],
             'items.*.article_ref' => ['nullable', 'string', 'max:64'],
             'items.*.barcode' => ['nullable', 'string', 'max:64'],
             'items.*.equiv' => ['nullable', 'string', 'max:64'],
@@ -119,6 +119,8 @@ class DeliveryOrderController extends Controller
             'items.*.quantity' => ['required', 'numeric', 'min:0.001'],
             'items.*.unit_price' => ['required', 'numeric', 'min:0'],
             'items.*.remise' => ['nullable', 'numeric', 'min:0', 'max:100'],
+        ], [
+            'items.max' => 'Un bon comprend au maximum 50 articles.',
         ]);
 
         $data['client_code'] = trim((string) ($data['client_code'] ?? ''));

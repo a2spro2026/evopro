@@ -2,7 +2,7 @@
     <div class="content-head sm-head">
         <div>
             <h1>Mouvement Stock</h1>
-            <p class="sm-sub">Stock = quantités des bons d’achat − ventes</p>
+            <p class="sm-sub">Achat = bon et facture d’achat. Vente = bon de livraison et facture de vente.</p>
         </div>
     </div>
 
