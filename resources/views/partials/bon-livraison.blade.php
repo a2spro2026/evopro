@@ -621,7 +621,7 @@
         const price = parseNum(priceInput.value);
         const qty = parseNum(row.querySelector('[data-f="qty"]').value);
         const remise = Math.min(100, Math.max(0, parseNum(row.querySelector('[data-f="remise"]').value)));
-        row.querySelector('[data-f="sub"]').value = moneyDot(qty * price * (1 + remise / 100));
+        row.querySelector('[data-f="sub"]').value = moneyDot(qty * price * (1 - remise / 100));
     }
     function recalc() {
         let qtyTotal = 0;

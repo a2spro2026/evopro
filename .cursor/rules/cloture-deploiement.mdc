@@ -1,0 +1,15 @@
+---
+description: Clôturer chaque modification par migration, commit, push et déploiement
+alwaysApply: true
+---
+
+# Clôture obligatoire
+
+Avant de terminer un travail qui modifie l'application, enchaîner ces quatre étapes. Ne pas s'arrêter après le correctif local.
+
+1. Migration locale : `php artisan migrate --force` sur la base MySQL `evopro`.
+2. Commit sur `master`. Exclure `.env`, `storage/app/evopro_data.json`, `database/database.sqlite`, `vendor` et la copie imbriquée sous `app/` (`app/app`, `app/artisan`, `app/composer.json`, etc.).
+3. Push vers `origin` (`https://github.com/a2spro2026/evopro.git`, branche `master`).
+4. Déploiement sur `https://evopro.a2spr.com` (`/var/www/evopro.a2spr.com` via SSH `avous`). Ne pas remplacer le `.env` de production ni `storage/app/evopro_data.json`. Puis `php artisan migrate --force` et rafraîchir les caches.
+
+Si le push est refusé, le dire clairement et faire quand même la migration et le déploiement.

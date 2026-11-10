@@ -167,7 +167,7 @@ class DeliveryOrderController extends Controller
                 : round((float) $item['unit_price'], 2);
             $remise = min(100, max(0, (float) ($item['remise'] ?? 0)));
             $quantity = round((float) $item['quantity'], 3);
-            $sub = round($quantity * $price * (1 + $remise / 100), 2);
+            $sub = round($quantity * $price * (1 - $remise / 100), 2);
             $qty += $quantity;
             $amount += $sub;
             $lines[] = [
