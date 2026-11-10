@@ -46,16 +46,14 @@ class SalesInvoiceController extends Controller
                 'total_ht' => round($rows->sum('total_ht'), 2),
                 'total_ttc' => round($rows->sum('total_ttc'), 2),
                 'clients' => Customer::query()->orderBy('name')->get(['id', 'name', 'ice']),
-                'stock' => FiscalMovementController::movements()
-                    ->filter(fn (array $row) => $row['achat'] > 0 && ($row['reference'] !== '' || $row['designation'] !== ''))
-                    ->map(fn (array $row) => [
-                        'key' => $row['key'],
-                        'reference' => $row['reference'],
-                        'designation' => $row['designation'],
-                        'stock' => $row['stock'],
-                        'purchase_price' => $this->purchasePrices()[$row['key']] ?? 0,
-                    ])
-                    ->values(),
+                'stock' => $this->fiscalCatalog()->values(),
+                'stock_moves' => StockMovementController::products()->map(fn (array $row) => [
+                    'key' => $row['key'],
+                    'reference' => $row['reference'],
+                    'designation' => $row['designation'],
+                    'stock' => $row['stock'],
+                    'purchase_price' => $row['purchase_price'],
+                ])->values(),
             ],
         ]);
     }
@@ -134,21 +132,27 @@ class SalesInvoiceController extends Controller
             'items.*.quantity' => ['required', 'numeric', 'min:0.001'],
             'items.*.unit_price' => ['required', 'numeric', 'min:0'],
             'items.*.remise' => ['nullable', 'numeric', 'min:0', 'max:100'],
+            'items.*.source' => ['nullable', 'in:fiscal,stock'],
         ]);
 
-        $stock = FiscalMovementController::movements()
-            ->filter(fn (array $row) => $row['achat'] > 0)
-            ->keyBy('key');
+        $fiscal = $this->fiscalCatalog()->keyBy('key');
+        $stock = StockMovementController::products()->keyBy('key');
 
         foreach ($data['items'] as $index => $item) {
-            $product = $stock->get(FiscalMovementController::lineKey($item['article_ref'] ?? '', $item['description'] ?? ''));
+            $source = ($item['source'] ?? 'fiscal') === 'stock' ? 'stock' : 'fiscal';
+            $catalog = $source === 'stock' ? $stock : $fiscal;
+            $product = $catalog->get(FiscalMovementController::lineKey($item['article_ref'] ?? '', $item['description'] ?? ''));
             if (! $product) {
                 throw ValidationException::withMessages([
-                    "items.$index.description" => 'Choisissez un produit du stock achats.',
+                    "items.$index.description" => $source === 'stock'
+                        ? 'Choisissez un produit du mouvement stock.'
+                        : 'Choisissez un produit du mouvement fiscal.',
                 ]);
             }
+            $data['items'][$index]['source'] = $source;
             $data['items'][$index]['article_ref'] = $product['reference'] !== '' ? $product['reference'] : null;
             $data['items'][$index]['description'] = $product['designation'];
+            $data['items'][$index]['purchase_price'] = round((float) ($product['purchase_price'] ?? 0), 2);
         }
 
         return $data;
@@ -185,11 +189,9 @@ class SalesInvoiceController extends Controller
     {
         $lines = [];
         $base = 0;
-        $prices = $this->purchasePrices();
         foreach ($data['items'] as $item) {
             $remise = min(100, max(0, (float) ($item['remise'] ?? 0)));
-            $key = FiscalMovementController::lineKey($item['article_ref'] ?? '', $item['description'] ?? '');
-            $purchase = round((float) ($prices[$key] ?? 0), 2);
+            $purchase = round((float) ($item['purchase_price'] ?? 0), 2);
             $line = round((float) $item['quantity'] * $purchase * (1 - $remise / 100), 2);
             $base += $line;
             $lines[] = [
@@ -208,6 +210,22 @@ class SalesInvoiceController extends Controller
         $tva = round($totalTtc - $totalHt, 2);
 
         return [$lines, ['total_ht' => $totalHt, 'tva' => $tva, 'total_ttc' => $totalTtc]];
+    }
+
+    private function fiscalCatalog()
+    {
+        $prices = $this->purchasePrices();
+
+        return FiscalMovementController::movements()
+            ->filter(fn (array $row) => $row['achat'] > 0 && ($row['reference'] !== '' || $row['designation'] !== ''))
+            ->map(fn (array $row) => [
+                'key' => $row['key'],
+                'reference' => $row['reference'],
+                'designation' => $row['designation'],
+                'stock' => $row['stock'],
+                'purchase_price' => $prices[$row['key']] ?? 0,
+            ])
+            ->values();
     }
 
     /**

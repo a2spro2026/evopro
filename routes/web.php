@@ -1,10 +1,23 @@
 <?php
 
+use App\Http\Controllers\ClientBalanceController;
+use App\Http\Controllers\ClientController;
+use App\Http\Controllers\ClientPaymentController;
+use App\Http\Controllers\DeliveryOrderController;
+use App\Http\Controllers\PurchaseOrderController;
 use App\Http\Controllers\SupplierController;
 use App\Http\Controllers\FiscalMovementController;
 use App\Http\Controllers\SalesInvoiceController;
+use App\Http\Controllers\StockMovementController;
 use App\Http\Controllers\SalesInvoicePaymentController;
 use App\Http\Controllers\SupplierInvoiceController;
+use App\Http\Controllers\SupplierBalanceController;
+use App\Http\Controllers\SupplierPaymentController;
+use App\Models\PurchaseOrder;
+use App\Models\SalesInvoice;
+use App\Models\SalesInvoicePaymentLine;
+use App\Models\SupplierInvoice;
+use App\Models\SupplierPayment;
 use App\Support\AppStore;
 use App\Support\CommercialPresenceHelper;
 use App\Support\ContactsArchive;
@@ -14,6 +27,7 @@ use App\Support\ProjetHelper;
 use App\Support\ProspectionHelper;
 use App\Support\UtilisateurHelper;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Facades\Route;
 
 $requireAuth = function () {
@@ -62,8 +76,199 @@ Route::get('/dashboard', function () use ($requireAuth) {
         'annule' => $projets->filter(fn ($p) => $resolveStatut($p) === 'annule')->count(),
     ];
 
+    $paymentTypes = ['Esp', 'Chq', 'Eff', 'Vir', 'Vers'];
+    $emptyMix = array_fill_keys($paymentTypes, 0.0);
+    $normalizeMix = function (array $amounts) use ($paymentTypes): array {
+        $total = array_sum($amounts);
+        $items = [];
+        foreach ($paymentTypes as $type) {
+            $amount = round((float) ($amounts[$type] ?? 0), 2);
+            $items[] = [
+                'type' => $type,
+                'amount' => $amount,
+                'rate' => $total > 0 ? round(($amount / $total) * 100, 1) : 0.0,
+            ];
+        }
+
+        return [
+            'total' => round($total, 2),
+            'items' => $items,
+        ];
+    };
+
+    $totalAchats = 0.0;
+    $totalVentes = 0.0;
+    $totalFacturesAchats = 0.0;
+    $totalFacturesVentes = 0.0;
+    $reglementAchatsMix = $emptyMix;
+    $reglementVentesMix = $emptyMix;
+
+    try {
+        if (Schema::hasTable('purchase_orders')) {
+            $totalAchats = (float) PurchaseOrder::query()->sum('total');
+        }
+        if (Schema::hasTable('sales_invoices')) {
+            $totalVentes = (float) SalesInvoice::query()->sum('total_ttc');
+            $totalFacturesVentes = $totalVentes;
+        }
+        if (Schema::hasTable('supplier_invoices')) {
+            $totalFacturesAchats = (float) SupplierInvoice::query()->sum('total_ttc');
+        }
+        if (Schema::hasTable('supplier_payments')) {
+            foreach (SupplierPayment::query()->get(['reglement', 'montant']) as $payment) {
+                $type = trim((string) ($payment->reglement ?? ''));
+                if (isset($reglementAchatsMix[$type])) {
+                    $reglementAchatsMix[$type] += (float) $payment->montant;
+                }
+            }
+        }
+        if (Schema::hasTable('sales_invoice_payment_lines')) {
+            foreach (SalesInvoicePaymentLine::query()->get(['method', 'amount']) as $line) {
+                $type = trim((string) ($line->method ?? ''));
+                if (isset($reglementVentesMix[$type])) {
+                    $reglementVentesMix[$type] += (float) $line->amount;
+                }
+            }
+        }
+    } catch (\Throwable $e) {
+        // Keep zeros if MySQL tables are unavailable.
+    }
+
+    $dashboardStats = [
+        'total_achats' => round($totalAchats, 2),
+        'total_ventes' => round($totalVentes, 2),
+        'total_factures_achats' => round($totalFacturesAchats, 2),
+        'total_factures_ventes' => round($totalFacturesVentes, 2),
+        'reglement_achats' => $normalizeMix($reglementAchatsMix),
+        'reglement_ventes' => $normalizeMix($reglementVentesMix),
+    ];
+
     $totalCharges = (float) collect(AppStore::get('charges'))
         ->sum(fn ($c) => (float) ($c['montant'] ?? $c['amount'] ?? 0));
+
+    $monthBucket = static function (): array {
+        return array_fill(1, 12, 0.0);
+    };
+    $volumeByYear = [];
+    $ensureYear = static function (int $year) use (&$volumeByYear, $monthBucket): void {
+        if (! isset($volumeByYear[$year])) {
+            $volumeByYear[$year] = [
+                'achats' => $monthBucket(),
+                'ventes' => $monthBucket(),
+                'charges' => $monthBucket(),
+                'paye' => $monthBucket(),
+                'impaye' => $monthBucket(),
+            ];
+        }
+    };
+    $parseChargeDate = static function ($row): ?\Carbon\Carbon {
+        foreach (['date', 'date_charge', 'created_at', 'date_operation'] as $key) {
+            $raw = trim((string) ($row[$key] ?? ''));
+            if ($raw === '') {
+                continue;
+            }
+            try {
+                return \Carbon\Carbon::parse($raw);
+            } catch (\Throwable $e) {
+                // try next field
+            }
+        }
+
+        return null;
+    };
+
+    try {
+        if (Schema::hasTable('purchase_orders')) {
+            foreach (PurchaseOrder::query()->get(['order_date', 'total']) as $row) {
+                if (! $row->order_date) {
+                    continue;
+                }
+                $year = (int) $row->order_date->format('Y');
+                $month = (int) $row->order_date->format('n');
+                $ensureYear($year);
+                $volumeByYear[$year]['achats'][$month] += (float) $row->total;
+            }
+        }
+        if (Schema::hasTable('sales_invoices')) {
+            $paidByInvoice = [];
+            if (Schema::hasTable('sales_invoice_payments') && Schema::hasTable('sales_invoice_payment_lines')) {
+                $paidByInvoice = \Illuminate\Support\Facades\DB::table('sales_invoice_payment_lines as l')
+                    ->join('sales_invoice_payments as p', 'p.id', '=', 'l.sales_invoice_payment_id')
+                    ->selectRaw('p.sales_invoice_id as invoice_id, SUM(l.amount) as paid')
+                    ->groupBy('p.sales_invoice_id')
+                    ->get()
+                    ->mapWithKeys(fn ($row) => [(int) $row->invoice_id => (float) $row->paid])
+                    ->all();
+            }
+            foreach (SalesInvoice::query()->get(['id', 'invoice_date', 'total_ttc']) as $invoice) {
+                if (! $invoice->invoice_date) {
+                    continue;
+                }
+                $year = (int) $invoice->invoice_date->format('Y');
+                $month = (int) $invoice->invoice_date->format('n');
+                $ensureYear($year);
+                $ttc = (float) $invoice->total_ttc;
+                $paid = (float) ($paidByInvoice[$invoice->id] ?? 0);
+                $volumeByYear[$year]['ventes'][$month] += $ttc;
+                $volumeByYear[$year]['impaye'][$month] += max($ttc - $paid, 0);
+            }
+        }
+        if (Schema::hasTable('sales_invoice_payments') && Schema::hasTable('sales_invoice_payment_lines')) {
+            $paidRows = \Illuminate\Support\Facades\DB::table('sales_invoice_payment_lines as l')
+                ->join('sales_invoice_payments as p', 'p.id', '=', 'l.sales_invoice_payment_id')
+                ->selectRaw('p.payment_date as payment_date, SUM(l.amount) as paid')
+                ->groupBy('p.payment_date')
+                ->get();
+            foreach ($paidRows as $row) {
+                if (empty($row->payment_date)) {
+                    continue;
+                }
+                $date = \Carbon\Carbon::parse($row->payment_date);
+                $year = (int) $date->format('Y');
+                $month = (int) $date->format('n');
+                $ensureYear($year);
+                $volumeByYear[$year]['paye'][$month] += (float) $row->paid;
+            }
+        }
+    } catch (\Throwable $e) {
+        // Keep empty volume series if MySQL is unavailable.
+    }
+
+    foreach (AppStore::get('charges') as $charge) {
+        $date = $parseChargeDate($charge);
+        if (! $date) {
+            continue;
+        }
+        $year = (int) $date->format('Y');
+        $month = (int) $date->format('n');
+        $ensureYear($year);
+        $volumeByYear[$year]['charges'][$month] += (float) ($charge['montant'] ?? $charge['amount'] ?? 0);
+    }
+
+    $currentYear = (int) now()->format('Y');
+    $ensureYear($currentYear);
+    $volumeYears = array_keys($volumeByYear);
+    sort($volumeYears);
+    foreach ($volumeByYear as $year => $series) {
+        foreach ($series as $key => $months) {
+            foreach ($months as $month => $value) {
+                $volumeByYear[$year][$key][$month] = round((float) $value, 2);
+            }
+        }
+    }
+
+    $dashboardStats['volume'] = [
+        'years' => $volumeYears,
+        'default_year' => in_array($currentYear, $volumeYears, true) ? $currentYear : (int) end($volumeYears),
+        'series' => [
+            ['key' => 'achats', 'label' => 'Achats', 'color' => '#2563eb'],
+            ['key' => 'ventes', 'label' => 'Ventes', 'color' => '#16a34a'],
+            ['key' => 'charges', 'label' => 'Charges', 'color' => '#e10600'],
+            ['key' => 'paye', 'label' => 'Régl. clients payés', 'color' => '#0891b2'],
+            ['key' => 'impaye', 'label' => 'Régl. clients impayés', 'color' => '#ea580c'],
+        ],
+        'by_year' => $volumeByYear,
+    ];
 
     ContactsArchive::importClientsFromProduction();
 
@@ -151,6 +356,7 @@ Route::get('/dashboard', function () use ($requireAuth) {
         'defaultPanel' => $defaultPanel,
         'welcomeName' => $welcomeName,
         'dashboardCounts' => $dashboardCounts,
+        'dashboardStats' => $dashboardStats,
         'totalCharges' => $totalCharges,
         'prospections' => $prospections,
         'prospectionsAll' => $prospectionsAll,
@@ -612,7 +818,7 @@ Route::middleware('auth.user')->delete('/numeros-entrants/{id}', function (strin
     return response()->json(['ok' => true, 'id' => $id]);
 })->where('id', '.+')->name('numeros-entrants.destroy');
 
-Route::middleware('auth.user')->post('/clients', function (Request $request) {
+Route::middleware('auth.user')->post('/client-dossiers', function (Request $request) {
     $data = $request->validate([
         'date' => ['required', 'string', 'regex:/^\d{2}\/\d{2}\/\d{4}$/'],
         'nom' => ['required', 'string', 'max:255'],
@@ -651,9 +857,9 @@ Route::middleware('auth.user')->post('/clients', function (Request $request) {
     AppStore::put('clients', $clients);
 
     return redirect()->route('dashboard')->with('open_panel', 'client');
-})->name('clients.store');
+})->name('client-dossiers.store');
 
-Route::middleware('auth.user')->put('/clients/{id}', function (Request $request, string $id) {
+Route::middleware('auth.user')->put('/client-dossiers/{id}', function (Request $request, string $id) {
     $data = $request->validate([
         'date' => ['required', 'string', 'regex:/^\d{2}\/\d{2}\/\d{4}$/'],
         'nom' => ['required', 'string', 'max:255'],
@@ -694,9 +900,9 @@ Route::middleware('auth.user')->put('/clients/{id}', function (Request $request,
     AppStore::put('clients', $clients);
 
     return redirect()->route('dashboard')->with('open_panel', 'client');
-})->where('id', '.+')->name('clients.update');
+})->where('id', '.+')->name('client-dossiers.update');
 
-Route::middleware('auth.user')->delete('/clients/{id}', function (Request $request, string $id) {
+Route::middleware('auth.user')->delete('/client-dossiers/{id}', function (Request $request, string $id) {
     $clients = collect(AppStore::get('clients'))
         ->reject(fn ($client) => ($client['id'] ?? '') === $id)
         ->values()
@@ -709,7 +915,7 @@ Route::middleware('auth.user')->delete('/clients/{id}', function (Request $reque
     }
 
     return redirect()->route('dashboard')->with('open_panel', 'client');
-})->where('id', '.+')->name('clients.destroy');
+})->where('id', '.+')->name('client-dossiers.destroy');
 
 Route::middleware('auth.user')->post('/projets', function (Request $request) {
     $data = $request->validate([
@@ -1026,6 +1232,35 @@ Route::middleware('auth.user')->post('/factures-achats', [SupplierInvoiceControl
 Route::middleware('auth.user')->put('/factures-achats/{supplierInvoice}', [SupplierInvoiceController::class, 'update'])->name('factures-achats.update');
 Route::middleware('auth.user')->delete('/factures-achats/{supplierInvoice}', [SupplierInvoiceController::class, 'destroy'])->name('factures-achats.destroy');
 Route::middleware('auth.user')->get('/mouvement-fiscal', [FiscalMovementController::class, 'index'])->name('mouvement-fiscal.index');
+Route::middleware('auth.user')->get('/bons-achats', [PurchaseOrderController::class, 'index'])->name('bons-achats.index');
+Route::middleware('auth.user')->post('/bons-achats', [PurchaseOrderController::class, 'store'])->name('bons-achats.store');
+Route::middleware('auth.user')->put('/bons-achats/{purchaseOrder}', [PurchaseOrderController::class, 'update'])->name('bons-achats.update');
+Route::middleware('auth.user')->delete('/bons-achats/{purchaseOrder}', [PurchaseOrderController::class, 'destroy'])->name('bons-achats.destroy');
+Route::middleware('auth.user')->get('/balance-fournisseurs', [SupplierBalanceController::class, 'index'])->name('balance-fournisseurs.index');
+Route::middleware('auth.user')->get('/reglements-achats', [SupplierPaymentController::class, 'index'])->name('reglements-achats.index');
+Route::middleware('auth.user')->get('/reglements-achats/orders', [SupplierPaymentController::class, 'orders'])->name('reglements-achats.orders');
+Route::middleware('auth.user')->post('/reglements-achats', [SupplierPaymentController::class, 'store'])->name('reglements-achats.store');
+Route::middleware('auth.user')->put('/reglements-achats/{supplierPayment}', [SupplierPaymentController::class, 'update'])->name('reglements-achats.update');
+Route::middleware('auth.user')->delete('/reglements-achats/{supplierPayment}', [SupplierPaymentController::class, 'destroy'])->name('reglements-achats.destroy');
+Route::middleware('auth.user')->get('/clients', [ClientController::class, 'index'])->name('clients.index');
+Route::middleware('auth.user')->post('/clients', [ClientController::class, 'store'])->name('clients.store');
+Route::middleware('auth.user')->put('/clients/{client}', [ClientController::class, 'update'])->name('clients.update');
+Route::middleware('auth.user')->delete('/clients/{client}', [ClientController::class, 'destroy'])->name('clients.destroy');
+Route::middleware('auth.user')->get('/bons-livraison', [DeliveryOrderController::class, 'index'])->name('bons-livraison.index');
+Route::middleware('auth.user')->post('/bons-livraison', [DeliveryOrderController::class, 'store'])->name('bons-livraison.store');
+Route::middleware('auth.user')->put('/bons-livraison/{deliveryOrder}', [DeliveryOrderController::class, 'update'])->name('bons-livraison.update');
+Route::middleware('auth.user')->delete('/bons-livraison/{deliveryOrder}', [DeliveryOrderController::class, 'destroy'])->name('bons-livraison.destroy');
+Route::middleware('auth.user')->get('/balance-clients', [ClientBalanceController::class, 'index'])->name('balance-clients.index');
+Route::middleware('auth.user')->get('/reglements-clients', [ClientPaymentController::class, 'index'])->name('reglements-clients.index');
+Route::middleware('auth.user')->get('/reglements-clients/orders', [ClientPaymentController::class, 'orders'])->name('reglements-clients.orders');
+Route::middleware('auth.user')->post('/reglements-clients', [ClientPaymentController::class, 'store'])->name('reglements-clients.store');
+Route::middleware('auth.user')->put('/reglements-clients/{clientPayment}', [ClientPaymentController::class, 'update'])->name('reglements-clients.update');
+Route::middleware('auth.user')->delete('/reglements-clients/{clientPayment}', [ClientPaymentController::class, 'destroy'])->name('reglements-clients.destroy');
+Route::middleware('auth.user')->get('/fiche-produits', [StockMovementController::class, 'sheet'])->name('fiche-produits.index');
+Route::middleware('auth.user')->get('/mouvement-stock', [StockMovementController::class, 'index'])->name('mouvement-stock.index');
+Route::middleware('auth.user')->post('/mouvement-stock', [StockMovementController::class, 'store'])->name('mouvement-stock.store');
+Route::middleware('auth.user')->put('/mouvement-stock/{stockProduct}', [StockMovementController::class, 'update'])->name('mouvement-stock.update');
+Route::middleware('auth.user')->delete('/mouvement-stock/{stockProduct}', [StockMovementController::class, 'destroy'])->name('mouvement-stock.destroy');
 Route::middleware('auth.user')->get('/factures-ventes', [SalesInvoiceController::class, 'index'])->name('factures-ventes.index');
 Route::middleware('auth.user')->post('/factures-ventes', [SalesInvoiceController::class, 'store'])->name('factures-ventes.store');
 Route::middleware('auth.user')->put('/factures-ventes/{salesInvoice}', [SalesInvoiceController::class, 'update'])->name('factures-ventes.update');

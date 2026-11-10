@@ -1,0 +1,247 @@
+<?php
+
+namespace App\Http\Controllers;
+
+use App\Models\StockProduct;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Schema;
+
+class StockMovementController extends Controller
+{
+    public static function products()
+    {
+        if (! Schema::hasTable('purchase_order_items')) {
+            return collect();
+        }
+
+        $rows = [];
+        $lines = DB::table('purchase_order_items as i')
+            ->join('purchase_orders as o', 'o.id', '=', 'i.purchase_order_id')
+            ->orderBy('o.order_date')
+            ->orderBy('i.id')
+            ->get(['i.article_ref', 'i.barcode', 'i.equiv', 'i.description', 'i.brand', 'i.family', 'i.quantity', 'i.unit_price', 'o.order_date']);
+
+        foreach ($lines as $line) {
+            $key = FiscalMovementController::lineKey($line->article_ref, $line->description);
+            $rows[$key] ??= self::blankRow($line);
+            $rows[$key]['achat'] += (float) $line->quantity;
+            self::addMonth($rows[$key], $line->order_date ?? null, 'achat', (float) $line->quantity);
+            $rows[$key]['purchase_price'] = round((float) $line->unit_price, 2);
+            if (trim((string) $line->barcode) !== '') {
+                $rows[$key]['barcode'] = trim((string) $line->barcode);
+            }
+            if (trim((string) $line->equiv) !== '') {
+                $rows[$key]['equiv'] = trim((string) $line->equiv);
+            }
+            if (trim((string) ($line->brand ?? '')) !== '') {
+                $rows[$key]['brand'] = trim((string) $line->brand);
+            }
+            if (trim((string) ($line->family ?? '')) !== '') {
+                $rows[$key]['family'] = trim((string) $line->family);
+            }
+        }
+
+        if (Schema::hasTable('sales_invoice_items')) {
+            $sales = DB::table('sales_invoice_items as i')
+                ->join('sales_invoices as f', 'f.id', '=', 'i.sales_invoice_id')
+                ->where('f.status', '!=', 'annulee')
+                ->get(['i.article_ref', 'i.description', 'i.quantity', 'f.invoice_date']);
+
+            foreach ($sales as $line) {
+                $key = FiscalMovementController::lineKey($line->article_ref, $line->description);
+                if (! isset($rows[$key])) {
+                    continue;
+                }
+                $rows[$key]['vente'] += (float) $line->quantity;
+                self::addMonth($rows[$key], $line->invoice_date ?? null, 'vente', (float) $line->quantity);
+            }
+        }
+
+        if (Schema::hasTable('delivery_order_items')) {
+            $deliveries = DB::table('delivery_order_items as i')
+                ->join('delivery_orders as o', 'o.id', '=', 'i.delivery_order_id')
+                ->orderBy('o.order_date')
+                ->orderBy('i.id')
+                ->get(['i.article_ref', 'i.description', 'i.quantity', 'o.order_date']);
+
+            foreach ($deliveries as $line) {
+                $key = FiscalMovementController::lineKey($line->article_ref, $line->description);
+                if (! isset($rows[$key])) {
+                    continue;
+                }
+                $rows[$key]['vente'] += (float) $line->quantity;
+                self::addMonth($rows[$key], $line->order_date ?? null, 'vente', (float) $line->quantity);
+            }
+        }
+
+        return collect($rows)
+            ->map(function (array $row) {
+                $row['achat'] = round($row['achat'], 3);
+                $row['vente'] = round($row['vente'], 3);
+                $row['stock_initial'] = 0;
+                $row['stock'] = round($row['achat'] - $row['vente'], 3);
+                $row['months'] = self::roundMonths($row['months']);
+                $row['years'] = collect($row['years'])
+                    ->map(fn (array $months) => self::roundMonths($months))
+                    ->all();
+
+                return $row;
+            })
+            ->sortBy([
+                ['reference', 'asc'],
+                ['designation', 'asc'],
+            ])
+            ->values()
+            ->map(function (array $row, int $index) {
+                $row['id'] = $index + 1;
+                $row['code'] = 'PRD-'.str_pad((string) ($index + 1), 4, '0', STR_PAD_LEFT);
+
+                return $row;
+            })
+            ->values();
+    }
+
+    public function sheet(): JsonResponse
+    {
+        $data = self::products()->map(fn (array $row) => [
+            'code' => $row['code'],
+            'reference' => $row['reference'],
+            'barcode' => $row['barcode'],
+            'designation' => $row['designation'],
+            'equiv' => $row['equiv'] ?? '',
+            'family' => $row['family'] ?? '',
+            'brand' => $row['brand'] ?? '',
+            'months' => collect($row['months'] ?? [])
+                ->filter(fn (array $month) => (float) ($month['achat'] ?? 0) > 0)
+                ->keys()
+                ->map(fn ($month) => (int) $month)
+                ->values(),
+            'quantity' => $row['achat'],
+            'stock' => $row['stock'],
+            'purchase_price' => $row['purchase_price'],
+            'unit' => 'U',
+            'unit_price' => $row['purchase_price'],
+            'status' => 'Actif',
+            'state' => $row['stock'] > 0 ? 'Disponible' : 'Rupture',
+        ])->values();
+
+        return response()->json(['data' => $data]);
+    }
+
+    private static function blankMonths(): array
+    {
+        $months = [];
+        for ($month = 1; $month <= 12; $month++) {
+            $months[$month] = ['achat' => 0.0, 'vente' => 0.0];
+        }
+
+        return $months;
+    }
+
+    private static function blankRow(object $line): array
+    {
+        return [
+            'key' => FiscalMovementController::lineKey($line->article_ref, $line->description),
+            'reference' => trim((string) $line->article_ref),
+            'barcode' => trim((string) ($line->barcode ?? '')),
+            'equiv' => trim((string) ($line->equiv ?? '')),
+            'designation' => trim((string) $line->description),
+            'brand' => trim((string) ($line->brand ?? '')),
+            'family' => trim((string) ($line->family ?? '')),
+            'achat' => 0.0,
+            'vente' => 0.0,
+            'purchase_price' => 0.0,
+            'months' => self::blankMonths(),
+            'years' => [],
+        ];
+    }
+
+    private static function addMonth(array &$row, mixed $date, string $field, float $quantity): void
+    {
+        $stamp = strtotime((string) $date);
+        if ($stamp === false) {
+            return;
+        }
+        $month = (int) date('n', $stamp);
+        $year = (string) date('Y', $stamp);
+        if ($month < 1 || $month > 12) {
+            return;
+        }
+        $row['months'][$month][$field] += $quantity;
+        $row['years'][$year] ??= self::blankMonths();
+        $row['years'][$year][$month][$field] += $quantity;
+    }
+
+    private static function roundMonths(array $months): array
+    {
+        foreach ($months as $month => $values) {
+            $months[$month] = [
+                'achat' => round((float) ($values['achat'] ?? 0), 3),
+                'vente' => round((float) ($values['vente'] ?? 0), 3),
+            ];
+        }
+
+        return $months;
+    }
+
+    public function index(): JsonResponse
+    {
+        $data = self::products();
+
+        $years = $data
+            ->flatMap(fn (array $row) => array_keys($row['years'] ?? []))
+            ->map(fn ($year) => (int) $year)
+            ->unique()
+            ->sort()
+            ->values();
+
+        return response()->json([
+            'data' => $data,
+            'meta' => [
+                'count' => $data->count(),
+                'stock' => round((float) $data->sum('stock'), 3),
+                'years' => $years,
+            ],
+        ]);
+    }
+
+    public function store(Request $request): JsonResponse
+    {
+        $product = StockProduct::create($this->validated($request));
+
+        return response()->json(self::products()->firstWhere('id', $product->id), 201);
+    }
+
+    public function update(Request $request, StockProduct $stockProduct): JsonResponse
+    {
+        $stockProduct->update($this->validated($request));
+
+        return response()->json(self::products()->firstWhere('id', $stockProduct->id));
+    }
+
+    public function destroy(StockProduct $stockProduct): JsonResponse
+    {
+        $stockProduct->delete();
+
+        return response()->json(['message' => 'Produit supprimé']);
+    }
+
+    private function validated(Request $request): array
+    {
+        $data = $request->validate([
+            'reference' => ['nullable', 'string', 'max:64'],
+            'designation' => ['required', 'string', 'max:255'],
+            'stock_initial' => ['nullable', 'numeric'],
+            'purchase_price' => ['nullable', 'numeric', 'min:0'],
+        ]);
+
+        return [
+            'reference' => trim((string) ($data['reference'] ?? '')) ?: null,
+            'designation' => trim($data['designation']),
+            'stock_initial' => round((float) ($data['stock_initial'] ?? 0), 3),
+            'purchase_price' => round((float) ($data['purchase_price'] ?? 0), 2),
+        ];
+    }
+}

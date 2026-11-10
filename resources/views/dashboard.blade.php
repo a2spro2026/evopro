@@ -52,7 +52,8 @@
         }
 
         [data-theme="light"] .panel .data-table th {
-            background: var(--table-head);
+            background: #f3d5db;
+            color: #5c1220;
         }
 
         [data-theme="light"] .panel .data-table tbody tr:hover {
@@ -698,7 +699,12 @@
             border: 1px solid transparent;
         }
 
-        .nav-subicon svg { width: 15px; height: 15px; }
+        .nav-subitem:hover .nav-subicon,
+        .nav-subitem.active .nav-subicon {
+            color: #fff;
+            background: rgba(225, 6, 0, 0.2);
+            border-color: rgba(225, 6, 0, 0.45);
+        }
 
         .nav-icon,
         .nav-subicon {
@@ -839,12 +845,16 @@
             border: 1px solid rgba(148, 163, 184, 0.28);
             background: rgba(248, 250, 252, 0.96);
             box-shadow: 0 12px 30px rgba(0, 0, 0, 0.16);
+            display: flex;
+            flex-direction: column;
+            min-height: 0;
         }
 
         .procar-table-bar {
             padding: 0.85rem 1.15rem;
             background: linear-gradient(90deg, #0a0a0c, #e10600 72%, #9b0400);
             border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+            flex: 0 0 auto;
         }
 
         .procar-table-bar h3 {
@@ -856,32 +866,47 @@
             text-transform: uppercase;
         }
 
-        .procar-table-scroll { overflow: auto; }
+        .procar-table-scroll {
+            flex: 1 1 auto;
+            min-height: 0;
+            overflow: auto;
+        }
 
         .procar-table {
             width: 100%;
-            border-collapse: collapse;
+            border-collapse: separate;
+            border-spacing: 0;
             min-width: 760px;
             color: #0f172a;
         }
 
         .procar-table th {
+            position: sticky;
+            top: 0;
+            z-index: 3;
             padding: 0.75rem 0.7rem;
-            background: #f1f5f9;
-            border-bottom: 1px solid #e2e8f0;
+            background: #5c1220;
+            border-bottom: 1px solid #8f2436;
             font-size: 0.68rem;
             font-weight: 800;
             letter-spacing: 0.05em;
             text-transform: uppercase;
             text-align: center;
-            color: #64748b;
+            color: #fff;
             white-space: nowrap;
+            box-shadow: inset 0 -1px 0 #8f2436;
+        }
+
+        [data-theme="light"] .procar-table th {
+            background: #f3d5db;
+            color: #5c1220;
+            border-bottom-color: #e7c9cf;
         }
 
         .procar-table td {
             padding: 1.4rem 0.7rem;
             text-align: center;
-            color: #94a3b8;
+            color: #000;
             font-size: 0.86rem;
         }
 
@@ -916,23 +941,33 @@
 
         .ff-grid {
             display: grid;
-            grid-template-columns: 78px 86px 1.2fr 0.9fr 1fr 1fr 0.7fr 0.75fr 0.8fr;
-            gap: 0.45rem;
+            grid-template-columns: 88px 92px minmax(160px, 1.5fr) minmax(120px, 1fr) minmax(120px, 1fr) 96px 96px minmax(110px, 0.95fr);
+            gap: 0.55rem;
             align-items: end;
+        }
+
+        .ff-grid > div {
+            display: flex;
+            flex-direction: column;
+            min-width: 0;
         }
 
         .ff-grid label {
             display: block;
-            margin-bottom: 0.2rem;
+            margin-bottom: 0.28rem;
             font-size: 0.68rem;
             font-weight: 700;
             color: #64748b;
+            line-height: 1;
+            min-height: 0.9rem;
         }
 
         .ff-grid input,
         .ff-grid select {
             width: 100%;
-            height: 32px;
+            height: 38px;
+            min-height: 38px;
+            box-sizing: border-box;
             border-radius: 8px;
             border: 1px solid #e2e8f0;
             background: #fff;
@@ -940,6 +975,30 @@
             text-align: center;
             font-size: 0.75rem;
             font-family: inherit;
+        }
+
+        .ff-grid .evopro-combo {
+            width: 100%;
+        }
+
+        .ff-grid .evopro-combo-trigger {
+            height: 38px;
+            min-height: 38px;
+            box-sizing: border-box;
+            padding: 0 0.7rem;
+            border-radius: 8px;
+            border: 1px solid #e2e8f0;
+            background: #fff;
+            color: #0f172a;
+            font-size: 0.75rem;
+            font-weight: 500;
+            text-transform: none;
+            justify-content: center;
+            text-align: center;
+        }
+
+        .ff-grid .evopro-combo-trigger::after {
+            margin-left: 0.35rem;
         }
 
         .ff-grid input[readonly] {
@@ -954,33 +1013,50 @@
             background: #fef2f2;
         }
 
+        .ff-card.is-locked .ff-grid input:not([readonly]),
+        .ff-card.is-locked .ff-grid select,
+        .ff-card.is-locked .ff-grid .evopro-combo-trigger {
+            opacity: 0.62;
+            background: #eef2f6;
+            color: #64748b;
+            pointer-events: none;
+        }
+
+        .ff-card.is-locked #ffSave,
+        .ff-card.is-locked #fcSave {
+            opacity: 0.45;
+            pointer-events: none;
+        }
+
         .ff-bar {
             display: flex;
             flex-wrap: wrap;
             align-items: center;
-            gap: 0.5rem;
+            gap: 0.55rem;
             margin-top: 0.85rem;
             padding-top: 0.75rem;
             border-top: 1px solid #e2e8f0;
+            min-height: 46px;
         }
 
         .ff-btn {
-            display: inline-flex;
-            align-items: center;
-            gap: 0.35rem;
-            height: 34px;
-            padding: 0 0.8rem;
+            display: inline-grid;
+            place-items: center;
+            width: 38px;
+            height: 38px;
+            padding: 0;
             border-radius: 10px;
             border: none;
             font-family: inherit;
-            font-size: 0.78rem;
-            font-weight: 700;
             cursor: pointer;
+            flex: 0 0 38px;
         }
 
+        .ff-btn svg { width: 17px; height: 17px; }
         .ff-btn.primary { background: #e10600; color: #fff; }
         .ff-btn.muted { background: #e2e8f0; color: #334155; }
         .ff-btn.secondary { background: #dbeafe; color: #1e3a8a; }
+        .ff-btn:disabled { opacity: 0.55; cursor: wait; }
 
         .ff-total {
             margin-left: auto;
@@ -1010,17 +1086,44 @@
         .ff-total strong { font-size: 0.95rem; color: #0a1628; }
         .ff-total.is-due strong { color: #dc2626; }
 
+        #panel-f-fiche .procar-table th:last-child,
+        #panel-f-fiche .procar-table td:last-child,
+        #panel-c-fiche .procar-table th:last-child,
+        #panel-c-fiche .procar-table td:last-child {
+            width: 168px;
+            min-width: 168px;
+            text-align: center;
+            vertical-align: middle;
+        }
+
+        .ff-actions {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.15rem;
+            flex-wrap: nowrap;
+            width: 100%;
+            margin: 0 auto;
+        }
+
         .ff-icon {
+            display: inline-grid;
+            place-items: center;
             width: 28px;
             height: 28px;
+            padding: 0;
             border: none;
             border-radius: 8px;
             background: transparent;
-            color: #94a3b8;
+            color: #64748b;
             cursor: pointer;
+            flex: 0 0 28px;
         }
 
+        .ff-icon svg { width: 15px; height: 15px; }
+
         .ff-icon:hover { background: #eff6ff; color: #1d4ed8; }
+        .ff-icon.see:hover { background: #fdf2f4; color: #8f2436; }
         .ff-icon.edit:hover { background: #fffbeb; color: #d97706; }
         .ff-icon.del:hover { background: #fef2f2; color: #dc2626; }
         .ff-icon.print:hover { background: #f1f5f9; color: #334155; }
@@ -1068,7 +1171,11 @@
         .ff-modal-row span { color: #64748b; }
 
         @media (max-width: 1100px) {
-            .ff-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+            .ff-grid { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+        }
+
+        @media (max-width: 720px) {
+            .ff-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
         }
 
         [data-theme="light"] .panel-placeholder {
@@ -1161,6 +1268,13 @@
             background: linear-gradient(90deg, rgba(225, 6, 0, 0.14), rgba(225, 6, 0, 0.04));
             color: #5c1220;
             box-shadow: inset 0 0 0 1px rgba(225, 6, 0, 0.22);
+        }
+
+        [data-theme="light"] .nav-subitem:hover .nav-subicon,
+        [data-theme="light"] .nav-subitem.active .nav-subicon {
+            color: #5c1220;
+            background: rgba(143, 36, 54, 0.14);
+            border-color: rgba(143, 36, 54, 0.35);
         }
 
         [data-theme="light"] .nav-icon,
@@ -1412,6 +1526,95 @@
         .panel { display: none; animation: fadeIn 0.3s ease both; }
         .panel.active { display: block; }
 
+        /* Verrouille barres / cartes / en-têtes : seules les lignes du tableau défilent */
+        .content:has(> .panel.active > .procar-table-card),
+        .content:has(> .panel.active > .mf-card),
+        .content:has(> .panel.active > .sm-card),
+        .content:has(> .panel.active > .fa-card),
+        .content:has(> .panel.active > .table-wrap) {
+            display: flex;
+            flex-direction: column;
+            min-height: 0;
+            overflow: hidden;
+        }
+
+        .panel.active:has(> .procar-table-card),
+        .panel.active:has(> .mf-card),
+        .panel.active:has(> .sm-card),
+        .panel.active:has(> .fa-card),
+        .panel.active:has(> .table-wrap) {
+            display: flex;
+            flex-direction: column;
+            flex: 1;
+            min-height: 0;
+            overflow: hidden;
+        }
+
+        .panel.active:has(> .procar-table-card) > *:not(.procar-table-card):not(.ba-window):not(.ra-window):not(.fa-window):not(.bl-window):not(.rc-window):not(.ff-modal),
+        .panel.active:has(> .mf-card) > *:not(.mf-card):not(.ba-window):not(.ra-window):not(.fa-window):not(.bl-window):not(.rc-window):not(.ff-modal),
+        .panel.active:has(> .sm-card) > *:not(.sm-card):not(.ba-window):not(.ra-window):not(.fa-window):not(.bl-window):not(.rc-window):not(.ff-modal),
+        .panel.active:has(> .fa-card) > *:not(.fa-card):not(.ba-window):not(.ra-window):not(.fa-window):not(.bl-window):not(.rc-window):not(.ff-modal),
+        .panel.active:has(> .table-wrap) > *:not(.table-wrap):not(.ba-window):not(.ra-window):not(.fa-window):not(.bl-window):not(.rc-window):not(.ff-modal) {
+            flex: 0 0 auto;
+        }
+
+        .panel.active > .procar-table-card,
+        .panel.active > .mf-card,
+        .panel.active > .sm-card,
+        .panel.active > .fa-card {
+            flex: 1 1 auto;
+            min-height: 0;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .panel.active > .table-wrap {
+            flex: 1 1 auto;
+            min-height: 0;
+            overflow: auto;
+            max-height: none;
+        }
+
+        .procar-table-bar,
+        .mf-bar,
+        .sm-bar,
+        .fa-list-bar {
+            flex: 0 0 auto;
+        }
+
+        .procar-table-scroll,
+        .mf-scroll,
+        .sm-scroll,
+        .fa-scroll {
+            flex: 1 1 auto;
+            min-height: 0;
+            overflow: auto;
+            max-height: none;
+        }
+
+        .procar-table,
+        .mf-table,
+        .fa-table,
+        .panel .data-table {
+            border-collapse: separate;
+            border-spacing: 0;
+        }
+
+        .procar-table thead th,
+        .mf-table thead th,
+        .fa-table thead th,
+        .panel .data-table thead th {
+            position: sticky;
+            top: 0;
+            z-index: 3;
+        }
+
+        .procar-table thead tr:nth-child(2) th {
+            top: 2.35rem;
+            z-index: 2;
+        }
+
         @keyframes fadeIn {
             from { opacity: 0; }
             to { opacity: 1; }
@@ -1437,6 +1640,333 @@
             display: grid;
             grid-template-columns: repeat(4, minmax(0, 1fr));
             gap: 0.85rem;
+        }
+
+        .dash-kpis {
+            display: grid;
+            grid-template-columns: repeat(4, minmax(0, 1fr));
+            gap: 0.9rem;
+            margin-bottom: 1.1rem;
+        }
+
+        .dash-kpi {
+            display: flex;
+            align-items: center;
+            gap: 0.85rem;
+            min-height: 104px;
+            padding: 1rem 1.1rem;
+            border-radius: 16px;
+            border: 1px solid rgba(148, 163, 184, 0.22);
+            background: linear-gradient(145deg, rgba(18, 18, 22, 0.96), rgba(10, 10, 14, 0.92));
+            box-shadow: 0 12px 28px rgba(0, 0, 0, 0.22);
+            color: #f8fafc;
+        }
+
+        .dash-kpi-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: 14px;
+            display: grid;
+            place-items: center;
+            flex: 0 0 48px;
+            color: #fff;
+        }
+
+        .dash-kpi-icon svg { width: 22px; height: 22px; }
+        .dash-kpi small {
+            display: block;
+            font-size: 0.72rem;
+            font-weight: 800;
+            letter-spacing: 0.06em;
+            text-transform: uppercase;
+            color: rgba(248, 250, 252, 0.72);
+        }
+        .dash-kpi strong {
+            display: block;
+            margin-top: 0.28rem;
+            font-size: 1.35rem;
+            font-weight: 800;
+            font-variant-numeric: tabular-nums;
+            letter-spacing: -0.02em;
+        }
+        .dash-kpi.achats .dash-kpi-icon { background: linear-gradient(135deg, #2563eb, #1e3a8a); }
+        .dash-kpi.ventes .dash-kpi-icon { background: linear-gradient(135deg, #16a34a, #14532d); }
+        .dash-kpi.fa .dash-kpi-icon { background: linear-gradient(135deg, #e10600, #9b0400); }
+        .dash-kpi.fv .dash-kpi-icon { background: linear-gradient(135deg, #7c3aed, #4c1d95); }
+
+        .dash-charts {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 0.9rem;
+        }
+
+        .dash-chart-card {
+            border-radius: 16px;
+            border: 1px solid rgba(148, 163, 184, 0.22);
+            background: linear-gradient(145deg, rgba(18, 18, 22, 0.96), rgba(10, 10, 14, 0.92));
+            box-shadow: 0 12px 28px rgba(0, 0, 0, 0.22);
+            padding: 1rem 1.1rem 1.15rem;
+            color: #f8fafc;
+        }
+
+        .dash-chart-head {
+            display: flex;
+            align-items: baseline;
+            justify-content: space-between;
+            gap: 0.75rem;
+            margin-bottom: 0.95rem;
+        }
+        .dash-chart-head h3 {
+            margin: 0;
+            font-size: 0.82rem;
+            letter-spacing: 0.06em;
+            text-transform: uppercase;
+        }
+        .dash-chart-head strong {
+            font-size: 1.05rem;
+            font-variant-numeric: tabular-nums;
+            color: #fff;
+        }
+
+        .dash-chart-body {
+            display: grid;
+            grid-template-columns: 168px minmax(0, 1fr);
+            gap: 1rem;
+            align-items: center;
+        }
+
+        .dash-donut {
+            width: 168px;
+            height: 168px;
+            border-radius: 50%;
+            position: relative;
+            box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.08);
+        }
+        .dash-donut::after {
+            content: '';
+            position: absolute;
+            inset: 34px;
+            border-radius: 50%;
+            background: #0c0c10;
+            border: 1px solid rgba(148, 163, 184, 0.18);
+        }
+
+        .dash-legend {
+            list-style: none;
+            margin: 0;
+            padding: 0;
+            display: grid;
+            gap: 0.45rem;
+        }
+        .dash-legend li {
+            display: grid;
+            grid-template-columns: 12px 42px 56px minmax(0, 1fr);
+            gap: 0.45rem;
+            align-items: center;
+            font-size: 0.8rem;
+        }
+        .dash-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 999px;
+        }
+        .dash-legend em {
+            font-style: normal;
+            color: rgba(248, 250, 252, 0.7);
+            font-variant-numeric: tabular-nums;
+        }
+        .dash-legend strong {
+            justify-self: end;
+            font-variant-numeric: tabular-nums;
+            font-weight: 700;
+        }
+
+        [data-theme="light"] .dash-kpi,
+        [data-theme="light"] .dash-chart-card {
+            background: #fff;
+            border-color: rgba(143, 36, 54, 0.16);
+            color: #121214;
+            box-shadow: 0 10px 26px rgba(15, 31, 53, 0.08);
+        }
+        [data-theme="light"] .dash-kpi small { color: rgba(18, 18, 20, 0.58); }
+        [data-theme="light"] .dash-chart-head strong,
+        [data-theme="light"] .dash-legend strong { color: #121214; }
+        [data-theme="light"] .dash-legend em { color: rgba(18, 18, 20, 0.58); }
+        [data-theme="light"] .dash-donut::after {
+            background: #fff;
+            border-color: rgba(143, 36, 54, 0.14);
+        }
+
+        .dash-volume-card {
+            margin-top: 0.9rem;
+            border-radius: 16px;
+            border: 1px solid rgba(148, 163, 184, 0.22);
+            background: linear-gradient(145deg, rgba(18, 18, 22, 0.96), rgba(10, 10, 14, 0.92));
+            box-shadow: 0 12px 28px rgba(0, 0, 0, 0.22);
+            padding: 1rem 1.1rem 1.15rem;
+            color: #f8fafc;
+        }
+        .dash-volume-head {
+            display: flex;
+            align-items: flex-end;
+            justify-content: space-between;
+            gap: 1rem;
+            margin-bottom: 0.85rem;
+            flex-wrap: wrap;
+        }
+        .dash-volume-head h3 {
+            margin: 0;
+            font-size: 0.82rem;
+            letter-spacing: 0.06em;
+            text-transform: uppercase;
+        }
+        .dash-volume-head p {
+            margin: 0.28rem 0 0;
+            color: rgba(248, 250, 252, 0.68);
+            font-size: 0.82rem;
+            text-transform: none;
+        }
+        .dash-year-filter {
+            display: flex;
+            flex-direction: column;
+            gap: 0.3rem;
+            font-size: 0.68rem;
+            font-weight: 800;
+            letter-spacing: 0.06em;
+            text-transform: uppercase;
+            color: rgba(248, 250, 252, 0.72);
+        }
+        .dash-year-filter select {
+            height: 38px;
+            min-width: 110px;
+            border-radius: 10px;
+            border: 1px solid #334155;
+            background: #111827;
+            color: #f8fafc;
+            font-family: inherit;
+            font-size: 0.84rem;
+            padding: 0 0.7rem;
+        }
+        .dash-volume-legend {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.65rem 1rem;
+            margin-bottom: 0.75rem;
+        }
+        .dash-volume-legend span {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+            font-size: 0.78rem;
+            color: rgba(248, 250, 252, 0.86);
+        }
+        .dash-volume-legend i {
+            width: 11px;
+            height: 11px;
+            border-radius: 3px;
+            display: inline-block;
+        }
+        .dash-volume-chart-wrap {
+            overflow: auto;
+            border-radius: 14px;
+            border: 1px solid rgba(148, 163, 184, 0.16);
+            background: rgba(8, 8, 12, 0.55);
+            padding: 0.4rem;
+        }
+        .dash-volume-chart {
+            width: 100%;
+            min-width: 860px;
+            height: auto;
+            display: block;
+        }
+        .dash-grid-line {
+            stroke: rgba(148, 163, 184, 0.22);
+            stroke-width: 1;
+            stroke-dasharray: 4 4;
+        }
+        .dash-axis-label {
+            fill: rgba(248, 250, 252, 0.62);
+            font-size: 11px;
+            font-family: Outfit, sans-serif;
+        }
+        .dash-volume-table-wrap {
+            margin-top: 0.85rem;
+            overflow: auto;
+            border-radius: 12px;
+            border: 1px solid rgba(148, 163, 184, 0.16);
+        }
+        .dash-volume-table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0;
+            min-width: 980px;
+            font-size: 0.78rem;
+        }
+        .dash-volume-table th,
+        .dash-volume-table td {
+            padding: 0.55rem 0.45rem;
+            text-align: center;
+            border-bottom: 1px solid rgba(148, 163, 184, 0.12);
+            white-space: nowrap;
+            font-variant-numeric: tabular-nums;
+        }
+        .dash-volume-table thead th {
+            position: sticky;
+            top: 0;
+            background: #5c1220;
+            color: #fff;
+            font-size: 0.68rem;
+            letter-spacing: 0.05em;
+            text-transform: uppercase;
+        }
+        .dash-volume-table tbody th {
+            text-align: left;
+            padding-left: 0.7rem;
+            background: rgba(255, 255, 255, 0.03);
+            font-weight: 700;
+        }
+        .dash-volume-table tbody th .dash-dot {
+            display: inline-block;
+            margin-right: 0.4rem;
+            vertical-align: middle;
+        }
+        .dash-volume-table td strong { color: #fff; }
+
+        [data-theme="light"] .dash-volume-card {
+            background: #fff;
+            border-color: rgba(143, 36, 54, 0.16);
+            color: #121214;
+            box-shadow: 0 10px 26px rgba(15, 31, 53, 0.08);
+        }
+        [data-theme="light"] .dash-volume-head p,
+        [data-theme="light"] .dash-year-filter,
+        [data-theme="light"] .dash-volume-legend span { color: rgba(18, 18, 20, 0.62); }
+        [data-theme="light"] .dash-year-filter select {
+            background: #fff;
+            color: #121214;
+            border-color: #e4c5cb;
+        }
+        [data-theme="light"] .dash-volume-chart-wrap {
+            background: #faf7f8;
+            border-color: rgba(143, 36, 54, 0.14);
+        }
+        [data-theme="light"] .dash-axis-label { fill: rgba(18, 18, 20, 0.55); }
+        [data-theme="light"] .dash-grid-line { stroke: rgba(143, 36, 54, 0.16); }
+        [data-theme="light"] .dash-volume-table thead th {
+            background: #f3d5db;
+            color: #5c1220;
+        }
+        [data-theme="light"] .dash-volume-table tbody th { background: #fff7f8; }
+        [data-theme="light"] .dash-volume-table td strong { color: #121214; }
+
+        @media (max-width: 1100px) {
+            .dash-kpis { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+            .dash-charts { grid-template-columns: 1fr; }
+        }
+        @media (max-width: 720px) {
+            .dash-kpis { grid-template-columns: 1fr; }
+            .dash-chart-body { grid-template-columns: 1fr; justify-items: center; }
+            .dash-legend { width: 100%; }
         }
 
         .card-stat {
@@ -1627,7 +2157,8 @@
 
         .data-table {
             width: 100%;
-            border-collapse: collapse;
+            border-collapse: separate;
+            border-spacing: 0;
             min-width: 1100px;
         }
 
@@ -1645,8 +2176,8 @@
             position: sticky;
             top: 0;
             z-index: 2;
-            background: rgba(14, 30, 54, 0.98);
-            color: var(--accent-soft);
+            background: #5c1220;
+            color: #fff;
             font-weight: 600;
             font-size: 0.75rem;
             letter-spacing: 0.04em;
@@ -1771,7 +2302,7 @@
         }
 
         #panel-prospection .table-wrap {
-            max-height: calc(100vh - 17rem);
+            max-height: none;
         }
 
         .prospection-toolbar {
@@ -2808,10 +3339,10 @@
                 @php
                     $activityNav = [
                         ['id' => 'fournisseurs', 'label' => 'Fournisseur', 'items' => [
-                            ['id' => 'f-fiche', 'label' => 'Fiche Fournisseur', 'cols' => ['ID', 'Nom Fournisseur', 'Contact', 'Adresse', 'Ville', 'Règlement', 'Échéance', 'Solde Initial', 'Actions']],
+                            ['id' => 'f-fiche', 'label' => 'Fiche Fournisseur', 'cols' => ['ID', 'Nom Fournisseur', 'Contact', 'Ville', 'Règlement', 'Échéance', 'Solde Initial', 'Actions']],
                             ['id' => 'f-bon', 'label' => 'Bon Achats', 'cols' => ['Date', 'N° B-A', 'Fournisseur', 'N° Frns', 'Qté totale', 'Total', 'Paiement', 'Échéance', 'Actions']],
                             ['id' => 'f-regl', 'label' => 'Règlement Achats', 'cols' => ['Réf', 'Date', 'Fournisseur', 'Type', 'Nom de Tiré', 'N°', 'Bnq', 'Date Décaiss', 'Montant', 'Statut', 'Action']],
-                            ['id' => 'f-bal', 'label' => 'Balance', 'cols' => ['Date', 'Fournisseur', 'Total Achats', 'Montant Payé', 'Solde', 'Reliquat']],
+                            ['id' => 'f-bal', 'label' => 'Balance', 'cols' => ['ID Fournisseur', 'Fournisseur', 'Total Achats', 'Montant Payé', 'Solde', 'Reliquat']],
                             ['id' => 'f-rel', 'label' => 'Relevé Compte', 'cols' => ['Opération', 'Date', 'N° Bn', 'Qte', 'Débit', 'Crédit', 'Solde', 'Type Rég', 'N° Rég', 'Nom Tiré', 'Date Encaiss', 'Payé', 'Dévalidé', 'Impayé', 'Reporté']],
                         ]],
                         ['id' => 'stock', 'label' => 'Stock', 'items' => [
@@ -2824,11 +3355,11 @@
                             ['id' => 'cat-config', 'label' => 'Config Catalogue'],
                         ]],
                         ['id' => 'clients', 'label' => 'Client', 'items' => [
-                            ['id' => 'c-fiche', 'label' => 'Fiche Client', 'cols' => ['CR', 'Nom Client', 'Contact', 'Ville', 'Adresse', 'Régl', 'Échéance', 'Solde Initial', 'Actions']],
+                            ['id' => 'c-fiche', 'label' => 'Fiche Client', 'cols' => ['ID', 'Nom Client', 'Contact', 'Ville', 'Règlement', 'Échéance', 'Solde Initial', 'Actions']],
                             ['id' => 'c-bon', 'label' => 'Bon Commercial', 'disabled' => true],
-                            ['id' => 'c-bl', 'label' => 'Bon Livraison', 'cols' => ['Date', 'N° B-V', 'Client', 'Ville', 'Adresse Livraison', 'Qté totale', 'Total', 'Paiement', 'Échéance', 'Statut', 'Actions']],
+                            ['id' => 'c-bl', 'label' => 'Bon Livraison', 'cols' => ['Date', 'N° BL', 'Client', 'ID Clt', 'Qté totale', 'Total', 'Paiement', 'Échéance', 'Actions']],
                             ['id' => 'c-regl', 'label' => 'Règlement Client', 'cols' => ['Réf', 'Date', 'Client', 'Type', 'Nom de Tiré', 'N°', 'Bnq', 'Date Décaiss', 'Montant', 'Statut', 'Action']],
-                            ['id' => 'c-bal', 'label' => 'Balance Clients', 'cols' => ['Date', 'Client', 'Total Ventes', 'Montant Payé', 'Solde', 'Reliquat']],
+                            ['id' => 'c-bal', 'label' => 'Balance Clients', 'cols' => ['ID Client', 'Client', 'Total Ventes', 'Montant Payé', 'Solde', 'Reliquat']],
                             ['id' => 'c-rel', 'label' => 'Relevé Compte Client', 'cols' => ['Opération', 'Date', 'N° Bn', 'Client Livré', 'Ville Liv', 'Qte', 'Débit', 'Crédit', 'Solde', 'Type Rég', 'N° Rég', 'Nom Tiré', 'Date Encaiss', 'Payé', 'Dévalidé', 'Impayé', 'Reporté']],
                             ['id' => 'c-jour', 'label' => 'Etat Journalier', 'cols' => ['Date', 'Réf', 'Code barre', 'Désignation', 'Qté', 'Prix achat', 'Prix vente', 'Marge', 'Stock actuel']],
                         ]],
@@ -2856,12 +3387,39 @@
                             ['id' => 'cfg-transport', 'label' => 'Transport', 'disabled' => true],
                         ]],
                     ];
-                    $facturationIcons = [
+                    $navSubIcons = [
+                        'f-fiche' => '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21h18"/><path d="M5 21V7l7-4 7 4v14"/><path d="M9 21v-6h6v6"/></svg>',
+                        'f-bon' => '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2h9l5 5v15a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2z"/><path d="M14 2v6h6"/><path d="M8 13h8"/><path d="M8 17h5"/></svg>',
+                        'f-regl' => '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="6" width="20" height="12" rx="2"/><circle cx="12" cy="12" r="2"/><path d="M6 12h.01M18 12h.01"/></svg>',
+                        'f-bal' => '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m16 16 3-8 3 8c-.87.65-1.92 1-3 1s-2.13-.35-3-1Z"/><path d="m2 16 3-8 3 8c-.87.65-1.92 1-3 1s-2.13-.35-3-1Z"/><path d="M7 21h10"/><path d="M12 3v18"/></svg>',
+                        'f-rel' => '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 6h13"/><path d="M8 12h13"/><path d="M8 18h13"/><path d="M3 6h.01"/><path d="M3 12h.01"/><path d="M3 18h.01"/></svg>',
+                        's-prod' => '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 8 12 3 3 8l9 5 9-5Z"/><path d="M3 8v8l9 5 9-5V8"/><path d="M12 13v8"/></svg>',
+                        's-mvt' => '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 3h5v5"/><path d="M21 3 14 10"/><path d="M8 21H3v-5"/><path d="m3 21 7-7"/></svg>',
+                        's-ret' => '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 3-6.7L3 8"/><path d="M3 3v5h5"/></svg>',
+                        'cat-liste' => '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>',
+                        'cat-config' => '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>',
+                        'c-fiche' => '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>',
+                        'c-bon' => '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><path d="M8 13h8"/><path d="M8 17h5"/></svg>',
+                        'c-bl' => '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 18V6a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2v11a1 1 0 0 0 1 1h2"/><path d="M15 18H9"/><path d="M19 18h2a1 1 0 0 0 1-1v-3.65a1 1 0 0 0-.22-.624l-3.48-4.35A1 1 0 0 0 17.52 8H14"/><circle cx="17" cy="18" r="2"/><circle cx="7" cy="18" r="2"/></svg>',
+                        'c-regl' => '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 7V4a1 1 0 0 0-1-1H5a2 2 0 0 0 0 4h15a1 1 0 0 1 1 1v4h-3a2 2 0 0 0 0 4h3a1 1 0 0 0 1-1v-2a1 1 0 0 0-1-1"/><path d="M3 5v14a2 2 0 0 0 2 2h15a1 1 0 0 0 1-1v-4"/></svg>',
+                        'c-bal' => '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m16 16 3-8 3 8c-.87.65-1.92 1-3 1s-2.13-.35-3-1Z"/><path d="m2 16 3-8 3 8c-.87.65-1.92 1-3 1s-2.13-.35-3-1Z"/><path d="M7 21h10"/><path d="M12 3v18"/></svg>',
+                        'c-rel' => '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><path d="M8 13h8"/><path d="M8 17h8"/></svg>',
+                        'c-jour' => '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4"/><path d="M8 2v4"/><path d="M3 10h18"/></svg>',
                         'fa-achat' => '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><path d="M12 18v-6"/><path d="m9 15 3 3 3-3"/></svg>',
                         'fa-fisc' => '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m16 3 4 4-4 4"/><path d="M20 7H4"/><path d="m8 21-4-4 4-4"/><path d="M4 17h16"/></svg>',
                         'fa-vente' => '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><path d="M12 12v6"/><path d="m9 15 3-3 3 3"/></svg>',
                         'fa-regl' => '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="6" width="20" height="12" rx="2"/><circle cx="12" cy="12" r="2"/><path d="M6 12h.01M18 12h.01"/></svg>',
                         'fa-bal' => '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m16 16 3-8 3 8c-.87.65-1.92 1-3 1s-2.13-.35-3-1Z"/><path d="m2 16 3-8 3 8c-.87.65-1.92 1-3 1s-2.13-.35-3-1Z"/><path d="M7 21h10"/><path d="M12 3v18"/><path d="M3 7h2c2 0 5-1 7-2 2 1 5 2 7 2h2"/></svg>',
+                        'm-trans' => '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m7 7 10 10"/><path d="M17 7v10H7"/></svg>',
+                        'm-charge' => '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 2v20l2-1 2 1 2-1 2 1 2-1 2 1 2-1 2 1V2l-2 1-2-1-2 1-2-1-2 1-2-1-2 1Z"/><path d="M8 10h8"/><path d="M8 14h5"/></svg>',
+                        'm-treso' => '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><path d="m7 14 4-4 3 3 5-6"/></svg>',
+                        'p-fiche' => '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>',
+                        'p-sal' => '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="8"/><path d="M12 8v8"/><path d="M9.5 9.5c.5-1 1.4-1.5 2.5-1.5 1.5 0 2.5.8 2.5 2s-1 1.8-2.5 2-2.5.8-2.5 2 1 2 2.5 2c1.1 0 2-.5 2.5-1.5"/></svg>',
+                        'p-etat' => '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4"/><path d="M8 2v4"/><path d="M3 10h18"/><path d="m9 16 2 2 4-4"/></svg>',
+                        'cfg-fiche' => '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21h18"/><path d="M6 21V5a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v16"/><path d="M10 9h4"/><path d="M10 13h4"/><path d="M10 17h4"/></svg>',
+                        'cfg-users' => '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><circle cx="19" cy="11" r="2"/><path d="M19 8v1"/><path d="M19 13v1"/><path d="m21.5 9.5-.8.5"/><path d="m16.5 12.5-.8.5"/><path d="m21.5 12.5-.8-.5"/><path d="m16.5 9.5-.8-.5"/></svg>',
+                        'cfg-auth' => '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>',
+                        'cfg-transport' => '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 18V6a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2v11a1 1 0 0 0 1 1h2"/><path d="M15 18H9"/><path d="M19 18h2a1 1 0 0 0 1-1v-3.65a1 1 0 0 0-.22-.624l-3.48-4.35A1 1 0 0 0 17.52 8H14"/><circle cx="17" cy="18" r="2"/><circle cx="7" cy="18" r="2"/></svg>',
                     ];
                 @endphp
                 <div class="nav-section">
@@ -2874,9 +3432,9 @@
                     </button>
                 </div>
                 @foreach ($activityNav as $group)
-                    @php $navLive = in_array($group['id'], ['facturation', 'configuration'], true); @endphp
+                    @php $navLive = in_array($group['id'], ['fournisseurs', 'clients', 'stock', 'facturation', 'configuration'], true); @endphp
                     <div class="nav-section {{ $navLive ? '' : 'is-held' }}">
-                        <div class="nav-group {{ $group['id'] === 'facturation' ? 'expanded is-pinned' : ($navLive ? '' : 'is-held') }}" data-nav-group="{{ $group['id'] }}">
+                        <div class="nav-group {{ $navLive ? 'expanded is-pinned' : 'is-held' }}" data-nav-group="{{ $group['id'] }}">
                             <button type="button" class="nav-item has-sublist" data-panel="{{ $group['id'] }}" data-toggle-group="{{ $group['id'] }}">
                                 <span class="nav-icon {{ $group['id'] }}" aria-hidden="true">
                                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/></svg>
@@ -2897,8 +3455,8 @@
                                         @if (!$navLive || !empty($group['soon']) || !empty($item['disabled'])) disabled @else data-panel="{{ $item['panel'] ?? $item['id'] }}" @endif
                                         @if ($navLive && !empty($item['config'])) data-config="{{ $item['config'] }}" @endif
                                     >
-                                        @if (!empty($facturationIcons[$item['id']]))
-                                            <span class="nav-subicon" aria-hidden="true">{!! $facturationIcons[$item['id']] !!}</span>
+                                        @if (!empty($navSubIcons[$item['id']]))
+                                            <span class="nav-subicon" aria-hidden="true">{!! $navSubIcons[$item['id']] !!}</span>
                                         @endif
                                         {{ $item['label'] }}
                                     </button>
@@ -2953,18 +3511,292 @@
                 <section class="panel active" id="panel-dashboard">
                     <div class="content-head">
                         <h1>Tableau de Bord</h1>
+                        <p>Synthèse achats, ventes et modes de règlement</p>
                     </div>
+                    @php
+                        $dash = $dashboardStats ?? [
+                            'total_achats' => 0,
+                            'total_ventes' => 0,
+                            'total_factures_achats' => 0,
+                            'total_factures_ventes' => 0,
+                            'reglement_achats' => ['total' => 0, 'items' => []],
+                            'reglement_ventes' => ['total' => 0, 'items' => []],
+                        ];
+                        $moneyFr = fn ($n) => number_format((float) $n, 2, ',', ' ');
+                        $pieColors = [
+                            'Esp' => '#16a34a',
+                            'Chq' => '#2563eb',
+                            'Eff' => '#ea580c',
+                            'Vir' => '#7c3aed',
+                            'Vers' => '#0891b2',
+                        ];
+                        $buildConic = function (array $items) use ($pieColors): string {
+                            $total = array_sum(array_map(fn ($i) => (float) ($i['amount'] ?? 0), $items));
+                            if ($total <= 0) {
+                                return 'conic-gradient(#334155 0deg 360deg)';
+                            }
+                            $parts = [];
+                            $cursor = 0.0;
+                            foreach ($items as $item) {
+                                $amount = (float) ($item['amount'] ?? 0);
+                                if ($amount <= 0) {
+                                    continue;
+                                }
+                                $deg = ($amount / $total) * 360;
+                                $color = $pieColors[$item['type'] ?? ''] ?? '#64748b';
+                                $parts[] = $color.' '.$cursor.'deg '.($cursor + $deg).'deg';
+                                $cursor += $deg;
+                            }
+                            return $parts ? 'conic-gradient('.implode(', ', $parts).')' : 'conic-gradient(#334155 0deg 360deg)';
+                        };
+                        $achatsPie = $buildConic($dash['reglement_achats']['items'] ?? []);
+                        $ventesPie = $buildConic($dash['reglement_ventes']['items'] ?? []);
+                    @endphp
+                    <div class="dash-kpis" aria-label="Indicateurs principaux">
+                        <article class="dash-kpi achats">
+                            <div class="dash-kpi-icon" aria-hidden="true">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21h18"/><path d="M5 21V7l7-4 7 4v14"/><path d="M9 21v-6h6v6"/></svg>
+                            </div>
+                            <div>
+                                <small>Total Achats</small>
+                                <strong>{{ $moneyFr($dash['total_achats']) }}</strong>
+                            </div>
+                        </article>
+                        <article class="dash-kpi ventes">
+                            <div class="dash-kpi-icon" aria-hidden="true">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                            </div>
+                            <div>
+                                <small>Total Ventes</small>
+                                <strong>{{ $moneyFr($dash['total_ventes']) }}</strong>
+                            </div>
+                        </article>
+                        <article class="dash-kpi fa">
+                            <div class="dash-kpi-icon" aria-hidden="true">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><path d="M12 18v-6"/><path d="m9 15 3 3 3-3"/></svg>
+                            </div>
+                            <div>
+                                <small>Factures Achats</small>
+                                <strong>{{ $moneyFr($dash['total_factures_achats']) }}</strong>
+                            </div>
+                        </article>
+                        <article class="dash-kpi fv">
+                            <div class="dash-kpi-icon" aria-hidden="true">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><path d="M12 12v6"/><path d="m9 15 3-3 3 3"/></svg>
+                            </div>
+                            <div>
+                                <small>Factures Ventes</small>
+                                <strong>{{ $moneyFr($dash['total_factures_ventes']) }}</strong>
+                            </div>
+                        </article>
+                    </div>
+
+                    <div class="dash-charts" aria-label="Répartition des règlements">
+                        <article class="dash-chart-card">
+                            <div class="dash-chart-head">
+                                <h3>Règlements Achats</h3>
+                                <strong>{{ $moneyFr($dash['reglement_achats']['total'] ?? 0) }}</strong>
+                            </div>
+                            <div class="dash-chart-body">
+                                <div class="dash-donut" style="background: {{ $achatsPie }};" role="img" aria-label="Répartition règlements achats"></div>
+                                <ul class="dash-legend">
+                                    @foreach (($dash['reglement_achats']['items'] ?? []) as $item)
+                                        <li>
+                                            <span class="dash-dot" style="background: {{ $pieColors[$item['type']] ?? '#64748b' }}"></span>
+                                            <span>{{ $item['type'] }}</span>
+                                            <em>{{ number_format((float) $item['rate'], 1, ',', ' ') }}%</em>
+                                            <strong>{{ $moneyFr($item['amount']) }}</strong>
+                                        </li>
+                                    @endforeach
+                                </ul>
+                            </div>
+                        </article>
+                        <article class="dash-chart-card">
+                            <div class="dash-chart-head">
+                                <h3>Règlements Ventes</h3>
+                                <strong>{{ $moneyFr($dash['reglement_ventes']['total'] ?? 0) }}</strong>
+                            </div>
+                            <div class="dash-chart-body">
+                                <div class="dash-donut" style="background: {{ $ventesPie }};" role="img" aria-label="Répartition règlements ventes"></div>
+                                <ul class="dash-legend">
+                                    @foreach (($dash['reglement_ventes']['items'] ?? []) as $item)
+                                        <li>
+                                            <span class="dash-dot" style="background: {{ $pieColors[$item['type']] ?? '#64748b' }}"></span>
+                                            <span>{{ $item['type'] }}</span>
+                                            <em>{{ number_format((float) $item['rate'], 1, ',', ' ') }}%</em>
+                                            <strong>{{ $moneyFr($item['amount']) }}</strong>
+                                        </li>
+                                    @endforeach
+                                </ul>
+                            </div>
+                        </article>
+                    </div>
+
+                    @php
+                        $volume = $dash['volume'] ?? [
+                            'years' => [(int) date('Y')],
+                            'default_year' => (int) date('Y'),
+                            'series' => [
+                                ['key' => 'achats', 'label' => 'Achats', 'color' => '#2563eb'],
+                                ['key' => 'ventes', 'label' => 'Ventes', 'color' => '#16a34a'],
+                                ['key' => 'charges', 'label' => 'Charges', 'color' => '#e10600'],
+                                ['key' => 'paye', 'label' => 'Régl. clients payés', 'color' => '#0891b2'],
+                                ['key' => 'impaye', 'label' => 'Régl. clients impayés', 'color' => '#ea580c'],
+                            ],
+                            'by_year' => [],
+                        ];
+                        $monthLabels = ['Jan', 'Fév', 'Mar', 'Avr', 'Mai', 'Juin', 'Juil', 'Août', 'Sep', 'Oct', 'Nov', 'Déc'];
+                    @endphp
+                    <article class="dash-volume-card" id="dashVolumeCard">
+                        <div class="dash-volume-head">
+                            <div>
+                                <h3>Volumes mensuels</h3>
+                                <p>Achats, ventes, charges et règlements clients payés / impayés</p>
+                            </div>
+                            <label class="dash-year-filter">Année
+                                <select id="dashVolumeYear" data-keep-native="1">
+                                    @foreach (($volume['years'] ?? []) as $yearOpt)
+                                        <option value="{{ $yearOpt }}" @selected((int) $yearOpt === (int) ($volume['default_year'] ?? date('Y')))>{{ $yearOpt }}</option>
+                                    @endforeach
+                                </select>
+                            </label>
+                        </div>
+                        <div class="dash-volume-legend" id="dashVolumeLegend">
+                            @foreach (($volume['series'] ?? []) as $serie)
+                                <span><i style="background: {{ $serie['color'] }}"></i>{{ $serie['label'] }}</span>
+                            @endforeach
+                        </div>
+                        <div class="dash-volume-chart-wrap">
+                            <svg id="dashVolumeChart" class="dash-volume-chart" viewBox="0 0 980 360" role="img" aria-label="Diagramme volumes mensuels"></svg>
+                        </div>
+                        <div class="dash-volume-table-wrap">
+                            <table class="dash-volume-table" id="dashVolumeTable">
+                                <thead>
+                                    <tr>
+                                        <th>Série</th>
+                                        @foreach ($monthLabels as $label)
+                                            <th>{{ $label }}</th>
+                                        @endforeach
+                                        <th>Total</th>
+                                    </tr>
+                                </thead>
+                                <tbody></tbody>
+                            </table>
+                        </div>
+                    </article>
+                    <script type="application/json" id="dashVolumeData">@json($volume)</script>
+                    <script>
+                    (function () {
+                        const dataNode = document.getElementById('dashVolumeData');
+                        const yearSelect = document.getElementById('dashVolumeYear');
+                        const svg = document.getElementById('dashVolumeChart');
+                        const tableBody = document.querySelector('#dashVolumeTable tbody');
+                        if (!dataNode || !yearSelect || !svg || !tableBody) return;
+                        const data = JSON.parse(dataNode.textContent || '{}');
+                        const months = ['Jan', 'Fév', 'Mar', 'Avr', 'Mai', 'Juin', 'Juil', 'Août', 'Sep', 'Oct', 'Nov', 'Déc'];
+                        const series = Array.isArray(data.series) ? data.series : [];
+                        const byYear = data.by_year || {};
+
+                        function money(value) {
+                            return (Number(value) || 0).toLocaleString('fr-FR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+                        }
+
+                        function niceMax(value) {
+                            if (value <= 0) return 1000;
+                            const pow = Math.pow(10, Math.floor(Math.log10(value)));
+                            const n = value / pow;
+                            const step = n <= 1 ? 1 : n <= 2 ? 2 : n <= 5 ? 5 : 10;
+                            return step * pow;
+                        }
+
+                        function render(year) {
+                            const pack = byYear[String(year)] || byYear[year] || {};
+                            const values = series.map((serie) => {
+                                const monthsMap = pack[serie.key] || {};
+                                return Array.from({ length: 12 }, (_, i) => Number(monthsMap[i + 1] || 0));
+                            });
+                            const flat = values.flat();
+                            const maxValue = niceMax(Math.max(...flat, 0));
+                            const width = 980;
+                            const height = 360;
+                            const pad = { top: 24, right: 18, bottom: 48, left: 72 };
+                            const plotW = width - pad.left - pad.right;
+                            const plotH = height - pad.top - pad.bottom;
+                            const groupW = plotW / 12;
+                            const barGap = 2;
+                            const barW = Math.max(6, (groupW - 16 - barGap * (series.length - 1)) / series.length);
+                            const ticks = 5;
+                            let grid = '';
+                            for (let i = 0; i <= ticks; i += 1) {
+                                const ratio = i / ticks;
+                                const y = pad.top + plotH - ratio * plotH;
+                                const val = maxValue * ratio;
+                                grid += `<line x1="${pad.left}" y1="${y}" x2="${width - pad.right}" y2="${y}" class="dash-grid-line"></line>`;
+                                grid += `<text x="${pad.left - 10}" y="${y + 4}" text-anchor="end" class="dash-axis-label">${money(val)}</text>`;
+                            }
+
+                            let bars = '';
+                            let labels = '';
+                            for (let m = 0; m < 12; m += 1) {
+                                const gx = pad.left + m * groupW + 8;
+                                labels += `<text x="${gx + (groupW - 16) / 2}" y="${height - 18}" text-anchor="middle" class="dash-axis-label">${months[m]}</text>`;
+                                series.forEach((serie, sIdx) => {
+                                    const value = values[sIdx][m] || 0;
+                                    const h = maxValue > 0 ? (value / maxValue) * plotH : 0;
+                                    const x = gx + sIdx * (barW + barGap);
+                                    const y = pad.top + plotH - h;
+                                    bars += `<rect x="${x}" y="${y}" width="${barW}" height="${Math.max(h, value > 0 ? 2 : 0)}" rx="3" fill="${serie.color}" opacity="0.92"><title>${serie.label} — ${months[m]} ${year}: ${money(value)}</title></rect>`;
+                                });
+                            }
+
+                            svg.innerHTML = `
+                                <defs>
+                                    <linearGradient id="dashPlotFade" x1="0" y1="0" x2="0" y2="1">
+                                        <stop offset="0%" stop-color="rgba(225,6,0,0.08)"/>
+                                        <stop offset="100%" stop-color="rgba(225,6,0,0)"/>
+                                    </linearGradient>
+                                </defs>
+                                <rect x="${pad.left}" y="${pad.top}" width="${plotW}" height="${plotH}" fill="url(#dashPlotFade)" rx="10"></rect>
+                                ${grid}
+                                ${bars}
+                                ${labels}
+                            `;
+
+                            tableBody.innerHTML = series.map((serie, sIdx) => {
+                                const row = values[sIdx];
+                                const total = row.reduce((sum, n) => sum + n, 0);
+                                return `<tr>
+                                    <th><span class="dash-dot" style="background:${serie.color}"></span>${serie.label}</th>
+                                    ${row.map((n) => `<td>${money(n)}</td>`).join('')}
+                                    <td><strong>${money(total)}</strong></td>
+                                </tr>`;
+                            }).join('');
+                        }
+
+                        yearSelect.addEventListener('change', () => render(yearSelect.value));
+                        render(yearSelect.value || data.default_year);
+                    })();
+                    </script>
                 </section>
 
                 @include('partials.fiche-fournisseur')
+                @include('partials.bon-achats')
+                @include('partials.reglement-achats')
+                @include('partials.balance-fournisseur')
+                @include('partials.fiche-client')
+                @include('partials.bon-livraison')
+                @include('partials.reglement-client')
+                @include('partials.balance-clients')
                 @include('partials.facture-achats')
                 @include('partials.mouvement-fiscal')
+                @include('partials.mouvement-stock')
+                @include('partials.fiche-produit')
                 @include('partials.facture-ventes')
                 @include('partials.reglement-factures-ventes')
 
                 @foreach ($activityNav as $group)
                     @foreach ($group['items'] as $item)
-                        @if (empty($group['soon']) && empty($item['disabled']) && ! in_array($item['id'] ?? '', ['f-fiche', 'fa-achat', 'fa-fisc', 'fa-vente', 'fa-regl', 'cfg-fiche'], true))
+                        @if (empty($group['soon']) && empty($item['disabled']) && ! in_array($item['id'] ?? '', ['f-fiche', 'f-bon', 'f-regl', 'f-bal', 'c-fiche', 'c-bl', 'c-regl', 'c-bal', 'fa-achat', 'fa-fisc', 'fa-vente', 'fa-regl', 'cfg-fiche', 's-mvt', 's-prod'], true))
                             <section class="panel" id="panel-{{ $item['id'] }}">
                                 <div class="content-head">
                                     <h1>{{ $item['label'] }}</h1>
@@ -4243,7 +5075,7 @@
                 <h2 id="clientModalTitle">Ajouter un client</h2>
                 <button type="button" class="modal-close" id="closeClientModal" aria-label="Fermer">×</button>
             </div>
-            <form method="post" action="{{ url('/clients') }}" id="clientForm">
+            <form method="post" action="{{ url('/client-dossiers') }}" id="clientForm">
                 @csrf
                 <div class="modal-body">
                     <div class="field">
@@ -4805,7 +5637,7 @@
         }
 
         function openClientCreate() {
-            clientForm.action = '{{ url('/clients') }}';
+            clientForm.action = '{{ url('/client-dossiers') }}';
             clientForm.querySelector('input[name="_method"]')?.remove();
             clientModalTitle.textContent = 'Ajouter un client';
             fillClientForm({
@@ -4825,7 +5657,7 @@
 
         function openClientView(client) {
             clientForm.querySelector('input[name="_method"]')?.remove();
-            clientForm.action = '{{ url('/clients') }}';
+            clientForm.action = '{{ url('/client-dossiers') }}';
             clientModalTitle.textContent = 'Voir Client';
             fillClientForm(client);
             setClientFormMode('view');
@@ -4833,7 +5665,7 @@
         }
 
         function openClientEdit(client) {
-            clientForm.action = `{{ url('/clients') }}/${encodeURIComponent(client.id)}`;
+            clientForm.action = `{{ url('/client-dossiers') }}/${encodeURIComponent(client.id)}`;
             let method = clientForm.querySelector('input[name="_method"]');
             if (!method) {
                 method = document.createElement('input');
@@ -4883,7 +5715,7 @@
             fd.append('_method', 'DELETE');
 
             try {
-                const response = await fetch(`{{ url('/clients') }}/${encodeURIComponent(client.id)}`, {
+                const response = await fetch(`{{ url('/client-dossiers') }}/${encodeURIComponent(client.id)}`, {
                     method: 'POST',
                     body: fd,
                     headers: { 'X-Requested-With': 'XMLHttpRequest', 'Accept': 'application/json' },

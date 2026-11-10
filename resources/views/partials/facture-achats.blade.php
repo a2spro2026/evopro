@@ -179,10 +179,10 @@
     .fa-stat.slate { background: linear-gradient(135deg, #2a2a2e, #0a0a0c); }
     .fa-stat.blue { background: linear-gradient(135deg, #6e1224, #3a0a12); }
     .fa-stat.green { background: linear-gradient(135deg, #8f2436, #4a1018); }
-    .fa-card { border-radius: 16px; overflow: hidden; border: 1px solid rgba(143, 36, 54, 0.45); background: #0a0a0c; }
+    .fa-card { border-radius: 16px; overflow: hidden; border: 1px solid rgba(143, 36, 54, 0.45); background: #0a0a0c; display: flex; flex-direction: column; min-height: 0; }
     .fa-list-bar {
         display: flex; align-items: center; justify-content: space-between;
-        padding: 0.8rem 1.1rem; color: #fff;
+        padding: 0.8rem 1.1rem; color: #fff; flex: 0 0 auto;
         background: linear-gradient(90deg, #0a0a0c, #5c1220 58%, #8f2436);
     }
     .fa-list-bar h3 { margin: 0; display: flex; align-items: center; gap: 0.45rem; font-size: 0.82rem; letter-spacing: 0.06em; text-transform: uppercase; }
@@ -191,16 +191,18 @@
     }
     .fa-list-bar button svg { width: 16px; height: 16px; }
     .fa-list-bar button:hover, .fa-x:hover { background: rgba(255,255,255,0.12); color: #fff; }
-    .fa-scroll { overflow: auto; max-height: calc(100dvh - 22rem); min-height: 220px; }
-    .fa-table { width: 100%; border-collapse: collapse; min-width: 980px; color: #e2e8f0; }
+    .fa-scroll { overflow: auto; flex: 1 1 auto; min-height: 0; max-height: none; }
+    .fa-table { width: 100%; border-collapse: separate; border-spacing: 0; min-width: 980px; color: #e2e8f0; }
     .fa-table th {
+        position: sticky; top: 0; z-index: 3;
         padding: 0.75rem 0.55rem; font-size: 0.68rem; letter-spacing: 0.08em; text-transform: uppercase;
-        color: #e7d5d8; background: #1a1014; text-align: center; white-space: nowrap;
+        color: #fff; background: #5c1220; text-align: center; white-space: nowrap;
+        box-shadow: inset 0 -1px 0 #8f2436;
     }
-    .fa-table td { padding: 0.7rem 0.55rem; text-align: center; border-top: 1px solid rgba(110, 18, 36, 0.35); font-size: 0.86rem; }
+    .fa-table td { padding: 0.7rem 0.55rem; text-align: center; border-top: 1px solid rgba(110, 18, 36, 0.35); font-size: 0.86rem; color: #000; background: #fff; }
     .fa-table tbody tr:hover td { background: rgba(110, 18, 36, 0.32); }
-    .fa-ref { color: #f0c9cf; font-weight: 700; font-family: ui-monospace, monospace; font-size: 0.78rem; }
-    .fa-ttc { color: #e8b4bc; font-weight: 700; }
+    .fa-ref { color: #000; font-weight: 700; font-family: ui-monospace, monospace; font-size: 0.78rem; }
+    .fa-ttc { color: #000; font-weight: 700; }
     .fa-depot { display: inline-flex; padding: 0.15rem 0.5rem; border-radius: 6px; font-size: 0.75rem; font-weight: 700; }
     .fa-depot.a { background: rgba(37,99,235,0.25); color: #93c5fd; }
     .fa-depot.b { background: rgba(139,92,246,0.25); color: #c4b5fd; }
@@ -283,7 +285,7 @@
     .fa-lines .c-remise { width: 68px; }
     .fa-lines .c-sub { width: 108px; }
     .fa-lines .c-x { width: 34px; }
-    .fa-lines th { position: sticky; top: 0; background: #1e293b; color: #94a3b8; font-size: 0.62rem; letter-spacing: 0.06em; text-transform: uppercase; padding: 0.5rem; text-align: center; }
+    .fa-lines th { position: sticky; top: 0; background: #5c1220; color: #fff; font-size: 0.62rem; letter-spacing: 0.06em; text-transform: uppercase; padding: 0.5rem; text-align: center; }
     .fa-lines td { padding: 0.35rem; text-align: center; border-top: 1px solid #1e293b; color: #e2e8f0; font-size: 0.78rem; }
     .fa-lines input {
         width: 100%; height: 32px; box-sizing: border-box; border-radius: 6px; border: 1px solid #475569;
@@ -329,6 +331,8 @@
         .fa-span-2 { grid-column: span 2; }
         .fa-stats { grid-template-columns: 1fr; }
     }
+    [data-theme="light"] .fa-table th,
+    [data-theme="light"] .fa-lines th { background: #f3d5db; color: #5c1220; }
 </style>
 <script>
 (function () {

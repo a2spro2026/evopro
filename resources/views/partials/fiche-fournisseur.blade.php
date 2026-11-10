@@ -3,7 +3,7 @@
         <h1>Fiche Fournisseur</h1>
     </div>
 
-    <form class="ff-card" id="ficheFournisseurForm" autocomplete="off">
+    <form class="ff-card is-locked" id="ficheFournisseurForm" autocomplete="off">
         <div class="ff-error" id="ffError" hidden></div>
         <div class="ff-grid">
             <div>
@@ -23,18 +23,10 @@
                 <input id="ffPhone" type="tel" maxlength="50" placeholder="06 XX XX XX XX">
             </div>
             <div>
-                <label for="ffEmail">E-mail</label>
-                <input id="ffEmail" type="email" maxlength="255" placeholder="contact@...">
-            </div>
-            <div>
-                <label for="ffAddress">Adresse</label>
-                <input id="ffAddress" maxlength="500" placeholder="Adresse">
-            </div>
-            <div>
                 <label for="ffCity">Ville</label>
                 <input id="ffCity" maxlength="255" placeholder="Ville">
             </div>
-            <div>
+            <div class="ff-narrow">
                 <label for="ffReglement">Règlement</label>
                 <select id="ffReglement">
                     <option value="">—</option>
@@ -45,7 +37,7 @@
                     <option>Vers</option>
                 </select>
             </div>
-            <div>
+            <div class="ff-narrow">
                 <label for="ffEcheance">Échéance</label>
                 <select id="ffEcheance">
                     <option value="">—</option>
@@ -55,15 +47,22 @@
                     <option>120 Jrs</option>
                 </select>
             </div>
-            <div>
+            <div class="ff-solde">
                 <label for="ffSolde">Solde Initial</label>
                 <input id="ffSolde" inputmode="decimal" placeholder="0.00">
             </div>
         </div>
         <div class="ff-bar">
-            <button type="submit" class="ff-btn primary" id="ffSave">Enregistrer</button>
-            <button type="button" class="ff-btn muted" id="ffReset">Nouveau</button>
-            <button type="button" class="ff-btn secondary" id="ffRefresh">Actualiser</button>
+            <button type="submit" class="ff-btn primary" id="ffSave" title="Enregistrer" aria-label="Enregistrer">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><path d="M17 21v-8H7v8"/><path d="M7 3v5h8"/></svg>
+            </button>
+            <button type="button" class="ff-btn muted" id="ffReset" title="Nouveau" aria-label="Nouveau">
+                <svg class="ff-ico-new" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 5v14"/><path d="M5 12h14"/></svg>
+                <svg class="ff-ico-cancel" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" hidden><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
+            </button>
+            <button type="button" class="ff-btn secondary" id="ffRefresh" title="Actualiser" aria-label="Actualiser">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12a9 9 0 1 1-2.6-6.4"/><path d="M21 3v6h-6"/></svg>
+            </button>
             <div class="ff-total" id="ffTotal">
                 <div>
                     <small>Total Soldes Fournisseurs</small>
@@ -82,7 +81,6 @@
                         <th>ID</th>
                         <th>Nom Fournisseur</th>
                         <th>Contact</th>
-                        <th>Adresse</th>
                         <th>Ville</th>
                         <th>Règlement</th>
                         <th>Échéance</th>
@@ -91,7 +89,7 @@
                     </tr>
                 </thead>
                 <tbody id="ffBody">
-                    <tr><td colspan="9">Aucune donnée pour le moment.</td></tr>
+                    <tr><td colspan="8">Aucune donnée pour le moment.</td></tr>
                 </tbody>
             </table>
         </div>
@@ -120,8 +118,6 @@
         code: document.getElementById('ffCode'),
         name: document.getElementById('ffName'),
         phone: document.getElementById('ffPhone'),
-        email: document.getElementById('ffEmail'),
-        address: document.getElementById('ffAddress'),
         city: document.getElementById('ffCity'),
         reglement: document.getElementById('ffReglement'),
         echeance: document.getElementById('ffEcheance'),
@@ -138,6 +134,12 @@
     let rows = [];
     let editingId = null;
     let meta = { next_id: 'CF-0001', date: '', total_soldes: '0.00' };
+
+    const eye = '<svg viewBox="0 0 24 24"><path d="M2 12s3.5-6 10-6 10 6 10 6-3.5 6-10 6S2 12 2 12z" fill="none" stroke="currentColor" stroke-width="1.8"/><circle cx="12" cy="12" r="2.5" fill="none" stroke="currentColor" stroke-width="1.8"/></svg>';
+    const pencil = '<svg viewBox="0 0 24 24"><path d="M4 20h4l10-10-4-4L4 16v4z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg>';
+    const printer = '<svg viewBox="0 0 24 24"><path d="M6 9V3h12v6M6 18H4a2 2 0 0 1-2-2v-5h20v5a2 2 0 0 1-2 2h-2M6 14h12v7H6z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg>';
+    const file = '<svg viewBox="0 0 24 24"><path d="M6 3h8l4 4v14H6z" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M14 3v5h5" fill="none" stroke="currentColor" stroke-width="1.8"/></svg>';
+    const trash = '<svg viewBox="0 0 24 24"><path d="M4 7h16M9 7V4h6v3M8 7l1 13h6l1-13" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>';
 
     function money(value) {
         const n = Number(String(value ?? '').replace(',', '.')) || 0;
@@ -158,22 +160,42 @@
         fields.solde.classList.toggle('is-solde', due);
     }
 
-    function fillForm(row) {
+    function setFormLocked(locked) {
+        form.classList.toggle('is-locked', locked);
+        ['name', 'phone', 'city', 'solde'].forEach((key) => {
+            fields[key].readOnly = locked;
+        });
+        fields.reglement.disabled = locked;
+        fields.echeance.disabled = locked;
+        saveBtn.disabled = locked;
+    }
+
+    function syncResetIcon(isEdit) {
+        const resetBtn = document.getElementById('ffReset');
+        resetBtn.title = isEdit ? 'Annuler' : 'Nouveau';
+        resetBtn.setAttribute('aria-label', resetBtn.title);
+        resetBtn.querySelector('.ff-ico-new').hidden = isEdit;
+        resetBtn.querySelector('.ff-ico-cancel').hidden = !isEdit;
+    }
+
+    function fillForm(row, unlock = false) {
         editingId = row ? row.id : null;
         fields.date.value = row?.created_at || meta.date || '';
         fields.code.value = row?.code || meta.next_id || '';
         fields.name.value = row?.name || '';
         fields.phone.value = row?.phone || '';
-        fields.email.value = row?.email || '';
-        fields.address.value = row?.address || '';
         fields.city.value = row?.city || '';
         fields.reglement.value = row?.reglement || '';
         fields.echeance.value = row?.echeance || '';
         fields.solde.value = row ? money(row.initial_balance) : '';
-        saveBtn.textContent = editingId ? 'Mettre à jour' : 'Enregistrer';
-        document.getElementById('ffReset').textContent = editingId ? 'Annuler' : 'Nouveau';
+        saveBtn.title = editingId ? 'Mettre à jour' : 'Enregistrer';
+        saveBtn.setAttribute('aria-label', saveBtn.title);
+        const active = unlock || Boolean(editingId);
+        syncResetIcon(active);
+        setFormLocked(!active);
         paintSolde();
         showError('');
+        if (active) fields.name.focus();
     }
 
     function render() {
@@ -181,7 +203,7 @@
         totalValue.textContent = money(total);
         totalBox.classList.toggle('is-due', total !== 0);
         if (!rows.length) {
-            body.innerHTML = '<tr><td colspan="9">Aucun fournisseur enregistré</td></tr>';
+            body.innerHTML = '<tr><td colspan="8">Aucun fournisseur enregistré</td></tr>';
             return;
         }
         body.innerHTML = rows.map((row) => {
@@ -190,17 +212,18 @@
                 <td>${esc(row.code)}</td>
                 <td>${esc(row.name) || '—'}</td>
                 <td>${esc(row.contact) || '—'}</td>
-                <td>${esc(row.address) || '—'}</td>
                 <td>${esc(row.city) || '—'}</td>
                 <td>${esc(row.reglement) || '—'}</td>
                 <td>${esc(row.echeance) || '—'}</td>
                 <td style="${due ? 'color:#dc2626;font-weight:700' : ''}">${money(row.initial_balance)}</td>
                 <td>
-                    <button type="button" class="ff-icon" data-act="voir" data-id="${row.id}" title="Voir">Voir</button>
-                    <button type="button" class="ff-icon edit" data-act="modifier" data-id="${row.id}" title="Modifier">Modifier</button>
-                    <button type="button" class="ff-icon del" data-act="supprimer" data-id="${row.id}" title="Supprimer">Supprimer</button>
-                    <button type="button" class="ff-icon print" data-act="imprimer" data-id="${row.id}" title="Imprimer">Imprimer</button>
-                    <button type="button" class="ff-icon pdf" data-act="pdf" data-id="${row.id}" title="PDF">PDF</button>
+                    <div class="ff-actions">
+                        <button type="button" class="ff-icon see" data-act="voir" data-id="${row.id}" title="Voir" aria-label="Voir">${eye}</button>
+                        <button type="button" class="ff-icon edit" data-act="modifier" data-id="${row.id}" title="Modifier" aria-label="Modifier">${pencil}</button>
+                        <button type="button" class="ff-icon print" data-act="imprimer" data-id="${row.id}" title="Imprimer" aria-label="Imprimer">${printer}</button>
+                        <button type="button" class="ff-icon pdf" data-act="pdf" data-id="${row.id}" title="PDF" aria-label="PDF">${file}</button>
+                        <button type="button" class="ff-icon del" data-act="supprimer" data-id="${row.id}" title="Supprimer" aria-label="Supprimer">${trash}</button>
+                    </div>
                 </td>
             </tr>`;
         }).join('');
@@ -212,7 +235,7 @@
         const payload = await response.json();
         rows = payload.data || [];
         meta = payload.meta || meta;
-        if (!editingId) fillForm(null);
+        if (!editingId) fillForm(null, false);
         render();
     }
 
@@ -220,8 +243,6 @@
         return {
             name: fields.name.value.trim(),
             phone: fields.phone.value.trim(),
-            email: fields.email.value.trim(),
-            address: fields.address.value.trim(),
             city: fields.city.value.trim(),
             reglement: fields.reglement.value,
             echeance: fields.echeance.value,
@@ -233,8 +254,8 @@
         const win = window.open('', '_blank', 'width=800,height=600');
         if (!win) return;
         const lines = [
-            ['ID', row.code], ['Nom Fournisseur', row.name], ['Contact', row.contact], ['E-mail', row.email],
-            ['Adresse', row.address], ['Ville', row.city], ['Règlement', row.reglement], ['Échéance', row.echeance],
+            ['ID', row.code], ['Nom Fournisseur', row.name], ['Contact', row.contact],
+            ['Ville', row.city], ['Règlement', row.reglement], ['Échéance', row.echeance],
             ['Solde Initial', money(row.initial_balance)], ['Date création', row.created_at],
         ].map(([k, v]) => `<tr><th>${k}</th><td>${v || '—'}</td></tr>`).join('');
         win.document.write(`<!DOCTYPE html><html><head><meta charset="utf-8"><title>Fiche ${row.code}</title>
@@ -248,7 +269,7 @@
     function openView(row) {
         modalTitle.textContent = row.code;
         const pairs = [
-            ['Nom Fournisseur', row.name], ['Contact', row.contact], ['E-mail', row.email], ['Adresse', row.address],
+            ['Nom Fournisseur', row.name], ['Contact', row.contact],
             ['Ville', row.city], ['Règlement', row.reglement], ['Échéance', row.echeance],
             ['Solde Initial', money(row.initial_balance)], ['Date', row.created_at],
         ];
@@ -260,7 +281,6 @@
         event.preventDefault();
         showError('');
         saveBtn.disabled = true;
-        saveBtn.textContent = 'Enregistrement...';
         try {
             const response = await fetch(editingId ? `/fournisseurs/${editingId}` : '/fournisseurs', {
                 method: editingId ? 'PUT' : 'POST',
@@ -274,16 +294,25 @@
             }
             editingId = null;
             await load();
-            fillForm(null);
+            fillForm(null, false);
         } catch (error) {
             showError(error.message);
-            saveBtn.textContent = editingId ? 'Mettre à jour' : 'Enregistrer';
+            saveBtn.title = editingId ? 'Mettre à jour' : 'Enregistrer';
+            saveBtn.setAttribute('aria-label', saveBtn.title);
+            setFormLocked(false);
         } finally {
-            saveBtn.disabled = false;
+            if (!form.classList.contains('is-locked')) saveBtn.disabled = false;
         }
     });
 
-    document.getElementById('ffReset').addEventListener('click', () => { editingId = null; fillForm(null); });
+    document.getElementById('ffReset').addEventListener('click', () => {
+        if (!form.classList.contains('is-locked') || editingId) {
+            editingId = null;
+            fillForm(null, false);
+            return;
+        }
+        fillForm(null, true);
+    });
     document.getElementById('ffRefresh').addEventListener('click', () => load().catch((error) => showError(error.message)));
     fields.solde.addEventListener('input', paintSolde);
     document.getElementById('ffModalClose').addEventListener('click', () => { modal.hidden = true; });
@@ -295,7 +324,7 @@
         const row = rows.find((item) => String(item.id) === button.dataset.id);
         if (!row) return;
         if (button.dataset.act === 'voir') openView(row);
-        if (button.dataset.act === 'modifier') fillForm(row);
+        if (button.dataset.act === 'modifier') fillForm(row, true);
         if (button.dataset.act === 'imprimer' || button.dataset.act === 'pdf') printRow(row);
         if (button.dataset.act === 'supprimer') {
             if (!window.confirm(`Supprimer le fournisseur « ${row.name} » ?`)) return;
@@ -309,9 +338,11 @@
             }
             if (editingId === row.id) editingId = null;
             await load();
+            fillForm(null, false);
         }
     });
 
+    setFormLocked(true);
     load().catch((error) => showError(error.message));
 })();
 </script>
