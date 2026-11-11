@@ -23,16 +23,11 @@
                 <option value="12">Décembre</option>
             </select>
         </label>
-        <label>Réf<input id="fpRef" list="fpRefList" maxlength="64" placeholder="Réf" autocomplete="off"></label>
-        <label>Désignation<input id="fpDesc" list="fpDescList" maxlength="255" placeholder="Désignation" autocomplete="off"></label>
-        <label>Equiv<input id="fpEquiv" list="fpEquivList" maxlength="64" placeholder="Equiv" autocomplete="off"></label>
-        <label>Marque<input id="fpBrand" list="fpBrandList" maxlength="120" placeholder="Marque" autocomplete="off"></label>
-        <label>Famille<input id="fpFamily" list="fpFamilyList" maxlength="120" placeholder="Famille" autocomplete="off"></label>
-        <datalist id="fpRefList"></datalist>
-        <datalist id="fpDescList"></datalist>
-        <datalist id="fpEquivList"></datalist>
-        <datalist id="fpBrandList"></datalist>
-        <datalist id="fpFamilyList"></datalist>
+        <label>Réf<input id="fpRef" maxlength="64" placeholder="Réf" autocomplete="off"></label>
+        <label>Désignation<input id="fpDesc" maxlength="255" placeholder="Désignation" autocomplete="off"></label>
+        <label>Equiv<input id="fpEquiv" maxlength="64" placeholder="Equiv" autocomplete="off"></label>
+        <label>Marque<input id="fpBrand" maxlength="120" placeholder="Marque" autocomplete="off"></label>
+        <label>Famille<input id="fpFamily" maxlength="120" placeholder="Famille" autocomplete="off"></label>
         <button type="button" class="fp-refresh" id="fpRefresh" title="Actualiser" aria-label="Actualiser">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12a9 9 0 1 1-2.64-6.36"/><path d="M21 3v6h-6"/></svg>
         </button>
@@ -143,27 +138,14 @@
         const text = String(value ?? '').trim();
         return text ? esc(text) : '—';
     }
-    const lists = [
-        ['fpRef', 'fpRefList', 'reference'],
-        ['fpDesc', 'fpDescList', 'designation'],
-        ['fpEquiv', 'fpEquivList', 'equiv'],
-        ['fpBrand', 'fpBrandList', 'brand'],
-        ['fpFamily', 'fpFamilyList', 'family'],
-    ];
+    const searchIds = ['fpRef', 'fpDesc', 'fpEquiv', 'fpBrand', 'fpFamily'];
     function matches(value, query) {
         if (!query) return true;
         return String(value ?? '').trim().toLowerCase().includes(query);
     }
     function clearSearchBars() {
         document.getElementById('fpMonth').value = '';
-        lists.forEach(([id]) => { document.getElementById(id).value = ''; });
-    }
-    function fillLists() {
-        lists.forEach(([, listId, key]) => {
-            const values = [...new Set(rows.map((row) => String(row[key] ?? '').trim()).filter(Boolean))]
-                .sort((a, b) => a.localeCompare(b, 'fr', { sensitivity: 'base' }));
-            document.getElementById(listId).innerHTML = values.map((value) => `<option value="${esc(value)}"></option>`).join('');
-        });
+        searchIds.forEach((id) => { document.getElementById(id).value = ''; });
     }
     function filtered() {
         const month = document.getElementById('fpMonth').value;
@@ -208,7 +190,6 @@
         const payload = await response.json();
         if (!response.ok) throw new Error(payload.message || 'Chargement impossible.');
         rows = payload.data || [];
-        fillLists();
         render();
     }
     ['fpMonth', 'fpRef', 'fpDesc', 'fpEquiv', 'fpBrand', 'fpFamily'].forEach((id) => {
