@@ -14,7 +14,7 @@ class ClientController extends Controller
     {
         $this->importCustomersFromSalesInvoices();
 
-        $rows = Client::query()->orderByDesc('id')->get()->map->toFicheArray()->values();
+        $rows = Client::query()->orderBy('id')->get()->map->toFicheArray()->values();
 
         return response()->json([
             'data' => $rows,
