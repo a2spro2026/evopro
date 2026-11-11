@@ -111,7 +111,10 @@
                     <table class="fa-lines">
                         <colgroup>
                             <col class="c-ref">
+                            <col class="c-equiv">
                             <col class="c-desc">
+                            <col class="c-brand">
+                            <col class="c-family">
                             <col class="c-qty">
                             <col class="c-price">
                             <col class="c-remise">
@@ -121,7 +124,10 @@
                         <thead>
                             <tr>
                                 <th>Réf</th>
+                                <th>Equiv</th>
                                 <th>Désignation</th>
+                                <th>Marque</th>
+                                <th>Famille</th>
                                 <th>Qté</th>
                                 <th>Prix/U</th>
                                 <th>Remise</th>
@@ -131,6 +137,8 @@
                         </thead>
                         <tbody id="faLines"></tbody>
                     </table>
+                    <datalist id="faBrandList"></datalist>
+                    <datalist id="faFamilyList"></datalist>
                 </div>
                 <div class="fa-totals">
                     <div class="ht"><small>Montant HT</small><strong id="faHt">0.00</strong></div>
@@ -279,12 +287,16 @@
     .fa-add-line { border: none; background: transparent; color: #e8b4bc; font-weight: 800; font-size: 0.78rem; cursor: pointer; font-family: inherit; }
     .fa-lines-wrap { max-height: 280px; overflow: auto; border: 1px solid #334155; border-radius: 10px; }
     .fa-lines { width: 100%; border-collapse: collapse; table-layout: fixed; }
-    .fa-lines .c-ref { width: 128px; }
+    .fa-lines .c-ref { width: 110px; }
+    .fa-lines .c-equiv { width: 90px; }
+    .fa-lines .c-brand { width: 100px; }
+    .fa-lines .c-family { width: 100px; }
     .fa-lines .c-qty { width: 62px; }
     .fa-lines .c-price { width: 78px; }
     .fa-lines .c-remise { width: 68px; }
     .fa-lines .c-sub { width: 108px; }
     .fa-lines .c-x { width: 34px; }
+    .fa-lines { min-width: 1100px; }
     .fa-lines th { position: sticky; top: 0; background: #5c1220; color: #fff; font-size: 0.62rem; letter-spacing: 0.06em; text-transform: uppercase; padding: 0.5rem; text-align: center; }
     .fa-lines td { padding: 0.35rem; text-align: center; border-top: 1px solid #1e293b; color: #e2e8f0; font-size: 0.78rem; }
     .fa-lines input {
@@ -384,10 +396,34 @@
         const remise = Math.min(100, Math.max(0, parseNum(row.querySelector('[data-f="remise"]').value)));
         return qty * price * (1 - remise / 100);
     }
+    function uniqueLabels(values) {
+        return [...new Set(values.map((value) => String(value ?? '').trim()).filter(Boolean))]
+            .sort((a, b) => a.localeCompare(b, 'fr', { sensitivity: 'base' }));
+    }
+    function fillBrandFamilyLists() {
+        const fromRows = (rows || []).flatMap((row) => row.items || []);
+        const fromLines = [...linesBody.querySelectorAll('tr')].map((row) => ({
+            brand: row.querySelector('[data-f="brand"]')?.value,
+            family: row.querySelector('[data-f="family"]')?.value,
+        }));
+        const brands = uniqueLabels([
+            ...fromRows.map((item) => item.brand),
+            ...fromLines.map((item) => item.brand),
+        ]);
+        const families = uniqueLabels([
+            ...fromRows.map((item) => item.family),
+            ...fromLines.map((item) => item.family),
+        ]);
+        document.getElementById('faBrandList').innerHTML = brands.map((value) => `<option value="${esc(value)}"></option>`).join('');
+        document.getElementById('faFamilyList').innerHTML = families.map((value) => `<option value="${esc(value)}"></option>`).join('');
+    }
     function lineRow(item) {
         const tr = document.createElement('tr');
         tr.innerHTML = `<td><input data-f="ref" maxlength="64" placeholder="Réf" value="${esc(item?.article_ref || '')}"></td>
+            <td><input data-f="equiv" maxlength="64" placeholder="Equiv" value="${esc(item?.equiv || '')}"></td>
             <td><input data-f="desc" required maxlength="255" placeholder="Désignation" value="${esc(item?.description || '')}"></td>
+            <td><input data-f="brand" maxlength="120" list="faBrandList" placeholder="Marque" value="${esc(item?.brand || '')}" autocomplete="off"></td>
+            <td><input data-f="family" maxlength="120" list="faFamilyList" placeholder="Famille" value="${esc(item?.family || '')}" autocomplete="off"></td>
             <td><input data-f="qty" required inputmode="decimal" value="${esc(item?.quantity ?? 1)}"></td>
             <td><input data-f="price" required inputmode="decimal" placeholder="0.00" value="${item?.unit_price != null && item.unit_price !== '' ? esc(moneyDot(item.unit_price)) : ''}"></td>
             <td><div class="fa-remise"><input data-f="remise" inputmode="decimal" value="${esc(item?.remise ?? 0)}"><span>%</span></div></td>
@@ -423,6 +459,7 @@
         linesBody.innerHTML = '';
         const items = row?.items?.length ? row.items : [{}];
         items.forEach((item) => linesBody.appendChild(lineRow(item)));
+        fillBrandFamilyLists();
         showError('');
         recalc();
     }
@@ -582,13 +619,16 @@
         document.getElementById(id).addEventListener('input', () => render(filteredRows()));
         document.getElementById(id).addEventListener('change', () => render(filteredRows()));
     });
-    document.getElementById('faAddLine').addEventListener('click', () => { linesBody.appendChild(lineRow()); recalc(); });
+    document.getElementById('faAddLine').addEventListener('click', () => { linesBody.appendChild(lineRow()); fillBrandFamilyLists(); recalc(); });
     document.getElementById('faViewClose').addEventListener('click', () => { view.hidden = true; });
     document.getElementById('faViewPrint').addEventListener('click', () => { if (viewRow) printRow(viewRow); });
     document.getElementById('faViewPdf').addEventListener('click', () => { if (viewRow) printRow(viewRow); });
     modal.addEventListener('click', (event) => { if (event.target === modal) closeModal(); });
     view.addEventListener('click', (event) => { if (event.target === view) view.hidden = true; });
-    linesBody.addEventListener('input', recalc);
+    linesBody.addEventListener('input', (event) => {
+        if (event.target.matches('[data-f="brand"], [data-f="family"]')) fillBrandFamilyLists();
+        recalc();
+    });
     linesBody.addEventListener('change', recalc);
     linesBody.addEventListener('focusout', (event) => {
         const price = event.target.closest('[data-f="price"]');
@@ -626,7 +666,10 @@
         });
         const items = [...linesBody.querySelectorAll('tr')].map((row) => ({
             article_ref: row.querySelector('[data-f="ref"]').value.trim(),
+            equiv: row.querySelector('[data-f="equiv"]').value.trim(),
             description: row.querySelector('[data-f="desc"]').value.trim(),
+            brand: row.querySelector('[data-f="brand"]').value.trim(),
+            family: row.querySelector('[data-f="family"]').value.trim(),
             quantity: Number(String(row.querySelector('[data-f="qty"]').value).replace(',', '.')),
             unit_price: Number(String(row.querySelector('[data-f="price"]').value).replace(',', '.')),
             remise: Number(String(row.querySelector('[data-f="remise"]').value).replace(',', '.')) || 0,

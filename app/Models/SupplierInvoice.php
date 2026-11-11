@@ -85,7 +85,10 @@ class SupplierInvoice extends Model
             'items' => $this->items->map(fn (SupplierInvoiceItem $item) => [
                 'id' => $item->id,
                 'article_ref' => $item->article_ref,
+                'equiv' => $item->equiv,
                 'description' => $item->description,
+                'brand' => $item->brand,
+                'family' => $item->family,
                 'quantity' => (float) $item->quantity,
                 'unit_price' => (float) $item->unit_price,
                 'remise' => (float) $item->remise,

@@ -10,7 +10,10 @@ class SupplierInvoiceItem extends Model
     protected $fillable = [
         'supplier_invoice_id',
         'article_ref',
+        'equiv',
         'description',
+        'brand',
+        'family',
         'quantity',
         'unit_price',
         'remise',

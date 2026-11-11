@@ -69,7 +69,10 @@ class SalesInvoice extends Model
             'items' => $this->items->map(fn (SalesInvoiceItem $item) => [
                 'id' => $item->id,
                 'article_ref' => $item->article_ref,
+                'equiv' => $item->equiv,
                 'description' => $item->description,
+                'brand' => $item->brand,
+                'family' => $item->family,
                 'quantity' => (float) $item->quantity,
                 'purchase_price' => (float) $item->purchase_price,
                 'unit_price' => (float) $item->unit_price,

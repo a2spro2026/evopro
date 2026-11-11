@@ -3,13 +3,17 @@
 namespace App\Http\Controllers;
 
 use App\Models\Client;
+use App\Models\Customer;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Schema;
 
 class ClientController extends Controller
 {
     public function index(): JsonResponse
     {
+        $this->importCustomersFromSalesInvoices();
+
         $rows = Client::query()->orderByDesc('id')->get()->map->toFicheArray()->values();
 
         return response()->json([
@@ -74,5 +78,39 @@ class ClientController extends Controller
         $next = (Client::max('id') ?? 0) + 1;
 
         return 'CC-'.str_pad((string) $next, 4, '0', STR_PAD_LEFT);
+    }
+
+    private function importCustomersFromSalesInvoices(): void
+    {
+        if (! Schema::hasTable('customers')) {
+            return;
+        }
+
+        foreach (Customer::query()->orderBy('id')->get() as $customer) {
+            $name = trim((string) $customer->name);
+            if ($name === '') {
+                continue;
+            }
+
+            $exists = Client::query()
+                ->whereRaw('LOWER(name) = ?', [mb_strtolower($name)])
+                ->exists();
+            if ($exists) {
+                continue;
+            }
+
+            Client::query()->create([
+                'name' => $name,
+                'ice' => $customer->ice,
+                'phone' => $customer->phone,
+                'email' => $customer->email,
+                'address' => $customer->address,
+                'city' => $customer->city,
+                'reglement' => $customer->reglement,
+                'payment_terms' => $customer->payment_terms,
+                'status' => $customer->status ?: 'actif',
+                'initial_balance' => 0,
+            ]);
+        }
     }
 }

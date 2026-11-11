@@ -117,8 +117,11 @@
                     <table class="fa-lines">
                         <colgroup>
                             <col class="c-ref">
-                            <col class="c-achat">
+                            <col class="c-equiv">
                             <col class="c-desc">
+                            <col class="c-brand">
+                            <col class="c-family">
+                            <col class="c-achat">
                             <col class="c-qty">
                             <col class="c-price">
                             <col class="c-remise">
@@ -128,8 +131,11 @@
                         <thead>
                             <tr>
                                 <th>Réf</th>
-                                <th>Prix achat</th>
+                                <th>Equiv</th>
                                 <th>Désignation</th>
+                                <th>Marque</th>
+                                <th>Famille</th>
+                                <th>Prix achat</th>
                                 <th>Qté</th>
                                 <th>Prix/U</th>
                                 <th>Remise</th>
@@ -139,6 +145,11 @@
                         </thead>
                         <tbody id="fvLines"></tbody>
                     </table>
+                    <datalist id="fvRefList"></datalist>
+                    <datalist id="fvEquivList"></datalist>
+                    <datalist id="fvDescList"></datalist>
+                    <datalist id="fvBrandList"></datalist>
+                    <datalist id="fvFamilyList"></datalist>
                 </div>
                 <div class="fa-totals">
                     <div class="ht"><small>Montant HT</small><strong id="fvHt">0.00</strong></div>
@@ -306,13 +317,17 @@
     .fa-add-line { border: none; background: transparent; color: #e8b4bc; font-weight: 800; font-size: 0.78rem; cursor: pointer; font-family: inherit; }
     .fa-lines-wrap { max-height: 280px; overflow: auto; border: 1px solid #334155; border-radius: 10px; }
     .fa-lines { width: 100%; border-collapse: collapse; table-layout: fixed; }
-    .fa-lines .c-ref { width: 140px; }
+    .fa-lines .c-ref { width: 110px; }
+    .fa-lines .c-equiv { width: 90px; }
+    .fa-lines .c-brand { width: 100px; }
+    .fa-lines .c-family { width: 100px; }
     .fa-lines .c-achat { width: 92px; }
     .fa-lines .c-qty { width: 62px; }
     .fa-lines .c-price { width: 78px; }
     .fa-lines .c-remise { width: 68px; }
     .fa-lines .c-sub { width: 108px; }
     .fa-lines .c-x { width: 34px; }
+    #panel-fa-vente .fa-lines { min-width: 1280px; }
     .fa-lines th { position: sticky; top: 0; background: #5c1220; color: #fff; font-size: 0.62rem; letter-spacing: 0.06em; text-transform: uppercase; padding: 0.5rem; text-align: center; }
     .fa-lines td { padding: 0.35rem; text-align: center; border-top: 1px solid #1e293b; color: #e2e8f0; font-size: 0.78rem; }
     .fa-lines input {
@@ -505,61 +520,104 @@
         const remise = Math.min(100, Math.max(0, parseNum(row.querySelector('[data-f="remise"]').value)));
         return Math.round(qty * price * (1 - remise / 100) * 100) / 100;
     }
+    function norm(value) {
+        return String(value ?? '').trim().toLowerCase();
+    }
+    function products() {
+        return meta.products || [];
+    }
+    function knownProduct(typed) {
+        const needle = norm(typed);
+        if (!needle) return null;
+        const matches = products().filter((item) => [item.reference, item.designation, item.equiv, item.code, item.key]
+            .some((value) => norm(value) === needle));
+        return matches.length === 1 ? matches[0] : null;
+    }
+    function matchCatalogPrefix(field, typed) {
+        const needle = norm(typed);
+        if (!needle) return null;
+        const labelOf = (product) => field === 'ref'
+            ? product.reference
+            : (field === 'equiv' ? product.equiv : product.designation);
+        const matches = products().filter((product) => norm(labelOf(product)).startsWith(needle));
+        return matches.length === 1 ? matches[0] : null;
+    }
+    function matchCatalogExact(field, typed) {
+        const needle = norm(typed);
+        if (!needle) return null;
+        const labelOf = (product) => field === 'ref'
+            ? product.reference
+            : (field === 'equiv' ? product.equiv : product.designation);
+        const matches = products().filter((product) => norm(labelOf(product)) === needle);
+        return matches.length === 1 ? matches[0] : null;
+    }
+    function uniqueLabels(values) {
+        return [...new Set(values.map((value) => String(value ?? '').trim()).filter(Boolean))]
+            .sort((a, b) => a.localeCompare(b, 'fr', { sensitivity: 'base' }));
+    }
+    function fillProductLists() {
+        const list = products();
+        document.getElementById('fvRefList').innerHTML = uniqueLabels(list.map((item) => item.reference)).map((value) => `<option value="${esc(value)}"></option>`).join('');
+        document.getElementById('fvEquivList').innerHTML = uniqueLabels(list.map((item) => item.equiv)).map((value) => `<option value="${esc(value)}"></option>`).join('');
+        document.getElementById('fvDescList').innerHTML = uniqueLabels(list.map((item) => item.designation)).map((value) => `<option value="${esc(value)}"></option>`).join('');
+        const fromLines = [...linesBody.querySelectorAll('tr')].map((row) => ({
+            brand: row.querySelector('[data-f="brand"]')?.value,
+            family: row.querySelector('[data-f="family"]')?.value,
+        }));
+        document.getElementById('fvBrandList').innerHTML = uniqueLabels([
+            ...list.map((item) => item.brand),
+            ...fromLines.map((item) => item.brand),
+        ]).map((value) => `<option value="${esc(value)}"></option>`).join('');
+        document.getElementById('fvFamilyList').innerHTML = uniqueLabels([
+            ...list.map((item) => item.family),
+            ...fromLines.map((item) => item.family),
+        ]).map((value) => `<option value="${esc(value)}"></option>`).join('');
+    }
+    function applyCatalogProduct(row, product) {
+        if (!row || !product) return;
+        row.querySelector('[data-f="ref"]').value = product.reference || '';
+        row.querySelector('[data-f="equiv"]').value = product.equiv || '';
+        row.querySelector('[data-f="desc"]').value = product.designation || '';
+        row.querySelector('[data-f="brand"]').value = product.brand || '';
+        row.querySelector('[data-f="family"]').value = product.family || '';
+        const achat = moneyDot(product.purchase_price || 0);
+        row.querySelector('[data-f="achat"]').value = achat;
+        row.querySelector('[data-f="price"]').value = achat;
+        row.dataset.product = product.key || product.code || '';
+    }
     function refreshLine(row) {
-        const option = row.querySelector('[data-f="desc"]')?.selectedOptions[0];
+        const product = knownProduct(row.dataset.product)
+            || knownProduct(row.querySelector('[data-f="ref"]')?.value || '')
+            || knownProduct(row.querySelector('[data-f="desc"]')?.value || '')
+            || knownProduct(row.querySelector('[data-f="equiv"]')?.value || '');
         const achatInput = row.querySelector('[data-f="achat"]');
         const priceInput = row.querySelector('[data-f="price"]');
-        if (!option || !option.value) {
+        if (!product) {
             achatInput.value = '';
-            priceInput.value = '';
             return;
         }
-        const achat = parseNum(option.dataset.achat);
-        achatInput.value = moneyDot(achat);
-        priceInput.value = moneyDot(achat);
-    }
-    function stockKey(item) {
-        const ref = String(item?.article_ref || item?.reference || '').trim().toLowerCase();
-        if (ref) return 'ref:' + ref;
-        return 'desc:' + String(item?.description || item?.designation || '').trim().toLowerCase();
-    }
-    function stockChoices(extra) {
-        const list = [...(meta.products || [])];
-        if (extra && (extra.article_ref || extra.description)) {
-            const key = stockKey(extra);
-            if (!list.some((item) => item.key === key)) {
-                list.push({
-                    key,
-                    reference: extra.article_ref || '',
-                    designation: extra.description || '',
-                    purchase_price: extra.purchase_price || extra.unit_price || 0,
-                });
-            }
-        }
-        return list;
-    }
-    function stockOptions(list, selected, field) {
-        const options = list.map((item) => {
-            const label = field === 'ref'
-                ? (item.reference || '—')
-                : `${moneyDot(item.purchase_price || 0)}  ${item.designation || '—'}`;
-            return `<option value="${esc(item.key)}" data-ref="${esc(item.reference)}" data-desc="${esc(item.designation)}" data-achat="${esc(item.purchase_price || 0)}"${item.key === selected ? ' selected' : ''}>${esc(label)}</option>`;
-        }).join('');
-        const placeholder = field === 'ref' ? 'Réf' : 'Désignation';
-        return `<option value="">${placeholder}</option>${options}`;
+        const achat = moneyDot(product.purchase_price || 0);
+        achatInput.value = achat;
+        priceInput.value = achat;
     }
     function lineRow(item) {
         const tr = document.createElement('tr');
-        const selected = item?.article_ref || item?.description ? stockKey(item) : '';
-        const choices = stockChoices(item);
-        tr.innerHTML = `<td><select data-f="ref" data-keep-native="1">${stockOptions(choices, selected, 'ref')}</select></td>
+        const known = knownProduct(item?.article_ref || '')
+            || knownProduct(item?.description || '')
+            || knownProduct(item?.equiv || '');
+        if (known) tr.dataset.product = known.key || known.code || '';
+        tr.innerHTML = `<td><input data-f="ref" maxlength="64" list="fvRefList" placeholder="Réf" value="${esc(item?.article_ref || known?.reference || '')}" autocomplete="off"></td>
+            <td><input data-f="equiv" maxlength="64" list="fvEquivList" placeholder="Equiv" value="${esc(item?.equiv || known?.equiv || '')}" autocomplete="off"></td>
+            <td><input data-f="desc" required maxlength="255" list="fvDescList" placeholder="Désignation" value="${esc(item?.description || known?.designation || '')}" autocomplete="off"></td>
+            <td><input data-f="brand" maxlength="120" list="fvBrandList" placeholder="Marque" value="${esc(item?.brand || known?.brand || '')}" autocomplete="off"></td>
+            <td><input data-f="family" maxlength="120" list="fvFamilyList" placeholder="Famille" value="${esc(item?.family || known?.family || '')}" autocomplete="off"></td>
             <td><input data-f="achat" readonly tabindex="-1" value=""></td>
-            <td><select data-f="desc" data-keep-native="1" required>${stockOptions(choices, selected, 'desc')}</select></td>
             <td><input data-f="qty" required inputmode="decimal" value="${esc(item?.quantity ?? 1)}"></td>
             <td><input data-f="price" required readonly tabindex="-1" inputmode="decimal" placeholder="0.00" value=""></td>
             <td><div class="fa-remise"><input data-f="remise" inputmode="decimal" value="${esc(item?.remise ?? 0)}"><span>%</span></div></td>
             <td><input data-f="sub" readonly tabindex="-1" value="0.00"></td>
             <td><button type="button" class="fa-line-x" data-remove title="Retirer">×</button></td>`;
+        if (known) applyCatalogProduct(tr, known);
         refreshLine(tr);
         return tr;
     }
@@ -592,6 +650,7 @@
         linesBody.innerHTML = '';
         const items = row?.items?.length ? row.items : [{}];
         items.forEach((item) => linesBody.appendChild(lineRow(item)));
+        fillProductLists();
         showError('');
         recalc();
     }
@@ -862,6 +921,7 @@
         meta = payload.meta || meta;
         rows = payload.data || [];
         fillNames();
+        fillProductLists();
         render(filteredRows());
     }
     function openModal(row) {
@@ -927,7 +987,7 @@
         document.getElementById(id).addEventListener('input', () => render(filteredRows()));
         document.getElementById(id).addEventListener('change', () => render(filteredRows()));
     });
-    document.getElementById('fvAddLine').addEventListener('click', () => { linesBody.appendChild(lineRow()); recalc(); });
+    document.getElementById('fvAddLine').addEventListener('click', () => { linesBody.appendChild(lineRow()); fillProductLists(); recalc(); });
     document.getElementById('fvViewClose').addEventListener('click', () => { view.hidden = true; });
     document.getElementById('fvViewPrint').addEventListener('click', () => { if (viewRow) printRow(viewRow); });
     document.getElementById('fvViewPdf').addEventListener('click', () => { if (viewRow) printRow(viewRow); });
@@ -946,18 +1006,33 @@
         event.preventDefault();
         event.returnValue = '';
     });
+    function tryAutofillProduct(row, field, typed, exactOnly = false) {
+        if (!row) return;
+        const product = exactOnly
+            ? matchCatalogExact(field, typed)
+            : (matchCatalogExact(field, typed) || matchCatalogPrefix(field, typed));
+        if (!product) {
+            if (!exactOnly) delete row.dataset.product;
+            return;
+        }
+        applyCatalogProduct(row, product);
+        fillProductLists();
+    }
     linesBody.addEventListener('input', (event) => {
         const row = event.target.closest('tr');
+        if (row && event.target.matches('[data-f="ref"], [data-f="equiv"], [data-f="desc"]')) {
+            tryAutofillProduct(row, event.target.getAttribute('data-f'), event.target.value, false);
+        }
+        if (event.target.matches('[data-f="brand"], [data-f="family"]')) fillProductLists();
         if (row) refreshLine(row);
         recalc();
     });
     linesBody.addEventListener('change', (event) => {
         const row = event.target.closest('tr');
-        if (row && event.target.matches('[data-f="ref"], [data-f="desc"]')) {
-            const key = event.target.value;
-            row.querySelector('[data-f="ref"]').value = key;
-            row.querySelector('[data-f="desc"]').value = key;
+        if (row && event.target.matches('[data-f="ref"], [data-f="equiv"], [data-f="desc"]')) {
+            tryAutofillProduct(row, event.target.getAttribute('data-f'), event.target.value, true);
         }
+        if (event.target.matches('[data-f="brand"], [data-f="family"]')) fillProductLists();
         if (row) refreshLine(row);
         recalc();
     });
@@ -1000,10 +1075,15 @@
             if (String(price.value).trim()) price.value = moneyDot(price.value);
         });
         const items = [...linesBody.querySelectorAll('tr')].map((row) => {
-            const option = row.querySelector('[data-f="desc"]').selectedOptions[0];
+            const product = knownProduct(row.dataset.product)
+                || knownProduct(row.querySelector('[data-f="ref"]').value)
+                || knownProduct(row.querySelector('[data-f="desc"]').value);
             return {
-            article_ref: option?.dataset.ref || '',
-            description: option?.dataset.desc || '',
+            article_ref: product?.reference || row.querySelector('[data-f="ref"]').value.trim(),
+            equiv: row.querySelector('[data-f="equiv"]').value.trim(),
+            description: product?.designation || row.querySelector('[data-f="desc"]').value.trim(),
+            brand: row.querySelector('[data-f="brand"]').value.trim(),
+            family: row.querySelector('[data-f="family"]').value.trim(),
             quantity: Number(String(row.querySelector('[data-f="qty"]').value).replace(',', '.')),
             unit_price: Number(String(row.querySelector('[data-f="price"]').value).replace(',', '.')),
             remise: Number(String(row.querySelector('[data-f="remise"]').value).replace(',', '.')) || 0,
@@ -1014,7 +1094,10 @@
         const known = (meta.clients || []).find((item) => String(item.name || '').trim().toLowerCase() === supplierName.toLowerCase());
         const supplierId = supplier.dataset.id || (known ? String(known.id) : '');
         if (!/^\d{15}$/.test(ice.value)) { showError('L’ICE doit contenir 15 chiffres.'); return; }
-        if (!items.length || items.some((item) => !item.description)) { showError('Choisissez la réf et la désignation dans la fiche produit.'); return; }
+        if (!items.length || items.some((item) => !item.description || !knownProduct(item.article_ref || item.description))) {
+            showError('Choisissez la réf et la désignation dans la fiche produit.');
+            return;
+        }
         const totalTtc = recalc();
         save.disabled = true;
         try {

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Client;
 use App\Models\Customer;
 use App\Models\SalesInvoice;
 use App\Models\SalesInvoiceItem;
@@ -47,9 +48,13 @@ class SalesInvoiceController extends Controller
                 'total_ttc' => round($rows->sum('total_ttc'), 2),
                 'clients' => Customer::query()->orderBy('name')->get(['id', 'name', 'ice']),
                 'products' => StockMovementController::products()->map(fn (array $row) => [
+                    'code' => $row['code'],
                     'key' => $row['key'],
                     'reference' => $row['reference'],
+                    'equiv' => $row['equiv'] ?? '',
                     'designation' => $row['designation'],
+                    'brand' => $row['brand'] ?? '',
+                    'family' => $row['family'] ?? '',
                     'purchase_price' => $row['purchase_price'],
                 ])->values(),
             ],
@@ -126,7 +131,10 @@ class SalesInvoiceController extends Controller
             'total_ttc' => ['nullable', 'numeric', 'min:0'],
             'items' => ['required', 'array', 'min:1'],
             'items.*.article_ref' => ['nullable', 'string', 'max:64'],
+            'items.*.equiv' => ['nullable', 'string', 'max:64'],
             'items.*.description' => ['required', 'string', 'max:255'],
+            'items.*.brand' => ['nullable', 'string', 'max:120'],
+            'items.*.family' => ['nullable', 'string', 'max:120'],
             'items.*.quantity' => ['required', 'numeric', 'min:0.001'],
             'items.*.unit_price' => ['required', 'numeric', 'min:0'],
             'items.*.remise' => ['nullable', 'numeric', 'min:0', 'max:100'],
@@ -142,7 +150,10 @@ class SalesInvoiceController extends Controller
                 ]);
             }
             $data['items'][$index]['article_ref'] = $product['reference'] !== '' ? $product['reference'] : null;
+            $data['items'][$index]['equiv'] = trim((string) ($item['equiv'] ?? $product['equiv'] ?? '')) ?: null;
             $data['items'][$index]['description'] = $product['designation'];
+            $data['items'][$index]['brand'] = trim((string) ($item['brand'] ?? $product['brand'] ?? '')) ?: null;
+            $data['items'][$index]['family'] = trim((string) ($item['family'] ?? $product['family'] ?? '')) ?: null;
             $data['items'][$index]['purchase_price'] = round((float) ($product['purchase_price'] ?? 0), 2);
         }
 
@@ -154,6 +165,7 @@ class SalesInvoiceController extends Controller
         if (! empty($data['client_id'])) {
             $customer = Customer::query()->findOrFail($data['client_id']);
             $customer->update(['ice' => $data['ice']]);
+            $this->syncClientRecord($customer);
 
             return $customer;
         }
@@ -165,15 +177,51 @@ class SalesInvoiceController extends Controller
 
         if ($customer) {
             $customer->update(['ice' => $data['ice']]);
+            $this->syncClientRecord($customer);
 
             return $customer;
         }
 
-        return Customer::query()->create([
+        $customer = Customer::query()->create([
             'name' => $name,
             'ice' => $data['ice'],
             'status' => 'actif',
         ]);
+        $this->syncClientRecord($customer);
+
+        return $customer;
+    }
+
+    private function syncClientRecord(Customer $customer): void
+    {
+        $name = trim((string) $customer->name);
+        if ($name === '') {
+            return;
+        }
+
+        $client = Client::query()
+            ->whereRaw('LOWER(name) = ?', [mb_strtolower($name)])
+            ->first();
+
+        $payload = [
+            'name' => $name,
+            'ice' => $customer->ice,
+            'phone' => $customer->phone,
+            'email' => $customer->email,
+            'address' => $customer->address,
+            'city' => $customer->city,
+            'reglement' => $customer->reglement,
+            'payment_terms' => $customer->payment_terms,
+            'status' => $customer->status ?: 'actif',
+        ];
+
+        if ($client) {
+            $client->update(array_filter($payload, fn ($value) => $value !== null && $value !== ''));
+
+            return;
+        }
+
+        Client::query()->create($payload + ['initial_balance' => 0]);
     }
 
     private function buildLines(array $data): array
@@ -187,7 +235,10 @@ class SalesInvoiceController extends Controller
             $base += $line;
             $lines[] = [
                 'article_ref' => $item['article_ref'] ?? null,
+                'equiv' => $item['equiv'] ?? null,
                 'description' => $item['description'],
+                'brand' => $item['brand'] ?? null,
+                'family' => $item['family'] ?? null,
                 'quantity' => $item['quantity'],
                 'purchase_price' => $purchase,
                 'unit_price' => $purchase,

@@ -153,6 +153,9 @@
                         </thead>
                         <tbody id="blLines"></tbody>
                     </table>
+                    <datalist id="blRefList"></datalist>
+                    <datalist id="blEquivList"></datalist>
+                    <datalist id="blDescList"></datalist>
                     <datalist id="blBrandList"></datalist>
                     <datalist id="blFamilyList"></datalist>
                 </div>
@@ -459,28 +462,59 @@
         return knownProduct(label);
     }
     function applyCatalogProduct(row, product) {
-        if (!product) return;
-        const code = choiceValue(product);
-        row.querySelectorAll('select[data-f]').forEach((field) => {
-            if ([...field.options].some((option) => option.value === code)) field.value = code;
-        });
+        if (!product || !row) return;
+        const refInput = row.querySelector('[data-f="ref"]');
+        const equivInput = row.querySelector('[data-f="equiv"]');
+        const descInput = row.querySelector('[data-f="desc"]');
         const brandInput = row.querySelector('[data-f="brand"]');
         const familyInput = row.querySelector('[data-f="family"]');
         const barcodeInput = row.querySelector('[data-f="barcode"]');
         const priceInput = row.querySelector('[data-f="price"]');
-        if (brandInput && !brandInput.matches('select')) brandInput.value = product.brand || '';
-        if (familyInput && !familyInput.matches('select')) familyInput.value = product.family || '';
+        if (refInput) refInput.value = product.reference || '';
+        if (equivInput) equivInput.value = product.equiv || '';
+        if (descInput) descInput.value = product.designation || '';
+        if (brandInput) brandInput.value = product.brand || '';
+        if (familyInput) familyInput.value = product.family || '';
         if (barcodeInput) barcodeInput.value = product.barcode || '';
         if (priceInput) {
             priceInput.value = moneyDot(product.purchase_price ?? product.unit_price ?? 0);
             priceInput.readOnly = true;
         }
+        row.dataset.mode = 'pick';
+        row.dataset.product = choiceValue(product);
+    }
+    function matchCatalogPrefix(field, typed) {
+        const needle = norm(typed);
+        if (!needle) return null;
+        const labelOf = (product) => field === 'ref'
+            ? product.reference
+            : (field === 'equiv' ? product.equiv : product.designation);
+        const matches = catalog.filter((product) => norm(labelOf(product)).startsWith(needle));
+        return matches.length === 1 ? matches[0] : null;
+    }
+    function matchCatalogExact(field, typed) {
+        const needle = norm(typed);
+        if (!needle) return null;
+        const labelOf = (product) => field === 'ref'
+            ? product.reference
+            : (field === 'equiv' ? product.equiv : product.designation);
+        const matches = catalog.filter((product) => norm(labelOf(product)) === needle);
+        return matches.length === 1 ? matches[0] : null;
     }
     async function ensureCatalog() {
         const response = await fetch('/fiche-produits', { headers: { 'Accept': 'application/json' } });
         const payload = await response.json().catch(() => ({}));
         catalog = response.ok ? (payload.data || []) : catalog;
+        fillProductLists();
         fillBrandFamilyLists();
+    }
+    function fillProductLists() {
+        const refs = uniqueLabels(catalog.map((item) => item.reference));
+        const equivs = uniqueLabels(catalog.map((item) => item.equiv));
+        const descs = uniqueLabels(catalog.map((item) => item.designation));
+        document.getElementById('blRefList').innerHTML = refs.map((value) => `<option value="${esc(value)}"></option>`).join('');
+        document.getElementById('blEquivList').innerHTML = equivs.map((value) => `<option value="${esc(value)}"></option>`).join('');
+        document.getElementById('blDescList').innerHTML = descs.map((value) => `<option value="${esc(value)}"></option>`).join('');
     }
     function uniqueLabels(values) {
         return [...new Set(values.map((value) => String(value ?? '').trim()).filter(Boolean))]
@@ -512,104 +546,52 @@
     function familyField(value = '') {
         return `<input data-f="family" maxlength="120" list="blFamilyList" value="${esc(value || '')}" placeholder="Famille" autocomplete="off">`;
     }
-    function identityCells(item, pickedKey) {
-        const known = pickedKey ? knownProduct(pickedKey) : null;
-        if (catalog.length && (known || !item.description && !item.ref && !item.equiv)) {
-            const selected = known ? choiceValue(known) : '';
-            const choices = (field, labelOf) => catalog.map((product) => {
-                const key = choiceValue(product);
-                const label = labelOf(product) || '—';
-                const achat = product.purchase_price ?? product.unit_price ?? 0;
-                return `<option value="${esc(key)}" data-achat="${esc(achat)}"${key === selected ? ' selected' : ''}>${esc(label)}</option>`;
-            }).join('');
-            const nouveau = mode === 'view' ? '' : '<option value="__new__">Nouveau</option>';
-            const box = (field, labelOf) => `<select data-f="${field}" data-keep-native="1"><option value="">—</option>${nouveau}${choices(field, labelOf)}</select>`;
-            return {
-                mode: 'pick',
-                ref: box('ref', (product) => product.reference),
-                equiv: box('equiv', (product) => product.equiv),
-                desc: box('desc', (product) => product.designation),
-                brand: brandField(item.brand || known?.brand || ''),
-                family: familyField(item.family || known?.family || ''),
-            };
-        }
-        return {
-            mode: 'new',
-            ref: `<input data-f="ref" maxlength="64" value="${esc(item.ref || '')}" placeholder="Réf">`,
-            equiv: `<input data-f="equiv" maxlength="64" value="${esc(item.equiv || '')}" placeholder="Equiv">`,
-            desc: `<input data-f="desc" required maxlength="255" value="${esc(item.description || '')}" placeholder="Désignation">`,
-            brand: brandField(item.brand || ''),
-            family: familyField(item.family || ''),
-        };
-    }
-    function lineRow(item = {}, forceNew = false) {
+    function lineRow(item = {}) {
         const tr = document.createElement('tr');
-        const key = productKey(item);
-        const cells = forceNew ? {
-            mode: 'new',
-            ref: `<input data-f="ref" maxlength="64" value="${esc(item.ref || '')}" placeholder="Réf">`,
-            equiv: `<input data-f="equiv" maxlength="64" value="${esc(item.equiv || '')}" placeholder="Equiv">`,
-            desc: `<input data-f="desc" required maxlength="255" value="${esc(item.description || '')}" placeholder="Désignation">`,
-            brand: brandField(item.brand || ''),
-            family: familyField(item.family || ''),
-        } : identityCells(item, knownProduct(key) ? key : '');
-        tr.dataset.mode = cells.mode;
+        const known = knownProduct(productKey(item))
+            || knownProduct(item.ref || item.article_ref || '')
+            || knownProduct(item.description || item.designation || '');
+        tr.dataset.mode = known ? 'pick' : 'new';
+        if (known) tr.dataset.product = choiceValue(known);
         tr.innerHTML = `
-            <td>${cells.ref}</td>
-            <td><input data-f="barcode" maxlength="64" value="${esc(item.barcode || '')}" placeholder="Code barre"></td>
-            <td>${cells.equiv}</td>
-            <td>${cells.desc}</td>
-            <td>${cells.brand}</td>
-            <td>${cells.family}</td>
+            <td><input data-f="ref" maxlength="64" list="blRefList" value="${esc(item.ref || item.article_ref || known?.reference || '')}" placeholder="Réf" autocomplete="off"></td>
+            <td><input data-f="barcode" maxlength="64" value="${esc(item.barcode || known?.barcode || '')}" placeholder="Code barre"></td>
+            <td><input data-f="equiv" maxlength="64" list="blEquivList" value="${esc(item.equiv || known?.equiv || '')}" placeholder="Equiv" autocomplete="off"></td>
+            <td><input data-f="desc" required maxlength="255" list="blDescList" value="${esc(item.description || item.designation || known?.designation || '')}" placeholder="Désignation" autocomplete="off"></td>
+            <td>${brandField(item.brand || known?.brand || '')}</td>
+            <td>${familyField(item.family || known?.family || '')}</td>
             <td><input data-f="qty" inputmode="decimal" value="${esc(item.qty != null ? item.qty : 1)}" placeholder="1"></td>
-            <td><input data-f="price" inputmode="decimal" value="${esc(item.price != null ? moneyDot(item.price) : '')}" placeholder="0.00"></td>
+            <td><input data-f="price" inputmode="decimal" value="${esc(item.price != null ? moneyDot(item.price) : (known ? moneyDot(known.purchase_price ?? known.unit_price ?? 0) : ''))}" placeholder="0.00"></td>
             <td><div class="bl-remise"><input data-f="remise" inputmode="decimal" value="${esc(item.remise != null ? item.remise : 0)}"><span>%</span></div></td>
             <td><input data-f="sub" readonly tabindex="-1" value="0.00"></td>
             <td><button type="button" class="bl-line-x" data-remove title="Retirer">×</button></td>`;
+        if (known) applyCatalogProduct(tr, known);
         refreshLine(tr);
         return tr;
     }
     function lineIdentity(row) {
-        const brand = row.querySelector('[data-f="brand"]')?.value.trim() || '';
-        const family = row.querySelector('[data-f="family"]')?.value.trim() || '';
-        if (row.dataset.mode === 'pick') {
-            const key = row.querySelector('[data-f="ref"]')?.value || '';
-            const product = key && key !== '__new__' ? knownProduct(key) : null;
-            if (!product) return null;
-            return {
-                ref: product.reference || '',
-                equiv: product.equiv || '',
-                description: product.designation || '',
-                brand,
-                family,
-            };
-        }
         return {
             ref: row.querySelector('[data-f="ref"]').value.trim(),
             equiv: row.querySelector('[data-f="equiv"]').value.trim(),
             description: row.querySelector('[data-f="desc"]').value.trim(),
-            brand,
-            family,
+            brand: row.querySelector('[data-f="brand"]')?.value.trim() || '',
+            family: row.querySelector('[data-f="family"]')?.value.trim() || '',
         };
     }
     function sameProductOnOtherLine(row, key) {
         return [...linesBody.querySelectorAll('tr')].some((other) => {
             if (other === row) return false;
-            return (other.querySelector('[data-f="ref"]')?.value || '') === key;
+            const identity = lineIdentity(other);
+            return identity && choiceValue(identity) === key;
         });
     }
     function importedPurchasePrice(row) {
-        if (row.dataset.mode !== 'pick') return null;
-        for (const field of ['ref', 'equiv', 'desc']) {
-            const select = row.querySelector(`select[data-f="${field}"]`);
-            const option = select?.selectedOptions?.[0];
-            if (option && option.value && option.value !== '__new__' && option.dataset.achat != null && option.dataset.achat !== '') {
-                return parseNum(option.dataset.achat);
-            }
-            const product = productFromSelect(select);
-            if (product) return parseNum(product.purchase_price ?? product.unit_price ?? 0);
-        }
-        return null;
+        const product = knownProduct(row.dataset.product)
+            || knownProduct(row.querySelector('[data-f="ref"]')?.value || '')
+            || knownProduct(row.querySelector('[data-f="desc"]')?.value || '')
+            || knownProduct(row.querySelector('[data-f="equiv"]')?.value || '');
+        if (!product) return null;
+        return parseNum(product.purchase_price ?? product.unit_price ?? 0);
     }
     function refreshLine(row) {
         const imported = importedPurchasePrice(row);
@@ -617,6 +599,8 @@
         if (imported != null && priceInput) {
             priceInput.value = moneyDot(imported);
             priceInput.readOnly = true;
+        } else if (priceInput) {
+            priceInput.readOnly = false;
         }
         const price = parseNum(priceInput.value);
         const qty = parseNum(row.querySelector('[data-f="qty"]').value);
@@ -800,53 +784,42 @@
     document.getElementById('blClt').addEventListener('blur', syncClientFromId);
     document.getElementById('blClient').addEventListener('change', syncIdFromClient);
     document.getElementById('blClient').addEventListener('blur', syncIdFromClient);
-    linesBody.addEventListener('input', (event) => {
-        recalc();
-        if (event.target.matches('[data-f="brand"], [data-f="family"]')) fillBrandFamilyLists();
-    });
-    linesBody.addEventListener('change', (event) => {
-        if (event.target.matches('[data-f="brand"], [data-f="family"]')) {
-            fillBrandFamilyLists();
+    function tryAutofillProduct(row, field, typed, exactOnly = false) {
+        if (!row || mode === 'view') return;
+        const product = exactOnly ? matchCatalogExact(field, typed) : (matchCatalogExact(field, typed) || matchCatalogPrefix(field, typed));
+        if (!product) {
+            if (!exactOnly) {
+                row.dataset.mode = 'new';
+                delete row.dataset.product;
+                const priceInput = row.querySelector('[data-f="price"]');
+                if (priceInput) priceInput.readOnly = false;
+            }
             return;
         }
-        const select = event.target.closest('select[data-f]');
-        if (!select || mode === 'view') return;
-        const row = select.closest('tr');
-        const keep = {
-            barcode: row.querySelector('[data-f="barcode"]').value,
-            brand: row.querySelector('[data-f="brand"]')?.value || '',
-            family: row.querySelector('[data-f="family"]')?.value || '',
-            qty: row.querySelector('[data-f="qty"]').value,
-            price: row.querySelector('[data-f="price"]').value,
-            remise: row.querySelector('[data-f="remise"]').value,
-        };
-        if (select.value === '__new__') {
-            const fresh = lineRow({
-                barcode: keep.barcode,
-                brand: keep.brand,
-                family: keep.family,
-                qty: keep.qty,
-                price: keep.price,
-                remise: keep.remise,
-            }, true);
-            row.replaceWith(fresh);
-            refreshLine(fresh);
-            fillBrandFamilyLists();
-            fresh.querySelector('[data-f="ref"]')?.focus();
-            showError('');
-            return;
-        }
-        const product = productFromSelect(select);
-        const key = product ? choiceValue(product) : select.value;
-        if (key && sameProductOnOtherLine(row, key)) {
-            row.querySelectorAll('select[data-f]').forEach((field) => { field.value = ''; });
+        const key = choiceValue(product);
+        if (sameProductOnOtherLine(row, key)) {
             showError('Ce produit est déjà sur ce bon.');
             return;
         }
         applyCatalogProduct(row, product);
         fillBrandFamilyLists();
-        recalc();
         showError('');
+    }
+    linesBody.addEventListener('input', (event) => {
+        const row = event.target.closest('tr');
+        if (event.target.matches('[data-f="ref"], [data-f="equiv"], [data-f="desc"]')) {
+            tryAutofillProduct(row, event.target.getAttribute('data-f'), event.target.value, false);
+        }
+        if (event.target.matches('[data-f="brand"], [data-f="family"]')) fillBrandFamilyLists();
+        recalc();
+    });
+    linesBody.addEventListener('change', (event) => {
+        const row = event.target.closest('tr');
+        if (event.target.matches('[data-f="ref"], [data-f="equiv"], [data-f="desc"]')) {
+            tryAutofillProduct(row, event.target.getAttribute('data-f'), event.target.value, true);
+        }
+        if (event.target.matches('[data-f="brand"], [data-f="family"]')) fillBrandFamilyLists();
+        recalc();
     });
     linesBody.addEventListener('click', (event) => {
         const button = event.target.closest('[data-remove]');
@@ -870,6 +843,7 @@
         const match = String(payload.meta?.next_ref || '').match(/(\d+)$/);
         seq = match ? Number(match[1]) : rows.length + 1;
         fillClientFilter();
+        fillProductLists();
         fillBrandFamilyLists();
         render();
     }

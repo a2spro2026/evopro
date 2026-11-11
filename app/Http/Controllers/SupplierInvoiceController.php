@@ -112,7 +112,10 @@ class SupplierInvoiceController extends Controller
             'total_ttc' => ['nullable', 'numeric', 'min:0'],
             'items' => ['required', 'array', 'min:1'],
             'items.*.article_ref' => ['nullable', 'string', 'max:64'],
+            'items.*.equiv' => ['nullable', 'string', 'max:64'],
             'items.*.description' => ['required', 'string', 'max:255'],
+            'items.*.brand' => ['nullable', 'string', 'max:120'],
+            'items.*.family' => ['nullable', 'string', 'max:120'],
             'items.*.quantity' => ['required', 'numeric', 'min:0.001'],
             'items.*.unit_price' => ['required', 'numeric', 'min:0'],
             'items.*.remise' => ['nullable', 'numeric', 'min:0', 'max:100'],
@@ -158,8 +161,11 @@ class SupplierInvoiceController extends Controller
             $line = round((float) $item['quantity'] * (float) $item['unit_price'] * (1 - $remise / 100), 2);
             $base += $line;
             $lines[] = [
-                'article_ref' => $item['article_ref'] ?? null,
+                'article_ref' => trim((string) ($item['article_ref'] ?? '')) ?: null,
+                'equiv' => trim((string) ($item['equiv'] ?? '')) ?: null,
                 'description' => $item['description'],
+                'brand' => trim((string) ($item['brand'] ?? '')) ?: null,
+                'family' => trim((string) ($item['family'] ?? '')) ?: null,
                 'quantity' => $item['quantity'],
                 'unit_price' => $item['unit_price'],
                 'remise' => $remise,
