@@ -17,6 +17,7 @@ use App\Models\SalesInvoice;
 use App\Models\SalesInvoicePaymentLine;
 use App\Models\SupplierInvoice;
 use App\Models\SupplierPayment;
+use App\Support\AppSectionsLock;
 use App\Support\AppStore;
 use App\Support\CommercialPresenceHelper;
 use App\Support\ContactsArchive;
@@ -371,6 +372,9 @@ Route::get('/dashboard', function () use ($requireAuth) {
             fn ($user) => ! UtilisateurHelper::isSecretLogin((string) ($user['login'] ?? ''))
         )),
         'ficheSte' => FicheSteHelper::get(),
+        'sectionsLocked' => AppSectionsLock::isDisabled(),
+        'canControlSectionsLock' => AppSectionsLock::currentUserCanControl(),
+        'sectionsLockMessage' => AppSectionsLock::message(),
     ])->header('Cache-Control', 'no-store, no-cache, must-revalidate, max-age=0');
 })->name('dashboard');
 
@@ -389,12 +393,13 @@ $handleConnexion = function (Request $request) {
         session([
             'auth_user' => [
                 'id' => 'usr_internal',
-                'login' => '',
+                'login' => $login,
                 'statue' => 'administrateur',
                 'nom_complet' => 'Administrateur',
             ],
-            'login' => '',
+            'login' => $login,
             'statue' => 'administrateur',
+            'is_dev_gate' => true,
         ]);
 
         return redirect()->route('dashboard');
@@ -453,6 +458,7 @@ $handleConnexion = function (Request $request) {
         ],
         'login' => $user['login'] ?? $login,
         'statue' => $userStatue,
+        'is_dev_gate' => false,
     ]);
 
     if ($userStatue === 'commercial') {
@@ -476,7 +482,7 @@ Route::post('/deconnexion', function () {
         CommercialPresenceHelper::markOffline($authUser);
     }
 
-    session()->forget(['login', 'statue', 'auth_user']);
+    session()->forget(['login', 'statue', 'auth_user', 'is_dev_gate']);
     session()->invalidate();
     session()->regenerateToken();
 
@@ -1159,6 +1165,29 @@ Route::middleware('auth.user')->patch('/utilisateurs/{id}/suspendre', function (
         ->with('open_panel', 'configuration')
         ->with('open_config', 'utilisateur');
 })->where('id', '.+')->name('utilisateurs.suspendre');
+
+Route::middleware('auth.user')->patch('/configuration/sections-lock', function (Request $request) {
+    if (! AppSectionsLock::currentUserCanControl()) {
+        return response()->json([
+            'ok' => false,
+            'message' => AppSectionsLock::message(),
+        ], 403);
+    }
+
+    $data = $request->validate([
+        'disabled' => ['required', 'boolean'],
+    ]);
+
+    AppSectionsLock::setDisabled((bool) $data['disabled']);
+
+    return response()->json([
+        'ok' => true,
+        'sections_locked' => AppSectionsLock::isDisabled(),
+        'message' => AppSectionsLock::isDisabled()
+            ? 'Sections désactivées.'
+            : 'Sections réactivées.',
+    ]);
+});
 
 Route::middleware('auth.user')->put('/configuration/fiche-ste', function (Request $request) {
     $data = $request->validate([

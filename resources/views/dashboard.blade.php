@@ -1471,6 +1471,79 @@
         .topbar-btn[data-toggle="theme"] .icon-light { display: none; }
         [data-theme="light"] .topbar-btn[data-toggle="theme"] .icon-dark { display: none; }
         [data-theme="light"] .topbar-btn[data-toggle="theme"] .icon-light { display: block; }
+        .topbar-btn.sections-lock.is-locked {
+            color: #f87171;
+            border-color: rgba(248, 113, 113, 0.45);
+            background: rgba(248, 113, 113, 0.12);
+        }
+        .topbar-btn.sections-lock .icon-unlock { display: none; }
+        .topbar-btn.sections-lock.is-locked .icon-lock { display: none; }
+        .topbar-btn.sections-lock.is-locked .icon-unlock { display: block; }
+        .sections-lock-banner {
+            display: none;
+            margin: 0 0 1rem;
+            padding: 1.1rem 1.25rem;
+            border-radius: 14px;
+            border: 1px solid rgba(248, 113, 113, 0.45);
+            background: linear-gradient(135deg, rgba(127, 29, 29, 0.92), rgba(69, 10, 10, 0.95));
+            color: #fee2e2;
+            text-align: center;
+            letter-spacing: 0.08em;
+            font-weight: 800;
+            font-size: 0.95rem;
+        }
+        body.app-sections-locked:not(.can-control-sections-lock) .sections-lock-banner { display: block; }
+        body.app-sections-locked:not(.can-control-sections-lock) .nav-sections,
+        body.app-sections-locked:not(.can-control-sections-lock) .nav-dashboard,
+        body.app-sections-locked:not(.can-control-sections-lock) .content .panel {
+            pointer-events: none;
+            opacity: 0.35;
+            filter: grayscale(0.35);
+        }
+        body.app-sections-locked:not(.can-control-sections-lock) .content .panel.active {
+            display: none !important;
+        }
+        body.app-sections-locked:not(.can-control-sections-lock) .sections-lock-screen {
+            display: grid;
+        }
+        .sections-lock-screen {
+            display: none;
+            place-items: center;
+            min-height: calc(100vh - 140px);
+            padding: 2rem 1rem;
+        }
+        .sections-lock-screen .box {
+            width: min(640px, 100%);
+            border-radius: 18px;
+            padding: 2rem 1.5rem;
+            text-align: center;
+            border: 1px solid rgba(248, 113, 113, 0.4);
+            background: rgba(15, 23, 42, 0.92);
+            box-shadow: 0 18px 40px rgba(0, 0, 0, 0.35);
+        }
+        .sections-lock-screen h1 {
+            margin: 0;
+            color: #fecaca;
+            font-size: clamp(1.1rem, 2.4vw, 1.55rem);
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+        }
+        .sections-lock-screen p {
+            margin: 0.85rem 0 0;
+            color: #e2e8f0;
+            font-size: 0.92rem;
+        }
+        [data-theme="light"] .sections-lock-screen .box {
+            background: #fff;
+            border-color: #fca5a5;
+        }
+        [data-theme="light"] .sections-lock-screen h1 { color: #b91c1c; }
+        [data-theme="light"] .sections-lock-screen p { color: #475569; }
+        [data-theme="light"] .sections-lock-banner {
+            background: linear-gradient(135deg, #fee2e2, #fecaca);
+            color: #7f1d1d;
+            border-color: #fca5a5;
+        }
 
         .welcome {
             display: flex;
@@ -3321,7 +3394,11 @@
         })();
     </script>
 </head>
-<body @class(['role-commercial' => $isCommercialRole ?? false])>
+<body @class([
+    'role-commercial' => $isCommercialRole ?? false,
+    'app-sections-locked' => !empty($sectionsLocked),
+    'can-control-sections-lock' => !empty($canControlSectionsLock),
+])>
     <div class="sidebar-backdrop" id="sidebarBackdrop" aria-hidden="true"></div>
 
     <div class="shell" id="appShell">
@@ -3493,6 +3570,23 @@
                 </div>
 
                 <div class="topbar-actions">
+                    @if (!empty($canControlSectionsLock))
+                        <button
+                            type="button"
+                            class="topbar-btn sections-lock {{ !empty($sectionsLocked) ? 'is-locked' : '' }}"
+                            id="sectionsLockToggle"
+                            aria-label="{{ !empty($sectionsLocked) ? 'Réactiver les sections' : 'Désactiver les sections' }}"
+                            title="{{ !empty($sectionsLocked) ? 'Réactiver les sections' : 'Désactiver les sections' }}"
+                            data-locked="{{ !empty($sectionsLocked) ? '1' : '0' }}"
+                        >
+                            <svg class="icon-lock" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                                <rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/><path d="M12 15v2"/>
+                            </svg>
+                            <svg class="icon-unlock" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                                <rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V8a4 4 0 0 1 7.5-1.8"/><path d="M12 15v2"/>
+                            </svg>
+                        </button>
+                    @endif
                     <button type="button" class="topbar-btn" id="themeToggle" data-toggle="theme" aria-label="Basculer mode clair ou sombre" title="Mode clair / sombre">
                         <svg class="icon-dark" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
                             <path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/>
@@ -3506,6 +3600,13 @@
             </header>
 
             <main class="content">
+                <div class="sections-lock-banner">{{ $sectionsLockMessage ?? 'VEUILLEZ CONTACTER LE SERVICE TECHNIQUE' }}</div>
+                <div class="sections-lock-screen" id="sectionsLockScreen">
+                    <div class="box">
+                        <h1>{{ $sectionsLockMessage ?? 'VEUILLEZ CONTACTER LE SERVICE TECHNIQUE' }}</h1>
+                        <p>Les sections de l’application sont temporairement désactivées.</p>
+                    </div>
+                </div>
                 <section class="panel active" id="panel-dashboard">
                     <div class="content-head">
                         <h1>Tableau de Bord</h1>
@@ -5309,6 +5410,10 @@
         const sidebarBackdrop = document.getElementById('sidebarBackdrop');
         const sidebarToggle = document.getElementById('sidebarToggle');
         const themeToggle = document.getElementById('themeToggle');
+        const sectionsLockToggle = document.getElementById('sectionsLockToggle');
+        const canControlSectionsLock = @json(!empty($canControlSectionsLock));
+        const sectionsLockMessage = @json($sectionsLockMessage ?? 'VEUILLEZ CONTACTER LE SERVICE TECHNIQUE');
+        let sectionsLocked = @json(!empty($sectionsLocked));
         const navParents = document.querySelectorAll('.nav-item[data-panel]:not(.nav-subitem)');
         const navSubitems = document.querySelectorAll('.nav-subitem');
         const navGroups = document.querySelectorAll('.nav-group');
@@ -5472,6 +5577,53 @@
         });
 
         applyTheme(localStorage.getItem('evopro-theme') || 'dark');
+
+        function syncSectionsLockUi() {
+            document.body.classList.toggle('app-sections-locked', sectionsLocked);
+            document.body.classList.toggle('can-control-sections-lock', canControlSectionsLock);
+            if (!sectionsLockToggle) return;
+            sectionsLockToggle.classList.toggle('is-locked', sectionsLocked);
+            sectionsLockToggle.dataset.locked = sectionsLocked ? '1' : '0';
+            const label = sectionsLocked ? 'Réactiver les sections' : 'Désactiver les sections';
+            sectionsLockToggle.title = label;
+            sectionsLockToggle.setAttribute('aria-label', label);
+        }
+
+        sectionsLockToggle?.addEventListener('click', async () => {
+            if (!canControlSectionsLock) return;
+            const nextDisabled = !(sectionsLockToggle.dataset.locked === '1');
+            const label = nextDisabled ? 'désactiver toutes les sections' : 'réactiver toutes les sections';
+            if (!window.confirm(`Voulez-vous ${label} ?`)) return;
+            try {
+                const response = await fetch('{{ url('/configuration/sections-lock') }}', {
+                    method: 'PATCH',
+                    headers: {
+                        'Accept': 'application/json',
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': csrfToken,
+                        'X-Requested-With': 'XMLHttpRequest',
+                    },
+                    body: JSON.stringify({ disabled: nextDisabled }),
+                });
+                const data = await response.json().catch(() => ({}));
+                if (!response.ok) throw new Error(data.message || sectionsLockMessage);
+                sectionsLocked = Boolean(data.sections_locked);
+                syncSectionsLockUi();
+            } catch (error) {
+                window.alert(error.message || 'Impossible de modifier le verrouillage.');
+            }
+        });
+
+        syncSectionsLockUi();
+
+        document.addEventListener('click', (event) => {
+            if (!sectionsLocked || canControlSectionsLock) return;
+            const nav = event.target.closest('[data-panel], [data-toggle-group], .nav-item, .nav-subitem');
+            if (!nav) return;
+            event.preventDefault();
+            event.stopPropagation();
+            window.alert(sectionsLockMessage);
+        }, true);
 
         function parseDateFrToKey(value) {
             const raw = String(value || '').trim();
