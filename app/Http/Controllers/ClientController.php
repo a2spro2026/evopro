@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Client;
 use App\Models\Customer;
+use App\Support\ClientSequencer;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Schema;
@@ -13,6 +14,7 @@ class ClientController extends Controller
     public function index(): JsonResponse
     {
         $this->importCustomersFromSalesInvoices();
+        ClientSequencer::resequenceIfNeeded();
 
         $rows = Client::query()->orderBy('id')->get()->map->toFicheArray()->values();
 
@@ -43,6 +45,7 @@ class ClientController extends Controller
     public function destroy(Client $client): JsonResponse
     {
         $client->delete();
+        ClientSequencer::resequenceIfNeeded();
 
         return response()->json(['ok' => true]);
     }
