@@ -23,11 +23,16 @@
                 <option value="12">Décembre</option>
             </select>
         </label>
-        <label>Réf<select id="fpRef" data-keep-native="1"><option value="">Tous</option></select></label>
-        <label>Désignation<select id="fpDesc" data-keep-native="1"><option value="">Tous</option></select></label>
-        <label>Equiv<select id="fpEquiv" data-keep-native="1"><option value="">Tous</option></select></label>
-        <label>Marque<select id="fpBrand" data-keep-native="1"><option value="">Tous</option></select></label>
-        <label>Famille<select id="fpFamily" data-keep-native="1"><option value="">Tous</option></select></label>
+        <label>Réf<input id="fpRef" list="fpRefList" maxlength="64" placeholder="Réf" autocomplete="off"></label>
+        <label>Désignation<input id="fpDesc" list="fpDescList" maxlength="255" placeholder="Désignation" autocomplete="off"></label>
+        <label>Equiv<input id="fpEquiv" list="fpEquivList" maxlength="64" placeholder="Equiv" autocomplete="off"></label>
+        <label>Marque<input id="fpBrand" list="fpBrandList" maxlength="120" placeholder="Marque" autocomplete="off"></label>
+        <label>Famille<input id="fpFamily" list="fpFamilyList" maxlength="120" placeholder="Famille" autocomplete="off"></label>
+        <datalist id="fpRefList"></datalist>
+        <datalist id="fpDescList"></datalist>
+        <datalist id="fpEquivList"></datalist>
+        <datalist id="fpBrandList"></datalist>
+        <datalist id="fpFamilyList"></datalist>
         <button type="button" class="fp-refresh" id="fpRefresh" title="Actualiser" aria-label="Actualiser">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12a9 9 0 1 1-2.64-6.36"/><path d="M21 3v6h-6"/></svg>
         </button>
@@ -139,24 +144,25 @@
         return text ? esc(text) : '—';
     }
     const lists = [
-        ['fpRef', 'reference'],
-        ['fpDesc', 'designation'],
-        ['fpEquiv', 'equiv'],
-        ['fpBrand', 'brand'],
-        ['fpFamily', 'family'],
+        ['fpRef', 'fpRefList', 'reference'],
+        ['fpDesc', 'fpDescList', 'designation'],
+        ['fpEquiv', 'fpEquivList', 'equiv'],
+        ['fpBrand', 'fpBrandList', 'brand'],
+        ['fpFamily', 'fpFamilyList', 'family'],
     ];
-    function same(value, query) {
+    function matches(value, query) {
         if (!query) return true;
-        return String(value ?? '').trim().toLowerCase() === query;
+        return String(value ?? '').trim().toLowerCase().includes(query);
+    }
+    function clearSearchBars() {
+        document.getElementById('fpMonth').value = '';
+        lists.forEach(([id]) => { document.getElementById(id).value = ''; });
     }
     function fillLists() {
-        lists.forEach(([id, key]) => {
-            const select = document.getElementById(id);
-            const current = select.value;
+        lists.forEach(([, listId, key]) => {
             const values = [...new Set(rows.map((row) => String(row[key] ?? '').trim()).filter(Boolean))]
                 .sort((a, b) => a.localeCompare(b, 'fr', { sensitivity: 'base' }));
-            select.innerHTML = `<option value="">Tous</option>${values.map((value) => `<option value="${esc(value)}">${esc(value)}</option>`).join('')}`;
-            select.value = values.includes(current) ? current : '';
+            document.getElementById(listId).innerHTML = values.map((value) => `<option value="${esc(value)}"></option>`).join('');
         });
     }
     function filtered() {
@@ -168,11 +174,11 @@
         const family = document.getElementById('fpFamily').value.trim().toLowerCase();
         return rows.filter((row) => {
             if (month && !(row.months || []).map(String).includes(month)) return false;
-            return same(row.reference, ref)
-                && same(row.designation, desc)
-                && same(row.equiv, equiv)
-                && same(row.brand, brand)
-                && same(row.family, family);
+            return matches(row.reference, ref)
+                && matches(row.designation, desc)
+                && matches(row.equiv, equiv)
+                && matches(row.brand, brand)
+                && matches(row.family, family);
         });
     }
     function render() {
@@ -211,6 +217,7 @@
         field.addEventListener('change', render);
     });
     document.getElementById('fpRefresh').addEventListener('click', () => {
+        clearSearchBars();
         load().catch((error) => { body.innerHTML = `<tr><td colspan="13">${esc(error.message)}</td></tr>`; });
     });
     document.querySelector('[data-panel="s-prod"]')?.addEventListener('click', () => {
