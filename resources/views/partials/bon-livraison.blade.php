@@ -164,6 +164,10 @@
                     <div><small>Total</small><strong id="blAmountTotal">0,00</strong></div>
                 </div>
                 <div class="bl-actions">
+                    <div class="bl-actions-print">
+                        <button type="button" class="bl-btn ghost" id="blPrint">Imprimer</button>
+                        <button type="button" class="bl-btn ghost" id="blDownload">Télécharger</button>
+                    </div>
                     <button type="button" class="bl-btn ghost" id="blClose">Fermer</button>
                     <button type="submit" class="bl-btn primary" id="blSave">Valider</button>
                 </div>
@@ -356,7 +360,11 @@
     }
     .bl-icon svg { width: 15px; height: 15px; }
     .bl-icon.see:hover, .bl-icon.edit:hover { color: #e7c4c8; background: rgba(143,36,54,0.16); }
+    .bl-icon.print:hover { color: #e2e8f0; background: rgba(148,163,184,0.16); }
+    .bl-icon.pdf:hover { color: #fb923c; background: rgba(251,146,60,0.14); }
     .bl-icon.del:hover { color: #f87171; background: rgba(248,113,113,0.12); }
+    .bl-actions-print { display: none; margin-right: auto; gap: 0.45rem; }
+    .bl-form.is-view .bl-actions-print { display: flex; }
     .bl-form.is-view .bl-add-line,
     .bl-form.is-view .bl-line-x,
     .bl-form.is-view #blSave { display: none; }
@@ -403,6 +411,8 @@
     const csrf = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '';
     const eye = '<svg viewBox="0 0 24 24"><path d="M2 12s3.5-6 10-6 10 6 10 6-3.5 6-10 6S2 12 2 12z" fill="none" stroke="currentColor" stroke-width="1.8"/><circle cx="12" cy="12" r="2.5" fill="none" stroke="currentColor" stroke-width="1.8"/></svg>';
     const pencil = '<svg viewBox="0 0 24 24"><path d="M4 20h4l10-10-4-4L4 16v4z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg>';
+    const printer = '<svg viewBox="0 0 24 24"><path d="M6 9V3h12v6M6 18H4a2 2 0 0 1-2-2v-5h20v5a2 2 0 0 1-2 2h-2M6 14h12v7H6z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg>';
+    const file = '<svg viewBox="0 0 24 24"><path d="M6 3h8l4 4v14H6z" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M14 3v5h5" fill="none" stroke="currentColor" stroke-width="1.8"/></svg>';
     const trash = '<svg viewBox="0 0 24 24"><path d="M4 7h16M9 7V4h6v3M8 7l1 13h6l1-13" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>';
     let rows = [];
     let clients = [];
@@ -410,6 +420,7 @@
     let seq = 1;
     let editingId = null;
     let mode = 'create';
+    let viewRow = null;
 
     function esc(value) {
         return String(value ?? '').replace(/[&<>"']/g, (ch) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[ch]));
@@ -433,6 +444,175 @@
         const parts = String(value).split('-');
         if (parts.length !== 3) return value;
         return `${parts[2]}/${parts[1]}/${parts[0]}`;
+    }
+    function qtyText(value) {
+        const n = Number(value) || 0;
+        return Number.isInteger(n) ? String(n) : String(n).replace('.', ',');
+    }
+    function frenchInt(value) {
+        const n = Math.floor(Math.abs(Number(value) || 0));
+        const units = ['', 'UN', 'DEUX', 'TROIS', 'QUATRE', 'CINQ', 'SIX', 'SEPT', 'HUIT', 'NEUF', 'DIX', 'ONZE', 'DOUZE', 'TREIZE', 'QUATORZE', 'QUINZE', 'SEIZE'];
+        const under100 = (x) => {
+            if (x < 17) return units[x];
+            if (x < 20) return 'DIX-' + units[x - 10];
+            const tens = ['', '', 'VINGT', 'TRENTE', 'QUARANTE', 'CINQUANTE', 'SOIXANTE', 'SOIXANTE', 'QUATRE-VINGT', 'QUATRE-VINGT'];
+            const t = Math.floor(x / 10);
+            const r = x % 10;
+            if (t === 7 || t === 9) {
+                if (r === 0) return t === 7 ? 'SOIXANTE-DIX' : 'QUATRE-VINGT-DIX';
+                if (r === 1 && t === 7) return 'SOIXANTE ET ONZE';
+                return tens[t] + '-' + under100(10 + r);
+            }
+            if (r === 0) return t === 8 ? 'QUATRE-VINGTS' : tens[t];
+            if (r === 1 && t !== 8) return tens[t] + ' ET UN';
+            return tens[t] + '-' + units[r];
+        };
+        const under1000 = (x) => {
+            if (x < 100) return under100(x);
+            const c = Math.floor(x / 100);
+            const r = x % 100;
+            const cent = (c === 1 ? 'CENT' : units[c] + ' CENT') + (r === 0 && c > 1 ? 'S' : '');
+            return r ? cent + ' ' + under100(r) : cent;
+        };
+        if (!n) return 'ZÉRO';
+        const millions = Math.floor(n / 1000000);
+        const thousands = Math.floor((n % 1000000) / 1000);
+        const rest = n % 1000;
+        const parts = [];
+        if (millions) parts.push(millions === 1 ? 'UN MILLION' : under1000(millions) + ' MILLIONS');
+        if (thousands) parts.push(thousands === 1 ? 'MILLE' : under1000(thousands) + ' MILLE');
+        if (rest) parts.push(under1000(rest));
+        return parts.join(' ');
+    }
+    function amountWords(value) {
+        const centsTotal = Math.round((Number(value) || 0) * 100);
+        const dirhams = Math.floor(centsTotal / 100);
+        const cents = centsTotal % 100;
+        let text = frenchInt(dirhams) + ' DH';
+        if (cents) text += ' ' + String(cents).padStart(2, '0') + ' CTS';
+        return text;
+    }
+    function resolveClient(row) {
+        const code = norm(row?.clt);
+        const name = norm(row?.client);
+        return clients.find((item) => norm(item.code) === code)
+            || clients.find((item) => norm(item.name) === name)
+            || {};
+    }
+    function buildPrintHtml(row) {
+        const company = window.ficheSteData || {};
+        const companyTitle = String(company.nom_societe || 'STE AUTO-SIHAP').trim() || 'STE AUTO-SIHAP';
+        const fallbackLogo = @json(asset('images/auto-sihap-marque.png'));
+        const siteRoot = @json(rtrim(url('/'), '/'));
+        const logoSrc = company.logo ? `${siteRoot}/${String(company.logo).replace(/^\/+/, '')}` : fallbackLogo;
+        const brandLines = [company.statue, company.activite].map((value) => String(value || '').trim()).filter(Boolean).map((value) => `<p>${esc(value)}</p>`).join('');
+        const show = (value) => esc(String(value || '').trim() || '—');
+        const raw = (value) => esc(String(value || '').trim());
+        const client = resolveClient(row);
+        const clientLines = [
+            row.client,
+            client.address || client.adresse,
+            client.city || client.ville,
+            client.phone || client.contact,
+            client.ice ? `ICE : ${client.ice}` : '',
+        ].map((value) => String(value || '').trim()).filter(Boolean);
+        const lines = (row.items || []).map((item) => `<tr>
+            <td class="ref">${esc(item.ref || '—')}</td>
+            <td class="desc">${esc(item.description || '—')}</td>
+            <td class="qty">${esc(qtyText(item.qty))}</td>
+            <td class="num">${esc(money(item.price))}</td>
+            <td class="num">${esc(money(item.remise))}</td>
+            <td class="num">${esc(money(item.sub))}</td>
+        </tr>`).join('') || '<tr><td colspan="6">—</td></tr>';
+        return `<!DOCTYPE html><html><head><meta charset="utf-8"><title>Bon de livraison ${esc(row.ref)}</title>
+            <style>
+                @page { size: A4; margin: 12mm 12mm 18mm; }
+                * { box-sizing: border-box; }
+                html, body { margin: 0; padding: 0; }
+                body { font-family: Arial, Helvetica, sans-serif; color: #1a1a1a; padding: 16px 22px 0; min-height: 100vh; }
+                .sheet { position: relative; z-index: 1; min-height: calc(100vh - 118px); padding-bottom: 12px; }
+                .watermark { position: fixed; inset: 0; display: flex; align-items: center; justify-content: center; overflow: hidden; pointer-events: none; }
+                .watermark span { font-size: 74px; font-weight: 800; letter-spacing: 0.04em; line-height: 1; white-space: nowrap; color: rgba(225, 6, 0, 0.22); transform: rotate(-28deg); text-transform: uppercase; }
+                .banner { width: 100%; display: flex; align-items: center; justify-content: flex-start; gap: 16px; margin: 0 0 12px; padding: 0 0 8px; background: transparent; border-bottom: 2px solid #e10600; }
+                .banner img { display: block; width: 148px; height: auto; flex: 0 0 auto; background: transparent; }
+                .banner h1 { margin: 0; color: #e10600; font-size: 28px; font-weight: 800; letter-spacing: 0.04em; text-transform: uppercase; }
+                .banner .brand p { margin: 2px 0 0; color: #5c1220; font-size: 12px; font-weight: 700; letter-spacing: 0.04em; text-transform: uppercase; }
+                .doc-title { margin: 0 0 10px; color: #5c1220; font-size: 16px; font-weight: 800; letter-spacing: 0.08em; text-transform: uppercase; }
+                .client { display: inline-block; min-width: 260px; max-width: 420px; border: 1px solid #8d98a3; padding: 8px 12px; font-size: 12px; line-height: 1.4; text-transform: uppercase; }
+                .meta, .lines, .totals { width: 100%; border-collapse: collapse; }
+                .meta { margin-top: 12px; }
+                .meta td { border: 1px solid #6d7580; padding: 5px 8px; font-size: 12px; }
+                .meta b { margin-right: 8px; }
+                .detail-title { margin: 14px 0 6px; color: #1a1a1a; font-size: 13px; font-weight: 800; letter-spacing: 0.04em; text-transform: uppercase; text-decoration: underline; text-underline-offset: 3px; }
+                .lines th { background: #f3d5db; color: #5c1220; border: 1px solid #8f2436; padding: 5px 4px; font-size: 12px; text-align: center; }
+                .lines td { border: 1px solid #c5ccd4; padding: 3px 5px; font-size: 11px; }
+                .lines td.ref, .lines td.qty { text-align: center; }
+                .lines td.desc { text-align: left; text-transform: uppercase; }
+                .lines td.num, .totals td.num { text-align: right; font-variant-numeric: tabular-nums; }
+                .totals { margin-top: 10px; }
+                .totals td { border: 1px solid #6d7580; padding: 5px 8px; font-size: 12px; font-weight: 700; }
+                .totals td.lbl { background: #f4f6f8; width: 18%; }
+                .words { position: fixed; left: 22px; right: 22px; bottom: 62px; margin: 0; font-size: 12px; font-style: italic; background: #fff; }
+                .words strong { display: block; margin-top: 6px; color: #1d4e9e; font-size: 15px; font-style: normal; letter-spacing: 0.03em; }
+                footer { position: fixed; left: 0; right: 0; bottom: 0; padding: 8px 18px 8px; border-top: 2px solid #e10600; text-align: center; font-size: 9px; line-height: 1.45; color: #333; background: #fff; }
+            </style></head><body>
+            <div class="watermark"><span>${esc(companyTitle)}</span></div>
+            <div class="sheet">
+                <div class="banner">
+                    <img src="${logoSrc}" alt="${esc(companyTitle)}">
+                    <div class="brand">
+                        <h1>${esc(companyTitle)}</h1>
+                        ${brandLines}
+                    </div>
+                </div>
+                <div class="doc-title">Bon de livraison</div>
+                <div class="client">${clientLines.map((line) => `<div>${esc(line)}</div>`).join('') || '<div>—</div>'}</div>
+                <table class="meta"><tr>
+                    <td><b>ID Client :</b> ${esc(row.clt || '—')}</td>
+                    <td><b>BL N° :</b> ${esc(row.ref || '—')}</td>
+                    <td><b>Date :</b> ${esc(formatDate(row.date))}</td>
+                </tr><tr>
+                    <td><b>Nom client :</b> ${esc(row.client || '—')}</td>
+                    <td><b>Paiement :</b> ${esc(row.paiement || '—')}</td>
+                    <td><b>Échéance :</b> ${esc(row.echeance || '—')}</td>
+                </tr></table>
+                <div class="detail-title">Détail livraison</div>
+                <table class="lines">
+                    <thead><tr><th>Référence</th><th>Désignation</th><th>Qté</th><th>Prix U.</th><th>R. (%)</th><th>Total</th></tr></thead>
+                    <tbody>${lines}</tbody>
+                </table>
+                <table class="totals"><tr>
+                    <td class="lbl">Qté totale</td><td class="num">${esc(qtyText(row.qty))}</td>
+                    <td class="lbl">Total</td><td class="num">${esc(money(row.total))}</td>
+                    <td class="lbl">Solde</td><td class="num">${esc(money(row.solde ?? ((Number(row.total) || 0) - (Number(row.paid) || 0))))}</td>
+                </tr></table>
+            </div>
+            <div class="words">Le présent bon de livraison s'élève à la somme de<strong>${esc(amountWords(row.total))}</strong></div>
+            <footer>
+                <div>${raw(company.adresse)}${company.adresse && company.ville ? ' — ' : ''}${raw(company.ville)}</div>
+                <div>R.C. : ${show(company.rc)} &nbsp; I.F. : ${show(company.identifiant_fiscal)} &nbsp; Patente : ${show(company.patente)} &nbsp; C.N.S.S. : ${show(company.cnss)} &nbsp; I.C.E. : ${show(company.ice)}</div>
+                <div>N° Télé : ${show(company.contact)} &nbsp; N° Fixe : ${show(company.fixe)} &nbsp; Email : ${show(company.email)}</div>
+            </footer>
+            </body></html>`;
+    }
+    function printRow(row, options = {}) {
+        const html = buildPrintHtml(row);
+        const win = window.open('', '_blank', 'width=900,height=700');
+        if (!win) return;
+        win.document.write(html);
+        win.document.close();
+        if (options.previewOnly) {
+            win.focus();
+            return;
+        }
+        const logo = win.document.querySelector('img');
+        const go = () => { win.focus(); win.print(); };
+        if (logo && !logo.complete) {
+            logo.onload = go;
+            logo.onerror = go;
+        } else {
+            setTimeout(go, 200);
+        }
     }
     function showError(message) {
         errorBox.hidden = !message;
@@ -755,6 +935,8 @@
             <td>
                 <button type="button" class="bl-icon see" data-act="voir" data-id="${row.id}" title="Voir" aria-label="Voir">${eye}</button>
                 <button type="button" class="bl-icon edit" data-act="modifier" data-id="${row.id}" title="Modifier" aria-label="Modifier">${pencil}</button>
+                <button type="button" class="bl-icon print" data-act="imprimer" data-id="${row.id}" title="Imprimer" aria-label="Imprimer">${printer}</button>
+                <button type="button" class="bl-icon pdf" data-act="telecharger" data-id="${row.id}" title="Télécharger" aria-label="Télécharger">${file}</button>
                 <button type="button" class="bl-icon del" data-act="supprimer" data-id="${row.id}" title="Supprimer" aria-label="Supprimer">${trash}</button>
             </td>
         </tr>`).join('');
@@ -774,6 +956,7 @@
         mode = nextMode || 'create';
         await ensureCatalog();
         editingId = row?.id || null;
+        viewRow = mode === 'view' ? row : null;
         form.reset();
         document.getElementById('blDate').value = row?.date || todayInput();
         document.getElementById('blRef').value = row?.ref || nextRef();
@@ -794,6 +977,7 @@
     }
     function closeModal() {
         modal.hidden = true;
+        viewRow = null;
         showError('');
     }
     function entryOpen() {
@@ -804,6 +988,8 @@
     }
     document.getElementById('blAdd').addEventListener('click', () => openModal(null, 'create'));
     document.getElementById('blClose').addEventListener('click', closeModal);
+    document.getElementById('blPrint').addEventListener('click', () => { if (viewRow) printRow(viewRow); });
+    document.getElementById('blDownload').addEventListener('click', () => { if (viewRow) printRow(viewRow, { previewOnly: true }); });
     document.getElementById('blCloseX').addEventListener('click', () => {
         if (entryOpen()) { blockLeave(); return; }
         closeModal();
@@ -998,6 +1184,8 @@
         if (!row) return;
         if (button.dataset.act === 'voir') openModal(row, 'view');
         if (button.dataset.act === 'modifier') openModal(row, 'edit');
+        if (button.dataset.act === 'imprimer') printRow(row);
+        if (button.dataset.act === 'telecharger') printRow(row, { previewOnly: true });
         if (button.dataset.act === 'supprimer') {
             if (!window.confirm(`Supprimer le bon ${row.ref} ?`)) return;
             const response = await fetch(`/bons-livraison/${row.id}`, { method: 'DELETE', headers: { 'Accept': 'application/json', 'X-CSRF-TOKEN': csrf } });
