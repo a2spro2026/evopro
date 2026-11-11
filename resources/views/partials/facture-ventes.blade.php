@@ -145,11 +145,6 @@
                         </thead>
                         <tbody id="fvLines"></tbody>
                     </table>
-                    <datalist id="fvRefList"></datalist>
-                    <datalist id="fvEquivList"></datalist>
-                    <datalist id="fvDescList"></datalist>
-                    <datalist id="fvBrandList"></datalist>
-                    <datalist id="fvFamilyList"></datalist>
                 </div>
                 <div class="fa-totals">
                     <div class="ht"><small>Montant HT</small><strong id="fvHt">0.00</strong></div>
@@ -329,20 +324,7 @@
     .fa-lines .c-x { width: 34px; }
     #panel-fa-vente .fa-lines { min-width: 1280px; }
     .fa-lines th { position: sticky; top: 0; background: #5c1220; color: #fff; font-size: 0.62rem; letter-spacing: 0.06em; text-transform: uppercase; padding: 0.5rem; text-align: center; }
-    .fa-lines td { padding: 0.35rem; text-align: center; border-top: 1px solid #1e293b; color: #e2e8f0; font-size: 0.78rem; position: relative; }
-    #panel-fa-vente .prod-suggest {
-        position: absolute; z-index: 30; left: 0.35rem; right: 0.35rem; top: calc(100% - 2px);
-        max-height: 180px; overflow: auto; border-radius: 8px;
-        border: 1px solid #475569; background: #0f172a; box-shadow: 0 12px 24px rgba(0,0,0,0.35);
-    }
-    #panel-fa-vente .prod-suggest[hidden] { display: none; }
-    #panel-fa-vente .prod-suggest button {
-        display: block; width: 100%; border: 0; background: transparent; color: #f8fafc;
-        text-align: left; padding: 0.45rem 0.55rem; cursor: pointer; font-family: inherit; font-size: 0.74rem;
-    }
-    #panel-fa-vente .prod-suggest button:hover,
-    #panel-fa-vente .prod-suggest button.is-active { background: rgba(143,36,54,0.45); }
-    #panel-fa-vente .prod-suggest small { display: block; color: #94a3b8; font-size: 0.68rem; }
+    .fa-lines td { padding: 0.35rem; text-align: center; border-top: 1px solid #1e293b; color: #e2e8f0; font-size: 0.78rem; }
     .fa-lines input {
         width: 100%; height: 32px; box-sizing: border-box; border-radius: 6px; border: 1px solid #475569;
         background: #1e293b; color: #fff; text-align: center; font-size: 0.75rem; font-family: inherit;
@@ -562,69 +544,6 @@
         const matches = products().filter((product) => norm(productLabel(product, field)) === needle);
         return matches.length === 1 ? matches[0] : null;
     }
-    function hideProductSuggest(row) {
-        row?.querySelectorAll('.prod-suggest').forEach((menu) => menu.remove());
-    }
-    function showProductSuggest(input, field, matches) {
-        const cell = input.closest('td');
-        const row = input.closest('tr');
-        if (!cell || !row) return;
-        hideProductSuggest(row);
-        if (!matches.length) return;
-        const menu = document.createElement('div');
-        menu.className = 'prod-suggest';
-        menu.innerHTML = matches.slice(0, 12).map((product, index) => {
-            const key = product.key || product.code || product.reference || product.designation;
-            const title = field === 'desc'
-                ? (product.designation || '—')
-                : `${product.reference || '—'} · ${product.designation || '—'}`;
-            const detail = field === 'desc'
-                ? `${product.reference || '—'} · ${moneyDot(product.purchase_price || 0)}`
-                : moneyDot(product.purchase_price || 0);
-            return `<button type="button" data-key="${esc(key)}" class="${index === 0 ? 'is-active' : ''}">${esc(title)}<small>${esc(detail)}</small></button>`;
-        }).join('');
-        menu.addEventListener('mousedown', (event) => {
-            const button = event.target.closest('button[data-key]');
-            if (!button) return;
-            event.preventDefault();
-            const product = knownProduct(button.dataset.key);
-            if (!product) return;
-            applyCatalogProduct(row, product);
-            hideProductSuggest(row);
-            fillProductLists();
-            refreshLine(row);
-            recalc();
-        });
-        cell.appendChild(menu);
-    }
-    function syncProductDatalist(field, matches) {
-        const listId = field === 'ref' ? 'fvRefList' : (field === 'equiv' ? 'fvEquivList' : 'fvDescList');
-        const source = matches.length ? matches : products();
-        document.getElementById(listId).innerHTML = uniqueLabels(source.map((product) => productLabel(product, field)))
-            .map((value) => `<option value="${esc(value)}"></option>`).join('');
-    }
-    function uniqueLabels(values) {
-        return [...new Set(values.map((value) => String(value ?? '').trim()).filter(Boolean))]
-            .sort((a, b) => a.localeCompare(b, 'fr', { sensitivity: 'base' }));
-    }
-    function fillProductLists() {
-        const list = products();
-        document.getElementById('fvRefList').innerHTML = uniqueLabels(list.map((item) => item.reference)).map((value) => `<option value="${esc(value)}"></option>`).join('');
-        document.getElementById('fvEquivList').innerHTML = uniqueLabels(list.map((item) => item.equiv)).map((value) => `<option value="${esc(value)}"></option>`).join('');
-        document.getElementById('fvDescList').innerHTML = uniqueLabels(list.map((item) => item.designation)).map((value) => `<option value="${esc(value)}"></option>`).join('');
-        const fromLines = [...linesBody.querySelectorAll('tr')].map((row) => ({
-            brand: row.querySelector('[data-f="brand"]')?.value,
-            family: row.querySelector('[data-f="family"]')?.value,
-        }));
-        document.getElementById('fvBrandList').innerHTML = uniqueLabels([
-            ...list.map((item) => item.brand),
-            ...fromLines.map((item) => item.brand),
-        ]).map((value) => `<option value="${esc(value)}"></option>`).join('');
-        document.getElementById('fvFamilyList').innerHTML = uniqueLabels([
-            ...list.map((item) => item.family),
-            ...fromLines.map((item) => item.family),
-        ]).map((value) => `<option value="${esc(value)}"></option>`).join('');
-    }
     function applyCatalogProduct(row, product) {
         if (!row || !product) return;
         row.querySelector('[data-f="ref"]').value = product.reference || '';
@@ -658,11 +577,11 @@
             || knownProduct(item?.description || '')
             || knownProduct(item?.equiv || '');
         if (known) tr.dataset.product = known.key || known.code || '';
-        tr.innerHTML = `<td><input data-f="ref" maxlength="64" list="fvRefList" placeholder="Réf" value="${esc(item?.article_ref || known?.reference || '')}" autocomplete="off"></td>
-            <td><input data-f="equiv" maxlength="64" list="fvEquivList" placeholder="Equiv" value="${esc(item?.equiv || known?.equiv || '')}" autocomplete="off"></td>
-            <td><input data-f="desc" required maxlength="255" list="fvDescList" placeholder="Désignation" value="${esc(item?.description || known?.designation || '')}" autocomplete="off"></td>
-            <td><input data-f="brand" maxlength="120" list="fvBrandList" placeholder="Marque" value="${esc(item?.brand || known?.brand || '')}" autocomplete="off"></td>
-            <td><input data-f="family" maxlength="120" list="fvFamilyList" placeholder="Famille" value="${esc(item?.family || known?.family || '')}" autocomplete="off"></td>
+        tr.innerHTML = `<td><input data-f="ref" maxlength="64" placeholder="Réf" value="${esc(item?.article_ref || known?.reference || '')}" autocomplete="off"></td>
+            <td><input data-f="equiv" maxlength="64" placeholder="Equiv" value="${esc(item?.equiv || known?.equiv || '')}" autocomplete="off"></td>
+            <td><input data-f="desc" required maxlength="255" placeholder="Désignation" value="${esc(item?.description || known?.designation || '')}" autocomplete="off"></td>
+            <td><input data-f="brand" maxlength="120" placeholder="Marque" value="${esc(item?.brand || known?.brand || '')}" autocomplete="off"></td>
+            <td><input data-f="family" maxlength="120" placeholder="Famille" value="${esc(item?.family || known?.family || '')}" autocomplete="off"></td>
             <td><input data-f="achat" readonly tabindex="-1" value=""></td>
             <td><input data-f="qty" required inputmode="decimal" value="${esc(item?.quantity ?? 1)}"></td>
             <td><input data-f="price" required readonly tabindex="-1" inputmode="decimal" placeholder="0.00" value=""></td>
@@ -702,7 +621,6 @@
         linesBody.innerHTML = '';
         const items = row?.items?.length ? row.items : [{}];
         items.forEach((item) => linesBody.appendChild(lineRow(item)));
-        fillProductLists();
         showError('');
         recalc();
     }
@@ -973,7 +891,6 @@
         meta = payload.meta || meta;
         rows = payload.data || [];
         fillNames();
-        fillProductLists();
         render(filteredRows());
     }
     function openModal(row) {
@@ -1039,7 +956,7 @@
         document.getElementById(id).addEventListener('input', () => render(filteredRows()));
         document.getElementById(id).addEventListener('change', () => render(filteredRows()));
     });
-    document.getElementById('fvAddLine').addEventListener('click', () => { linesBody.appendChild(lineRow()); fillProductLists(); recalc(); });
+    document.getElementById('fvAddLine').addEventListener('click', () => { linesBody.appendChild(lineRow()); recalc(); });
     document.getElementById('fvViewClose').addEventListener('click', () => { view.hidden = true; });
     document.getElementById('fvViewPrint').addEventListener('click', () => { if (viewRow) printRow(viewRow); });
     document.getElementById('fvViewPdf').addEventListener('click', () => { if (viewRow) printRow(viewRow); });
@@ -1058,46 +975,33 @@
         event.preventDefault();
         event.returnValue = '';
     });
-    function tryAutofillProduct(row, field, typed, exactOnly = false) {
+    function tryAutofillProduct(row, field, typed) {
         if (!row) return;
-        const input = row.querySelector(`[data-f="${field}"]`);
         const matches = filterCatalog(field, typed);
-        syncProductDatalist(field, matches);
-        if (!exactOnly && input) showProductSuggest(input, field, matches);
         const product = matchCatalogExact(field, typed) || (matches.length === 1 ? matches[0] : null);
         if (!product) {
-            if (!exactOnly && !norm(typed)) hideProductSuggest(row);
-            if (!exactOnly && !matches.length) delete row.dataset.product;
+            if (!matches.length) delete row.dataset.product;
             return;
         }
         applyCatalogProduct(row, product);
-        hideProductSuggest(row);
-        fillProductLists();
     }
     linesBody.addEventListener('input', (event) => {
         const row = event.target.closest('tr');
         if (row && event.target.matches('[data-f="ref"], [data-f="equiv"], [data-f="desc"]')) {
-            tryAutofillProduct(row, event.target.getAttribute('data-f'), event.target.value, false);
+            tryAutofillProduct(row, event.target.getAttribute('data-f'), event.target.value);
         }
-        if (event.target.matches('[data-f="brand"], [data-f="family"]')) fillProductLists();
         if (row) refreshLine(row);
         recalc();
     });
     linesBody.addEventListener('change', (event) => {
         const row = event.target.closest('tr');
         if (row && event.target.matches('[data-f="ref"], [data-f="equiv"], [data-f="desc"]')) {
-            tryAutofillProduct(row, event.target.getAttribute('data-f'), event.target.value, true);
-            hideProductSuggest(row);
+            tryAutofillProduct(row, event.target.getAttribute('data-f'), event.target.value);
         }
-        if (event.target.matches('[data-f="brand"], [data-f="family"]')) fillProductLists();
         if (row) refreshLine(row);
         recalc();
     });
     linesBody.addEventListener('focusout', (event) => {
-        if (event.target.matches('[data-f="ref"], [data-f="equiv"], [data-f="desc"]')) {
-            const row = event.target.closest('tr');
-            setTimeout(() => hideProductSuggest(row), 120);
-        }
         const price = event.target.closest('[data-f="price"]');
         if (!price || !String(price.value).trim()) return;
         price.value = moneyDot(price.value);
