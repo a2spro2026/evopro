@@ -967,23 +967,23 @@
 
         .ff-grid {
             display: grid;
-            grid-template-columns: 84px 88px minmax(140px, 1.35fr) minmax(110px, 1fr) 88px 88px 88px 92px auto minmax(170px, 0.9fr);
+            grid-template-columns: 84px 88px minmax(140px, 1.35fr) 96px minmax(100px, 1fr) 100px 100px 110px auto minmax(170px, 0.9fr);
             gap: 0.45rem;
             align-items: end;
         }
 
         #panel-f-fiche .ff-grid,
         #panel-c-fiche .ff-grid {
-            grid-template-columns: 84px 88px minmax(150px, 1.4fr) minmax(110px, 1fr) 78px 88px 88px 92px auto minmax(160px, 0.85fr);
+            grid-template-columns: 84px 88px minmax(150px, 1.4fr) 96px minmax(100px, 1fr) 100px 100px 110px auto minmax(160px, 0.85fr);
         }
 
         .ff-grid .ff-solde {
-            max-width: 92px;
+            max-width: none;
         }
 
         #panel-f-fiche .ff-grid > div:nth-child(5),
         #panel-c-fiche .ff-grid > div:nth-child(5) {
-            max-width: 78px;
+            max-width: none;
         }
 
         .ff-grid > div {
