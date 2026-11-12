@@ -661,6 +661,18 @@
         row.dataset.mode = 'pick';
         row.dataset.product = choiceValue(product);
     }
+    function clearCatalogProduct(row, keepField) {
+        if (!row) return;
+        ['ref', 'equiv', 'desc', 'brand', 'family', 'barcode', 'price'].forEach((name) => {
+            if (keepField && name === keepField) return;
+            const input = row.querySelector(`[data-f="${name}"]`);
+            if (!input) return;
+            input.value = '';
+            if (name === 'price') input.readOnly = false;
+        });
+        row.dataset.mode = 'new';
+        delete row.dataset.product;
+    }
     function productLabel(product, field) {
         if (field === 'ref') return product.reference || '';
         if (field === 'equiv') return product.equiv || '';
@@ -939,12 +951,7 @@
         const matches = filterCatalog(field, typed);
         const product = matchCatalogExact(field, typed) || (matches.length === 1 ? matches[0] : null);
         if (!product) {
-            if (!matches.length) {
-                row.dataset.mode = 'new';
-                delete row.dataset.product;
-                const priceInput = row.querySelector('[data-f="price"]');
-                if (priceInput) priceInput.readOnly = false;
-            }
+            if (!String(typed || '').trim() || !matches.length) clearCatalogProduct(row, field);
             return;
         }
         const key = choiceValue(product);

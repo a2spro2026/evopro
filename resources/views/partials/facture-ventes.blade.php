@@ -564,6 +564,15 @@
         row.querySelector('[data-f="price"]').value = achat;
         row.dataset.product = product.key || product.code || '';
     }
+    function clearCatalogProduct(row, keepField) {
+        if (!row) return;
+        ['ref', 'equiv', 'desc', 'brand', 'family', 'achat', 'price'].forEach((name) => {
+            if (keepField && name === keepField) return;
+            const input = row.querySelector(`[data-f="${name}"]`);
+            if (input) input.value = '';
+        });
+        delete row.dataset.product;
+    }
     function refreshLine(row) {
         const product = knownProduct(row.dataset.product)
             || knownProduct(row.querySelector('[data-f="ref"]')?.value || '')
@@ -572,6 +581,11 @@
         const achatInput = row.querySelector('[data-f="achat"]');
         const priceInput = row.querySelector('[data-f="price"]');
         if (!product) {
+            if (achatInput && !String(row.querySelector('[data-f="ref"]')?.value || '').trim()
+                && !String(row.querySelector('[data-f="desc"]')?.value || '').trim()) {
+                achatInput.value = '';
+                if (priceInput) priceInput.value = '';
+            }
             return;
         }
         const achat = moneyDot(product.purchase_price || 0);
@@ -999,7 +1013,7 @@
         const matches = filterCatalog(field, typed);
         const product = matchCatalogExact(field, typed) || (matches.length === 1 ? matches[0] : null);
         if (!product) {
-            if (!matches.length) delete row.dataset.product;
+            if (!String(typed || '').trim() || !matches.length) clearCatalogProduct(row, field);
             return;
         }
         applyCatalogProduct(row, product);
