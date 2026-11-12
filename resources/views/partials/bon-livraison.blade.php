@@ -282,9 +282,12 @@
         max-height: 340px; overflow: auto; border: 1px solid #334155; border-radius: 10px;
     }
     .bl-lines { width: 100%; border-collapse: collapse; table-layout: fixed; min-width: 1180px; }
-    .bl-lines col.c-ref { width: 7%; }
+    .bl-lines col.c-ref { width: 10%; }
     .bl-lines col.c-barcode { width: 9%; }
-    .bl-lines col.c-equiv { width: 7%; }
+    .bl-lines col.c-equiv { width: 8%; }
+    .bl-lines input[data-f="ref"],
+    .bl-lines input[data-f="equiv"],
+    .bl-lines input[data-f="barcode"] { text-overflow: ellipsis; }
     .bl-lines col.c-desc { width: 22%; }
     .bl-lines col.c-brand { width: 10%; }
     .bl-lines col.c-family { width: 10%; }
@@ -610,6 +613,9 @@
     function norm(value) {
         return String(value ?? '').trim().toLowerCase();
     }
+    function compact(value) {
+        return norm(value).replace(/[\s\-_./]+/g, '');
+    }
     function productKey(item) {
         return [
             item.reference ?? item.ref,
@@ -620,7 +626,7 @@
         ].map(norm).join('\u0001');
     }
     function choiceValue(product) {
-        return String(product.code || productKey(product));
+        return String(product.code || product.key || productKey(product));
     }
     function knownProduct(key) {
         if (!key || key === '__new__') return null;
@@ -628,8 +634,9 @@
             || catalog.find((item) => productKey(item) === key);
         if (direct) return direct;
         const needle = norm(key);
+        const compactNeedle = compact(key);
         const byLabel = catalog.filter((item) => [item.reference, item.designation, item.equiv, item.code]
-            .some((value) => norm(value) === needle));
+            .some((value) => norm(value) === needle || (compactNeedle && compact(value) === compactNeedle)));
         return byLabel.length === 1 ? byLabel[0] : null;
     }
     function productFromSelect(select) {
@@ -648,7 +655,7 @@
         const familyInput = row.querySelector('[data-f="family"]');
         const barcodeInput = row.querySelector('[data-f="barcode"]');
         const priceInput = row.querySelector('[data-f="price"]');
-        if (refInput) refInput.value = product.reference || '';
+        if (refInput) refInput.value = product.reference || refInput.value || '';
         if (equivInput) equivInput.value = product.equiv || '';
         if (descInput) descInput.value = product.designation || '';
         if (brandInput) brandInput.value = product.brand || '';
@@ -680,15 +687,30 @@
         if (field === 'family') return product.family || '';
         return product.designation || '';
     }
+    function labelMatches(label, typed, field) {
+        const needle = norm(typed);
+        if (!needle) return false;
+        if (norm(label).startsWith(needle) || norm(label) === needle) return true;
+        if (field === 'ref' || field === 'equiv') {
+            const cNeedle = compact(typed);
+            return Boolean(cNeedle) && compact(label).startsWith(cNeedle);
+        }
+        return false;
+    }
     function filterCatalog(field, typed) {
         const needle = norm(typed);
         if (!needle || needle.length < 1) return [];
-        return catalog.filter((product) => norm(productLabel(product, field)).startsWith(needle));
+        return catalog.filter((product) => labelMatches(productLabel(product, field), typed, field));
     }
     function matchCatalogExact(field, typed) {
         const needle = norm(typed);
         if (!needle) return null;
-        const matches = catalog.filter((product) => norm(productLabel(product, field)) === needle);
+        const matches = catalog.filter((product) => {
+            const label = productLabel(product, field);
+            if (norm(label) === needle) return true;
+            if ((field === 'ref' || field === 'equiv') && compact(label) === compact(typed)) return true;
+            return false;
+        });
         return matches.length === 1 ? matches[0] : null;
     }
     async function ensureCatalog() {
@@ -951,7 +973,9 @@
         const matches = filterCatalog(field, typed);
         const product = matchCatalogExact(field, typed) || (matches.length === 1 ? matches[0] : null);
         if (!product) {
-            if (!String(typed || '').trim() || !matches.length) clearCatalogProduct(row, field);
+            const empty = !String(typed || '').trim();
+            if (empty) clearCatalogProduct(row, field);
+            else if ((field === 'ref' || field === 'equiv') && !matches.length) clearCatalogProduct(row, field);
             return;
         }
         const key = choiceValue(product);

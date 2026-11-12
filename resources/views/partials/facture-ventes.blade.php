@@ -312,8 +312,10 @@
     .fa-add-line { border: none; background: transparent; color: #e8b4bc; font-weight: 800; font-size: 0.78rem; cursor: pointer; font-family: inherit; }
     .fa-lines-wrap { max-height: 280px; overflow: auto; border: 1px solid #334155; border-radius: 10px; }
     .fa-lines { width: 100%; border-collapse: collapse; table-layout: fixed; }
-    .fa-lines .c-ref { width: 110px; }
-    .fa-lines .c-equiv { width: 90px; }
+    .fa-lines .c-ref { width: 140px; }
+    .fa-lines .c-equiv { width: 100px; }
+    .fa-lines input[data-f="ref"],
+    .fa-lines input[data-f="equiv"] { text-overflow: ellipsis; }
     .fa-lines .c-brand { width: 100px; }
     .fa-lines .c-family { width: 100px; }
     .fa-lines .c-achat { width: 92px; }
@@ -524,14 +526,22 @@
     function norm(value) {
         return String(value ?? '').trim().toLowerCase();
     }
+    function compact(value) {
+        return norm(value).replace(/[\s\-_./]+/g, '');
+    }
     function products() {
         return meta.products || [];
     }
     function knownProduct(typed) {
         const needle = norm(typed);
+        const compactNeedle = compact(typed);
         if (!needle) return null;
         const matches = products().filter((item) => [item.reference, item.designation, item.equiv, item.code, item.key]
-            .some((value) => norm(value) === needle));
+            .some((value) => {
+                if (norm(value) === needle) return true;
+                if (compactNeedle && compact(value) === compactNeedle) return true;
+                return false;
+            }));
         return matches.length === 1 ? matches[0] : null;
     }
     function productLabel(product, field) {
@@ -541,20 +551,37 @@
         if (field === 'family') return product.family || '';
         return product.designation || '';
     }
+    function labelMatches(label, typed, field) {
+        const needle = norm(typed);
+        if (!needle) return false;
+        if (norm(label).startsWith(needle) || norm(label) === needle) return true;
+        if (field === 'ref' || field === 'equiv') {
+            const cNeedle = compact(typed);
+            return Boolean(cNeedle) && compact(label).startsWith(cNeedle);
+        }
+        return false;
+    }
     function filterCatalog(field, typed) {
         const needle = norm(typed);
         if (!needle || needle.length < 1) return [];
-        return products().filter((product) => norm(productLabel(product, field)).startsWith(needle));
+        return products().filter((product) => labelMatches(productLabel(product, field), typed, field));
     }
     function matchCatalogExact(field, typed) {
         const needle = norm(typed);
         if (!needle) return null;
-        const matches = products().filter((product) => norm(productLabel(product, field)) === needle);
+        const matches = products().filter((product) => {
+            const label = productLabel(product, field);
+            if (norm(label) === needle) return true;
+            if ((field === 'ref' || field === 'equiv') && compact(label) === compact(typed)) return true;
+            return false;
+        });
         return matches.length === 1 ? matches[0] : null;
     }
     function applyCatalogProduct(row, product) {
         if (!row || !product) return;
-        row.querySelector('[data-f="ref"]').value = product.reference || '';
+        const refInput = row.querySelector('[data-f="ref"]');
+        const currentRef = refInput?.value || '';
+        if (refInput) refInput.value = product.reference || currentRef || '';
         row.querySelector('[data-f="equiv"]').value = product.equiv || '';
         row.querySelector('[data-f="desc"]').value = product.designation || '';
         row.querySelector('[data-f="brand"]').value = product.brand || '';
@@ -1013,7 +1040,9 @@
         const matches = filterCatalog(field, typed);
         const product = matchCatalogExact(field, typed) || (matches.length === 1 ? matches[0] : null);
         if (!product) {
-            if (!String(typed || '').trim() || !matches.length) clearCatalogProduct(row, field);
+            const empty = !String(typed || '').trim();
+            if (empty) clearCatalogProduct(row, field);
+            else if ((field === 'ref' || field === 'equiv') && !matches.length) clearCatalogProduct(row, field);
             return;
         }
         applyCatalogProduct(row, product);

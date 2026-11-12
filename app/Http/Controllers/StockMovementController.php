@@ -171,6 +171,7 @@ class StockMovementController extends Controller
     {
         $data = self::products()->map(fn (array $row) => [
             'code' => $row['code'],
+            'key' => $row['key'] ?? '',
             'reference' => $row['reference'],
             'barcode' => $row['barcode'],
             'designation' => $row['designation'],
