@@ -1108,10 +1108,13 @@
             flex: 0 0 38px;
         }
 
-        .ff-btn svg { width: 17px; height: 17px; }
-        .ff-btn.primary { background: #e10600; color: #fff; }
-        .ff-btn.muted { background: #e2e8f0; color: #334155; }
-        .ff-btn.secondary { background: #dbeafe; color: #1e3a8a; }
+        .ff-btn svg { width: 18px; height: 18px; }
+        .ff-btn.primary { background: linear-gradient(180deg, #ef2b24, #c10500); color: #fff; box-shadow: inset 0 1px 0 rgba(255,255,255,0.18); }
+        .ff-btn.muted { background: #e8eef5; color: #1e293b; border: 1px solid #cbd5e1; }
+        .ff-btn.secondary { background: #dbeafe; color: #1e3a8a; border: 1px solid #bfdbfe; }
+        .ff-btn.primary:hover { filter: brightness(1.05); }
+        .ff-btn.muted:hover { background: #dce5f0; }
+        .ff-btn.secondary:hover { background: #cfe0ff; }
         .ff-btn:disabled { opacity: 0.55; cursor: wait; }
 
         .ff-total {
