@@ -10,14 +10,68 @@ use Illuminate\Support\Facades\Schema;
 
 class StockMovementController extends Controller
 {
+    public static function normalizeToken(mixed $value): string
+    {
+        $text = mb_strtolower(trim((string) $value));
+        if (class_exists(\Normalizer::class)) {
+            $decomposed = \Normalizer::normalize($text, \Normalizer::FORM_D);
+            if (is_string($decomposed) && $decomposed !== '') {
+                $text = $decomposed;
+            }
+            $text = preg_replace('/\p{Mn}+/u', '', $text) ?? $text;
+        }
+        $text = preg_replace('/[^a-z0-9]+/u', ' ', $text) ?? $text;
+        $text = preg_replace('/\s+/u', ' ', trim($text)) ?? $text;
+
+        return $text;
+    }
+
     public static function lineKey(mixed $reference, mixed $description): string
     {
-        $ref = mb_strtolower(trim((string) $reference));
+        $ref = self::normalizeToken($reference);
+        $ref = preg_replace('/[\s\-_]+/u', '', $ref) ?? $ref;
         if ($ref !== '') {
             return 'ref:'.$ref;
         }
 
-        return 'desc:'.mb_strtolower(trim((string) $description));
+        return 'desc:'.self::normalizeToken($description);
+    }
+
+    public static function resolveRowKey(array &$rows, array &$byDesc, mixed $reference, mixed $description): string
+    {
+        $refNorm = preg_replace('/[\s\-_]+/u', '', self::normalizeToken($reference)) ?? '';
+        $refKey = $refNorm !== '' ? 'ref:'.$refNorm : null;
+        $descNorm = self::normalizeToken($description);
+        $descKey = $descNorm !== '' ? 'desc:'.$descNorm : null;
+
+        if ($refKey && isset($rows[$refKey])) {
+            if ($descKey) {
+                $byDesc[$descKey] = $refKey;
+            }
+
+            return $refKey;
+        }
+
+        if ($descKey && isset($byDesc[$descKey], $rows[$byDesc[$descKey]])) {
+            $existing = $byDesc[$descKey];
+            if ($refKey && $existing !== $refKey && ! isset($rows[$refKey])) {
+                $rows[$refKey] = $rows[$existing];
+                $rows[$refKey]['key'] = $refKey;
+                unset($rows[$existing]);
+                $byDesc[$descKey] = $refKey;
+
+                return $refKey;
+            }
+
+            return $existing;
+        }
+
+        $key = $refKey ?? $descKey ?? 'desc:';
+        if ($descKey) {
+            $byDesc[$descKey] = $key;
+        }
+
+        return $key;
     }
 
     public static function products()
@@ -27,9 +81,21 @@ class StockMovementController extends Controller
         }
 
         $rows = [];
+        $byDesc = [];
         foreach (self::purchaseLines() as $line) {
-            $key = self::lineKey($line->article_ref, $line->description);
-            $rows[$key] ??= self::blankRow($line);
+            $key = self::resolveRowKey($rows, $byDesc, $line->article_ref, $line->description);
+            if (! isset($rows[$key])) {
+                $rows[$key] = self::blankRow($line);
+                $rows[$key]['key'] = $key;
+            } else {
+                $ref = trim((string) ($line->article_ref ?? ''));
+                if ($ref !== '' && trim((string) $rows[$key]['reference']) === '') {
+                    $rows[$key]['reference'] = $ref;
+                }
+                if (trim((string) $rows[$key]['designation']) === '') {
+                    $rows[$key]['designation'] = trim((string) $line->description);
+                }
+            }
             $rows[$key]['achat'] += (float) $line->quantity;
             self::addMonth($rows[$key], $line->sort_date ?? null, 'achat', (float) $line->quantity);
             $rows[$key]['purchase_price'] = round((float) $line->unit_price, 2);
@@ -48,7 +114,7 @@ class StockMovementController extends Controller
                 ->get(['i.article_ref', 'i.description', 'i.quantity', 'f.invoice_date']);
 
             foreach ($sales as $line) {
-                $key = self::lineKey($line->article_ref, $line->description);
+                $key = self::resolveRowKey($rows, $byDesc, $line->article_ref, $line->description);
                 if (! isset($rows[$key])) {
                     continue;
                 }
@@ -65,7 +131,7 @@ class StockMovementController extends Controller
                 ->get(['i.article_ref', 'i.description', 'i.quantity', 'o.order_date']);
 
             foreach ($deliveries as $line) {
-                $key = self::lineKey($line->article_ref, $line->description);
+                $key = self::resolveRowKey($rows, $byDesc, $line->article_ref, $line->description);
                 if (! isset($rows[$key])) {
                     continue;
                 }

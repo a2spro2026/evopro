@@ -874,10 +874,11 @@
 
         .procar-table {
             width: 100%;
-            border-collapse: separate;
+            border-collapse: collapse;
             border-spacing: 0;
             min-width: 760px;
             color: #0f172a;
+            border: 1px solid #cbd5e1;
         }
 
         .procar-table th {
@@ -886,7 +887,7 @@
             z-index: 3;
             padding: 0.75rem 0.7rem;
             background: #5c1220;
-            border-bottom: 1px solid #8f2436;
+            border: 1px solid #8f2436;
             font-size: 0.68rem;
             font-weight: 800;
             letter-spacing: 0.05em;
@@ -894,20 +895,45 @@
             text-align: center;
             color: #fff;
             white-space: nowrap;
-            box-shadow: inset 0 -1px 0 #8f2436;
         }
 
         [data-theme="light"] .procar-table th {
             background: #f3d5db;
             color: #5c1220;
-            border-bottom-color: #e7c9cf;
+            border-color: #e7c9cf;
         }
 
         .procar-table td {
-            padding: 1.4rem 0.7rem;
+            padding: 0.85rem 0.7rem;
             text-align: center;
             color: #000;
             font-size: 0.86rem;
+            border: 1px solid #cbd5e1;
+        }
+
+        [data-theme="light"] .procar-table td {
+            border-color: #e4c5cb;
+        }
+
+        .ba-lines,
+        .bl-lines,
+        .fa-lines,
+        .ra-lines,
+        .rc-lines {
+            border-collapse: collapse;
+        }
+
+        .ba-lines th,
+        .ba-lines td,
+        .bl-lines th,
+        .bl-lines td,
+        .fa-lines th,
+        .fa-lines td,
+        .ra-lines th,
+        .ra-lines td,
+        .rc-lines th,
+        .rc-lines td {
+            border: 1px solid #475569;
         }
 
         .procar-soon {
@@ -941,9 +967,29 @@
 
         .ff-grid {
             display: grid;
-            grid-template-columns: 88px 92px minmax(160px, 1.5fr) minmax(120px, 1fr) minmax(120px, 1fr) 96px 96px minmax(110px, 0.95fr);
-            gap: 0.55rem;
+            grid-template-columns: 84px 88px minmax(140px, 1.35fr) minmax(110px, 1fr) 88px 88px 88px 92px auto minmax(170px, 0.9fr);
+            gap: 0.45rem;
             align-items: end;
+        }
+
+        #panel-f-fiche .ff-grid {
+            grid-template-columns: 84px 88px minmax(150px, 1.4fr) minmax(110px, 1fr) 78px 88px 88px 92px auto minmax(160px, 0.85fr);
+        }
+
+        .ff-grid .ff-solde {
+            max-width: 92px;
+        }
+
+        #panel-f-fiche .ff-grid > div:nth-child(5) {
+            max-width: 78px;
+        }
+
+        .ff-inline-actions {
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+            height: 38px;
+            margin-top: calc(0.9rem + 0.28rem);
         }
 
         .ff-grid > div {
@@ -1037,6 +1083,16 @@
             padding-top: 0.75rem;
             border-top: 1px solid #e2e8f0;
             min-height: 46px;
+        }
+
+        #panel-f-fiche .ff-bar {
+            display: none;
+        }
+
+        #panel-f-fiche .ff-grid .ff-total {
+            margin-left: 0;
+            justify-self: end;
+            min-height: 38px;
         }
 
         .ff-btn {

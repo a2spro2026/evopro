@@ -661,11 +661,13 @@
     function productLabel(product, field) {
         if (field === 'ref') return product.reference || '';
         if (field === 'equiv') return product.equiv || '';
+        if (field === 'brand') return product.brand || '';
+        if (field === 'family') return product.family || '';
         return product.designation || '';
     }
     function filterCatalog(field, typed) {
         const needle = norm(typed);
-        if (!needle) return [];
+        if (!needle || needle.length < 1) return [];
         return catalog.filter((product) => norm(productLabel(product, field)).startsWith(needle));
     }
     function matchCatalogExact(field, typed) {
@@ -952,15 +954,17 @@
     }
     linesBody.addEventListener('input', (event) => {
         const row = event.target.closest('tr');
-        if (event.target.matches('[data-f="ref"], [data-f="equiv"], [data-f="desc"]')) {
+        if (event.target.matches('[data-f="ref"], [data-f="equiv"], [data-f="desc"], [data-f="brand"], [data-f="family"]')) {
             tryAutofillProduct(row, event.target.getAttribute('data-f'), event.target.value);
+            refreshLine(row);
         }
         recalc();
     });
     linesBody.addEventListener('change', (event) => {
         const row = event.target.closest('tr');
-        if (event.target.matches('[data-f="ref"], [data-f="equiv"], [data-f="desc"]')) {
+        if (event.target.matches('[data-f="ref"], [data-f="equiv"], [data-f="desc"], [data-f="brand"], [data-f="family"]')) {
             tryAutofillProduct(row, event.target.getAttribute('data-f'), event.target.value);
+            refreshLine(row);
         }
         recalc();
     });

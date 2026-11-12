@@ -85,7 +85,7 @@
                         <input id="baFrns" maxlength="64" placeholder="CF-0001" list="baFrnsList">
                         <datalist id="baFrnsList"></datalist>
                     </div>
-                    <div class="ba-field ba-span-2">
+                    <div class="ba-field ba-supplier">
                         <label for="baSupplier">Nom Fournisseur</label>
                         <input id="baSupplier" required maxlength="255" placeholder="Nom fournisseur" list="baSupplierList">
                         <datalist id="baSupplierList"></datalist>
@@ -232,11 +232,11 @@
     .ba-error { margin-bottom: 0.75rem; padding: 0.65rem 0.8rem; border-radius: 10px; background: rgba(127,29,29,0.35); color: #fecaca; border: 1px solid #7f1d1d; font-size: 0.82rem; }
     .ba-grid {
         display: grid;
-        grid-template-columns: 140px 110px minmax(220px, 1.6fr) 130px 110px 110px;
-        gap: 0.65rem;
+        grid-template-columns: 128px 96px minmax(150px, 1fr) 118px 96px 96px;
+        gap: 0.5rem;
         align-items: end;
     }
-    .ba-span-2 { grid-column: span 1; }
+    .ba-supplier { min-width: 0; max-width: 220px; }
     .ba-field { display: flex; flex-direction: column; gap: 0.3rem; min-width: 0; }
     .ba-field label { font-size: 0.68rem; font-weight: 700; letter-spacing: 0.04em; color: #94a3b8; }
     .ba-field input, .ba-field select {
@@ -373,7 +373,7 @@
     @media (max-width: 900px) {
         .ba-window { left: 0; }
         .ba-grid { grid-template-columns: 1fr 1fr; }
-        .ba-field.ba-span-2 { grid-column: 1 / -1; }
+        .ba-field.ba-supplier { grid-column: 1 / -1; max-width: none; }
     }
 </style>
 <script>

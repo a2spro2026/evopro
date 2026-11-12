@@ -51,18 +51,18 @@
                 <label for="ffSolde">Solde Initial</label>
                 <input id="ffSolde" inputmode="decimal" placeholder="0.00">
             </div>
-        </div>
-        <div class="ff-bar">
-            <button type="submit" class="ff-btn primary" id="ffSave" title="Enregistrer" aria-label="Enregistrer">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><path d="M17 21v-8H7v8"/><path d="M7 3v5h8"/></svg>
-            </button>
-            <button type="button" class="ff-btn muted" id="ffReset" title="Nouveau" aria-label="Nouveau">
-                <svg class="ff-ico-new" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 5v14"/><path d="M5 12h14"/></svg>
-                <svg class="ff-ico-cancel" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" hidden><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
-            </button>
-            <button type="button" class="ff-btn secondary" id="ffRefresh" title="Actualiser" aria-label="Actualiser">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12a9 9 0 1 1-2.6-6.4"/><path d="M21 3v6h-6"/></svg>
-            </button>
+            <div class="ff-inline-actions">
+                <button type="submit" class="ff-btn primary" id="ffSave" title="Enregistrer" aria-label="Enregistrer">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><path d="M17 21v-8H7v8"/><path d="M7 3v5h8"/></svg>
+                </button>
+                <button type="button" class="ff-btn muted" id="ffReset" title="Nouveau" aria-label="Nouveau">
+                    <svg class="ff-ico-new" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 5v14"/><path d="M5 12h14"/></svg>
+                    <svg class="ff-ico-cancel" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" hidden><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
+                </button>
+                <button type="button" class="ff-btn secondary" id="ffRefresh" title="Actualiser" aria-label="Actualiser">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12a9 9 0 1 1-2.6-6.4"/><path d="M21 3v6h-6"/></svg>
+                </button>
+            </div>
             <div class="ff-total" id="ffTotal">
                 <div>
                     <small>Total Soldes Fournisseurs</small>

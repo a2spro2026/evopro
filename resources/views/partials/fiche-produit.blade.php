@@ -108,6 +108,35 @@
     #panel-s-prod .fp-refresh svg { width: 16px; height: 16px; }
     #panel-s-prod .fp-actif { color: #4ade80; font-weight: 800; }
     #panel-s-prod .fp-rupture { color: #f87171; font-weight: 800; }
+    #panel-s-prod .procar-table { table-layout: fixed; min-width: 1100px; }
+    #panel-s-prod .procar-table th:nth-child(1),
+    #panel-s-prod .procar-table td:nth-child(1) { width: 7.5%; } /* Code */
+    #panel-s-prod .procar-table th:nth-child(2),
+    #panel-s-prod .procar-table td:nth-child(2) { width: 11%; } /* Réf */
+    #panel-s-prod .procar-table th:nth-child(3),
+    #panel-s-prod .procar-table td:nth-child(3) { width: 8%; } /* Code barre réduit */
+    #panel-s-prod .procar-table th:nth-child(4),
+    #panel-s-prod .procar-table td:nth-child(4) { width: 22%; text-align: left; padding-left: 0.65rem; } /* Désignation */
+    #panel-s-prod .procar-table th:nth-child(5),
+    #panel-s-prod .procar-table td:nth-child(5),
+    #panel-s-prod .procar-table th:nth-child(6),
+    #panel-s-prod .procar-table td:nth-child(6) { width: 8%; }
+    #panel-s-prod .procar-table th:nth-child(7),
+    #panel-s-prod .procar-table td:nth-child(7),
+    #panel-s-prod .procar-table th:nth-child(8),
+    #panel-s-prod .procar-table td:nth-child(8) { width: 6%; }
+    #panel-s-prod .procar-table th:nth-child(9),
+    #panel-s-prod .procar-table td:nth-child(9),
+    #panel-s-prod .procar-table th:nth-child(11),
+    #panel-s-prod .procar-table td:nth-child(11) { width: 8%; }
+    #panel-s-prod .procar-table th:nth-child(10),
+    #panel-s-prod .procar-table td:nth-child(10) { width: 3.5%; }
+    #panel-s-prod .procar-table th:nth-child(12),
+    #panel-s-prod .procar-table td:nth-child(12),
+    #panel-s-prod .procar-table th:nth-child(13),
+    #panel-s-prod .procar-table td:nth-child(13) { width: 6.5%; }
+    #panel-s-prod .procar-table td:nth-child(1),
+    #panel-s-prod .procar-table td:nth-child(2) { font-weight: 700; }
     [data-theme="light"] #panel-s-prod .fp-filters label { color: #5c1220; }
     [data-theme="light"] #panel-s-prod .fp-filters input,
     [data-theme="light"] #panel-s-prod .fp-filters select { background: #fff; color: #1a1214; border-color: #e4c5cb; }
