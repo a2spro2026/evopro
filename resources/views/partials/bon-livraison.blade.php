@@ -320,9 +320,12 @@
         font-size: 0.68rem; color: #94a3b8; pointer-events: none;
     }
     .bl-lines .bl-line-x {
-        width: 28px; height: 28px; border: none; border-radius: 8px; background: transparent;
-        color: #f87171; cursor: pointer; font-size: 1rem;
+        display: inline-grid; place-items: center; width: 30px; height: 30px; padding: 0;
+        border: 1px solid rgba(220, 38, 38, 0.35); border-radius: 9px;
+        background: #fef2f2; color: #dc2626; cursor: pointer;
     }
+    .bl-lines .bl-line-x svg { width: 15px; height: 15px; }
+    .bl-lines .bl-line-x:hover { background: #dc2626; color: #fff; border-color: #dc2626; }
     .bl-totals {
         display: grid; grid-template-columns: repeat(2, minmax(0, 180px)); gap: 0.55rem;
         justify-content: end; margin-top: 0.8rem;
@@ -705,7 +708,7 @@
             <td><input data-f="price" inputmode="decimal" value="${esc(item.price != null ? moneyDot(item.price) : (known ? moneyDot(known.purchase_price ?? known.unit_price ?? 0) : ''))}" placeholder="0.00"></td>
             <td><div class="bl-remise"><input data-f="remise" inputmode="decimal" value="${esc(item.remise != null ? item.remise : 0)}"><span>%</span></div></td>
             <td><input data-f="sub" readonly tabindex="-1" value="0.00"></td>
-            <td><button type="button" class="bl-line-x" data-remove title="Retirer">×</button></td>`;
+            <td><button type="button" class="bl-line-x" data-remove title="Retirer" aria-label="Retirer">${trash}</button></td>`;
         if (known) applyCatalogProduct(tr, known);
         refreshLine(tr);
         return tr;

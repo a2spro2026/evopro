@@ -214,7 +214,7 @@
             <td><input data-f="bnq" maxlength="64"></td>
             <td><input data-f="tire" maxlength="255"></td>
             <td><input data-f="solde" readonly tabindex="-1" value="0.00"></td>
-            <td><button type="button" class="fa-line-x" data-remove title="Retirer">×</button></td>`;
+            <td><button type="button" class="fa-line-x" data-remove title="Retirer" aria-label="Retirer">${trash}</button></td>`;
         if (line) {
             tr.querySelector('[data-f="amount"]').value = moneyDot(line.amount);
             tr.querySelector('[data-f="type"]').value = line.method || '';

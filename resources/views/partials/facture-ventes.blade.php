@@ -349,7 +349,13 @@
     .fa-remise { position: relative; }
     .fa-remise input { padding-right: 1.1rem; }
     .fa-remise span { position: absolute; right: 8px; top: 50%; transform: translateY(-50%); font-size: 0.68rem; color: #94a3b8; pointer-events: none; }
-    .fa-line-x { border: none; background: transparent; color: #f87171; cursor: pointer; font-size: 1rem; }
+    .fa-line-x {
+        display: inline-grid; place-items: center; width: 30px; height: 30px; padding: 0;
+        border: 1px solid rgba(220, 38, 38, 0.35); border-radius: 9px;
+        background: #fef2f2; color: #dc2626; cursor: pointer;
+    }
+    .fa-line-x svg { width: 15px; height: 15px; }
+    .fa-line-x:hover { background: #dc2626; color: #fff; border-color: #dc2626; }
     .fa-totals { display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.55rem; margin-top: 0.8rem; }
     .fa-totals div { border-radius: 12px; padding: 0.55rem 0.4rem; text-align: center; background: #1e293b; border: 1px solid #334155; }
     .fa-totals small { display: block; font-size: 0.62rem; font-weight: 800; letter-spacing: 0.06em; text-transform: uppercase; color: #94a3b8; }
@@ -589,7 +595,7 @@
             <td><input data-f="price" required readonly tabindex="-1" inputmode="decimal" placeholder="0.00" value=""></td>
             <td><div class="fa-remise"><input data-f="remise" inputmode="decimal" value="${esc(item?.remise ?? 0)}"><span>%</span></div></td>
             <td><input data-f="sub" readonly tabindex="-1" value="0.00"></td>
-            <td><button type="button" class="fa-line-x" data-remove title="Retirer">×</button></td>`;
+            <td><button type="button" class="fa-line-x" data-remove title="Retirer" aria-label="Retirer">${trash}</button></td>`;
         if (known) applyCatalogProduct(tr, known);
         refreshLine(tr);
         return tr;
