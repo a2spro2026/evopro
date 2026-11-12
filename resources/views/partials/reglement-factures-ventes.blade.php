@@ -414,7 +414,13 @@
         const row = group[0];
         if (!row) return;
         if (button.dataset.act === 'voir') openView(group);
-        if (button.dataset.act === 'modifier') openEdit(group);
+        if (button.dataset.act === 'modifier') {
+            const id = row.id;
+            try { await load(); } catch (error) { showError(error.message); }
+            const fresh = paymentGroup(String(id));
+            if (!fresh.length) { showError('Règlement introuvable.'); return; }
+            openEdit(fresh);
+        }
         if (button.dataset.act === 'supprimer') {
             if (!window.confirm(`Supprimer le règlement ${row.reference} ?`)) return;
             const response = await fetch(`/reglements-factures-ventes/${row.id}`, { method: 'DELETE', headers: { 'Accept': 'application/json', 'X-CSRF-TOKEN': csrf } });

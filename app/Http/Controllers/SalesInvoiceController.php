@@ -63,7 +63,7 @@ class SalesInvoiceController extends Controller
 
     public function store(Request $request): JsonResponse
     {
-        $data = $this->validated($request);
+        $data = $this->validated($request, null);
 
         $invoice = DB::transaction(function () use ($data) {
             [$lines, $totals] = $this->buildLines($data);
@@ -90,7 +90,7 @@ class SalesInvoiceController extends Controller
 
     public function update(Request $request, SalesInvoice $salesInvoice): JsonResponse
     {
-        $data = $this->validated($request);
+        $data = $this->validated($request, $salesInvoice);
 
         $invoice = DB::transaction(function () use ($data, $salesInvoice) {
             [$lines, $totals] = $this->buildLines($data);
@@ -121,7 +121,7 @@ class SalesInvoiceController extends Controller
         return response()->json(['message' => 'Facture supprimée']);
     }
 
-    private function validated(Request $request): array
+    private function validated(Request $request, ?SalesInvoice $invoice = null): array
     {
         $data = $request->validate([
             'client_id' => ['nullable', 'integer', 'exists:customers,id'],
@@ -145,9 +145,30 @@ class SalesInvoiceController extends Controller
         foreach ($data['items'] as $index => $item) {
             $product = $catalog->get(StockMovementController::lineKey($item['article_ref'] ?? '', $item['description'] ?? ''));
             if (! $product) {
-                throw ValidationException::withMessages([
-                    "items.$index.description" => 'Choisissez un article de la fiche produit.',
-                ]);
+                foreach ($catalog as $candidate) {
+                    $ref = StockMovementController::normalizeToken($candidate['reference'] ?? '');
+                    $desc = StockMovementController::normalizeToken($candidate['designation'] ?? '');
+                    $needleRef = StockMovementController::normalizeToken($item['article_ref'] ?? '');
+                    $needleDesc = StockMovementController::normalizeToken($item['description'] ?? '');
+                    if (($needleRef !== '' && $needleRef === $ref) || ($needleDesc !== '' && $needleDesc === $desc)) {
+                        $product = $candidate;
+                        break;
+                    }
+                }
+            }
+            if (! $product) {
+                if (! $invoice) {
+                    throw ValidationException::withMessages([
+                        "items.$index.description" => 'Choisissez un article de la fiche produit.',
+                    ]);
+                }
+                $data['items'][$index]['article_ref'] = trim((string) ($item['article_ref'] ?? '')) ?: null;
+                $data['items'][$index]['equiv'] = trim((string) ($item['equiv'] ?? '')) ?: null;
+                $data['items'][$index]['description'] = trim((string) $item['description']);
+                $data['items'][$index]['brand'] = trim((string) ($item['brand'] ?? '')) ?: null;
+                $data['items'][$index]['family'] = trim((string) ($item['family'] ?? '')) ?: null;
+                $data['items'][$index]['purchase_price'] = round((float) ($item['unit_price'] ?? 0), 2);
+                continue;
             }
             $data['items'][$index]['article_ref'] = $product['reference'] !== '' ? $product['reference'] : null;
             $data['items'][$index]['equiv'] = trim((string) ($item['equiv'] ?? $product['equiv'] ?? '')) ?: null;

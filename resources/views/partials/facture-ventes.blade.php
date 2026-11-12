@@ -572,7 +572,6 @@
         const achatInput = row.querySelector('[data-f="achat"]');
         const priceInput = row.querySelector('[data-f="price"]');
         if (!product) {
-            achatInput.value = '';
             return;
         }
         const achat = moneyDot(product.purchase_price || 0);
@@ -585,14 +584,16 @@
             || knownProduct(item?.description || '')
             || knownProduct(item?.equiv || '');
         if (known) tr.dataset.product = known.key || known.code || '';
+        const seedPrice = item?.purchase_price ?? item?.unit_price;
+        const seed = seedPrice != null && seedPrice !== '' ? moneyDot(seedPrice) : '';
         tr.innerHTML = `<td><input data-f="ref" maxlength="64" placeholder="Réf" value="${esc(item?.article_ref || known?.reference || '')}" autocomplete="off"></td>
             <td><input data-f="equiv" maxlength="64" placeholder="Equiv" value="${esc(item?.equiv || known?.equiv || '')}" autocomplete="off"></td>
             <td><input data-f="desc" required maxlength="255" placeholder="Désignation" value="${esc(item?.description || known?.designation || '')}" autocomplete="off"></td>
             <td><input data-f="brand" maxlength="120" placeholder="Marque" value="${esc(item?.brand || known?.brand || '')}" autocomplete="off"></td>
             <td><input data-f="family" maxlength="120" placeholder="Famille" value="${esc(item?.family || known?.family || '')}" autocomplete="off"></td>
-            <td><input data-f="achat" readonly tabindex="-1" value=""></td>
+            <td><input data-f="achat" readonly tabindex="-1" value="${esc(seed)}"></td>
             <td><input data-f="qty" required inputmode="decimal" value="${esc(item?.quantity ?? 1)}"></td>
-            <td><input data-f="price" required readonly tabindex="-1" inputmode="decimal" placeholder="0.00" value=""></td>
+            <td><input data-f="price" required readonly tabindex="-1" inputmode="decimal" placeholder="0.00" value="${esc(seed)}"></td>
             <td><div class="fa-remise"><input data-f="remise" inputmode="decimal" value="${esc(item?.remise ?? 0)}"><span>%</span></div></td>
             <td><input data-f="sub" readonly tabindex="-1" value="0.00"></td>
             <td><button type="button" class="fa-line-x" data-remove title="Retirer" aria-label="Retirer">${trash}</button></td>`;
@@ -945,11 +946,21 @@
         if (!event.target.closest('.fa-supplier')) supplierMenu.hidden = true;
     });
     ice.addEventListener('input', () => { ice.value = ice.value.replace(/\D/g, '').slice(0, 15); });
-    async function openFresh(row) {
+    async function openFresh() {
         try { await load(); } catch (error) { showError(error.message); }
-        openModal(row || null);
+        openModal(null);
     }
-    document.getElementById('fvAdd').addEventListener('click', () => openFresh(null));
+    async function openEdit(row) {
+        const id = row?.id;
+        try { await load(); } catch (error) { showError(error.message); }
+        const fresh = rows.find((item) => String(item.id) === String(id)) || row;
+        if (!fresh) {
+            showError('Facture introuvable.');
+            return;
+        }
+        openModal(fresh);
+    }
+    document.getElementById('fvAdd').addEventListener('click', () => openFresh());
     document.getElementById('fvClose').addEventListener('click', closeModal);
     document.getElementById('fvCloseX').addEventListener('click', () => { if (entryOpen()) blockLeave(); });
     document.getElementById('fvRefresh').addEventListener('click', () => load().catch((error) => showError(error.message)));
@@ -1027,7 +1038,7 @@
         const row = rows.find((item) => String(item.id) === button.dataset.id);
         if (!row) return;
         if (button.dataset.act === 'voir') openView(row);
-        if (button.dataset.act === 'modifier') openFresh(row);
+        if (button.dataset.act === 'modifier') openEdit(row);
         if (button.dataset.act === 'imprimer' || button.dataset.act === 'pdf') printRow(row);
         if (button.dataset.act === 'payer') {
             document.querySelector('[data-panel="fa-regl"]')?.click();
@@ -1067,8 +1078,14 @@
         const known = (meta.clients || []).find((item) => String(item.name || '').trim().toLowerCase() === supplierName.toLowerCase());
         const supplierId = supplier.dataset.id || (known ? String(known.id) : '');
         if (!/^\d{15}$/.test(ice.value)) { showError('L’ICE doit contenir 15 chiffres.'); return; }
-        if (!items.length || items.some((item) => !item.description || !knownProduct(item.article_ref || item.description))) {
-            showError('Choisissez la réf et la désignation dans la fiche produit.');
+        if (!items.length || items.some((item) => {
+            if (!item.description || !(item.quantity > 0)) return true;
+            if (knownProduct(item.article_ref || item.description)) return false;
+            return !(editingId && Number.isFinite(item.unit_price) && item.unit_price >= 0);
+        })) {
+            showError(editingId
+                ? 'Chaque ligne doit avoir une désignation, une quantité et un prix.'
+                : 'Choisissez la réf et la désignation dans la fiche produit.');
             return;
         }
         const totalTtc = recalc();

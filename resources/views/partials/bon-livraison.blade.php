@@ -704,8 +704,8 @@
             <td><input data-f="desc" required maxlength="255" value="${esc(item.description || item.designation || known?.designation || '')}" placeholder="Désignation" autocomplete="off"></td>
             <td>${brandField(item.brand || known?.brand || '')}</td>
             <td>${familyField(item.family || known?.family || '')}</td>
-            <td><input data-f="qty" inputmode="decimal" value="${esc(item.qty != null ? item.qty : 1)}" placeholder="1"></td>
-            <td><input data-f="price" inputmode="decimal" value="${esc(item.price != null ? moneyDot(item.price) : (known ? moneyDot(known.purchase_price ?? known.unit_price ?? 0) : ''))}" placeholder="0.00"></td>
+            <td><input data-f="qty" inputmode="decimal" value="${esc(item.qty != null ? item.qty : (item.quantity != null ? item.quantity : 1))}" placeholder="1"></td>
+            <td><input data-f="price" inputmode="decimal" value="${esc((item.price != null || item.unit_price != null) ? moneyDot(item.price ?? item.unit_price) : (known ? moneyDot(known.purchase_price ?? known.unit_price ?? 0) : ''))}" placeholder="0.00"></td>
             <td><div class="bl-remise"><input data-f="remise" inputmode="decimal" value="${esc(item.remise != null ? item.remise : 0)}"><span>%</span></div></td>
             <td><input data-f="sub" readonly tabindex="-1" value="0.00"></td>
             <td><button type="button" class="bl-line-x" data-remove title="Retirer" aria-label="Retirer">${trash}</button></td>`;
@@ -1079,7 +1079,12 @@
         const row = rows.find((item) => String(item.id) === button.dataset.id);
         if (!row) return;
         if (button.dataset.act === 'voir') openModal(row, 'view');
-        if (button.dataset.act === 'modifier') openModal(row, 'edit');
+        if (button.dataset.act === 'modifier') {
+            const id = row.id;
+            try { await load(); } catch (error) { showError(error.message); }
+            const fresh = rows.find((item) => String(item.id) === String(id)) || row;
+            openModal(fresh, 'edit');
+        }
         if (button.dataset.act === 'imprimer') printRow(row);
         if (button.dataset.act === 'telecharger') printRow(row, { previewOnly: true });
         if (button.dataset.act === 'supprimer') {

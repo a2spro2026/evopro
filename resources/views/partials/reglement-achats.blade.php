@@ -634,7 +634,12 @@
         const row = rows.find((item) => String(item.id) === button.dataset.id);
         if (!row) return;
         if (button.dataset.act === 'voir') openModal(row, 'view');
-        if (button.dataset.act === 'modifier') openModal(row, 'edit');
+        if (button.dataset.act === 'modifier') {
+            const id = row.id;
+            try { await load(); } catch (error) { showError(error.message); }
+            const fresh = rows.find((item) => String(item.id) === String(id)) || row;
+            openModal(fresh, 'edit');
+        }
         if (button.dataset.act === 'supprimer') {
             if (!window.confirm(`Supprimer le règlement ${row.reference} ?`)) return;
             const response = await fetch(`/reglements-achats/${row.id}`, {

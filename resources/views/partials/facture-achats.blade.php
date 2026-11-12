@@ -654,7 +654,12 @@
         const row = rows.find((item) => String(item.id) === button.dataset.id);
         if (!row) return;
         if (button.dataset.act === 'voir') openView(row);
-        if (button.dataset.act === 'modifier') openModal(row);
+        if (button.dataset.act === 'modifier') {
+            const id = row.id;
+            try { await load(); } catch (error) { showError(error.message); }
+            const fresh = rows.find((item) => String(item.id) === String(id)) || row;
+            openModal(fresh);
+        }
         if (button.dataset.act === 'imprimer' || button.dataset.act === 'pdf') printRow(row);
         if (button.dataset.act === 'supprimer') {
             if (!window.confirm(`Supprimer la facture ${row.reference} ?`)) return;

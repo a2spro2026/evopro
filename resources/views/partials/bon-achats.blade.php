@@ -528,8 +528,8 @@
             <td>${cells.desc}</td>
             <td>${cells.brand}</td>
             <td>${cells.family}</td>
-            <td><input data-f="qty" inputmode="decimal" value="${esc(item.qty != null ? item.qty : 1)}" placeholder="1"></td>
-            <td><input data-f="price" inputmode="decimal" value="${esc(item.price != null ? moneyDot(item.price) : '')}" placeholder="0.00"></td>
+            <td><input data-f="qty" inputmode="decimal" value="${esc(item.qty != null ? item.qty : (item.quantity != null ? item.quantity : 1))}" placeholder="1"></td>
+            <td><input data-f="price" inputmode="decimal" value="${esc((item.price != null || item.unit_price != null) ? moneyDot(item.price ?? item.unit_price) : '')}" placeholder="0.00"></td>
             <td><div class="ba-remise"><input data-f="remise" inputmode="decimal" value="${esc(item.remise != null ? item.remise : 0)}"><span>%</span></div></td>
             <td><input data-f="sub" readonly tabindex="-1" value="0.00"></td>
             <td><button type="button" class="ba-line-x" data-remove title="Retirer" aria-label="Retirer">${trash}</button></td>`;
@@ -911,7 +911,12 @@
         const row = rows.find((item) => String(item.id) === button.dataset.id);
         if (!row) return;
         if (button.dataset.act === 'voir') openModal(row, 'view');
-        if (button.dataset.act === 'modifier') openModal(row, 'edit');
+        if (button.dataset.act === 'modifier') {
+            const id = row.id;
+            try { await load(); } catch (error) { showError(error.message); }
+            const fresh = rows.find((item) => String(item.id) === String(id)) || row;
+            openModal(fresh, 'edit');
+        }
         if (button.dataset.act === 'supprimer') {
             if (!window.confirm(`Supprimer le bon ${row.ref} ?`)) return;
             const response = await fetch(`/bons-achats/${row.id}`, { method: 'DELETE', headers: { 'Accept': 'application/json', 'X-CSRF-TOKEN': csrf } });
