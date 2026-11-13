@@ -283,7 +283,7 @@
     const body = document.getElementById('rcBody');
     const ordersBody = document.getElementById('rcOrders');
     if (!panel || !modal || !form || !body || !ordersBody) return;
-    const csrf = document.querySelector('meta[name="csRC-token"]')?.getAttribute('content') || '';
+    const csrf = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '';
     const errorBox = document.getElementById('rcError');
     const eye = '<svg viewBox="0 0 24 24"><path d="M2 12s3.5-6 10-6 10 6 10 6-3.5 6-10 6S2 12 2 12z" fill="none" stroke="currentColor" stroke-width="1.8"/><circle cx="12" cy="12" r="2.5" fill="none" stroke="currentColor" stroke-width="1.8"/></svg>';
     const pencil = '<svg viewBox="0 0 24 24"><path d="M4 20h4l10-10-4-4L4 16v4z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg>';
@@ -599,7 +599,7 @@
         try {
             const response = await fetch(editingId ? `/reglements-clients/${editingId}` : '/reglements-clients', {
                 method: editingId ? 'PUT' : 'POST',
-                headers: { 'Content-Type': 'application/json', 'Accept': 'application/json', 'X-CSRC-TOKEN': csrf },
+                headers: { 'Content-Type': 'application/json', 'Accept': 'application/json', 'X-CSRF-TOKEN': csrf },
                 body: JSON.stringify({
                     payment_date: document.getElementById('rcDate').value,
                     client_id: Number(clientId),
@@ -644,7 +644,7 @@
             if (!window.confirm(`Supprimer le règlement ${row.reference} ?`)) return;
             const response = await fetch(`/reglements-clients/${row.id}`, {
                 method: 'DELETE',
-                headers: { 'Accept': 'application/json', 'X-CSRC-TOKEN': csrf },
+                headers: { 'Accept': 'application/json', 'X-CSRF-TOKEN': csrf },
             });
             if (!response.ok) { showError('Impossible de supprimer ce règlement.'); return; }
             await load();

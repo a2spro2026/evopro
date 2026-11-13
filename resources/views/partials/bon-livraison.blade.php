@@ -288,6 +288,35 @@
     .bl-lines input[data-f="ref"],
     .bl-lines input[data-f="equiv"],
     .bl-lines input[data-f="barcode"] { text-overflow: ellipsis; }
+    .evopro-prod-menu {
+        position: fixed; z-index: 80; min-width: 280px; max-width: min(420px, calc(100vw - 24px));
+        max-height: 240px; overflow: auto; padding: 0.3rem;
+        border-radius: 12px; border: 1px solid #e7c9cf; background: #fff;
+        box-shadow: 0 18px 40px rgba(28, 10, 16, 0.18);
+    }
+    .evopro-prod-menu[hidden] { display: none !important; }
+    .evopro-prod-menu button {
+        display: grid; grid-template-columns: 96px minmax(0, 1fr); gap: 0.15rem 0.65rem;
+        width: 100%; border: 0; border-radius: 8px; background: transparent;
+        padding: 0.45rem 0.55rem; text-align: left; cursor: pointer; font-family: inherit;
+    }
+    .evopro-prod-menu button:hover,
+    .evopro-prod-menu button.is-active { background: #f8e8eb; }
+    .evopro-prod-menu .ref {
+        grid-row: 1 / span 2; align-self: center;
+        font-size: 0.72rem; font-weight: 800; letter-spacing: 0.02em;
+        color: #5c1220; font-family: ui-monospace, monospace; word-break: break-all;
+    }
+    .evopro-prod-menu .name {
+        font-size: 0.78rem; font-weight: 650; color: #1a1214; line-height: 1.25;
+        white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    }
+    .evopro-prod-menu .meta {
+        font-size: 0.66rem; color: #7a5961; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    }
+    .evopro-prod-menu .empty {
+        padding: 0.7rem 0.8rem; font-size: 0.75rem; color: #7a5961; text-align: center;
+    }
     .bl-lines col.c-desc { width: 22%; }
     .bl-lines col.c-brand { width: 10%; }
     .bl-lines col.c-family { width: 10%; }
@@ -920,6 +949,7 @@
         if (mode !== 'view') document.getElementById('blClient').focus();
     }
     function closeModal() {
+        hideProdMenu();
         modal.hidden = true;
         viewRow = null;
         showError('');
@@ -968,18 +998,112 @@
     document.getElementById('blClt').addEventListener('blur', syncClientFromId);
     document.getElementById('blClient').addEventListener('change', syncIdFromClient);
     document.getElementById('blClient').addEventListener('blur', syncIdFromClient);
-    function tryAutofillProduct(row, field, typed) {
-        if (!row || mode === 'view') return;
-        const matches = filterCatalog(field, typed);
-        const product = matchCatalogExact(field, typed) || (matches.length === 1 ? matches[0] : null);
-        if (!product) {
-            const empty = !String(typed || '').trim();
-            if (empty) clearCatalogProduct(row, field);
-            else if ((field === 'ref' || field === 'equiv') && !matches.length) clearCatalogProduct(row, field);
+    let prodMenu = null;
+    let prodMenuItems = [];
+    let prodMenuIndex = -1;
+    let prodMenuRow = null;
+    function ensureProdMenu() {
+        if (prodMenu) return prodMenu;
+        prodMenu = document.createElement('div');
+        prodMenu.className = 'evopro-prod-menu';
+        prodMenu.hidden = true;
+        prodMenu.setAttribute('role', 'listbox');
+        document.body.appendChild(prodMenu);
+        prodMenu.addEventListener('mousedown', (event) => {
+            const button = event.target.closest('button[data-i]');
+            if (!button) return;
+            event.preventDefault();
+            pickProdMenu(Number(button.dataset.i));
+        });
+        return prodMenu;
+    }
+    function hideProdMenu() {
+        if (!prodMenu) return;
+        prodMenu.hidden = true;
+        prodMenu.innerHTML = '';
+        prodMenuItems = [];
+        prodMenuIndex = -1;
+        prodMenuRow = null;
+    }
+    function placeProdMenu(anchor) {
+        const menu = ensureProdMenu();
+        const rect = anchor.getBoundingClientRect();
+        const width = Math.max(rect.width, 280);
+        let left = rect.left;
+        if (left + width > window.innerWidth - 12) left = Math.max(12, window.innerWidth - width - 12);
+        let top = rect.bottom + 6;
+        menu.hidden = false;
+        menu.style.width = `${width}px`;
+        menu.style.left = `${left}px`;
+        menu.style.top = `${top}px`;
+        const menuHeight = menu.offsetHeight || 240;
+        if (top + menuHeight > window.innerHeight - 12) {
+            top = Math.max(12, rect.top - menuHeight - 6);
+            menu.style.top = `${top}px`;
+        }
+    }
+    function renderProdMenu(matches) {
+        const menu = ensureProdMenu();
+        prodMenuItems = matches.slice(0, 12);
+        prodMenuIndex = prodMenuItems.length ? 0 : -1;
+        if (!prodMenuItems.length) {
+            menu.innerHTML = '<div class="empty">Aucun article</div>';
             return;
         }
+        menu.innerHTML = prodMenuItems.map((product, index) => {
+            const meta = [product.equiv, product.brand, product.family].filter(Boolean).join(' · ') || 'Fiche produit';
+            return `<button type="button" role="option" data-i="${index}" class="${index === 0 ? 'is-active' : ''}">
+                <span class="ref">${esc(product.reference || '—')}</span>
+                <span class="name">${esc(product.designation || '—')}</span>
+                <span class="meta">${esc(meta)}</span>
+            </button>`;
+        }).join('');
+    }
+    function setProdMenuActive(next) {
+        if (!prodMenuItems.length) return;
+        prodMenuIndex = (next + prodMenuItems.length) % prodMenuItems.length;
+        [...prodMenu.querySelectorAll('button[data-i]')].forEach((button) => {
+            button.classList.toggle('is-active', Number(button.dataset.i) === prodMenuIndex);
+        });
+        prodMenu.querySelector(`button[data-i="${prodMenuIndex}"]`)?.scrollIntoView({ block: 'nearest' });
+    }
+    function pickProdMenu(index) {
+        const product = prodMenuItems[index];
+        const row = prodMenuRow;
+        if (!product || !row) return;
         const key = choiceValue(product);
         if (sameProductOnOtherLine(row, key)) {
+            showError('Ce produit est déjà sur ce bon.');
+            hideProdMenu();
+            return;
+        }
+        applyCatalogProduct(row, product);
+        refreshLine(row);
+        recalc();
+        showError('');
+        hideProdMenu();
+    }
+    function tryAutofillProduct(row, field, typed, anchor) {
+        if (!row || mode === 'view') return;
+        const matches = filterCatalog(field, typed);
+        const exact = matchCatalogExact(field, typed);
+        if (!String(typed || '').trim()) {
+            clearCatalogProduct(row, field);
+            hideProdMenu();
+            return;
+        }
+        if (!matches.length) {
+            if (field === 'ref' || field === 'equiv') clearCatalogProduct(row, field);
+            hideProdMenu();
+            return;
+        }
+        const usable = matches.filter((product) => !sameProductOnOtherLine(row, choiceValue(product)));
+        prodMenuRow = row;
+        renderProdMenu(usable.length ? usable : matches);
+        placeProdMenu(anchor);
+        const product = exact || (usable.length === 1 ? usable[0] : null);
+        if (!product) return;
+        if (sameProductOnOtherLine(row, choiceValue(product))) {
             showError('Ce produit est déjà sur ce bon.');
             return;
         }
@@ -988,20 +1112,31 @@
     }
     linesBody.addEventListener('input', (event) => {
         const row = event.target.closest('tr');
-        if (event.target.matches('[data-f="ref"], [data-f="equiv"], [data-f="desc"], [data-f="brand"], [data-f="family"]')) {
-            tryAutofillProduct(row, event.target.getAttribute('data-f'), event.target.value);
+        if (event.target.matches('[data-f="ref"], [data-f="equiv"], [data-f="desc"]')) {
+            tryAutofillProduct(row, event.target.getAttribute('data-f'), event.target.value, event.target);
+            refreshLine(row);
+        } else if (event.target.matches('[data-f="brand"], [data-f="family"]')) {
+            hideProdMenu();
             refreshLine(row);
         }
         recalc();
     });
-    linesBody.addEventListener('change', (event) => {
-        const row = event.target.closest('tr');
-        if (event.target.matches('[data-f="ref"], [data-f="equiv"], [data-f="desc"], [data-f="brand"], [data-f="family"]')) {
-            tryAutofillProduct(row, event.target.getAttribute('data-f'), event.target.value);
-            refreshLine(row);
-        }
-        recalc();
+    linesBody.addEventListener('keydown', (event) => {
+        if (!prodMenu || prodMenu.hidden || mode === 'view') return;
+        if (!event.target.matches('[data-f="ref"], [data-f="equiv"], [data-f="desc"]')) return;
+        if (event.key === 'ArrowDown') { event.preventDefault(); setProdMenuActive(prodMenuIndex + 1); }
+        else if (event.key === 'ArrowUp') { event.preventDefault(); setProdMenuActive(prodMenuIndex - 1); }
+        else if (event.key === 'Enter' && prodMenuIndex >= 0) { event.preventDefault(); pickProdMenu(prodMenuIndex); }
+        else if (event.key === 'Escape') { event.preventDefault(); hideProdMenu(); }
     });
+    linesBody.addEventListener('focusout', (event) => {
+        if (!event.target.matches('[data-f="ref"], [data-f="equiv"], [data-f="desc"]')) return;
+        setTimeout(() => {
+            if (!prodMenu?.contains(document.activeElement)) hideProdMenu();
+        }, 120);
+    });
+    document.addEventListener('scroll', hideProdMenu, true);
+    window.addEventListener('resize', hideProdMenu);
     linesBody.addEventListener('click', (event) => {
         const button = event.target.closest('[data-remove]');
         if (!button) return;

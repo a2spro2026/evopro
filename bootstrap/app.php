@@ -20,7 +20,7 @@ return Application::configure(basePath: dirname(__DIR__))
             if ($response->getStatusCode() === 419 && ($request->expectsJson() || $request->ajax())) {
                 return response()->json([
                     'ok' => false,
-                    'message' => 'Session expirée. Réessayez l’import.',
+                    'message' => 'Session expirée. Rechargez la page puis réessayez.',
                 ], 419);
             }
 
