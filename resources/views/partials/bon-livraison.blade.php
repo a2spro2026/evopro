@@ -279,7 +279,7 @@
     }
     .bl-add-line:hover { background: #8f2436; }
     .bl-lines-wrap {
-        max-height: 340px; overflow: auto; border: 1px solid #334155; border-radius: 10px;
+        max-height: min(52vh, 520px); overflow: auto; border: 1px solid #334155; border-radius: 10px;
     }
     .bl-lines { width: 100%; border-collapse: collapse; table-layout: fixed; min-width: 1180px; }
     .bl-lines col.c-ref { width: 10%; }

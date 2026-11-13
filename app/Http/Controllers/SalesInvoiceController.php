@@ -129,7 +129,7 @@ class SalesInvoiceController extends Controller
             'ice' => ['required', 'digits:15'],
             'invoice_date' => ['required', 'date'],
             'total_ttc' => ['nullable', 'numeric', 'min:0'],
-            'items' => ['required', 'array', 'min:1'],
+            'items' => ['required', 'array', 'min:1', 'max:50'],
             'items.*.article_ref' => ['nullable', 'string', 'max:64'],
             'items.*.equiv' => ['nullable', 'string', 'max:64'],
             'items.*.description' => ['required', 'string', 'max:255'],
@@ -138,6 +138,8 @@ class SalesInvoiceController extends Controller
             'items.*.quantity' => ['required', 'numeric', 'min:0.001'],
             'items.*.unit_price' => ['required', 'numeric', 'min:0'],
             'items.*.remise' => ['nullable', 'numeric', 'min:0', 'max:100'],
+        ], [
+            'items.max' => 'Une facture comprend au maximum 50 articles.',
         ]);
 
         $catalog = StockMovementController::products()->keyBy('key');

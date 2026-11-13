@@ -310,7 +310,7 @@
     .fa-lines-head p { margin: 0; font-size: 0.72rem; font-weight: 800; letter-spacing: 0.08em; text-transform: uppercase; color: #94a3b8; }
     .fa-lines-head > div { display: flex; align-items: center; gap: 0.65rem; }
     .fa-add-line { border: none; background: transparent; color: #e8b4bc; font-weight: 800; font-size: 0.78rem; cursor: pointer; font-family: inherit; }
-    .fa-lines-wrap { max-height: 280px; overflow: auto; border: 1px solid #334155; border-radius: 10px; }
+    .fa-lines-wrap { max-height: min(52vh, 520px); overflow: auto; border: 1px solid #334155; border-radius: 10px; }
     .fa-lines { width: 100%; border-collapse: collapse; table-layout: fixed; }
     .fa-lines .c-ref { width: 140px; }
     .fa-lines .c-equiv { width: 100px; }
@@ -1045,7 +1045,14 @@
         document.getElementById(id).addEventListener('input', () => render(filteredRows()));
         document.getElementById(id).addEventListener('change', () => render(filteredRows()));
     });
-    document.getElementById('fvAddLine').addEventListener('click', () => { linesBody.appendChild(lineRow()); recalc(); });
+    document.getElementById('fvAddLine').addEventListener('click', () => {
+        if (linesBody.querySelectorAll('tr').length >= 50) {
+            showError('Une facture comprend au maximum 50 articles.');
+            return;
+        }
+        linesBody.appendChild(lineRow());
+        recalc();
+    });
     document.getElementById('fvViewClose').addEventListener('click', () => { view.hidden = true; });
     document.getElementById('fvViewPrint').addEventListener('click', () => { if (viewRow) printRow(viewRow); });
     document.getElementById('fvViewPdf').addEventListener('click', () => { if (viewRow) printRow(viewRow); });
@@ -1261,6 +1268,7 @@
                 : 'Choisissez la réf et la désignation dans la fiche produit.');
             return;
         }
+        if (items.length > 50) { showError('Une facture comprend au maximum 50 articles.'); return; }
         const totalTtc = recalc();
         save.disabled = true;
         try {

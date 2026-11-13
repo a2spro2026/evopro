@@ -110,7 +110,7 @@ class SupplierInvoiceController extends Controller
             'ice' => ['required', 'digits:15'],
             'invoice_date' => ['required', 'date'],
             'total_ttc' => ['nullable', 'numeric', 'min:0'],
-            'items' => ['required', 'array', 'min:1'],
+            'items' => ['required', 'array', 'min:1', 'max:50'],
             'items.*.article_ref' => ['nullable', 'string', 'max:64'],
             'items.*.equiv' => ['nullable', 'string', 'max:64'],
             'items.*.description' => ['required', 'string', 'max:255'],
@@ -122,6 +122,7 @@ class SupplierInvoiceController extends Controller
         ], [
             'reference.required' => 'Saisissez la référence de la facture.',
             'reference.unique' => 'Cette référence est déjà utilisée.',
+            'items.max' => 'Une facture comprend au maximum 50 articles.',
         ]);
     }
 

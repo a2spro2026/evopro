@@ -286,7 +286,7 @@
     .fa-lines-head p { margin: 0; font-size: 0.72rem; font-weight: 800; letter-spacing: 0.08em; text-transform: uppercase; color: #94a3b8; }
     .fa-lines-head > div { display: flex; align-items: center; gap: 0.65rem; }
     .fa-add-line { border: none; background: transparent; color: #e8b4bc; font-weight: 800; font-size: 0.78rem; cursor: pointer; font-family: inherit; }
-    .fa-lines-wrap { max-height: 280px; overflow: auto; border: 1px solid #334155; border-radius: 10px; }
+    .fa-lines-wrap { max-height: min(52vh, 520px); overflow: auto; border: 1px solid #334155; border-radius: 10px; }
     .fa-lines { width: 100%; border-collapse: collapse; table-layout: fixed; }
     .fa-lines .c-ref { width: 110px; }
     .fa-lines .c-equiv { width: 90px; }
@@ -628,7 +628,15 @@
         document.getElementById(id).addEventListener('input', () => render(filteredRows()));
         document.getElementById(id).addEventListener('change', () => render(filteredRows()));
     });
-    document.getElementById('faAddLine').addEventListener('click', () => { linesBody.appendChild(lineRow()); fillBrandFamilyLists(); recalc(); });
+    document.getElementById('faAddLine').addEventListener('click', () => {
+        if (linesBody.querySelectorAll('tr').length >= 50) {
+            showError('Une facture comprend au maximum 50 articles.');
+            return;
+        }
+        linesBody.appendChild(lineRow());
+        fillBrandFamilyLists();
+        recalc();
+    });
     document.getElementById('faViewClose').addEventListener('click', () => { view.hidden = true; });
     document.getElementById('faViewPrint').addEventListener('click', () => { if (viewRow) printRow(viewRow); });
     document.getElementById('faViewPdf').addEventListener('click', () => { if (viewRow) printRow(viewRow); });
@@ -700,6 +708,7 @@
         const supplierId = supplier.dataset.id || (known ? String(known.id) : '');
         if (!/^\d{15}$/.test(ice.value)) { showError('L’ICE doit contenir 15 chiffres.'); return; }
         if (!items.length || items.some((item) => !item.description)) { showError('Chaque ligne doit avoir une désignation.'); return; }
+        if (items.length > 50) { showError('Une facture comprend au maximum 50 articles.'); return; }
         const totalTtc = recalc();
         save.disabled = true;
         try {
