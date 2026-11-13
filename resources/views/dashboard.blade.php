@@ -885,7 +885,7 @@
             position: sticky;
             top: 0;
             z-index: 3;
-            padding: 0.75rem 0.7rem;
+            padding: 0.48rem 0.5rem;
             background: #5c1220;
             border: 1px solid #8f2436;
             font-size: 0.68rem;
@@ -904,10 +904,10 @@
         }
 
         .procar-table td {
-            padding: 0.85rem 0.7rem;
+            padding: 0.38rem 0.5rem;
             text-align: center;
             color: #000;
-            font-size: 0.86rem;
+            font-size: 0.8rem;
             border: 1px solid #cbd5e1;
         }
 
@@ -1751,7 +1751,7 @@
         }
 
         .procar-table thead tr:nth-child(2) th {
-            top: 2.35rem;
+            top: 1.9rem;
             z-index: 2;
         }
 
@@ -2305,11 +2305,11 @@
         /* Tous les onglets : en-têtes et données centrés */
         .panel .data-table th,
         .panel .data-table td {
-            padding: 0.72rem 0.8rem;
+            padding: 0.38rem 0.5rem;
             text-align: center !important;
             vertical-align: middle;
             border-bottom: 1px solid rgba(110, 168, 255, 0.1);
-            font-size: 0.84rem;
+            font-size: 0.8rem;
         }
 
         .panel .data-table th {

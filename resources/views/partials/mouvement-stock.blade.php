@@ -173,8 +173,8 @@
         color: #fff; background: #5c1220; text-align: center; white-space: nowrap;
         vertical-align: middle; overflow: hidden;
     }
-    .sm-table thead tr:first-child th { top: 0; z-index: 4; height: 2.15rem; }
-    .sm-table thead tr:nth-child(2) th { top: 2.15rem; z-index: 3; background: #7a1a2c; height: 1.95rem; }
+    .sm-table thead tr:first-child th { top: 0; z-index: 4; height: 1.85rem; }
+    .sm-table thead tr:nth-child(2) th { top: 1.85rem; z-index: 3; background: #7a1a2c; height: 1.7rem; }
     .sm-table thead tr:first-child th[rowspan] { z-index: 5; vertical-align: middle; font-size: 0.72rem; }
     .sm-table thead tr:first-child th[colspan] {
         border-left: 1px solid rgba(255,255,255,0.18);
@@ -184,9 +184,9 @@
     .sm-table .sm-h-vente { color: #bbf7d0; border-right: 2px solid rgba(255,255,255,0.28); }
     .sm-table .sm-col-stock { color: #fde68a; font-weight: 800; }
     .sm-table td {
-        padding: 0.55rem 0.35rem; text-align: center; white-space: nowrap;
+        padding: 0.38rem 0.3rem; text-align: center; white-space: nowrap;
         color: #000; background: #fff;
-        font-variant-numeric: tabular-nums; font-size: 0.82rem; overflow: hidden;
+        font-variant-numeric: tabular-nums; font-size: 0.8rem; overflow: hidden;
     }
     .sm-table td.sm-empty {
         text-align: left; padding: 1.4rem 1rem; color: #64748b; font-weight: 600;

@@ -203,11 +203,11 @@
     .fa-table { width: 100%; border-collapse: separate; border-spacing: 0; min-width: 980px; color: #e2e8f0; }
     .fa-table th {
         position: sticky; top: 0; z-index: 3;
-        padding: 0.75rem 0.55rem; font-size: 0.68rem; letter-spacing: 0.08em; text-transform: uppercase;
+        padding: 0.48rem 0.5rem; font-size: 0.68rem; letter-spacing: 0.08em; text-transform: uppercase;
         color: #fff; background: #5c1220; text-align: center; white-space: nowrap;
         box-shadow: inset 0 -1px 0 #8f2436;
     }
-    .fa-table td { padding: 0.7rem 0.55rem; text-align: center; border-top: 1px solid rgba(110, 18, 36, 0.35); font-size: 0.86rem; color: #000; background: #fff; }
+    .fa-table td { padding: 0.38rem 0.5rem; text-align: center; border-top: 1px solid rgba(110, 18, 36, 0.35); font-size: 0.8rem; color: #000; background: #fff; }
     .fa-table tbody tr:hover td { background: rgba(110, 18, 36, 0.32); }
     .fa-ref { color: #000; font-weight: 700; font-family: ui-monospace, monospace; font-size: 0.78rem; }
     .fa-ttc { color: #000; font-weight: 700; }
