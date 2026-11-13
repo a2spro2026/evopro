@@ -9,6 +9,7 @@ use App\Http\Controllers\SupplierController;
 use App\Http\Controllers\SalesInvoiceController;
 use App\Http\Controllers\StockMovementController;
 use App\Http\Controllers\SalesInvoicePaymentController;
+use App\Http\Controllers\SupplierInvoicePaymentController;
 use App\Http\Controllers\SupplierInvoiceController;
 use App\Http\Controllers\SupplierBalanceController;
 use App\Http\Controllers\SupplierPaymentController;
@@ -1296,3 +1297,7 @@ Route::middleware('auth.user')->get('/reglements-factures-ventes', [SalesInvoice
 Route::middleware('auth.user')->post('/reglements-factures-ventes', [SalesInvoicePaymentController::class, 'store'])->name('reglements-factures-ventes.store');
 Route::middleware('auth.user')->put('/reglements-factures-ventes/{salesInvoicePayment}', [SalesInvoicePaymentController::class, 'update'])->name('reglements-factures-ventes.update');
 Route::middleware('auth.user')->delete('/reglements-factures-ventes/{salesInvoicePayment}', [SalesInvoicePaymentController::class, 'destroy'])->name('reglements-factures-ventes.destroy');
+Route::middleware('auth.user')->get('/reglements-factures-achats', [SupplierInvoicePaymentController::class, 'index'])->name('reglements-factures-achats.index');
+Route::middleware('auth.user')->post('/reglements-factures-achats', [SupplierInvoicePaymentController::class, 'store'])->name('reglements-factures-achats.store');
+Route::middleware('auth.user')->put('/reglements-factures-achats/{supplierInvoicePayment}', [SupplierInvoicePaymentController::class, 'update'])->name('reglements-factures-achats.update');
+Route::middleware('auth.user')->delete('/reglements-factures-achats/{supplierInvoicePayment}', [SupplierInvoicePaymentController::class, 'destroy'])->name('reglements-factures-achats.destroy');

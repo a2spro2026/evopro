@@ -42,6 +42,11 @@ class SupplierInvoice extends Model
         return $this->hasMany(SupplierInvoiceItem::class);
     }
 
+    public function payments(): HasMany
+    {
+        return $this->hasMany(SupplierInvoicePayment::class);
+    }
+
     public function getReferenceAttribute(): string
     {
         $stored = trim((string) ($this->attributes['reference'] ?? ''));

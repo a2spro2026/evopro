@@ -224,6 +224,7 @@
     .fa-icon.edit:hover { color: #fbbf24; }
     .fa-icon.print:hover { color: #e2e8f0; }
     .fa-icon.pdf:hover { color: #fb923c; }
+    .fa-icon.pay:hover { color: #34d399; }
     .fa-icon.del:hover { color: #f87171; }
     .fa-window {
         position: fixed; top: 0; right: 0; bottom: 0; left: 272px; z-index: 40;
@@ -375,6 +376,7 @@
     const printer = '<svg viewBox="0 0 24 24"><path d="M6 9V3h12v6M6 18H4a2 2 0 0 1-2-2v-5h20v5a2 2 0 0 1-2 2h-2M6 14h12v7H6z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg>';
     const file = '<svg viewBox="0 0 24 24"><path d="M6 3h8l4 4v14H6z" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M14 3v5h5" fill="none" stroke="currentColor" stroke-width="1.8"/></svg>';
     const trash = '<svg viewBox="0 0 24 24"><path d="M4 7h16M9 7V4h6v3M8 7l1 13h6l1-13" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>';
+    const payer = '<svg viewBox="0 0 24 24"><rect x="3" y="6" width="18" height="12" rx="2" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M3 10h18M7 15h4" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>';
 
     function moneyDot(value) {
         const n = Number(String(value ?? '').replace(/\s/g, '').replace(',', '.')) || 0;
@@ -529,6 +531,7 @@
                 <button type="button" class="fa-icon edit" data-act="modifier" data-id="${row.id}" title="Modifier">${pencil}</button>
                 <button type="button" class="fa-icon print" data-act="imprimer" data-id="${row.id}" title="Imprimer">${printer}</button>
                 <button type="button" class="fa-icon pdf" data-act="pdf" data-id="${row.id}" title="PDF">${file}</button>
+                <button type="button" class="fa-icon pay" data-act="payer" data-id="${row.id}" title="Payer">${payer}</button>
                 <button type="button" class="fa-icon del" data-act="supprimer" data-id="${row.id}" title="Supprimer">${trash}</button>
             </div></td>
         </tr>`).join('');
@@ -661,6 +664,10 @@
             openModal(fresh);
         }
         if (button.dataset.act === 'imprimer' || button.dataset.act === 'pdf') printRow(row);
+        if (button.dataset.act === 'payer') {
+            document.querySelector('[data-panel="fa-regl-achat"]')?.click();
+            document.dispatchEvent(new CustomEvent('evopro-pay-supplier-invoice', { detail: row }));
+        }
         if (button.dataset.act === 'supprimer') {
             if (!window.confirm(`Supprimer la facture ${row.reference} ?`)) return;
             const response = await fetch(`/factures-achats/${row.id}`, { method: 'DELETE', headers: { 'Accept': 'application/json', 'X-CSRF-TOKEN': csrf } });

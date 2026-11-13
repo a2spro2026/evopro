@@ -3509,6 +3509,7 @@
                         ]],
                         ['id' => 'facturation', 'label' => 'Facturation', 'items' => [
                             ['id' => 'fa-achat', 'label' => 'Factures Achats', 'cols' => ['Date', 'Réf', 'Fournisseur', 'Destination', 'Total HT', 'TVA', 'Total TTC', 'Statut', 'Actions']],
+                            ['id' => 'fa-regl-achat', 'label' => 'Régl Fact/Achats', 'cols' => ['Date', 'N° Règlement', 'N° Facture', 'Fournisseur', 'Mode', 'Référence', 'Montant', 'Solde Facture', 'Actions']],
                             ['id' => 'fa-vente', 'label' => 'Facture Ventes'],
                             ['id' => 'fa-regl', 'label' => 'Régl Fact/Vente', 'cols' => ['Date', 'N° Règlement', 'N° Facture', 'Client', 'Mode', 'Référence', 'Montant', 'Solde Facture', 'Actions']],
                             ['id' => 'fa-bal', 'label' => 'Balance'],
@@ -3551,6 +3552,7 @@
                         'fa-achat' => '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><path d="M12 18v-6"/><path d="m9 15 3 3 3-3"/></svg>',
                         'fa-vente' => '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><path d="M12 12v6"/><path d="m9 15 3-3 3 3"/></svg>',
                         'fa-regl' => '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="6" width="20" height="12" rx="2"/><circle cx="12" cy="12" r="2"/><path d="M6 12h.01M18 12h.01"/></svg>',
+                        'fa-regl-achat' => '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="6" width="20" height="12" rx="2"/><circle cx="12" cy="12" r="2"/><path d="M6 12h.01M18 12h.01"/></svg>',
                         'fa-bal' => '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m16 16 3-8 3 8c-.87.65-1.92 1-3 1s-2.13-.35-3-1Z"/><path d="m2 16 3-8 3 8c-.87.65-1.92 1-3 1s-2.13-.35-3-1Z"/><path d="M7 21h10"/><path d="M12 3v18"/><path d="M3 7h2c2 0 5-1 7-2 2 1 5 2 7 2h2"/></svg>',
                         'm-trans' => '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m7 7 10 10"/><path d="M17 7v10H7"/></svg>',
                         'm-charge' => '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 2v20l2-1 2 1 2-1 2 1 2-1 2 1 2-1 2 1V2l-2 1-2-1-2 1-2-1-2 1-2-1-2 1Z"/><path d="M8 10h8"/><path d="M8 14h5"/></svg>',
@@ -3954,6 +3956,7 @@
                 @include('partials.reglement-client')
                 @include('partials.balance-clients')
                 @include('partials.facture-achats')
+                @include('partials.reglement-factures-achats')
                 @include('partials.mouvement-stock')
                 @include('partials.fiche-produit')
                 @include('partials.facture-ventes')
@@ -3961,7 +3964,7 @@
 
                 @foreach ($activityNav as $group)
                     @foreach ($group['items'] as $item)
-                        @if (empty($group['soon']) && empty($item['disabled']) && ! in_array($item['id'] ?? '', ['f-fiche', 'f-bon', 'f-regl', 'f-bal', 'c-fiche', 'c-bl', 'c-regl', 'c-bal', 'fa-achat', 'fa-vente', 'fa-regl', 'cfg-fiche', 's-mvt', 's-prod'], true))
+                        @if (empty($group['soon']) && empty($item['disabled']) && ! in_array($item['id'] ?? '', ['f-fiche', 'f-bon', 'f-regl', 'f-bal', 'c-fiche', 'c-bl', 'c-regl', 'c-bal', 'fa-achat', 'fa-regl-achat', 'fa-vente', 'fa-regl', 'cfg-fiche', 's-mvt', 's-prod'], true))
                             <section class="panel" id="panel-{{ $item['id'] }}">
                                 <div class="content-head">
                                     <h1>{{ $item['label'] }}</h1>
