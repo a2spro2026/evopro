@@ -7665,5 +7665,163 @@
             }
         @endif
     </script>
+    <style id="evopro-ui-polish">
+        /* Cartes KPI — plus compactes, ombre douce, coins maîtrisés */
+        .ba-card, .bl-card, .bf-card, .cb-card, .fa-stat, .sm-stat, .card-stat {
+            border-radius: 10px !important;
+            padding: 0.5rem 0.9rem !important;
+            min-height: 0 !important;
+            box-shadow: 0 3px 12px rgba(15, 23, 42, 0.12) !important;
+            border: 1px solid rgba(255, 255, 255, 0.14);
+        }
+        .ba-card span, .bl-card span, .bf-card span, .cb-card span,
+        .fa-stat span, .sm-stat span {
+            font-size: 0.6rem !important;
+            letter-spacing: 0.07em !important;
+            opacity: 0.92 !important;
+        }
+        .ba-card strong, .bl-card strong, .bf-card strong, .cb-card strong,
+        .fa-stat strong, .sm-stat strong {
+            margin-top: 0.12rem !important;
+            font-size: 1.08rem !important;
+            font-weight: 700 !important;
+            letter-spacing: -0.02em;
+        }
+        .card-stat small { font-size: 0.68rem !important; }
+        .card-stat strong { font-size: 1.2rem !important; }
+        .ba-summary, .bl-summary, .bf-summary, .cb-summary, .fa-stats, .sm-stats {
+            gap: 0.55rem !important;
+            margin-bottom: 0.75rem !important;
+        }
+        .ba-card.achats, .bl-card.ventes, .bf-card.achats, .cb-card.ventes,
+        .sm-stat:not(.buy):not(.sell):not(.stock), .fa-stat.blue {
+            background: linear-gradient(160deg, #3b82f6, #1d4ed8) !important;
+            color: #fff !important;
+        }
+        .ba-card.paye, .bl-card.paye, .bf-card.paye, .cb-card.paye, .sm-stat.sell,
+        .fa-stat.green, .fa-stat.ventes {
+            background: linear-gradient(160deg, #22c55e, #15803d) !important;
+            color: #fff !important;
+        }
+        .ba-card.solde, .bl-card.solde, .bf-card.solde, .cb-card.solde, .sm-stat.buy,
+        .fa-stat.achats {
+            background: linear-gradient(160deg, #ef4444, #b91c1c) !important;
+            color: #fff !important;
+        }
+        .fa-stat.slate {
+            background: linear-gradient(160deg, #3f3f46, #18181b) !important;
+            color: #fff !important;
+        }
+        .bf-card.reliquat, .cb-card.reliquat {
+            background: linear-gradient(160deg, #f97316, #c2410c) !important;
+            color: #fff !important;
+        }
+        .sm-stat.stock {
+            color: #1a1204 !important;
+            background: linear-gradient(160deg, #fde68a, #eab308) !important;
+        }
+        .fa-stat.regl { background: linear-gradient(160deg, #fb923c, #c2410c) !important; color: #fff !important; }
+        .fa-filters .fa-stat { padding: 0.35rem 0.75rem !important; }
+        .fa-filters .fa-stat strong { font-size: 0.98rem !important; margin-top: 0.05rem !important; }
+
+        /* Barres de liste */
+        .procar-table-bar, .fa-list-bar, .sm-bar, .mf-bar {
+            padding: 0.5rem 1rem !important;
+            background: linear-gradient(90deg, #14090b 0%, #5c1220 48%, #c41212 100%) !important;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+        }
+        .procar-table-bar h3, .fa-list-bar h3, .sm-bar h3, .mf-bar h3 {
+            font-size: 0.74rem !important;
+            letter-spacing: 0.07em !important;
+            font-weight: 700 !important;
+        }
+        .procar-table-card, .fa-card, .sm-card, .mf-card {
+            border-radius: 12px !important;
+            box-shadow: 0 6px 18px rgba(15, 23, 42, 0.1) !important;
+            border-color: rgba(143, 36, 54, 0.28) !important;
+        }
+        [data-theme="light"] .procar-table-card {
+            background: #fff !important;
+            border-color: #e8ced4 !important;
+        }
+
+        /* Boutons d’ajout / actions principales */
+        .ba-add, .bl-add {
+            width: 36px !important;
+            height: 36px !important;
+            border-radius: 10px !important;
+            background: linear-gradient(180deg, #a12b3f, #5c1220) !important;
+            box-shadow: 0 4px 12px rgba(92, 18, 32, 0.22) !important;
+        }
+        .ba-add svg, .bl-add svg { width: 18px !important; height: 18px !important; }
+        .fa-nouveau, .rc-add, .ra-add {
+            height: 34px !important;
+            padding: 0 0.9rem !important;
+            border-radius: 9px !important;
+            font-size: 0.78rem !important;
+            background: linear-gradient(180deg, #a12b3f, #5c1220) !important;
+            box-shadow: 0 3px 10px rgba(92, 18, 32, 0.2) !important;
+        }
+        .btn-primary {
+            padding: 0.45rem 0.85rem !important;
+            border-radius: 9px !important;
+            border: 1px solid rgba(161, 43, 63, 0.45) !important;
+            background: linear-gradient(180deg, #a12b3f, #5c1220) !important;
+            color: #fff !important;
+            box-shadow: 0 3px 10px rgba(92, 18, 32, 0.18);
+        }
+        .btn-ghost {
+            padding: 0.45rem 0.85rem !important;
+            border-radius: 9px !important;
+        }
+        .ba-btn.primary, .bl-btn.primary, .rc-btn.primary, .ra-btn.primary, .fa-btn.primary,
+        .ff-btn.primary, .fc-btn.primary {
+            background: linear-gradient(180deg, #a12b3f, #5c1220) !important;
+            box-shadow: 0 3px 10px rgba(92, 18, 32, 0.18);
+        }
+        .ba-btn, .bl-btn, .rc-btn, .ra-btn, .fa-btn {
+            height: 34px !important;
+            border-radius: 999px !important;
+            font-size: 0.75rem !important;
+        }
+
+        /* Filtres + refresh */
+        .ba-filters, .bl-filters, .bf-filters, .cb-filters, .rc-filters, .ra-filters, .sm-filters, .fa-filters {
+            gap: 0.55rem !important;
+            margin-bottom: 0.75rem !important;
+        }
+        .ba-filters select, .bl-filters select, .bf-filters select, .cb-filters select,
+        .rc-filters select, .ra-filters select, .sm-filters select,
+        .fa-filters input, .fa-filters select {
+            height: 34px !important;
+            border-radius: 8px !important;
+            font-size: 0.8rem !important;
+            border-color: #d6c0c5 !important;
+        }
+        .ba-refresh, .bl-refresh, .bf-refresh, .cb-refresh, .rc-refresh, .ra-refresh, .sm-refresh, .fa-refresh {
+            width: 34px !important;
+            height: 34px !important;
+            border-radius: 8px !important;
+            border-color: #d6c0c5 !important;
+            background: #fff !important;
+            color: #5c1220 !important;
+            box-shadow: 0 1px 3px rgba(15, 23, 42, 0.06);
+        }
+        [data-theme="light"] .ba-refresh,
+        [data-theme="light"] .bl-refresh,
+        [data-theme="light"] .bf-refresh,
+        [data-theme="light"] .cb-refresh,
+        [data-theme="light"] .rc-refresh,
+        [data-theme="light"] .ra-refresh,
+        [data-theme="light"] .sm-refresh {
+            background: #fff !important;
+            color: #5c1220 !important;
+            border-color: #e4c5cb !important;
+        }
+
+        /* En-têtes de page un peu plus serrés */
+        .content-head { margin-bottom: 0.9rem !important; }
+        .content-head h1 { font-size: 1.35rem; letter-spacing: 0.04em; }
+    </style>
 </body>
 </html>
