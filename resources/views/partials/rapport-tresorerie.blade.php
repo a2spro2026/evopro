@@ -63,7 +63,18 @@
     <div class="procar-table-card">
         <div class="procar-table-bar"><h3>Mouvements trésorerie</h3></div>
         <div class="procar-table-scroll">
-            <table class="procar-table">
+            <table class="procar-table tr-table">
+                <colgroup>
+                    <col class="tr-col-date">
+                    <col class="tr-col-op">
+                    <col class="tr-col-amt">
+                    <col class="tr-col-amt">
+                    <col class="tr-col-amt">
+                    <col class="tr-col-amt">
+                    <col class="tr-col-amt">
+                    <col class="tr-col-amt">
+                    <col class="tr-col-amt">
+                </colgroup>
                 <thead>
                     <tr>
                         <th>Date</th>
@@ -153,7 +164,21 @@
     #panel-m-treso .tr-card.charge { background: linear-gradient(160deg, #0b1f3a, #06101f) !important; color: #fff !important; }
     #panel-m-treso .tr-card.fa-debit { background: linear-gradient(160deg, #8b5cf6, #6d28d9) !important; color: #fff !important; }
     #panel-m-treso .tr-card.fa-credit { background: linear-gradient(160deg, #9b1b2e, #6b0f1a) !important; color: #fff !important; }
-    #panel-m-treso .procar-table td.num { font-variant-numeric: tabular-nums; font-weight: 700; }
+    #panel-m-treso .tr-table {
+        table-layout: fixed;
+        width: 100%;
+        min-width: 1100px;
+    }
+    #panel-m-treso .tr-table .tr-col-date { width: 110px; }
+    #panel-m-treso .tr-table .tr-col-op { width: auto; }
+    #panel-m-treso .tr-table .tr-col-amt { width: 118px; }
+    #panel-m-treso .tr-table th:nth-child(n+3),
+    #panel-m-treso .tr-table td:nth-child(n+3) {
+        width: 118px;
+        text-align: center;
+        white-space: nowrap;
+    }
+    #panel-m-treso .procar-table td.num { font-variant-numeric: tabular-nums; font-weight: 700; text-align: center; }
     #panel-m-treso .procar-table td.debit { color: #dc2626; }
     #panel-m-treso .procar-table td.credit { color: #2563eb; }
     #panel-m-treso .procar-table td.caisse { color: #d97706; }
