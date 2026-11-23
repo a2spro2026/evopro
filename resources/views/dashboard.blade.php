@@ -1980,8 +1980,8 @@
         }
         .dash-kpis {
             display: grid;
-            grid-template-columns: repeat(5, minmax(0, 1fr));
-            gap: 0.75rem;
+            grid-template-columns: repeat(6, minmax(0, 1fr));
+            gap: 0.65rem;
             margin-bottom: 0;
         }
 
@@ -2029,6 +2029,7 @@
         .dash-kpi.ventes .dash-kpi-icon { background: linear-gradient(135deg, #16a34a, #14532d); }
         .dash-kpi.fa .dash-kpi-icon { background: linear-gradient(135deg, #c47a3a, #8b5424); }
         .dash-kpi.fv .dash-kpi-icon { background: linear-gradient(135deg, #7c3aed, #4c1d95); }
+        .dash-kpi.charges .dash-kpi-icon { background: linear-gradient(135deg, #0b1f3a, #06101f); }
         .dash-kpi.marge {
             background: linear-gradient(160deg, #22c55e, #15803d) !important;
             border-color: rgba(255, 255, 255, 0.18) !important;
@@ -2311,6 +2312,9 @@
         [data-theme="light"] .dash-volume-table tbody th { background: #fff7f8; }
         [data-theme="light"] .dash-volume-table td strong { color: #121214; }
 
+        @media (max-width: 1280px) {
+            .dash-kpis { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+        }
         @media (max-width: 1100px) {
             .dash-kpis { grid-template-columns: repeat(2, minmax(0, 1fr)); }
             .dash-charts { grid-template-columns: 1fr; }
@@ -3984,6 +3988,15 @@
                                 <div>
                                     <small>Factures Ventes</small>
                                     <strong>{{ $moneyFr($dash['total_factures_ventes']) }}</strong>
+                                </div>
+                            </article>
+                            <article class="dash-kpi charges">
+                                <div class="dash-kpi-icon" aria-hidden="true">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v20"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+                                </div>
+                                <div>
+                                    <small>Total Charge</small>
+                                    <strong>{{ $moneyFr($dash['total_charges'] ?? 0) }}</strong>
                                 </div>
                             </article>
                             <article class="dash-kpi marge">
