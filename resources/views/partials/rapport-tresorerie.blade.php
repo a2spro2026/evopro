@@ -83,29 +83,56 @@
         display: flex; flex-direction: column; gap: 0.35rem; width: 140px;
         font-size: 0.68rem; font-weight: 800; letter-spacing: 0.06em; text-transform: uppercase; color: #d6c4b4;
     }
+    #panel-m-treso .tr-filters select,
+    #panel-m-treso .tr-refresh,
+    #panel-m-treso .tr-btn {
+        height: 34px; min-height: 34px; max-height: 34px; box-sizing: border-box;
+        border-radius: 8px; border: 1px solid #334155; font-family: inherit;
+    }
     #panel-m-treso .tr-filters select {
-        width: 100%; height: 38px; box-sizing: border-box; border-radius: 10px; border: 1px solid #334155;
-        background: #fff; color: #000; color-scheme: light; font-family: inherit; font-size: 0.84rem; padding: 0 0.55rem;
+        width: 100%; background: #fff; color: #000; color-scheme: light;
+        font-size: 0.8rem; padding: 0 0.55rem;
     }
     #panel-m-treso .tr-refresh {
-        width: 38px; height: 38px; padding: 0; border: 1px solid #334155; border-radius: 10px;
+        width: 34px; padding: 0;
         display: grid; place-items: center; cursor: pointer; background: #111827; color: #f8fafc;
     }
-    #panel-m-treso .tr-refresh svg { width: 16px; height: 16px; }
+    #panel-m-treso .tr-refresh svg { width: 15px; height: 15px; }
     #panel-m-treso .tr-btn {
-        height: 38px; padding: 0 0.85rem; border-radius: 10px; border: 1px solid #334155;
-        display: inline-flex; align-items: center; gap: 0.35rem; cursor: pointer;
-        font-family: inherit; font-size: 0.76rem; font-weight: 700; background: #111827; color: #f8fafc;
+        padding: 0 0.85rem;
+        display: inline-flex; align-items: center; justify-content: center; gap: 0.35rem; cursor: pointer;
+        font-size: 0.76rem; font-weight: 700; background: #111827; color: #f8fafc;
     }
-    #panel-m-treso .tr-btn svg { width: 15px; height: 15px; }
+    #panel-m-treso .tr-btn svg { width: 14px; height: 14px; flex: 0 0 14px; }
     #panel-m-treso .tr-btn.pdf { background: linear-gradient(180deg, #ea580c, #9a3412); border-color: #9a3412; }
-    #panel-m-treso .tr-summary { display: flex; flex-wrap: wrap; gap: 0.6rem; margin: 0 0 0 auto; justify-content: flex-end; }
-    #panel-m-treso .tr-card {
-        border-radius: 12px; padding: 0.7rem 1.05rem; color: #fff; min-width: 148px;
-        box-shadow: 0 4px 14px rgba(15,23,42,0.14);
+    #panel-m-treso .tr-summary {
+        display: grid;
+        grid-template-columns: repeat(7, minmax(0, 1fr));
+        gap: 0.5rem;
+        margin: 0 0 0 auto;
+        flex: 1 1 720px;
+        max-width: 100%;
     }
-    #panel-m-treso .tr-card span { display: block; font-size: 0.68rem; font-weight: 700; letter-spacing: 0.07em; text-transform: uppercase; opacity: 0.92; }
-    #panel-m-treso .tr-card strong { display: block; margin-top: 0.25rem; font-size: 1.28rem; font-variant-numeric: tabular-nums; }
+    #panel-m-treso .tr-card {
+        border-radius: 12px; padding: 0.55rem 0.7rem; color: #fff;
+        width: 100%; min-width: 0; min-height: 70px; box-sizing: border-box;
+        box-shadow: 0 4px 14px rgba(15,23,42,0.14);
+        display: flex; flex-direction: column; justify-content: center;
+    }
+    #panel-m-treso .tr-card span {
+        display: block; font-size: 0.62rem; font-weight: 700; letter-spacing: 0.06em;
+        text-transform: uppercase; opacity: 0.92; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    }
+    #panel-m-treso .tr-card strong {
+        display: block; margin-top: 0.2rem; font-size: 1.12rem; font-variant-numeric: tabular-nums;
+        white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    }
+    @media (max-width: 1280px) {
+        #panel-m-treso .tr-summary { grid-template-columns: repeat(4, minmax(0, 1fr)); flex-basis: 100%; }
+    }
+    @media (max-width: 720px) {
+        #panel-m-treso .tr-summary { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    }
     #panel-m-treso .tr-card.debit { background: linear-gradient(160deg, #facc15, #ca8a04) !important; color: #1a1204 !important; }
     #panel-m-treso .tr-card.credit { background: linear-gradient(160deg, #3b82f6, #1d4ed8) !important; color: #fff !important; }
     #panel-m-treso .tr-card.caisse { background: linear-gradient(160deg, #22c55e, #15803d) !important; color: #fff !important; }

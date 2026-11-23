@@ -7898,7 +7898,8 @@
             border: 1px solid var(--control-border) !important;
         }
         .ba-refresh, .bl-refresh, .bf-refresh, .cb-refresh, .rc-refresh, .ra-refresh,
-        .sm-refresh, .fa-refresh, .relf-refresh, .relc-refresh {
+        .sm-refresh, .fa-refresh, .relf-refresh, .relc-refresh,
+        #panel-m-treso .tr-refresh {
             width: 34px !important;
             height: 34px !important;
             border-radius: 8px !important;
@@ -7906,6 +7907,25 @@
             background: var(--control-bg) !important;
             color: var(--accent-2) !important;
             box-shadow: 0 1px 3px rgba(15, 23, 42, 0.06);
+        }
+        #panel-m-treso .tr-filters select,
+        #panel-m-treso .tr-btn {
+            height: 34px !important;
+            min-height: 34px !important;
+            border-radius: 8px !important;
+            box-sizing: border-box !important;
+        }
+        #panel-m-treso .tr-summary {
+            display: grid !important;
+            grid-template-columns: repeat(7, minmax(0, 1fr)) !important;
+            gap: 0.5rem !important;
+        }
+        #panel-m-treso .tr-card {
+            width: 100% !important;
+            min-width: 0 !important;
+            min-height: 70px !important;
+            padding: 0.55rem 0.7rem !important;
+            box-sizing: border-box !important;
         }
 
         /* Boutons principaux */
