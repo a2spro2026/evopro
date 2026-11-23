@@ -1846,7 +1846,8 @@
         .content:has(> .panel.active > .mf-card),
         .content:has(> .panel.active > .sm-card),
         .content:has(> .panel.active > .fa-card),
-        .content:has(> .panel.active > .table-wrap) {
+        .content:has(> .panel.active > .table-wrap),
+        .content:has(> #panel-dashboard.active) {
             display: flex;
             flex-direction: column;
             min-height: 0;
@@ -1857,7 +1858,8 @@
         .panel.active:has(> .mf-card),
         .panel.active:has(> .sm-card),
         .panel.active:has(> .fa-card),
-        .panel.active:has(> .table-wrap) {
+        .panel.active:has(> .table-wrap),
+        #panel-dashboard.panel.active {
             display: flex;
             flex-direction: column;
             flex: 1;
@@ -1957,11 +1959,30 @@
             gap: 0.85rem;
         }
 
+        #panel-dashboard .dash-sticky {
+            flex: 0 0 auto;
+            position: sticky;
+            top: 0;
+            z-index: 8;
+            background: var(--bg);
+            padding-bottom: 0.65rem;
+        }
+        #panel-dashboard .dash-sticky .content-head {
+            margin-bottom: 0.65rem;
+        }
+        #panel-dashboard .dash-sticky .content-head p { display: none; }
+        #panel-dashboard .dash-scroll {
+            flex: 1 1 auto;
+            min-height: 0;
+            overflow: auto;
+            overscroll-behavior: contain;
+            padding-bottom: 0.5rem;
+        }
         .dash-kpis {
             display: grid;
             grid-template-columns: repeat(4, minmax(0, 1fr));
             gap: 0.9rem;
-            margin-bottom: 1.1rem;
+            margin-bottom: 0;
         }
 
         .dash-kpi {
@@ -2013,6 +2034,7 @@
             display: grid;
             grid-template-columns: repeat(2, minmax(0, 1fr));
             gap: 0.9rem;
+            margin-top: 0.85rem;
         }
 
         .dash-chart-card {
@@ -3858,10 +3880,6 @@
                     </div>
                 </div>
                 <section class="panel active" id="panel-dashboard">
-                    <div class="content-head">
-                        <h1>Tableau de Bord</h1>
-                        <p>Synthèse achats, ventes et modes de règlement</p>
-                    </div>
                     @php
                         $dash = $dashboardStats ?? [
                             'total_achats' => 0,
@@ -3901,45 +3919,51 @@
                         $achatsPie = $buildConic($dash['reglement_achats']['items'] ?? []);
                         $ventesPie = $buildConic($dash['reglement_ventes']['items'] ?? []);
                     @endphp
-                    <div class="dash-kpis" aria-label="Indicateurs principaux">
-                        <article class="dash-kpi achats">
-                            <div class="dash-kpi-icon" aria-hidden="true">
-                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21h18"/><path d="M5 21V7l7-4 7 4v14"/><path d="M9 21v-6h6v6"/></svg>
-                            </div>
-                            <div>
-                                <small>Total Achats</small>
-                                <strong>{{ $moneyFr($dash['total_achats']) }}</strong>
-                            </div>
-                        </article>
-                        <article class="dash-kpi ventes">
-                            <div class="dash-kpi-icon" aria-hidden="true">
-                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
-                            </div>
-                            <div>
-                                <small>Total Ventes</small>
-                                <strong>{{ $moneyFr($dash['total_ventes']) }}</strong>
-                            </div>
-                        </article>
-                        <article class="dash-kpi fa">
-                            <div class="dash-kpi-icon" aria-hidden="true">
-                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><path d="M12 18v-6"/><path d="m9 15 3 3 3-3"/></svg>
-                            </div>
-                            <div>
-                                <small>Factures Achats</small>
-                                <strong>{{ $moneyFr($dash['total_factures_achats']) }}</strong>
-                            </div>
-                        </article>
-                        <article class="dash-kpi fv">
-                            <div class="dash-kpi-icon" aria-hidden="true">
-                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><path d="M12 12v6"/><path d="m9 15 3-3 3 3"/></svg>
-                            </div>
-                            <div>
-                                <small>Factures Ventes</small>
-                                <strong>{{ $moneyFr($dash['total_factures_ventes']) }}</strong>
-                            </div>
-                        </article>
+                    <div class="dash-sticky">
+                        <div class="content-head">
+                            <h1>Tableau de Bord</h1>
+                        </div>
+                        <div class="dash-kpis" aria-label="Indicateurs principaux">
+                            <article class="dash-kpi achats">
+                                <div class="dash-kpi-icon" aria-hidden="true">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21h18"/><path d="M5 21V7l7-4 7 4v14"/><path d="M9 21v-6h6v6"/></svg>
+                                </div>
+                                <div>
+                                    <small>Total Achats</small>
+                                    <strong>{{ $moneyFr($dash['total_achats']) }}</strong>
+                                </div>
+                            </article>
+                            <article class="dash-kpi ventes">
+                                <div class="dash-kpi-icon" aria-hidden="true">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                                </div>
+                                <div>
+                                    <small>Total Ventes</small>
+                                    <strong>{{ $moneyFr($dash['total_ventes']) }}</strong>
+                                </div>
+                            </article>
+                            <article class="dash-kpi fa">
+                                <div class="dash-kpi-icon" aria-hidden="true">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><path d="M12 18v-6"/><path d="m9 15 3 3 3-3"/></svg>
+                                </div>
+                                <div>
+                                    <small>Factures Achats</small>
+                                    <strong>{{ $moneyFr($dash['total_factures_achats']) }}</strong>
+                                </div>
+                            </article>
+                            <article class="dash-kpi fv">
+                                <div class="dash-kpi-icon" aria-hidden="true">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><path d="M12 12v6"/><path d="m9 15 3-3 3 3"/></svg>
+                                </div>
+                                <div>
+                                    <small>Factures Ventes</small>
+                                    <strong>{{ $moneyFr($dash['total_factures_ventes']) }}</strong>
+                                </div>
+                            </article>
+                        </div>
                     </div>
 
+                    <div class="dash-scroll">
                     <div class="dash-charts" aria-label="Répartition des règlements">
                         <article class="dash-chart-card">
                             <div class="dash-chart-head">
@@ -4126,6 +4150,7 @@
                         render(yearSelect.value || data.default_year);
                     })();
                     </script>
+                    </div>
                 </section>
 
                 @include('partials.fiche-fournisseur')
@@ -8226,6 +8251,8 @@
         }
 
         .content-head { margin-bottom: 0.9rem !important; }
+        #panel-dashboard .dash-sticky .content-head { margin-bottom: 0.55rem !important; }
+        .content:has(> #panel-dashboard.active) { padding-top: 1rem !important; }
         .content-head h1 {
             font-size: 1.32rem !important;
             letter-spacing: 0.03em;
