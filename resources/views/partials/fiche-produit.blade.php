@@ -107,7 +107,18 @@
     }
     #panel-s-prod .fp-refresh svg { width: 16px; height: 16px; }
     #panel-s-prod .fp-actif { color: #4ade80; font-weight: 800; }
-    #panel-s-prod .fp-rupture { color: #f87171; font-weight: 800; }
+    #panel-s-prod .fp-rupture { color: #b45309; font-weight: 800; }
+    #panel-s-prod .procar-table tbody tr.fp-row-rupture td {
+        background: #facc15 !important;
+        color: #1a1204 !important;
+    }
+    #panel-s-prod .procar-table tbody tr.fp-row-rupture:hover td {
+        background: #fde047 !important;
+    }
+    #panel-s-prod .procar-table tbody tr.fp-row-rupture .fp-actif,
+    #panel-s-prod .procar-table tbody tr.fp-row-rupture .fp-rupture {
+        color: #92400e !important;
+    }
     #panel-s-prod .procar-table { table-layout: fixed; min-width: 1100px; }
     #panel-s-prod .procar-table th:nth-child(1),
     #panel-s-prod .procar-table td:nth-child(1) { width: 7.5%; } /* Code */
@@ -142,7 +153,14 @@
     [data-theme="light"] #panel-s-prod .fp-filters select { background: #fff; color: #1a1214; border-color: #e0d0c0; }
     [data-theme="light"] #panel-s-prod .fp-refresh { background: #fff; color: #0b1f3a; border-color: #e0d0c0; }
     [data-theme="light"] #panel-s-prod .fp-actif { color: #15803d; }
-    [data-theme="light"] #panel-s-prod .fp-rupture { color: #dc2626; }
+    [data-theme="light"] #panel-s-prod .fp-rupture { color: #b45309; }
+    [data-theme="light"] #panel-s-prod .procar-table tbody tr.fp-row-rupture td {
+        background: #facc15 !important;
+        color: #1a1204 !important;
+    }
+    [data-theme="light"] #panel-s-prod .procar-table tbody tr.fp-row-rupture:hover td {
+        background: #fde047 !important;
+    }
     @media (max-width: 1100px) {
         #panel-s-prod .fp-filters { grid-template-columns: repeat(3, minmax(0, 1fr)); }
         #panel-s-prod .fp-refresh { grid-column: 3; justify-self: end; }
@@ -198,7 +216,9 @@
             body.innerHTML = `<tr><td colspan="13">${rows.length ? 'Aucun produit pour cette recherche.' : 'Aucun produit importé'}</td></tr>`;
             return;
         }
-        body.innerHTML = list.map((row) => `<tr>
+        body.innerHTML = list.map((row) => {
+            const isRupture = String(row.state || '').trim().toLowerCase() === 'rupture';
+            return `<tr class="${isRupture ? 'fp-row-rupture' : ''}">
             <td>${esc(row.code)}</td>
             <td>${dash(row.reference)}</td>
             <td>${dash(row.barcode)}</td>
@@ -211,8 +231,9 @@
             <td>${esc(row.unit || 'U')}</td>
             <td>${esc(money(row.unit_price))}</td>
             <td class="fp-actif">${esc(row.status)}</td>
-            <td class="${row.state === 'Rupture' ? 'fp-rupture' : ''}">${esc(row.state)}</td>
-        </tr>`).join('');
+            <td class="${isRupture ? 'fp-rupture' : ''}">${esc(row.state)}</td>
+        </tr>`;
+        }).join('');
     }
     async function load() {
         const response = await fetch('/fiche-produits', { headers: { 'Accept': 'application/json' } });
