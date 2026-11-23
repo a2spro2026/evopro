@@ -3575,7 +3575,7 @@
                         ]],
                         ['id' => 'monetaire', 'label' => 'Suivi Monétaire', 'items' => [
                             ['id' => 'm-charge', 'label' => 'Charge', 'cols' => ['Imprimer', 'PDF', 'Date', 'Réf', 'Catégorie', 'Désignation', 'Bénéficiaire', 'Montant', 'Type Rég', 'N°', 'Bnq', 'Tiré', 'Date Encaiss', 'Action']],
-                            ['id' => 'm-treso', 'label' => 'Rapport Trésorerie', 'cols' => ['Date', 'Opération', 'Débit', 'Crédit', 'Caisse', 'Débit facturé', 'Crédit facturé', 'Esp facturé']],
+                            ['id' => 'm-treso', 'label' => 'Rapport Trésorerie', 'cols' => ['Date', 'Opération', 'Débit', 'Crédit', 'Caisse', 'Charge', 'Débit facturé', 'Crédit facturé', 'Esp facturé']],
                         ]],
                         ['id' => 'configuration', 'label' => 'Configuration', 'items' => [
                             ['id' => 'cfg-fiche', 'label' => 'Fiche Société', 'panel' => 'configuration', 'config' => 'fiche-ste'],
@@ -7798,6 +7798,10 @@
         }
         #panel-m-treso .tr-card.solde {
             background: linear-gradient(160deg, #ef4444, #b91c1c) !important;
+            color: #fff !important;
+        }
+        #panel-m-treso .tr-card.charge {
+            background: linear-gradient(160deg, #0b1f3a, #06101f) !important;
             color: #fff !important;
         }
         #panel-m-treso .tr-card.fa-debit {

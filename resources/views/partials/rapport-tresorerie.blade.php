@@ -42,6 +42,7 @@
             <div class="tr-card credit"><span>BL / Crédit</span><strong id="trSumCredit">0,00</strong></div>
             <div class="tr-card caisse"><span>ESP / Caisse</span><strong id="trSumCaisse">0,00</strong></div>
             <div class="tr-card solde"><span>Solde</span><strong id="trSumSolde">0,00</strong></div>
+            <div class="tr-card charge"><span>Total Charge</span><strong id="trSumCharge">0,00</strong></div>
             <div class="tr-card fa-debit"><span>Débit facturé</span><strong id="trSumDebitFact">0,00</strong></div>
             <div class="tr-card fa-credit"><span>Crédit facturé</span><strong id="trSumCreditFact">0,00</strong></div>
         </div>
@@ -58,13 +59,14 @@
                         <th>Débit</th>
                         <th>Crédit</th>
                         <th>Caisse</th>
+                        <th>Charge</th>
                         <th>Débit facturé</th>
                         <th>Crédit facturé</th>
                         <th>Esp facturé</th>
                     </tr>
                 </thead>
                 <tbody id="trBody">
-                    <tr><td colspan="8">Chargement...</td></tr>
+                    <tr><td colspan="9">Chargement...</td></tr>
                 </tbody>
             </table>
         </div>
@@ -108,12 +110,14 @@
     #panel-m-treso .tr-card.credit { background: linear-gradient(160deg, #3b82f6, #1d4ed8) !important; color: #fff !important; }
     #panel-m-treso .tr-card.caisse { background: linear-gradient(160deg, #22c55e, #15803d) !important; color: #fff !important; }
     #panel-m-treso .tr-card.solde { background: linear-gradient(160deg, #ef4444, #b91c1c) !important; color: #fff !important; }
+    #panel-m-treso .tr-card.charge { background: linear-gradient(160deg, #0b1f3a, #06101f) !important; color: #fff !important; }
     #panel-m-treso .tr-card.fa-debit { background: linear-gradient(160deg, #8b5cf6, #6d28d9) !important; color: #fff !important; }
     #panel-m-treso .tr-card.fa-credit { background: linear-gradient(160deg, #9b1b2e, #6b0f1a) !important; color: #fff !important; }
     #panel-m-treso .procar-table td.num { font-variant-numeric: tabular-nums; font-weight: 700; }
     #panel-m-treso .procar-table td.debit { color: #dc2626; }
     #panel-m-treso .procar-table td.credit { color: #2563eb; }
     #panel-m-treso .procar-table td.caisse { color: #d97706; }
+    #panel-m-treso .procar-table td.charge { color: #0b1f3a; }
     #panel-m-treso .procar-table td.fa-debit { color: #c47a3a; }
     #panel-m-treso .procar-table td.fa-credit { color: #15803d; }
     #panel-m-treso .procar-table td.esp-fact { color: #ea580c; }
@@ -134,7 +138,7 @@
 
     let rows = [];
     let meta = {
-        debit: 0, credit: 0, caisse: 0, solde: 0,
+        debit: 0, credit: 0, caisse: 0, charge: 0, solde: 0,
         debit_facture: 0, credit_facture: 0, esp_facture: 0,
     };
 
@@ -157,13 +161,14 @@
         panel.querySelector('#trSumCredit').textContent = money(meta.credit);
         panel.querySelector('#trSumCaisse').textContent = money(meta.caisse);
         panel.querySelector('#trSumSolde').textContent = money(meta.solde);
+        panel.querySelector('#trSumCharge').textContent = money(meta.charge);
         panel.querySelector('#trSumDebitFact').textContent = money(meta.debit_facture);
         panel.querySelector('#trSumCreditFact').textContent = money(meta.credit_facture);
     }
     function render() {
         paintSummary();
         if (!rows.length) {
-            body.innerHTML = '<tr><td colspan="8">Aucun mouvement pour cette période.</td></tr>';
+            body.innerHTML = '<tr><td colspan="9">Aucun mouvement pour cette période.</td></tr>';
             return;
         }
         body.innerHTML = rows.map(function (row) {
@@ -173,6 +178,7 @@
                 + amountCell(row.debit, 'debit')
                 + amountCell(row.credit, 'credit')
                 + amountCell(row.caisse, 'caisse')
+                + amountCell(row.charge, 'charge')
                 + amountCell(row.debit_facture, 'fa-debit')
                 + amountCell(row.credit_facture, 'fa-credit')
                 + amountCell(row.esp_facture, 'esp-fact')
@@ -189,6 +195,7 @@
                 + '<td>' + (row.debit ? esc(money(row.debit)) : '—') + '</td>'
                 + '<td>' + (row.credit ? esc(money(row.credit)) : '—') + '</td>'
                 + '<td>' + (row.caisse ? esc(money(row.caisse)) : '—') + '</td>'
+                + '<td>' + (row.charge ? esc(money(row.charge)) : '—') + '</td>'
                 + '<td>' + (row.debit_facture ? esc(money(row.debit_facture)) : '—') + '</td>'
                 + '<td>' + (row.credit_facture ? esc(money(row.credit_facture)) : '—') + '</td>'
                 + '<td>' + (row.esp_facture ? esc(money(row.esp_facture)) : '—') + '</td>'
@@ -207,12 +214,13 @@
             + '<div><span>BL / Credit</span><strong>' + esc(money(meta.credit)) + '</strong></div>'
             + '<div><span>ESP / Caisse</span><strong>' + esc(money(meta.caisse)) + '</strong></div>'
             + '<div><span>Solde</span><strong>' + esc(money(meta.solde)) + '</strong></div>'
+            + '<div><span>Total Charge</span><strong>' + esc(money(meta.charge)) + '</strong></div>'
             + '<div><span>Debit facture</span><strong>' + esc(money(meta.debit_facture)) + '</strong></div>'
             + '<div><span>Credit facture</span><strong>' + esc(money(meta.credit_facture)) + '</strong></div>'
             + '</div>'
-            + '<table><thead><tr><th>Date</th><th>Operation</th><th>Debit</th><th>Credit</th><th>Caisse</th>'
+            + '<table><thead><tr><th>Date</th><th>Operation</th><th>Debit</th><th>Credit</th><th>Caisse</th><th>Charge</th>'
             + '<th>Debit facture</th><th>Credit facture</th><th>Esp facture</th></tr></thead>'
-            + '<tbody>' + (lines || '<tr><td colspan="8">Aucune donnee</td></tr>') + '</tbody></table>'
+            + '<tbody>' + (lines || '<tr><td colspan="9">Aucune donnee</td></tr>') + '</tbody></table>'
             + '</body></html>');
         win.document.close();
         win.focus();
@@ -229,7 +237,7 @@
         const payload = await response.json();
         rows = Array.isArray(payload.data) ? payload.data : [];
         meta = Object.assign({
-            debit: 0, credit: 0, caisse: 0, solde: 0,
+            debit: 0, credit: 0, caisse: 0, charge: 0, solde: 0,
             debit_facture: 0, credit_facture: 0, esp_facture: 0,
         }, payload.meta || {});
         render();
@@ -237,7 +245,7 @@
 
     function runLoad() {
         load().catch(function () {
-            body.innerHTML = '<tr><td colspan="8">Erreur de chargement</td></tr>';
+            body.innerHTML = '<tr><td colspan="9">Erreur de chargement</td></tr>';
         });
     }
     monthFilter.addEventListener('change', runLoad);
@@ -248,7 +256,7 @@
         load().catch(function () {});
     });
     load().catch(function () {
-        body.innerHTML = '<tr><td colspan="8">Erreur de chargement</td></tr>';
+        body.innerHTML = '<tr><td colspan="9">Erreur de chargement</td></tr>';
     });
 })();
 </script>

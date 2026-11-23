@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Charge;
 use App\Models\ClientPayment;
 use App\Models\DeliveryOrder;
 use App\Models\PurchaseOrder;
@@ -202,6 +203,29 @@ class TreasuryReportController extends Controller
                 });
         }
 
+        if (Schema::hasTable('charges')) {
+            Charge::query()
+                ->with('category')
+                ->orderByDesc('charge_date')
+                ->orderByDesc('id')
+                ->get()
+                ->each(function (Charge $charge) use ($rows) {
+                    $date = $charge->charge_date;
+                    if (! $date) {
+                        return;
+                    }
+                    $label = $charge->category?->name
+                        ?: ($charge->designation ?: $charge->reference);
+                    $rows->push($this->row(
+                        date: $date,
+                        operation: 'CH '.$charge->reference.($label ? ' — '.$label : ''),
+                        type: 'charge',
+                        charge: (float) $charge->montant,
+                        ref: $charge->reference,
+                    ));
+                });
+        }
+
         $filtered = $rows
             ->filter(function (array $row) use ($month) {
                 if ($month && (int) $row['month'] !== $month) {
@@ -221,6 +245,7 @@ class TreasuryReportController extends Controller
         $debit = round((float) $filtered->sum('debit'), 2);
         $credit = round((float) $filtered->sum('credit'), 2);
         $caisse = round((float) $filtered->sum('caisse'), 2);
+        $charge = round((float) $filtered->sum('charge'), 2);
         $debitFacture = round((float) $filtered->sum('debit_facture'), 2);
         $creditFacture = round((float) $filtered->sum('credit_facture'), 2);
         $espFacture = round((float) $filtered->sum('esp_facture'), 2);
@@ -232,6 +257,7 @@ class TreasuryReportController extends Controller
                 'debit' => $debit,
                 'credit' => $credit,
                 'caisse' => $caisse,
+                'charge' => $charge,
                 'solde' => $solde,
                 'debit_facture' => $debitFacture,
                 'credit_facture' => $creditFacture,
@@ -247,6 +273,7 @@ class TreasuryReportController extends Controller
         float $debit = 0,
         float $credit = 0,
         float $caisse = 0,
+        float $charge = 0,
         float $debit_facture = 0,
         float $credit_facture = 0,
         float $esp_facture = 0,
@@ -262,6 +289,7 @@ class TreasuryReportController extends Controller
             'debit' => round($debit, 2),
             'credit' => round($credit, 2),
             'caisse' => round($caisse, 2),
+            'charge' => round($charge, 2),
             'debit_facture' => round($debit_facture, 2),
             'credit_facture' => round($credit_facture, 2),
             'esp_facture' => round($esp_facture, 2),
