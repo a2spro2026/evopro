@@ -19,6 +19,7 @@ use App\Http\Controllers\SupplierBalanceController;
 use App\Http\Controllers\SupplierPaymentController;
 use App\Http\Controllers\SupplierStatementController;
 use App\Models\Charge;
+use App\Models\DeliveryOrder;
 use App\Models\PurchaseOrder;
 use App\Models\SalesInvoice;
 use App\Models\SalesInvoicePaymentLine;
@@ -107,6 +108,7 @@ Route::get('/dashboard', function () use ($requireAuth) {
     $totalVentes = 0.0;
     $totalFacturesAchats = 0.0;
     $totalFacturesVentes = 0.0;
+    $totalCharges = 0.0;
     $reglementAchatsMix = $emptyMix;
     $reglementVentesMix = $emptyMix;
 
@@ -114,12 +116,23 @@ Route::get('/dashboard', function () use ($requireAuth) {
         if (Schema::hasTable('purchase_orders')) {
             $totalAchats = (float) PurchaseOrder::query()->sum('total');
         }
+        if (Schema::hasTable('delivery_orders')) {
+            $totalVentes = (float) DeliveryOrder::query()->sum('total');
+        }
         if (Schema::hasTable('sales_invoices')) {
-            $totalVentes = (float) SalesInvoice::query()->sum('total_ttc');
-            $totalFacturesVentes = $totalVentes;
+            $totalFacturesVentes = (float) SalesInvoice::query()->sum('total_ttc');
+            if ($totalVentes <= 0) {
+                $totalVentes = $totalFacturesVentes;
+            }
         }
         if (Schema::hasTable('supplier_invoices')) {
             $totalFacturesAchats = (float) SupplierInvoice::query()->sum('total_ttc');
+        }
+        if (Schema::hasTable('charges')) {
+            $totalCharges = (float) Charge::query()->sum('montant');
+        } else {
+            $totalCharges = (float) collect(AppStore::get('charges'))
+                ->sum(fn ($c) => (float) ($c['montant'] ?? $c['amount'] ?? 0));
         }
         if (Schema::hasTable('supplier_payments')) {
             foreach (SupplierPayment::query()->get(['reglement', 'montant']) as $payment) {
@@ -141,19 +154,18 @@ Route::get('/dashboard', function () use ($requireAuth) {
         // Keep zeros if MySQL tables are unavailable.
     }
 
+    $marge = ($totalVentes + $totalFacturesVentes) - ($totalAchats + $totalFacturesAchats + $totalCharges);
+
     $dashboardStats = [
         'total_achats' => round($totalAchats, 2),
         'total_ventes' => round($totalVentes, 2),
         'total_factures_achats' => round($totalFacturesAchats, 2),
         'total_factures_ventes' => round($totalFacturesVentes, 2),
+        'total_charges' => round($totalCharges, 2),
+        'marge' => round($marge, 2),
         'reglement_achats' => $normalizeMix($reglementAchatsMix),
         'reglement_ventes' => $normalizeMix($reglementVentesMix),
     ];
-
-    $totalCharges = Schema::hasTable('charges')
-        ? (float) Charge::query()->sum('montant')
-        : (float) collect(AppStore::get('charges'))
-            ->sum(fn ($c) => (float) ($c['montant'] ?? $c['amount'] ?? 0));
 
     $monthBucket = static function (): array {
         return array_fill(1, 12, 0.0);

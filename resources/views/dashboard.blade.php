@@ -1980,8 +1980,8 @@
         }
         .dash-kpis {
             display: grid;
-            grid-template-columns: repeat(4, minmax(0, 1fr));
-            gap: 0.9rem;
+            grid-template-columns: repeat(5, minmax(0, 1fr));
+            gap: 0.75rem;
             margin-bottom: 0;
         }
 
@@ -2029,6 +2029,14 @@
         .dash-kpi.ventes .dash-kpi-icon { background: linear-gradient(135deg, #16a34a, #14532d); }
         .dash-kpi.fa .dash-kpi-icon { background: linear-gradient(135deg, #c47a3a, #8b5424); }
         .dash-kpi.fv .dash-kpi-icon { background: linear-gradient(135deg, #7c3aed, #4c1d95); }
+        .dash-kpi.marge {
+            background: linear-gradient(160deg, #22c55e, #15803d) !important;
+            border-color: rgba(255, 255, 255, 0.18) !important;
+            color: #fff !important;
+        }
+        .dash-kpi.marge small { color: rgba(255, 255, 255, 0.92) !important; }
+        .dash-kpi.marge strong { color: #fff !important; }
+        .dash-kpi.marge .dash-kpi-icon { background: rgba(255, 255, 255, 0.22); color: #fff; }
 
         .dash-charts {
             display: grid;
@@ -2125,6 +2133,13 @@
             color: #121214;
             box-shadow: 0 10px 26px rgba(15, 31, 53, 0.08);
         }
+        [data-theme="light"] .dash-kpi.marge {
+            background: linear-gradient(160deg, #22c55e, #15803d) !important;
+            border-color: rgba(255, 255, 255, 0.18) !important;
+            color: #fff !important;
+        }
+        [data-theme="light"] .dash-kpi.marge small,
+        [data-theme="light"] .dash-kpi.marge strong { color: #fff !important; }
         [data-theme="light"] .dash-kpi small { color: rgba(18, 18, 20, 0.58); }
         [data-theme="light"] .dash-chart-head strong,
         [data-theme="light"] .dash-legend strong { color: #121214; }
@@ -3886,9 +3901,20 @@
                             'total_ventes' => 0,
                             'total_factures_achats' => 0,
                             'total_factures_ventes' => 0,
+                            'total_charges' => 0,
+                            'marge' => 0,
                             'reglement_achats' => ['total' => 0, 'items' => []],
                             'reglement_ventes' => ['total' => 0, 'items' => []],
                         ];
+                        if (! isset($dash['marge'])) {
+                            $dash['marge'] = (
+                                (float) ($dash['total_ventes'] ?? 0) + (float) ($dash['total_factures_ventes'] ?? 0)
+                            ) - (
+                                (float) ($dash['total_achats'] ?? 0)
+                                + (float) ($dash['total_factures_achats'] ?? 0)
+                                + (float) ($dash['total_charges'] ?? 0)
+                            );
+                        }
                         $moneyFr = fn ($n) => number_format((float) $n, 2, ',', ' ');
                         $pieColors = [
                             'Esp' => '#16a34a',
@@ -3958,6 +3984,15 @@
                                 <div>
                                     <small>Factures Ventes</small>
                                     <strong>{{ $moneyFr($dash['total_factures_ventes']) }}</strong>
+                                </div>
+                            </article>
+                            <article class="dash-kpi marge">
+                                <div class="dash-kpi-icon" aria-hidden="true">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v18"/><path d="M17 8H9.5a2.5 2.5 0 0 0 0 5H14a2.5 2.5 0 0 1 0 5H6"/></svg>
+                                </div>
+                                <div>
+                                    <small>Marge</small>
+                                    <strong>{{ $moneyFr($dash['marge'] ?? 0) }}</strong>
                                 </div>
                             </article>
                         </div>
