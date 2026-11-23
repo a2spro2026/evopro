@@ -22,6 +22,17 @@ class TreasuryReportController extends Controller
     {
         $month = $request->query('month');
         $month = ($month !== null && $month !== '') ? (int) $month : null;
+        $type = trim((string) $request->query('type', ''));
+        $typeMap = [
+            'ba' => ['ba'],
+            'bl' => ['bl'],
+            'caisse' => ['esp_ba', 'esp_bl'],
+            'charge' => ['charge'],
+            'fa' => ['fa'],
+            'fv' => ['fv'],
+            'esp_facture' => ['esp_fa', 'esp_fv'],
+        ];
+        $typeFilter = $typeMap[$type] ?? null;
 
         $rows = collect();
 
@@ -227,8 +238,11 @@ class TreasuryReportController extends Controller
         }
 
         $filtered = $rows
-            ->filter(function (array $row) use ($month) {
+            ->filter(function (array $row) use ($month, $typeFilter) {
                 if ($month && (int) $row['month'] !== $month) {
+                    return false;
+                }
+                if ($typeFilter !== null && ! in_array($row['type'], $typeFilter, true)) {
                     return false;
                 }
 

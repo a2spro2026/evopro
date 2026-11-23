@@ -25,6 +25,18 @@
                     <option value="12">Décembre</option>
                 </select>
             </label>
+            <label class="tr-filter-type">Type
+                <select id="trType" data-keep-native="1">
+                    <option value="">Tous</option>
+                    <option value="ba">BA / Débit</option>
+                    <option value="bl">BL / Crédit</option>
+                    <option value="caisse">ESP / Caisse</option>
+                    <option value="charge">Charge</option>
+                    <option value="fa">Débit facturé</option>
+                    <option value="fv">Crédit facturé</option>
+                    <option value="esp_facture">Esp facturé</option>
+                </select>
+            </label>
             <button type="button" class="tr-refresh" id="trRefresh" title="Actualiser" aria-label="Actualiser">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12a9 9 0 1 1-2.64-6.36"/><path d="M21 3v6h-6"/></svg>
             </button>
@@ -83,6 +95,7 @@
         display: flex; flex-direction: column; gap: 0.35rem; width: 140px;
         font-size: 0.68rem; font-weight: 800; letter-spacing: 0.06em; text-transform: uppercase; color: #d6c4b4;
     }
+    #panel-m-treso .tr-filters label.tr-filter-type { width: 168px; }
     #panel-m-treso .tr-filters select,
     #panel-m-treso .tr-refresh,
     #panel-m-treso .tr-btn {
@@ -158,10 +171,11 @@
     if (!panel) return;
     const body = panel.querySelector('#trBody');
     const monthFilter = panel.querySelector('#trMonth');
+    const typeFilter = panel.querySelector('#trType');
     const refreshBtn = panel.querySelector('#trRefresh');
     const printAllBtn = panel.querySelector('#trPrintAll');
     const pdfAllBtn = panel.querySelector('#trPdfAll');
-    if (!body || !monthFilter || !refreshBtn) return;
+    if (!body || !monthFilter || !typeFilter || !refreshBtn) return;
 
     let rows = [];
     let meta = {
@@ -254,8 +268,11 @@
         setTimeout(function () { win.print(); }, 300);
     }
     async function load() {
-        const month = monthFilter.value;
-        const url = month ? '/rapport-tresorerie?month=' + encodeURIComponent(month) : '/rapport-tresorerie';
+        const params = new URLSearchParams();
+        if (monthFilter.value) params.set('month', monthFilter.value);
+        if (typeFilter.value) params.set('type', typeFilter.value);
+        const query = params.toString();
+        const url = query ? '/rapport-tresorerie?' + query : '/rapport-tresorerie';
         const response = await fetch(url, {
             headers: { Accept: 'application/json', 'X-Requested-With': 'XMLHttpRequest' },
             credentials: 'same-origin',
@@ -276,6 +293,7 @@
         });
     }
     monthFilter.addEventListener('change', runLoad);
+    typeFilter.addEventListener('change', runLoad);
     refreshBtn.addEventListener('click', runLoad);
     printAllBtn.addEventListener('click', function () { printReport(rows, 'Rapport Tresorerie'); });
     pdfAllBtn.addEventListener('click', function () { printReport(rows, 'Rapport Tresorerie'); });
