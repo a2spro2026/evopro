@@ -328,10 +328,11 @@
     .fa-lines .c-price { width: 78px; }
     .fa-lines .c-remise { width: 68px; }
     .fa-lines .c-sub { width: 108px; }
-    .fa-lines .c-x { width: 34px; }
+    .fa-lines .c-x { width: 28px; }
     #panel-fa-vente .fa-lines { min-width: 1280px; }
     .fa-lines th { position: sticky; top: 0; z-index: 5; background: #0b1f3a; color: #fff; font-size: 0.62rem; letter-spacing: 0.06em; text-transform: uppercase; padding: 0.5rem; text-align: center; box-shadow: 0 1px 0 #c47a3a; }
-    .fa-lines td { padding: 0.35rem; text-align: center; border-top: 1px solid #1e293b; color: #e2e8f0; font-size: 0.78rem; }
+    .fa-lines td { padding: 0.35rem; text-align: center; vertical-align: middle; border-top: 1px solid #1e293b; color: #e2e8f0; font-size: 0.78rem; }
+    .fa-lines td:last-child { padding-left: 0.15rem; padding-right: 0.25rem; }
     .fa-lines input {
         width: 100%; height: 32px; box-sizing: border-box; border-radius: 6px; border: 1px solid #475569;
         background: #1e293b; color: #fff; text-align: center; font-size: 0.75rem; font-family: inherit;
@@ -386,12 +387,14 @@
     .fa-remise input { padding-right: 1.1rem; }
     .fa-remise span { position: absolute; right: 8px; top: 50%; transform: translateY(-50%); font-size: 0.68rem; color: #94a3b8; pointer-events: none; }
     .fa-line-x {
-        display: inline-grid; place-items: center; width: 30px; height: 30px; padding: 0;
-        border: 1px solid rgba(220, 38, 38, 0.35); border-radius: 9px;
-        background: #fef2f2; color: #dc2626; cursor: pointer;
+        display: inline-grid; place-items: center;
+        width: 22px; height: 22px; padding: 0; margin: 0 auto;
+        border: none; border-radius: 6px;
+        background: transparent; color: #c2410c; cursor: pointer;
+        line-height: 1; flex: 0 0 22px;
     }
-    .fa-line-x svg { width: 15px; height: 15px; }
-    .fa-line-x:hover { background: #dc2626; color: #fff; border-color: #dc2626; }
+    .fa-line-x svg { width: 12px; height: 12px; display: block; }
+    .fa-line-x:hover { background: rgba(220, 38, 38, 0.12); color: #b91c1c; }
     .fa-totals { display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.55rem; margin-top: 0.8rem; }
     .fa-totals div { border-radius: 12px; padding: 0.55rem 0.4rem; text-align: center; background: #1e293b; border: 1px solid #334155; }
     .fa-totals small { display: block; font-size: 0.62rem; font-weight: 800; letter-spacing: 0.06em; text-transform: uppercase; color: #94a3b8; }
@@ -531,6 +534,7 @@
     const printer = '<svg viewBox="0 0 24 24"><path d="M6 9V3h12v6M6 18H4a2 2 0 0 1-2-2v-5h20v5a2 2 0 0 1-2 2h-2M6 14h12v7H6z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg>';
     const file = '<svg viewBox="0 0 24 24"><path d="M6 3h8l4 4v14H6z" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M14 3v5h5" fill="none" stroke="currentColor" stroke-width="1.8"/></svg>';
     const trash = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M8 6V4h8v2"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6M14 11v6"/></svg>';
+    const times = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M7 7l10 10M17 7L7 17"/></svg>';
     const payer = '<svg viewBox="0 0 24 24"><rect x="3" y="6" width="18" height="12" rx="2" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M3 10h18M7 15h4" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>';
 
     function moneyDot(value) {
@@ -673,7 +677,7 @@
             <td><input data-f="price" required readonly tabindex="-1" inputmode="decimal" placeholder="0.00" value="${esc(seed)}"></td>
             <td><div class="fa-remise"><input data-f="remise" inputmode="decimal" value="${esc(item?.remise ?? 0)}"><span>%</span></div></td>
             <td><input data-f="sub" readonly tabindex="-1" value="0.00"></td>
-            <td><button type="button" class="fa-line-x" data-remove title="Retirer" aria-label="Retirer">${trash}</button></td>`;
+            <td><button type="button" class="fa-line-x" data-remove title="Retirer" aria-label="Retirer">${times}</button></td>`;
         if (known) applyCatalogProduct(tr, known);
         refreshLine(tr);
         return tr;
