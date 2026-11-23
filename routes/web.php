@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\ChargeController;
 use App\Http\Controllers\ClientBalanceController;
+use App\Http\Controllers\NotificationAlertController;
 use App\Http\Controllers\TreasuryReportController;
 use App\Http\Controllers\ClientController;
 use App\Http\Controllers\ClientPaymentController;
@@ -1333,3 +1334,4 @@ Route::middleware('auth.user')->put('/charges/{charge}', [ChargeController::clas
 Route::middleware('auth.user')->delete('/charges/{charge}', [ChargeController::class, 'destroy'])->name('charges.destroy');
 Route::middleware('auth.user')->post('/charge-categories', [ChargeController::class, 'storeCategory'])->name('charge-categories.store');
 Route::middleware('auth.user')->get('/rapport-tresorerie', [TreasuryReportController::class, 'index'])->name('rapport-tresorerie.index');
+Route::middleware('auth.user')->get('/notifications/alerts', [NotificationAlertController::class, 'index'])->name('notifications.alerts');

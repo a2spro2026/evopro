@@ -1608,6 +1608,116 @@
         .topbar-btn.sections-lock .icon-unlock { display: none; }
         .topbar-btn.sections-lock.is-locked .icon-lock { display: none; }
         .topbar-btn.sections-lock.is-locked .icon-unlock { display: block; }
+
+        .notif-wrap { position: relative; }
+        .topbar-btn.notif-btn { position: relative; color: var(--text); }
+        .topbar-btn.notif-btn.has-alerts {
+            color: #ca8a04;
+            border-color: rgba(202, 138, 4, 0.45);
+            background: rgba(250, 204, 21, 0.14);
+            animation: notifBellBlink 1.1s ease-in-out infinite;
+        }
+        .topbar-btn.notif-btn .notif-badge {
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            min-width: 18px;
+            height: 18px;
+            padding: 0 5px;
+            border-radius: 999px;
+            background: #dc2626;
+            color: #fff;
+            font-size: 0.65rem;
+            font-weight: 800;
+            line-height: 18px;
+            text-align: center;
+            box-shadow: 0 0 0 2px var(--topbar-bg);
+        }
+        .topbar-btn.notif-btn .notif-badge[hidden] { display: none !important; }
+        @keyframes notifBellBlink {
+            0%, 100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(250, 204, 21, 0.35); }
+            50% { transform: scale(1.06); box-shadow: 0 0 0 6px rgba(250, 204, 21, 0); }
+        }
+        .notif-panel {
+            position: absolute;
+            top: calc(100% + 10px);
+            right: 0;
+            z-index: 90;
+            width: min(380px, calc(100vw - 24px));
+            max-height: min(420px, 70vh);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            border-radius: 14px;
+            border: 1px solid var(--line);
+            background: var(--panel, #fff);
+            box-shadow: 0 18px 40px rgba(15, 23, 42, 0.18);
+            color: var(--text);
+        }
+        .notif-panel[hidden] { display: none !important; }
+        .notif-panel-head {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 0.75rem;
+            padding: 0.85rem 1rem;
+            border-bottom: 1px solid var(--line);
+            background: color-mix(in srgb, var(--accent-2, #0b1f3a) 8%, transparent);
+        }
+        .notif-panel-head strong {
+            font-size: 0.86rem;
+            letter-spacing: 0.04em;
+            text-transform: uppercase;
+        }
+        .notif-panel-head span {
+            font-size: 0.72rem;
+            color: var(--muted);
+            font-weight: 700;
+        }
+        .notif-list {
+            overflow: auto;
+            max-height: min(360px, 60vh);
+            padding: 0.35rem;
+        }
+        .notif-item {
+            display: grid;
+            gap: 0.15rem;
+            width: 100%;
+            text-align: left;
+            border: 0;
+            border-radius: 10px;
+            background: transparent;
+            color: inherit;
+            padding: 0.7rem 0.75rem;
+            cursor: pointer;
+            font-family: inherit;
+            text-transform: none;
+        }
+        .notif-item:hover { background: color-mix(in srgb, var(--accent, #c47a3a) 12%, transparent); }
+        .notif-item .notif-title {
+            font-size: 0.72rem;
+            font-weight: 800;
+            letter-spacing: 0.05em;
+            text-transform: uppercase;
+            color: #ca8a04;
+        }
+        .notif-item.is-urgent .notif-title { color: #dc2626; }
+        .notif-item .notif-msg {
+            font-size: 0.82rem;
+            font-weight: 650;
+            line-height: 1.3;
+        }
+        .notif-item .notif-detail {
+            font-size: 0.72rem;
+            color: var(--muted);
+        }
+        .notif-empty {
+            padding: 1.2rem 1rem;
+            text-align: center;
+            color: var(--muted);
+            font-size: 0.82rem;
+            text-transform: none;
+        }
         .sections-lock-banner {
             display: none;
             margin: 0 0 1rem;
@@ -3706,6 +3816,24 @@
                             </svg>
                         </button>
                     @endif
+                    <div class="notif-wrap">
+                        <button type="button" class="topbar-btn notif-btn" id="notifBell" aria-label="Notifications" title="Notifications" aria-expanded="false" aria-controls="notifPanel">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                                <path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/>
+                                <path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/>
+                            </svg>
+                            <span class="notif-badge" id="notifBadge" hidden>0</span>
+                        </button>
+                        <div class="notif-panel" id="notifPanel" hidden role="dialog" aria-label="Liste des alertes">
+                            <div class="notif-panel-head">
+                                <strong>Alertes</strong>
+                                <span id="notifCountLabel">0</span>
+                            </div>
+                            <div class="notif-list" id="notifList">
+                                <div class="notif-empty">Aucune alerte</div>
+                            </div>
+                        </div>
+                    </div>
                     <button type="button" class="topbar-btn" id="themeToggle" data-toggle="theme" aria-label="Basculer mode clair ou sombre" title="Mode clair / sombre">
                         <svg class="icon-dark" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
                             <path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/>
@@ -5603,6 +5731,98 @@
             sidebar?.classList.remove('open');
             sidebarBackdrop?.classList.remove('open');
         }
+
+        (function initNotifications() {
+            const bell = document.getElementById('notifBell');
+            const panel = document.getElementById('notifPanel');
+            const list = document.getElementById('notifList');
+            const badge = document.getElementById('notifBadge');
+            const countLabel = document.getElementById('notifCountLabel');
+            if (!bell || !panel || !list || !badge || !countLabel) return;
+
+            let alerts = [];
+            let open = false;
+
+            function esc(value) {
+                return String(value ?? '').replace(/[&<>"']/g, (ch) => ({
+                    '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;',
+                }[ch]));
+            }
+
+            function setOpen(next) {
+                open = !!next;
+                panel.hidden = !open;
+                bell.setAttribute('aria-expanded', open ? 'true' : 'false');
+            }
+
+            function paint() {
+                const count = alerts.length;
+                bell.classList.toggle('has-alerts', count > 0);
+                if (count > 0) {
+                    badge.hidden = false;
+                    badge.textContent = count > 99 ? '99+' : String(count);
+                    countLabel.textContent = count + (count > 1 ? ' alertes' : ' alerte');
+                    list.innerHTML = alerts.map((alert) => `
+                        <button type="button" class="notif-item ${alert.severity === 'urgent' ? 'is-urgent' : ''}" data-panel-target="${esc(alert.panel || '')}">
+                            <span class="notif-title">${esc(alert.title || 'Alerte')}</span>
+                            <span class="notif-msg">${esc(alert.message || '—')}</span>
+                            <span class="notif-detail">${esc(alert.detail || '')}</span>
+                        </button>
+                    `).join('');
+                } else {
+                    badge.hidden = true;
+                    badge.textContent = '0';
+                    countLabel.textContent = '0 alerte';
+                    list.innerHTML = '<div class="notif-empty">Aucune alerte</div>';
+                }
+            }
+
+            async function loadAlerts() {
+                try {
+                    const response = await fetch('/notifications/alerts', {
+                        headers: { Accept: 'application/json', 'X-Requested-With': 'XMLHttpRequest' },
+                        credentials: 'same-origin',
+                    });
+                    if (!response.ok) throw new Error('load');
+                    const payload = await response.json();
+                    alerts = Array.isArray(payload.data) ? payload.data : [];
+                } catch (error) {
+                    alerts = [];
+                }
+                paint();
+            }
+
+            bell.addEventListener('click', (event) => {
+                event.preventDefault();
+                event.stopPropagation();
+                setOpen(!open);
+                if (open) loadAlerts();
+            });
+
+            list.addEventListener('click', (event) => {
+                const item = event.target.closest('[data-panel-target]');
+                if (!item) return;
+                const target = item.getAttribute('data-panel-target');
+                setOpen(false);
+                if (target) showPanel(target);
+            });
+
+            document.addEventListener('click', (event) => {
+                if (!open) return;
+                if (event.target.closest('.notif-wrap')) return;
+                setOpen(false);
+            });
+
+            document.addEventListener('keydown', (event) => {
+                if (event.key === 'Escape' && open) setOpen(false);
+            });
+
+            loadAlerts();
+            setInterval(loadAlerts, 60000);
+            document.addEventListener('visibilitychange', () => {
+                if (!document.hidden) loadAlerts();
+            });
+        })();
 
         navParents.forEach((item) => {
             item.addEventListener('click', () => {
