@@ -178,9 +178,9 @@
         margin-bottom: 1rem; flex-wrap: wrap;
     }
     .bl-summary { display: flex; flex-wrap: wrap; gap: 0.55rem; margin: 0 0 0 auto; }
-    .bl-card { border-radius: 10px; padding: 0.45rem 0.85rem; color: #fff; box-shadow: 0 3px 12px rgba(15,23,42,0.12); min-width: 118px; }
-    .bl-card span { display: block; font-size: 0.6rem; font-weight: 700; letter-spacing: 0.07em; text-transform: uppercase; opacity: 0.9; }
-    .bl-card strong { display: block; margin-top: 0.12rem; font-size: 1.05rem; font-variant-numeric: tabular-nums; }
+    .bl-card { border-radius: 12px; padding: 0.7rem 1.05rem; color: #fff; box-shadow: 0 4px 14px rgba(15,23,42,0.14); min-width: 148px; }
+    .bl-card span { display: block; font-size: 0.68rem; font-weight: 700; letter-spacing: 0.07em; text-transform: uppercase; opacity: 0.92; }
+    .bl-card strong { display: block; margin-top: 0.25rem; font-size: 1.28rem; font-variant-numeric: tabular-nums; }
     .bl-card.ventes { background: linear-gradient(135deg, #2563eb, #1e3a8a); }
     .bl-card.paye { background: linear-gradient(135deg, #16a34a, #14532d); }
     .bl-card.solde { background: linear-gradient(135deg, #ef4444, #b91c1c); }

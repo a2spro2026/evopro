@@ -7720,21 +7720,38 @@
         @endif
     </script>
     <style id="evopro-ui-polish">
-        /* Cartes KPI — plus compactes, ombre douce, coins maîtrisés */
-        .ba-card, .bl-card, .bf-card, .cb-card, .fa-stat, .sm-stat, .card-stat {
+        /* Cartes KPI BA/BL/balances — même taille que trésorerie */
+        .ba-card, .bl-card, .bf-card, .cb-card {
+            border-radius: 12px !important;
+            padding: 0.7rem 1.05rem !important;
+            min-width: 148px !important;
+            min-height: 0 !important;
+            box-shadow: 0 4px 14px rgba(15, 23, 42, 0.14) !important;
+            border: 1px solid rgba(255, 255, 255, 0.14);
+        }
+        .ba-card span, .bl-card span, .bf-card span, .cb-card span {
+            font-size: 0.68rem !important;
+            letter-spacing: 0.07em !important;
+            opacity: 0.92 !important;
+        }
+        .ba-card strong, .bl-card strong, .bf-card strong, .cb-card strong {
+            margin-top: 0.25rem !important;
+            font-size: 1.28rem !important;
+            font-weight: 700 !important;
+            letter-spacing: -0.02em;
+        }
+        .fa-stat, .sm-stat, .card-stat {
             border-radius: 10px !important;
             padding: 0.5rem 0.9rem !important;
             min-height: 0 !important;
             box-shadow: 0 3px 12px rgba(15, 23, 42, 0.12) !important;
             border: 1px solid rgba(255, 255, 255, 0.14);
         }
-        .ba-card span, .bl-card span, .bf-card span, .cb-card span,
         .fa-stat span, .sm-stat span {
             font-size: 0.6rem !important;
             letter-spacing: 0.07em !important;
             opacity: 0.92 !important;
         }
-        .ba-card strong, .bl-card strong, .bf-card strong, .cb-card strong,
         .fa-stat strong, .sm-stat strong {
             margin-top: 0.12rem !important;
             font-size: 1.08rem !important;
