@@ -5,19 +5,26 @@ namespace App\Http\Controllers;
 use App\Models\Supplier;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Schema;
 
 class SupplierController extends Controller
 {
     public function index(): JsonResponse
     {
-        $rows = Supplier::query()->orderByDesc('id')->get()->map->toFicheArray()->values();
+        $query = Supplier::query()->orderByDesc('id');
+        if (Schema::hasTable('purchase_orders')) {
+            $query->with(['purchaseOrders' => fn ($q) => $q->select('id', 'supplier_id', 'total', 'montant_paye')]);
+        }
+        $suppliers = $query->get();
+        $rows = $suppliers->map->toFicheArray()->values();
+        $totalSoldes = round($suppliers->sum(fn (Supplier $supplier) => $supplier->displayedSolde()), 2);
 
         return response()->json([
             'data' => $rows,
             'meta' => [
                 'next_id' => $this->nextCode(),
                 'date' => now()->format('d/m/Y'),
-                'total_soldes' => number_format((float) Supplier::query()->sum('initial_balance'), 2, '.', ''),
+                'total_soldes' => number_format($totalSoldes, 2, '.', ''),
             ],
         ]);
     }

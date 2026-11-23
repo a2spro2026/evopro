@@ -4,10 +4,6 @@
             <h1>Factures Achats</h1>
             <p class="fa-sub">Saisie des factures fournisseurs</p>
         </div>
-        <button type="button" class="fa-nouveau" id="faAdd">
-            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/></svg>
-            Nouveau
-        </button>
     </div>
 
     <div class="fa-filters">
@@ -36,6 +32,10 @@
                     <option value="">Tous</option>
                 </select>
             </label>
+            <button type="button" class="fa-nouveau" id="faAdd">
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/></svg>
+                Nouveau
+            </button>
         </div>
         <div class="fa-stats">
             <div class="fa-stat achats"><span>Total Achats</span><strong id="faSumTtc">0,00</strong></div>
@@ -176,7 +176,7 @@
     .fa-nouveau {
         display: inline-flex; align-items: center; gap: 0.4rem;
         height: 40px; padding: 0 1rem; border: none; border-radius: 10px; cursor: pointer;
-        background: linear-gradient(180deg, #8f2436, #5c1220); color: #fff;
+        background: linear-gradient(180deg, #c47a3a, #0b1f3a); color: #fff;
         font-weight: 700; font-size: 0.85rem; font-family: inherit;
     }
     .fa-nouveau svg, .fa-list-bar svg { width: 16px; height: 16px; }
@@ -185,13 +185,13 @@
     .fa-stat span { display: block; font-size: 0.68rem; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; opacity: 0.85; }
     .fa-stat strong { display: block; margin-top: 0.25rem; font-size: 1.35rem; font-variant-numeric: tabular-nums; }
     .fa-stat.slate { background: linear-gradient(135deg, #2a2a2e, #0a0a0c); }
-    .fa-stat.blue { background: linear-gradient(135deg, #6e1224, #3a0a12); }
-    .fa-stat.green { background: linear-gradient(135deg, #8f2436, #4a1018); }
+    .fa-stat.blue { background: linear-gradient(135deg, #1e3a5f, #0b1f3a); }
+    .fa-stat.green { background: linear-gradient(135deg, #c47a3a, #8b5424); }
     .fa-card { border-radius: 16px; overflow: hidden; border: 1px solid rgba(143, 36, 54, 0.45); background: #0a0a0c; display: flex; flex-direction: column; min-height: 0; }
     .fa-list-bar {
         display: flex; align-items: center; justify-content: space-between;
         padding: 0.8rem 1.1rem; color: #fff; flex: 0 0 auto;
-        background: linear-gradient(90deg, #0a0a0c, #5c1220 58%, #8f2436);
+        background: linear-gradient(90deg, #0a0a0c, #0b1f3a 58%, #c47a3a);
     }
     .fa-list-bar h3 { margin: 0; display: flex; align-items: center; gap: 0.45rem; font-size: 0.82rem; letter-spacing: 0.06em; text-transform: uppercase; }
     .fa-list-bar button, .fa-x {
@@ -204,8 +204,8 @@
     .fa-table th {
         position: sticky; top: 0; z-index: 3;
         padding: 0.48rem 0.5rem; font-size: 0.68rem; letter-spacing: 0.08em; text-transform: uppercase;
-        color: #fff; background: #5c1220; text-align: center; white-space: nowrap;
-        box-shadow: inset 0 -1px 0 #8f2436;
+        color: #fff; background: #0b1f3a; text-align: center; white-space: nowrap;
+        box-shadow: inset 0 -1px 0 #c47a3a;
     }
     .fa-table td { padding: 0.38rem 0.5rem; text-align: center; border-top: 1px solid rgba(110, 18, 36, 0.35); font-size: 0.8rem; color: #000; background: #fff; }
     .fa-table tbody tr:hover td { background: rgba(110, 18, 36, 0.32); }
@@ -242,7 +242,7 @@
     #faModal.fa-window[hidden] { display: none !important; }
     .fa-sheet {
         width: min(920px, 100%); margin-top: 1.5rem; border-radius: 16px; overflow: hidden;
-        background: #0c0c0e; border: 1px solid #4a1824; color: #f4f5f6;
+        background: #0c0c0e; border: 1px solid #1e3a5f; color: #f4f5f6;
         box-shadow: 0 24px 60px rgba(0,0,0,0.45);
     }
     #faModal .fa-sheet { width: min(1220px, 100%); margin: auto; }
@@ -250,12 +250,12 @@
     .fa-sheet-head {
         display: flex; align-items: center; justify-content: space-between; gap: 1rem;
         padding: 0.9rem 1.15rem; color: #fff;
-        background: linear-gradient(90deg, #0a0a0c, #5c1220 58%, #8f2436);
+        background: linear-gradient(90deg, #0a0a0c, #0b1f3a 58%, #c47a3a);
     }
     .fa-sheet-head h3 { margin: 0; font-size: 0.92rem; letter-spacing: 0.06em; text-transform: uppercase; }
     .fa-kicker { margin: 0; font-size: 0.62rem; letter-spacing: 0.12em; text-transform: uppercase; color: #e7c4c8; }
     .fa-form { padding: 1rem 1.15rem 0.4rem; }
-    .fa-error { margin-bottom: 0.75rem; padding: 0.65rem 0.8rem; border-radius: 10px; background: rgba(127,29,29,0.35); color: #fecaca; border: 1px solid #7f1d1d; font-size: 0.82rem; }
+    .fa-error { margin-bottom: 0.75rem; padding: 0.65rem 0.8rem; border-radius: 10px; background: rgba(127,29,29,0.35); color: #fecaca; border: 1px solid #1e3a5f; font-size: 0.82rem; }
     .fa-grid { display: grid; grid-template-columns: minmax(0, 1.15fr) minmax(120px, 0.7fr) minmax(0, 1.55fr) minmax(148px, 1.15fr); gap: 0.75rem 0.85rem; }
     .fa-span-2 { grid-column: span 2; }
     .fa-field label {
@@ -263,7 +263,7 @@
         margin-bottom: 0.35rem; font-size: 0.62rem; font-weight: 800; letter-spacing: 0.08em;
         text-transform: uppercase; color: #94a3b8;
     }
-    .fa-field label::after { content: ''; width: 28px; height: 2px; border-radius: 2px; background: #e10600; }
+    .fa-field label::after { content: ''; width: 28px; height: 2px; border-radius: 2px; background: #c47a3a; }
     .fa-field input, .fa-field select {
         width: 100%; height: 40px; box-sizing: border-box; border-radius: 8px;
         border: 1px solid #475569; background: #1e293b; color: #f8fafc;
@@ -287,7 +287,7 @@
     .fa-lines-head > div { display: flex; align-items: center; gap: 0.65rem; }
     .fa-add-line { border: none; background: transparent; color: #e8b4bc; font-weight: 800; font-size: 0.78rem; cursor: pointer; font-family: inherit; }
     .fa-lines-wrap { max-height: min(52vh, 520px); overflow: auto; border: 1px solid #334155; border-radius: 10px; }
-    .fa-lines { width: 100%; border-collapse: collapse; table-layout: fixed; }
+    .fa-lines { width: 100%; border-collapse: separate; border-spacing: 0; table-layout: fixed; }
     .fa-lines .c-ref { width: 110px; }
     .fa-lines .c-equiv { width: 90px; }
     .fa-lines .c-brand { width: 100px; }
@@ -298,7 +298,7 @@
     .fa-lines .c-sub { width: 108px; }
     .fa-lines .c-x { width: 34px; }
     .fa-lines { min-width: 1100px; }
-    .fa-lines th { position: sticky; top: 0; background: #5c1220; color: #fff; font-size: 0.62rem; letter-spacing: 0.06em; text-transform: uppercase; padding: 0.5rem; text-align: center; }
+    .fa-lines th { position: sticky; top: 0; z-index: 5; background: #0b1f3a; color: #fff; font-size: 0.62rem; letter-spacing: 0.06em; text-transform: uppercase; padding: 0.5rem; text-align: center; box-shadow: 0 1px 0 #c47a3a; }
     .fa-lines td { padding: 0.35rem; text-align: center; border-top: 1px solid #1e293b; color: #e2e8f0; font-size: 0.78rem; }
     .fa-lines input {
         width: 100%; height: 32px; box-sizing: border-box; border-radius: 6px; border: 1px solid #475569;
@@ -331,15 +331,15 @@
     .fa-totals div { border-radius: 12px; padding: 0.55rem 0.4rem; text-align: center; background: #1e293b; border: 1px solid #334155; }
     .fa-totals small { display: block; font-size: 0.62rem; font-weight: 800; letter-spacing: 0.06em; text-transform: uppercase; color: #94a3b8; }
     .fa-totals strong { display: block; margin-top: 0.15rem; font-size: 0.95rem; }
-    .fa-totals .tva { background: rgba(92, 18, 32, 0.55); border-color: #8f2436; }
+    .fa-totals .tva { background: rgba(92, 18, 32, 0.55); border-color: #c47a3a; }
     .fa-totals .tva small, .fa-totals .tva strong { color: #f0c9cf; }
-    .fa-totals .ttc { background: rgba(74, 14, 24, 0.85); border-color: #e10600; }
+    .fa-totals .ttc { background: rgba(74, 14, 24, 0.85); border-color: #c47a3a; }
     .fa-totals .ttc small, .fa-totals .ttc strong { color: #fff; }
     .fa-actions { display: flex; justify-content: flex-end; gap: 0.5rem; padding: 0.9rem 0 1rem; }
     .fa-view .fa-actions { padding: 0.9rem 1.15rem 1rem; border-top: 1px solid #1e293b; }
     .fa-btn { height: 36px; padding: 0 1rem; border-radius: 999px; border: none; font-family: inherit; font-weight: 700; font-size: 0.78rem; cursor: pointer; }
     .fa-btn.ghost { background: #1e293b; color: #e2e8f0; border: 1px solid #475569; }
-    .fa-btn.primary { background: linear-gradient(180deg, #8f2436, #5c1220); color: #fff; }
+    .fa-btn.primary { background: linear-gradient(180deg, #c47a3a, #0b1f3a); color: #fff; }
     .fa-view-body { padding: 0.9rem 1.15rem; max-height: 50vh; overflow: auto; }
     .fa-view-row { display: flex; justify-content: space-between; gap: 1rem; padding: 0.4rem 0; border-bottom: 1px solid #1e293b; font-size: 0.84rem; }
     .fa-view-row span { color: #94a3b8; }
@@ -351,7 +351,7 @@
         .fa-stats { grid-template-columns: 1fr; }
     }
     [data-theme="light"] .fa-table th,
-    [data-theme="light"] .fa-lines th { background: #f3d5db; color: #5c1220; }
+    [data-theme="light"] .fa-lines th { background: #f5ede4; color: #0b1f3a; }
 </style>
 <script>
 (function () {
@@ -629,8 +629,8 @@
         document.getElementById(id).addEventListener('change', () => render(filteredRows()));
     });
     document.getElementById('faAddLine').addEventListener('click', () => {
-        if (linesBody.querySelectorAll('tr').length >= 50) {
-            showError('Une facture comprend au maximum 50 articles.');
+        if (linesBody.querySelectorAll('tr').length >= 500) {
+            showError('Une facture comprend au maximum 500 articles.');
             return;
         }
         linesBody.appendChild(lineRow());
@@ -708,7 +708,7 @@
         const supplierId = supplier.dataset.id || (known ? String(known.id) : '');
         if (!/^\d{15}$/.test(ice.value)) { showError('L’ICE doit contenir 15 chiffres.'); return; }
         if (!items.length || items.some((item) => !item.description)) { showError('Chaque ligne doit avoir une désignation.'); return; }
-        if (items.length > 50) { showError('Une facture comprend au maximum 50 articles.'); return; }
+        if (items.length > 500) { showError('Une facture comprend au maximum 500 articles.'); return; }
         const totalTtc = recalc();
         save.disabled = true;
         try {

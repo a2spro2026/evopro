@@ -3,6 +3,8 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Support\Facades\Schema;
 
 class Supplier extends Model
 {
@@ -28,13 +30,42 @@ class Supplier extends Model
         ];
     }
 
+    public function purchaseOrders(): HasMany
+    {
+        return $this->hasMany(PurchaseOrder::class);
+    }
+
     public function getCodeAttribute(): string
     {
         return 'CF-'.str_pad((string) $this->id, 4, '0', STR_PAD_LEFT);
     }
 
+    public function unpaidPurchaseBalance(): float
+    {
+        if (! Schema::hasTable('purchase_orders')) {
+            return 0.0;
+        }
+
+        $orders = $this->relationLoaded('purchaseOrders')
+            ? $this->purchaseOrders
+            : $this->purchaseOrders()->get(['id', 'total', 'montant_paye']);
+
+        return round($orders->sum(function (PurchaseOrder $order) {
+            return max((float) $order->total - (float) ($order->montant_paye ?? 0), 0);
+        }), 2);
+    }
+
+    public function displayedSolde(): float
+    {
+        return round((float) $this->initial_balance + $this->unpaidPurchaseBalance(), 2);
+    }
+
     public function toFicheArray(): array
     {
+        $initial = round((float) $this->initial_balance, 2);
+        $baSolde = $this->unpaidPurchaseBalance();
+        $solde = round($initial + $baSolde, 2);
+
         return [
             'id' => $this->id,
             'code' => $this->code,
@@ -46,7 +77,9 @@ class Supplier extends Model
             'city' => $this->city,
             'reglement' => $this->reglement,
             'echeance' => $this->payment_terms,
-            'initial_balance' => number_format((float) $this->initial_balance, 2, '.', ''),
+            'initial_balance' => number_format($initial, 2, '.', ''),
+            'ba_solde' => number_format($baSolde, 2, '.', ''),
+            'solde' => number_format($solde, 2, '.', ''),
             'created_at' => $this->created_at?->format('d/m/Y'),
         ];
     }

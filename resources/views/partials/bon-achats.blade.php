@@ -4,43 +4,43 @@
             <h1>Bon Achats</h1>
             <p class="ba-sub">Bons d’achat fournisseurs</p>
         </div>
-        <button type="button" class="ba-add" id="baAdd" title="Ajouter" aria-label="Ajouter">
-            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/></svg>
-        </button>
     </div>
 
-    <div class="ba-summary">
-        <div class="ba-card achats"><span>Total Achats</span><strong id="baSumAchats">0,00</strong></div>
-        <div class="ba-card paye"><span>Total Payé</span><strong id="baSumPaye">0,00</strong></div>
-        <div class="ba-card solde"><span>Solde</span><strong id="baSumSolde">0,00</strong></div>
-    </div>
-
-    <div class="ba-filters">
-        <label>Mois
-            <select id="baMonth" data-keep-native="1">
-                <option value="">Tous</option>
-                <option value="1">Janvier</option>
-                <option value="2">Février</option>
-                <option value="3">Mars</option>
-                <option value="4">Avril</option>
-                <option value="5">Mai</option>
-                <option value="6">Juin</option>
-                <option value="7">Juillet</option>
-                <option value="8">Août</option>
-                <option value="9">Septembre</option>
-                <option value="10">Octobre</option>
-                <option value="11">Novembre</option>
-                <option value="12">Décembre</option>
-            </select>
-        </label>
-        <label>Fournisseur
-            <select id="baSupplierFilter" data-keep-native="1">
-                <option value="">Tous</option>
-            </select>
-        </label>
-        <button type="button" class="ba-refresh" id="baRefresh" title="Actualiser" aria-label="Actualiser">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12a9 9 0 1 1-2.64-6.36"/><path d="M21 3v6h-6"/></svg>
-        </button>
+    <div class="ba-toolbar">
+        <div class="ba-filters">
+            <label>Mois
+                <select id="baMonth" data-keep-native="1">
+                    <option value="">Tous</option>
+                    <option value="1">Janvier</option>
+                    <option value="2">Février</option>
+                    <option value="3">Mars</option>
+                    <option value="4">Avril</option>
+                    <option value="5">Mai</option>
+                    <option value="6">Juin</option>
+                    <option value="7">Juillet</option>
+                    <option value="8">Août</option>
+                    <option value="9">Septembre</option>
+                    <option value="10">Octobre</option>
+                    <option value="11">Novembre</option>
+                    <option value="12">Décembre</option>
+                </select>
+            </label>
+            <label class="ba-filter-supplier">Fournisseur
+                <input id="baSupplierFilter" type="search" list="baSupplierFilterList" placeholder="Rechercher…" autocomplete="off">
+                <datalist id="baSupplierFilterList"></datalist>
+            </label>
+            <button type="button" class="ba-add" id="baAdd" title="Ajouter" aria-label="Ajouter">
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/></svg>
+            </button>
+            <button type="button" class="ba-refresh" id="baRefresh" title="Actualiser" aria-label="Actualiser">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12a9 9 0 1 1-2.64-6.36"/><path d="M21 3v6h-6"/></svg>
+            </button>
+        </div>
+        <div class="ba-summary">
+            <div class="ba-card achats"><span>Total Achats</span><strong id="baSumAchats">0,00</strong></div>
+            <div class="ba-card paye"><span>Total Payé</span><strong id="baSumPaye">0,00</strong></div>
+            <div class="ba-card solde"><span>Solde</span><strong id="baSumSolde">0,00</strong></div>
+        </div>
     </div>
 
     <div class="procar-table-card">
@@ -171,22 +171,28 @@
 <style>
     #panel-f-bon .ba-sub { margin: 0.2rem 0 0; color: var(--muted); font-size: 0.82rem; text-transform: none; }
     #panel-f-bon .ba-head { display: flex; align-items: flex-end; justify-content: space-between; gap: 1rem; }
-    .ba-summary { display: grid; grid-template-columns: repeat(3, minmax(0, 220px)); gap: 0.75rem; margin-bottom: 1rem; }
-    .ba-card { border-radius: 14px; padding: 0.85rem 1rem; color: #fff; box-shadow: 0 10px 24px rgba(0,0,0,0.2); }
-    .ba-card span { display: block; font-size: 0.68rem; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; opacity: 0.9; }
-    .ba-card strong { display: block; margin-top: 0.25rem; font-size: 1.3rem; font-variant-numeric: tabular-nums; }
+    .ba-toolbar {
+        display: flex; align-items: end; justify-content: space-between; gap: 0.75rem;
+        margin-bottom: 1rem; flex-wrap: wrap;
+    }
+    .ba-summary { display: flex; flex-wrap: wrap; gap: 0.55rem; margin: 0 0 0 auto; }
+    .ba-card { border-radius: 10px; padding: 0.45rem 0.85rem; color: #fff; box-shadow: 0 3px 12px rgba(15,23,42,0.12); min-width: 118px; }
+    .ba-card span { display: block; font-size: 0.6rem; font-weight: 700; letter-spacing: 0.07em; text-transform: uppercase; opacity: 0.9; }
+    .ba-card strong { display: block; margin-top: 0.12rem; font-size: 1.05rem; font-variant-numeric: tabular-nums; }
     .ba-card.achats { background: linear-gradient(135deg, #2563eb, #1e3a8a); }
     .ba-card.paye { background: linear-gradient(135deg, #16a34a, #14532d); }
-    .ba-card.solde { background: linear-gradient(135deg, #dc2626, #7f1d1d); }
+    .ba-card.solde { background: linear-gradient(135deg, #ef4444, #b91c1c); }
     .ba-filters {
-        display: grid; grid-template-columns: 180px minmax(220px, 1fr) 38px; gap: 0.75rem;
-        align-items: end; margin-bottom: 1rem;
+        display: flex; flex-wrap: wrap; align-items: end; gap: 0.55rem; margin: 0;
     }
     .ba-filters label {
         display: flex; flex-direction: column; gap: 0.35rem; min-width: 0;
-        font-size: 0.68rem; font-weight: 800; letter-spacing: 0.06em; text-transform: uppercase; color: #e7d5d8;
+        font-size: 0.68rem; font-weight: 800; letter-spacing: 0.06em; text-transform: uppercase; color: #d6c4b4;
     }
-    .ba-filters select {
+    .ba-filters label:not(.ba-filter-supplier) { width: 132px; }
+    .ba-filters .ba-filter-supplier { width: min(420px, 42vw); min-width: 260px; flex: 1 1 260px; max-width: 520px; }
+    .ba-filters select,
+    .ba-filters input {
         width: 100%; height: 38px; box-sizing: border-box; border-radius: 10px; border: 1px solid #334155;
         background: #fff; color: #000; color-scheme: light; font-family: inherit; font-size: 0.84rem; padding: 0 0.55rem;
     }
@@ -195,15 +201,15 @@
         display: grid; place-items: center; cursor: pointer; background: #111827; color: #f8fafc;
     }
     .ba-refresh svg { width: 16px; height: 16px; }
-    [data-theme="light"] .ba-filters label { color: #5c1220; }
-    [data-theme="light"] .ba-refresh { background: #fff; color: #5c1220; border-color: #e4c5cb; }
+    [data-theme="light"] .ba-filters label { color: #0b1f3a; }
+    [data-theme="light"] .ba-refresh { background: #fff; color: #0b1f3a; border-color: #e0d0c0; }
     .ba-add {
         display: inline-grid; place-items: center;
-        width: 42px; height: 42px; border: none; border-radius: 12px; cursor: pointer;
-        background: linear-gradient(180deg, #8f2436, #5c1220); color: #fff;
+        width: 38px; height: 38px; border: none; border-radius: 10px; cursor: pointer;
+        background: linear-gradient(180deg, #c47a3a, #0b1f3a); color: #fff;
         box-shadow: 0 8px 18px rgba(143, 36, 54, 0.28);
     }
-    .ba-add svg { width: 20px; height: 20px; }
+    .ba-add svg { width: 18px; height: 18px; }
     .ba-add:hover { filter: brightness(1.06); }
     .ba-window {
         position: fixed; top: 0; right: 0; bottom: 0; left: 272px; z-index: 40;
@@ -214,13 +220,13 @@
     .ba-window[hidden] { display: none !important; }
     .ba-sheet {
         width: min(1380px, calc(100vw - 2.5rem)); margin: auto; border-radius: 16px; overflow: hidden;
-        background: #0c0c0e; border: 1px solid #4a1824; color: #f4f5f6;
+        background: #0c0c0e; border: 1px solid #1e3a5f; color: #f4f5f6;
         box-shadow: 0 24px 60px rgba(0,0,0,0.45);
     }
     .ba-sheet-head {
         display: flex; align-items: center; justify-content: space-between; gap: 1rem;
         padding: 0.9rem 1.15rem; color: #fff;
-        background: linear-gradient(90deg, #0a0a0c, #5c1220 58%, #8f2436);
+        background: linear-gradient(90deg, #0a0a0c, #0b1f3a 58%, #c47a3a);
     }
     .ba-sheet-head h3 { margin: 0; font-size: 0.92rem; letter-spacing: 0.06em; text-transform: uppercase; }
     .ba-x {
@@ -229,7 +235,7 @@
     }
     .ba-x:hover { background: rgba(255,255,255,0.12); color: #fff; }
     .ba-form { padding: 1rem 1.15rem 0.4rem; }
-    .ba-error { margin-bottom: 0.75rem; padding: 0.65rem 0.8rem; border-radius: 10px; background: rgba(127,29,29,0.35); color: #fecaca; border: 1px solid #7f1d1d; font-size: 0.82rem; }
+    .ba-error { margin-bottom: 0.75rem; padding: 0.65rem 0.8rem; border-radius: 10px; background: rgba(127,29,29,0.35); color: #fecaca; border: 1px solid #1e3a5f; font-size: 0.82rem; }
     .ba-grid {
         display: grid;
         grid-template-columns: 128px 96px minmax(150px, 1fr) 118px 96px 96px;
@@ -258,7 +264,7 @@
     .ba-field select:focus,
     .ba-field input:focus {
         background-color: #fff; color: #000;
-        outline: 2px solid #8f2436; outline-offset: 1px;
+        outline: 2px solid #c47a3a; outline-offset: 1px;
     }
     .ba-field select option { background: #fff; color: #000; }
     .ba-field input::placeholder,
@@ -275,11 +281,11 @@
         width: 32px; height: 32px; border: none; border-radius: 8px; cursor: pointer;
         background: #1e293b; color: #fff; font-size: 1.2rem; line-height: 1; font-weight: 700;
     }
-    .ba-add-line:hover { background: #8f2436; }
+    .ba-add-line:hover { background: #c47a3a; }
     .ba-lines-wrap {
         max-height: min(52vh, 520px); overflow: auto; border: 1px solid #334155; border-radius: 10px;
     }
-    .ba-lines { width: 100%; border-collapse: collapse; table-layout: fixed; min-width: 1180px; }
+    .ba-lines { width: 100%; border-collapse: separate; border-spacing: 0; table-layout: fixed; min-width: 1180px; }
     .ba-lines col.c-ref { width: 7%; }
     .ba-lines col.c-barcode { width: 9%; }
     .ba-lines col.c-equiv { width: 7%; }
@@ -292,9 +298,10 @@
     .ba-lines col.c-sub { width: 9%; }
     .ba-lines col.c-x { width: 40px; }
     .ba-lines th {
-        position: sticky; top: 0; background: #5c1220; color: #fff;
+        position: sticky; top: 0; z-index: 5; background: #0b1f3a; color: #fff;
         font-size: 0.62rem; letter-spacing: 0.06em; text-transform: uppercase;
         padding: 0.5rem; text-align: center;
+        box-shadow: 0 1px 0 #c47a3a;
     }
     .ba-lines th:nth-child(4) { text-align: left; padding-left: 0.65rem; }
     .ba-lines td { padding: 0.3rem; border-top: 1px solid #1e293b; }
@@ -337,7 +344,7 @@
     .ba-actions { display: flex; justify-content: flex-end; gap: 0.5rem; padding: 0.95rem 0 1rem; }
     .ba-btn { height: 36px; padding: 0 1rem; border-radius: 999px; border: none; font-family: inherit; font-weight: 700; font-size: 0.78rem; cursor: pointer; }
     .ba-btn.ghost { background: #1e293b; color: #e2e8f0; border: 1px solid #475569; }
-    .ba-btn.primary { background: linear-gradient(180deg, #8f2436, #5c1220); color: #fff; }
+    .ba-btn.primary { background: linear-gradient(180deg, #c47a3a, #0b1f3a); color: #fff; }
     .ba-icon {
         display: inline-grid; place-items: center; width: 28px; height: 28px; padding: 0;
         border: none; border-radius: 8px; background: transparent; color: #94a3b8; cursor: pointer;
@@ -353,25 +360,25 @@
     [data-theme="light"] .ba-sheet { background: #fff; border-color: #e7c9cf; color: #1a1214; }
     [data-theme="light"] .ba-field label,
     [data-theme="light"] .ba-totals small,
-    [data-theme="light"] .ba-lines th { color: #5c1220; background: #f3d5db; }
+    [data-theme="light"] .ba-lines th { color: #0b1f3a; background: #f5ede4; }
     [data-theme="light"] .ba-field input,
     [data-theme="light"] .ba-field select,
     [data-theme="light"] .ba-lines input,
-    [data-theme="light"] .ba-lines select { background: #fff; color: #000; border-color: #e4c5cb; }
+    [data-theme="light"] .ba-lines select { background: #fff; color: #000; border-color: #e0d0c0; }
     [data-theme="light"] .ba-field select {
         background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath fill='%237a5a62' d='M1 1l5 5 5-5'/%3E%3C/svg%3E");
         background-repeat: no-repeat;
         background-position: right 0.7rem center;
         background-size: 12px 8px;
     }
-    [data-theme="light"] .ba-lines-wrap { border-color: #e4c5cb; }
-    [data-theme="light"] .ba-lines th { background: #f3d5db; color: #5c1220; }
+    [data-theme="light"] .ba-lines-wrap { border-color: #e0d0c0; }
+    [data-theme="light"] .ba-lines th { background: #f5ede4; color: #0b1f3a; }
     [data-theme="light"] .ba-lines td { border-top-color: #f0dde1; }
     [data-theme="light"] .ba-totals div { background: #fff; border-color: #e7c9cf; }
-    [data-theme="light"] .ba-add-line { background: #f3d5db; color: #5c1220; }
-    [data-theme="light"] .ba-btn.ghost { background: #fff; color: #5c1220; border-color: #e4c5cb; }
+    [data-theme="light"] .ba-add-line { background: #f5ede4; color: #0b1f3a; }
+    [data-theme="light"] .ba-btn.ghost { background: #fff; color: #0b1f3a; border-color: #e0d0c0; }
     [data-theme="light"] .ba-icon { color: #64748b; }
-    [data-theme="light"] .ba-lines-head p { color: #8f2436; }
+    [data-theme="light"] .ba-lines-head p { color: #c47a3a; }
     [data-theme="light"] .ba-remise span { color: #7a5a62; }
     @media (max-width: 900px) {
         .ba-window { left: 0; }
@@ -624,19 +631,17 @@
         }).filter((item) => item && (item.description || item.ref || item.barcode));
     }
     function fillSupplierFilter() {
-        const select = document.getElementById('baSupplierFilter');
-        const current = select.value;
+        const list = document.getElementById('baSupplierFilterList');
         const values = [...new Set(rows.map((row) => String(row.supplier || '').trim()).filter(Boolean))]
             .sort((a, b) => a.localeCompare(b, 'fr', { sensitivity: 'base' }));
-        select.innerHTML = `<option value="">Tous</option>${values.map((value) => `<option value="${esc(value)}">${esc(value)}</option>`).join('')}`;
-        select.value = values.includes(current) ? current : '';
+        list.innerHTML = values.map((value) => `<option value="${esc(value)}"></option>`).join('');
     }
     function filteredRows() {
         const month = document.getElementById('baMonth').value;
         const supplier = document.getElementById('baSupplierFilter').value.trim().toLowerCase();
         return rows.filter((row) => {
             if (month && String(row.month || '') !== month) return false;
-            if (supplier && String(row.supplier || '').trim().toLowerCase() !== supplier) return false;
+            if (supplier && !String(row.supplier || '').trim().toLowerCase().includes(supplier)) return false;
             return true;
         });
     }
@@ -720,8 +725,8 @@
         closeModal();
     });
     document.getElementById('baAddLine').addEventListener('click', () => {
-        if (linesBody.querySelectorAll('tr').length >= 50) {
-            showError('Un bon comprend au maximum 50 articles.');
+        if (linesBody.querySelectorAll('tr').length >= 500) {
+            showError('Un bon comprend au maximum 500 articles.');
             return;
         }
         linesBody.appendChild(lineRow());
@@ -828,6 +833,7 @@
         render();
     }
     document.getElementById('baMonth').addEventListener('change', render);
+    document.getElementById('baSupplierFilter').addEventListener('input', render);
     document.getElementById('baSupplierFilter').addEventListener('change', render);
     document.getElementById('baRefresh').addEventListener('click', () => {
         load().catch((error) => { body.innerHTML = `<tr><td colspan="9">${esc(error.message)}</td></tr>`; });
@@ -837,8 +843,8 @@
         event.preventDefault();
         if (mode === 'view') return;
         showError('');
-        if (linesBody.querySelectorAll('tr').length > 50) {
-            showError('Un bon comprend au maximum 50 articles.');
+        if (linesBody.querySelectorAll('tr').length > 500) {
+            showError('Un bon comprend au maximum 500 articles.');
             return;
         }
         const date = document.getElementById('baDate').value;

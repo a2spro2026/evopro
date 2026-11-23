@@ -8,17 +8,54 @@
 
     <div class="fa-filters">
         <div class="fa-filter-side">
-            <label>N° Facture<input type="search" id="fraInvoiceNo" autocomplete="off"></label>
-            <label>Nom fournisseur
-                <select id="fraSupplierName" class="fa-name" data-keep-native="1">
+            <label>Mois
+                <select id="fraMonth" data-keep-native="1">
                     <option value="">Tous</option>
+                    <option value="1">Janvier</option>
+                    <option value="2">Février</option>
+                    <option value="3">Mars</option>
+                    <option value="4">Avril</option>
+                    <option value="5">Mai</option>
+                    <option value="6">Juin</option>
+                    <option value="7">Juillet</option>
+                    <option value="8">Août</option>
+                    <option value="9">Septembre</option>
+                    <option value="10">Octobre</option>
+                    <option value="11">Novembre</option>
+                    <option value="12">Décembre</option>
                 </select>
             </label>
-            <label>Montant<input type="search" id="fraAmount" inputmode="decimal" autocomplete="off"></label>
-            <label>Réf Règlement<input type="search" id="fraPayRef" autocomplete="off"></label>
+            <label>N° Rég<input type="search" id="fraPayRef" placeholder="Rechercher…" autocomplete="off"></label>
+            <label>Nom fournisseur<input type="search" id="fraSupplierName" class="fa-name" placeholder="Rechercher…" autocomplete="off"></label>
+            <label>Mnt<input type="search" id="fraAmount" inputmode="decimal" placeholder="Rechercher…" autocomplete="off"></label>
+            <label>Type
+                <select id="fraTypeFilter" data-keep-native="1">
+                    <option value="">Tous</option>
+                    <option>Esp</option>
+                    <option>Chq</option>
+                    <option>Eff</option>
+                    <option>Vir</option>
+                    <option>Vers</option>
+                </select>
+            </label>
+            <label>Bnq
+                <select id="fraBanqueFilter" data-keep-native="1">
+                    <option value="">Tous</option>
+                    <option>Attijariwafa</option>
+                    <option>BMCE</option>
+                    <option>Banque Populaire</option>
+                    <option>CIH</option>
+                    <option>SGMB</option>
+                    <option>Crédit Agricole</option>
+                    <option>CDM</option>
+                    <option>Al Barid Bank</option>
+                    <option>Autre</option>
+                </select>
+            </label>
+            <label>Nom Tiré<input type="search" id="fraTireFilter" placeholder="Rechercher…" autocomplete="off"></label>
         </div>
         <div class="fa-stats">
-            <div class="fa-stat regl"><span>Total Règlements</span><strong id="fraSum">0,00</strong></div>
+            <div class="fa-stat regl"><span>Total Rég</span><strong id="fraSum">0,00</strong></div>
         </div>
     </div>
 
@@ -141,14 +178,24 @@
     .fra-lines .c-x { width: 34px; }
     .fra-lines select {
         width: 100%; height: 32px; box-sizing: border-box; border-radius: 6px; border: 1px solid #475569;
-        background: #161214; color: #fff; text-align: center; font-size: 0.75rem; font-family: inherit; border-color: #5c2430;
+        background: #161214; color: #fff; text-align: center; font-size: 0.75rem; font-family: inherit; border-color: #1e3a5f;
     }
     .fra-lines input:disabled, .fra-lines select:disabled {
         background: #100e10; color: #8a7076; border-color: #3d2430; cursor: not-allowed;
     }
     #fraAdd { font-size: 1.05rem; line-height: 1; }
-    #panel-fa-regl-achat .fa-filters input { width: 150px; }
-    #panel-fa-regl-achat .fa-filters select.fa-name { width: 240px; }
+    #panel-fa-regl-achat .fa-filters { flex-wrap: nowrap; gap: 0.55rem; align-items: end; }
+    #panel-fa-regl-achat .fa-filter-side { flex-wrap: nowrap; gap: 0.45rem; min-width: 0; overflow: visible; }
+    #panel-fa-regl-achat .fa-filters label { flex-direction: column; align-items: stretch; gap: 0.25rem; min-width: 0; }
+    #panel-fa-regl-achat .fa-filters input,
+    #panel-fa-regl-achat .fa-filters select { width: 108px; min-width: 0; }
+    #panel-fa-regl-achat .fa-filters input.fa-name { width: 150px; }
+    #panel-fa-regl-achat .fa-filters .fa-stats { margin-left: auto; }
+    #panel-fa-regl-achat .fa-filters .fa-stat {
+        min-width: 118px; padding: 0.28rem 0.65rem; border-radius: 10px;
+    }
+    #panel-fa-regl-achat .fa-filters .fa-stat span { font-size: 0.55rem; }
+    #panel-fa-regl-achat .fa-filters .fa-stat strong { font-size: 0.92rem; margin-top: 0; }
     .fa-stat.regl,
     [data-theme="light"] .fa-stat.regl { background: linear-gradient(135deg, #f97316, #c2410c); color: #fff; }
     #fraModal.fa-window {
@@ -248,37 +295,39 @@
             row.querySelector('[data-f="solde"]').value = moneyDot(total - used);
         });
     }
-    function fillSuppliers() {
-        const select = document.getElementById('fraSupplierName');
-        const current = select.value;
-        const seen = new Set();
-        const names = [];
-        rows.forEach((row) => {
-            const name = String(row.fournisseur || '').trim();
-            const key = name.toLowerCase();
-            if (!name || name === '—' || seen.has(key)) return;
-            seen.add(key);
-            names.push(name);
-        });
-        names.sort((a, b) => a.localeCompare(b, 'fr'));
-        select.innerHTML = '<option value="">Tous</option>' + names.map((name) => `<option value="${esc(name)}">${esc(name)}</option>`).join('');
-        select.value = names.some((name) => name.toLowerCase() === current.toLowerCase()) ? current : '';
-    }
     function amountMatches(amount, query) {
         const q = String(query || '').replace(/\s/g, '').replace(',', '.');
         if (!q) return true;
-        return String(amount).includes(q) || moneyDot(amount).includes(q);
+        return String(amount).includes(q) || moneyDot(amount).includes(q) || moneyFr(amount).includes(query);
+    }
+    function contains(haystack, needle) {
+        const q = String(needle || '').trim().toLowerCase();
+        if (!q) return true;
+        return String(haystack || '').toLowerCase().includes(q);
+    }
+    function rowMonth(row) {
+        const raw = String(row.payment_date_raw || '');
+        if (/^\d{4}-\d{2}-\d{2}$/.test(raw)) return String(Number(raw.slice(5, 7)));
+        const fr = String(row.payment_date || '');
+        const parts = fr.split('/');
+        return parts.length === 3 ? String(Number(parts[1])) : '';
     }
     function filteredRows() {
-        const invoiceNo = document.getElementById('fraInvoiceNo').value.trim().toLowerCase();
-        const client = document.getElementById('fraSupplierName').value.trim().toLowerCase();
+        const month = document.getElementById('fraMonth').value;
+        const supplier = document.getElementById('fraSupplierName').value;
         const amount = document.getElementById('fraAmount').value;
-        const payRef = document.getElementById('fraPayRef').value.trim().toLowerCase();
+        const payRef = document.getElementById('fraPayRef').value;
+        const type = document.getElementById('fraTypeFilter').value;
+        const banque = document.getElementById('fraBanqueFilter').value;
+        const tire = document.getElementById('fraTireFilter').value;
         return rows.filter((row) => {
-            if (invoiceNo && !String(row.invoice_reference || '').toLowerCase().includes(invoiceNo)) return false;
-            if (client && String(row.fournisseur || '').trim().toLowerCase() !== client) return false;
+            if (month && rowMonth(row) !== month) return false;
+            if (!contains(row.fournisseur, supplier)) return false;
             if (!amountMatches(row.amount, amount)) return false;
-            if (payRef && !String(row.reference || '').toLowerCase().includes(payRef)) return false;
+            if (!contains(row.reference, payRef) && !contains(row.line_reference, payRef)) return false;
+            if (type && String(row.method || '') !== type) return false;
+            if (banque && String(row.bank || '') !== banque) return false;
+            if (!contains(row.nom_tire, tire)) return false;
             return true;
         });
     }
@@ -311,7 +360,6 @@
         const payload = await response.json();
         meta = payload.meta || meta;
         rows = payload.data || [];
-        fillSuppliers();
         render(filteredRows());
     }
     function showSheet() {
@@ -379,10 +427,14 @@
     document.getElementById('fraClose').addEventListener('click', closeModal);
     document.getElementById('fraCloseX').addEventListener('click', closeModal);
     document.getElementById('fraRefresh').addEventListener('click', () => load().catch((error) => showError(error.message)));
-    ['fraInvoiceNo', 'fraAmount', 'fraPayRef'].forEach((id) => {
-        document.getElementById(id).addEventListener('input', () => render(filteredRows()));
+    ['fraMonth', 'fraTypeFilter', 'fraBanqueFilter'].forEach((id) => {
+        document.getElementById(id).addEventListener('change', () => render(filteredRows()));
     });
-    document.getElementById('fraSupplierName').addEventListener('change', () => render(filteredRows()));
+    ['fraSupplierName', 'fraAmount', 'fraPayRef', 'fraTireFilter'].forEach((id) => {
+        const field = document.getElementById(id);
+        field.addEventListener('input', () => render(filteredRows()));
+        field.addEventListener('change', () => render(filteredRows()));
+    });
     document.getElementById('fraViewClose').addEventListener('click', closeView);
     document.getElementById('fraViewOk').addEventListener('click', closeView);
     view.addEventListener('click', (event) => { if (event.target === view) closeView(); });

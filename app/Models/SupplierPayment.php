@@ -17,6 +17,7 @@ class SupplierPayment extends Model
         'banque',
         'nom_tire',
         'montant',
+        'amount_on_initial',
         'date_decaissement',
         'remarque',
         'total_ttc',
@@ -30,6 +31,7 @@ class SupplierPayment extends Model
             'payment_date' => 'date',
             'date_decaissement' => 'date',
             'montant' => 'decimal:2',
+            'amount_on_initial' => 'decimal:2',
             'total_ttc' => 'decimal:2',
             'solde_ttc' => 'decimal:2',
         ];

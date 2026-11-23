@@ -1,6 +1,12 @@
 <section class="panel" id="panel-c-fiche">
-    <div class="content-head">
+    <div class="content-head ff-head">
         <h1>Fiche Client</h1>
+        <div class="ff-total" id="fcTotal">
+            <div>
+                <small>Total Soldes clients</small>
+                <strong id="fcTotalValue">0.00</strong>
+            </div>
+        </div>
     </div>
 
     <form class="ff-card is-locked" id="ficheClientForm" autocomplete="off">
@@ -62,12 +68,6 @@
                 <button type="button" class="ff-btn secondary" id="fcRefresh" title="Actualiser" aria-label="Actualiser">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12a9 9 0 1 1-2.6-6.4"/><path d="M21 3v6h-6"/></svg>
                 </button>
-            </div>
-            <div class="ff-total" id="fcTotal">
-                <div>
-                    <small>Total Soldes clients</small>
-                    <strong id="fcTotalValue">0.00</strong>
-                </div>
             </div>
         </div>
     </form>

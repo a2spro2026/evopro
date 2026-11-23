@@ -6,23 +6,24 @@
         </div>
     </div>
 
-    <div class="cb-summary">
-        <div class="cb-card ventes"><span>Total Ventes</span><strong id="cbSumVentes">0,00</strong></div>
-        <div class="cb-card paye"><span>Montant Payé</span><strong id="cbSumPaye">0,00</strong></div>
-        <div class="cb-card solde"><span>Solde</span><strong id="cbSumSolde">0,00</strong></div>
-        <div class="cb-card reliquat"><span>Reliquat</span><strong id="cbSumReliquat">0,00</strong></div>
-    </div>
-
-    <div class="cb-filters">
-        <label>ID
-            <select id="cbCodeFilter" data-keep-native="1"><option value="">Tous</option></select>
-        </label>
-        <label>Client
-            <select id="cbNameFilter" data-keep-native="1"><option value="">Tous</option></select>
-        </label>
-        <button type="button" class="cb-refresh" id="cbRefresh" title="Actualiser" aria-label="Actualiser">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12a9 9 0 1 1-2.64-6.36"/><path d="M21 3v6h-6"/></svg>
-        </button>
+    <div class="cb-toolbar">
+        <div class="cb-filters">
+            <label>ID
+                <select id="cbCodeFilter" data-keep-native="1"><option value="">Tous</option></select>
+            </label>
+            <label class="cb-filter-name">Client
+                <select id="cbNameFilter" data-keep-native="1"><option value="">Tous</option></select>
+            </label>
+            <button type="button" class="cb-refresh" id="cbRefresh" title="Actualiser" aria-label="Actualiser">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12a9 9 0 1 1-2.64-6.36"/><path d="M21 3v6h-6"/></svg>
+            </button>
+        </div>
+        <div class="cb-summary">
+            <div class="cb-card ventes"><span>Total Ventes</span><strong id="cbSumVentes">0,00</strong></div>
+            <div class="cb-card paye"><span>Montant Payé</span><strong id="cbSumPaye">0,00</strong></div>
+            <div class="cb-card solde"><span>Solde</span><strong id="cbSumSolde">0,00</strong></div>
+            <div class="cb-card reliquat"><span>Reliquat</span><strong id="cbSumReliquat">0,00</strong></div>
+        </div>
     </div>
 
     <div class="procar-table-card">
@@ -49,22 +50,26 @@
 <style>
     #panel-c-bal .cb-sub { margin: 0.2rem 0 0; color: var(--muted); font-size: 0.82rem; text-transform: none; }
     #panel-c-bal .cb-head { display: flex; align-items: flex-end; justify-content: space-between; gap: 1rem; }
-    .cb-summary { display: grid; grid-template-columns: repeat(4, minmax(0, 220px)); gap: 0.75rem; margin-bottom: 1rem; }
-    .cb-card { border-radius: 14px; padding: 0.85rem 1rem; color: #fff; box-shadow: 0 10px 24px rgba(0,0,0,0.2); }
-    .cb-card span { display: block; font-size: 0.68rem; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; opacity: 0.9; }
-    .cb-card strong { display: block; margin-top: 0.25rem; font-size: 1.25rem; font-variant-numeric: tabular-nums; }
+    .cb-toolbar {
+        display: flex; align-items: end; justify-content: space-between; gap: 0.75rem;
+        margin-bottom: 1rem; flex-wrap: wrap;
+    }
+    .cb-summary { display: flex; flex-wrap: wrap; gap: 0.55rem; margin: 0 0 0 auto; }
+    .cb-card { border-radius: 10px; padding: 0.45rem 0.85rem; color: #fff; box-shadow: 0 3px 12px rgba(15,23,42,0.12); min-width: 110px; }
+    .cb-card span { display: block; font-size: 0.6rem; font-weight: 700; letter-spacing: 0.07em; text-transform: uppercase; opacity: 0.9; }
+    .cb-card strong { display: block; margin-top: 0.12rem; font-size: 1.05rem; font-variant-numeric: tabular-nums; }
     .cb-card.ventes { background: linear-gradient(135deg, #2563eb, #1e3a8a); }
     .cb-card.paye { background: linear-gradient(135deg, #16a34a, #14532d); }
-    .cb-card.solde { background: linear-gradient(135deg, #dc2626, #7f1d1d); }
+    .cb-card.solde { background: linear-gradient(135deg, #ef4444, #b91c1c); }
     .cb-card.reliquat { background: linear-gradient(135deg, #ea580c, #9a3412); }
     .cb-filters {
-        display: grid; grid-template-columns: 160px minmax(220px, 1fr) 38px; gap: 0.75rem;
-        align-items: end; margin-bottom: 1rem;
+        display: flex; flex-wrap: wrap; align-items: end; gap: 0.55rem; margin: 0;
     }
     .cb-filters label {
-        display: flex; flex-direction: column; gap: 0.35rem; min-width: 0;
-        font-size: 0.68rem; font-weight: 800; letter-spacing: 0.06em; text-transform: uppercase; color: #e7d5d8;
+        display: flex; flex-direction: column; gap: 0.35rem; min-width: 0; width: 140px;
+        font-size: 0.68rem; font-weight: 800; letter-spacing: 0.06em; text-transform: uppercase; color: #d6c4b4;
     }
+    .cb-filters .cb-filter-name { width: 200px; }
     .cb-filters select {
         width: 100%; height: 38px; box-sizing: border-box; border-radius: 10px; border: 1px solid #334155;
         background: #fff; color: #000; color-scheme: light; font-family: inherit; font-size: 0.84rem; padding: 0 0.55rem;
@@ -78,12 +83,8 @@
     #panel-c-bal .procar-table td.solde { color: #dc2626; }
     #panel-c-bal .procar-table td.reliquat { color: #ea580c; }
     #panel-c-bal .procar-table td.paye { color: #15803d; }
-    [data-theme="light"] .cb-filters label { color: #5c1220; }
-    [data-theme="light"] .cb-refresh { background: #fff; color: #5c1220; border-color: #e4c5cb; }
-    @media (max-width: 1100px) {
-        .cb-summary { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-        .cb-filters { grid-template-columns: 1fr 1fr 38px; }
-    }
+    [data-theme="light"] .cb-filters label { color: #0b1f3a; }
+    [data-theme="light"] .cb-refresh { background: #fff; color: #0b1f3a; border-color: #e0d0c0; }
 </style>
 <script>
 (function () {

@@ -33,11 +33,12 @@ class SupplierPaymentController extends Controller
                 'date' => now()->format('Y-m-d'),
                 'suppliers' => Supplier::query()
                     ->orderBy('name')
-                    ->get(['id', 'name'])
+                    ->get(['id', 'name', 'initial_balance'])
                     ->map(fn (Supplier $supplier) => [
                         'id' => $supplier->id,
                         'code' => $supplier->code,
                         'name' => $supplier->name,
+                        'initial_balance' => round((float) $supplier->initial_balance, 2),
                     ])
                     ->values(),
             ],
@@ -50,6 +51,7 @@ class SupplierPaymentController extends Controller
             'supplier_id' => ['required', 'integer', 'exists:suppliers,id'],
         ]);
 
+        $supplier = Supplier::query()->findOrFail($data['supplier_id']);
         $orders = PurchaseOrder::query()
             ->where('supplier_id', $data['supplier_id'])
             ->orderByDesc('order_date')
@@ -58,14 +60,18 @@ class SupplierPaymentController extends Controller
             ->map(fn (PurchaseOrder $order) => $this->formatOrder($order))
             ->values();
 
-        $total = round($orders->sum(fn (array $row) => (float) $row['montant_bon']), 2);
-        $solde = round($orders->sum(fn (array $row) => (float) $row['solde']), 2);
+        $initial = round((float) $supplier->initial_balance, 2);
+        $baTotal = round($orders->sum(fn (array $row) => (float) $row['montant_bon']), 2);
+        $baSolde = round($orders->sum(fn (array $row) => (float) $row['solde']), 2);
 
         return response()->json([
             'data' => $orders,
             'meta' => [
-                'total_ttc' => $total,
-                'solde_ttc' => $solde,
+                'initial_balance' => $initial,
+                'total_ttc' => round($baTotal + $initial, 2),
+                'solde_ttc' => round($baSolde + $initial, 2),
+                'ba_total' => $baTotal,
+                'ba_solde' => $baSolde,
             ],
         ]);
     }
@@ -116,10 +122,11 @@ class SupplierPaymentController extends Controller
             'banque' => ['nullable', 'string', 'max:100'],
             'nom_tire' => ['nullable', 'string', 'max:150'],
             'montant' => ['required', 'numeric', 'min:0.01'],
+            'amount_on_initial' => ['nullable', 'numeric', 'min:0'],
             'date_decaissement' => ['nullable', 'date'],
             'remarque' => ['nullable', 'string', 'max:1000'],
             'statut' => ['nullable', 'in:'.implode(',', self::STATUTS)],
-            'allocations' => ['required', 'array', 'min:1'],
+            'allocations' => ['nullable', 'array'],
             'allocations.*.purchase_order_id' => ['required', 'integer', 'exists:purchase_orders,id'],
             'allocations.*.amount' => ['nullable', 'numeric', 'min:0'],
             'allocations.*.action' => ['nullable', 'in:'.implode(',', self::STATUTS)],
@@ -130,6 +137,8 @@ class SupplierPaymentController extends Controller
         $data['banque'] = trim((string) ($data['banque'] ?? '')) ?: null;
         $data['nom_tire'] = trim((string) ($data['nom_tire'] ?? '')) ?: null;
         $data['remarque'] = trim((string) ($data['remarque'] ?? '')) ?: null;
+        $data['amount_on_initial'] = round((float) ($data['amount_on_initial'] ?? 0), 2);
+        $data['allocations'] = array_values($data['allocations'] ?? []);
 
         if (($data['reglement'] ?? null) === 'Esp') {
             $data['numero'] = null;
@@ -137,12 +146,19 @@ class SupplierPaymentController extends Controller
             $data['nom_tire'] = null;
         }
 
+        if ($data['amount_on_initial'] <= 0 && $data['allocations'] === []) {
+            throw ValidationException::withMessages([
+                'allocations' => 'Cochez le solde initial ou au moins un bon d’achat.',
+            ]);
+        }
+
         return $data;
     }
 
     private function persist(?SupplierPayment $existing, array $data): SupplierPayment
     {
-        $orderIds = collect($data['allocations'])->pluck('purchase_order_id')->all();
+        $supplier = Supplier::query()->lockForUpdate()->findOrFail($data['supplier_id']);
+        $orderIds = collect($data['allocations'])->pluck('purchase_order_id')->filter()->all();
         $orders = PurchaseOrder::query()
             ->whereIn('id', $orderIds)
             ->where('supplier_id', $data['supplier_id'])
@@ -157,7 +173,20 @@ class SupplierPaymentController extends Controller
         }
 
         $paymentAmount = round((float) $data['montant'], 2);
-        $remaining = $paymentAmount;
+        $onInitial = round((float) ($data['amount_on_initial'] ?? 0), 2);
+        $initialDue = round((float) $supplier->initial_balance, 2);
+        if ($onInitial - $initialDue > 0.009) {
+            throw ValidationException::withMessages([
+                'amount_on_initial' => 'Le montant sur solde initial dépasse le solde initial disponible.',
+            ]);
+        }
+
+        $remaining = round($paymentAmount - $onInitial, 2);
+        if ($remaining < -0.009) {
+            throw ValidationException::withMessages([
+                'amount_on_initial' => 'Le montant sur solde initial dépasse le règlement.',
+            ]);
+        }
         $built = [];
 
         foreach ($data['allocations'] as $row) {
@@ -203,15 +232,21 @@ class SupplierPaymentController extends Controller
             unset($row);
         }
 
-        $allocated = round(collect($built)->sum('amount'), 2);
+        if ($remaining > 0.009 && $onInitial + 0.009 < $initialDue) {
+            $extraInitial = round(min($remaining, $initialDue - $onInitial), 2);
+            $onInitial = round($onInitial + $extraInitial, 2);
+            $remaining = round($remaining - $extraInitial, 2);
+        }
+
+        $allocated = round(collect($built)->sum('amount') + $onInitial, 2);
         if ($allocated - $paymentAmount > 0.009) {
             throw ValidationException::withMessages([
                 'montant' => 'Le montant alloué dépasse le montant du règlement.',
             ]);
         }
 
-        $totalTtc = round($orders->sum(fn (PurchaseOrder $order) => (float) $order->total), 2);
-        $soldeAvant = round($orders->sum(fn (PurchaseOrder $order) => max((float) $order->total - (float) ($order->montant_paye ?? 0), 0)), 2);
+        $totalTtc = round($orders->sum(fn (PurchaseOrder $order) => (float) $order->total) + $initialDue, 2);
+        $soldeAvant = round($orders->sum(fn (PurchaseOrder $order) => max((float) $order->total - (float) ($order->montant_paye ?? 0), 0)) + $initialDue, 2);
 
         $statut = $data['statut'] ?? null;
         if ($statut === null || $statut === '') {
@@ -227,6 +262,7 @@ class SupplierPaymentController extends Controller
             'banque' => $data['banque'],
             'nom_tire' => $data['nom_tire'],
             'montant' => $paymentAmount,
+            'amount_on_initial' => $onInitial,
             'date_decaissement' => $data['date_decaissement'] ?? null,
             'remarque' => $data['remarque'],
             'total_ttc' => $totalTtc,
@@ -241,6 +277,12 @@ class SupplierPaymentController extends Controller
             $next = (SupplierPayment::max('id') ?? 0) + 1;
             $payload['reference'] = $this->referenceFor($next);
             $payment = SupplierPayment::create($payload);
+        }
+
+        if ($onInitial > 0) {
+            $supplier->update([
+                'initial_balance' => round(max((float) $supplier->initial_balance - $onInitial, 0), 2),
+            ]);
         }
 
         foreach ($built as $row) {
@@ -260,7 +302,13 @@ class SupplierPaymentController extends Controller
 
     private function rollbackPaid(SupplierPayment $payment): void
     {
-        $payment->loadMissing('allocations.purchaseOrder');
+        $payment->loadMissing(['allocations.purchaseOrder', 'supplier']);
+        $onInitial = round((float) ($payment->amount_on_initial ?? 0), 2);
+        if ($onInitial > 0 && $payment->supplier) {
+            $payment->supplier->update([
+                'initial_balance' => round((float) $payment->supplier->initial_balance + $onInitial, 2),
+            ]);
+        }
         foreach ($payment->allocations as $allocation) {
             $order = $allocation->purchaseOrder;
             if (! $order) {
@@ -311,6 +359,7 @@ class SupplierPaymentController extends Controller
             'banque' => $payment->banque,
             'nom_tire' => $payment->nom_tire,
             'montant' => round((float) $payment->montant, 2),
+            'amount_on_initial' => round((float) ($payment->amount_on_initial ?? 0), 2),
             'date_decaissement' => $payment->date_decaissement?->format('Y-m-d'),
             'date_decaissement_fr' => $payment->date_decaissement?->format('d/m/Y'),
             'remarque' => $payment->remarque,

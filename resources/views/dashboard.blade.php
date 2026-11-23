@@ -10,35 +10,65 @@
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
         :root {
-            --bg: #070708;
-            --sidebar: #0a0a0c;
-            --panel: rgba(18, 18, 20, 0.92);
-            --line: rgba(197, 201, 206, 0.16);
-            --accent: #e10600;
-            --accent-soft: #d7dbe0;
-            --text: #f6f7f8;
-            --muted: rgba(215, 219, 224, 0.68);
-            --topbar-bg: rgba(10, 10, 12, 0.94);
-            --input-bg: rgba(255, 255, 255, 0.04);
-            --hover-bg: rgba(225, 6, 0, 0.12);
-            --table-head: rgba(9, 21, 37, 0.95);
+            --bg: #07131f;
+            --sidebar: #0b1f3a;
+            --panel: rgba(14, 28, 48, 0.96);
+            --line: rgba(148, 163, 184, 0.18);
+            --accent: #c47a3a;
+            --accent-2: #8b5424;
+            --accent-soft: #e8eef5;
+            --text: #f8fafc;
+            --muted: rgba(203, 213, 225, 0.72);
+            --topbar-bg: rgba(11, 31, 58, 0.96);
+            --input-bg: rgba(255, 255, 255, 0.05);
+            --hover-bg: rgba(196, 122, 58, 0.16);
+            --table-head: #0b1f3a;
+            --table-head-text: #ffffff;
+            --table-body: #ffffff;
+            --table-text: #0f172a;
+            --table-border: #dbe3ef;
+            --table-row-hover: #f5ede4;
+            --filter-label: #d6c4b4;
+            --control-bg: #ffffff;
+            --control-text: #0f172a;
+            --control-border: #cbd5e1;
             --shadow: rgba(0, 0, 0, 0.35);
+            --color-solde: #dc2626;
+            --color-paye: #16a34a;
+            --color-imp: #dc2626;
+            --color-deva: #7c3aed;
+            --color-repo: #ca8a04;
         }
 
         [data-theme="light"] {
-            --bg: #f4f4f5;
+            --bg: #f5ede4;
             --sidebar: #ffffff;
-            --panel: rgba(255, 255, 255, 0.95);
-            --line: rgba(225, 6, 0, 0.16);
-            --accent: #e10600;
-            --accent-soft: #9b0400;
-            --text: #121214;
-            --muted: rgba(18, 18, 20, 0.62);
-            --topbar-bg: rgba(255, 255, 255, 0.94);
-            --input-bg: rgba(18, 18, 20, 0.04);
-            --hover-bg: rgba(225, 6, 0, 0.08);
-            --table-head: rgba(237, 243, 251, 0.98);
-            --shadow: rgba(15, 31, 53, 0.08);
+            --panel: rgba(255, 255, 255, 0.98);
+            --line: rgba(148, 163, 184, 0.28);
+            --accent: #c47a3a;
+            --accent-2: #8b5424;
+            --accent-soft: #0b1f3a;
+            --text: #0b1f3a;
+            --muted: rgba(30, 58, 95, 0.72);
+            --topbar-bg: rgba(255, 255, 255, 0.96);
+            --input-bg: #ffffff;
+            --hover-bg: rgba(196, 122, 58, 0.1);
+            --table-head: #0b1f3a;
+            --table-head-text: #ffffff;
+            --table-body: #ffffff;
+            --table-text: #0f172a;
+            --table-border: #e0d0c0;
+            --table-row-hover: #faf6f1;
+            --filter-label: #1e3a5f;
+            --control-bg: #ffffff;
+            --control-text: #0f172a;
+            --control-border: #d6c4b4;
+            --shadow: rgba(11, 31, 58, 0.08);
+            --color-solde: #dc2626;
+            --color-paye: #15803d;
+            --color-imp: #dc2626;
+            --color-deva: #7c3aed;
+            --color-repo: #ca8a04;
         }
 
         [data-theme="light"] .card-stat {
@@ -52,12 +82,12 @@
         }
 
         [data-theme="light"] .panel .data-table th {
-            background: #f3d5db;
-            color: #5c1220;
+            background: var(--table-head);
+            color: var(--table-head-text);
         }
 
         [data-theme="light"] .panel .data-table tbody tr:hover {
-            background: rgba(59, 158, 255, 0.08);
+            background: var(--table-row-hover);
         }
 
         * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -390,7 +420,7 @@
             z-index: 1;
             margin: 0.35rem 0 0;
             text-align: center;
-            color: #e10600;
+            color: #c47a3a;
             font-size: 0.78rem;
             font-weight: 800;
             letter-spacing: 0.04em;
@@ -518,7 +548,7 @@
         }
 
         .nav-item.active {
-            background: linear-gradient(135deg, #e10600, #9b0400);
+            background: linear-gradient(135deg, #c47a3a, #8b5424);
             color: #fff;
             box-shadow: 0 4px 15px rgba(225, 6, 0, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.2);
         }
@@ -531,7 +561,7 @@
             bottom: 20%;
             width: 3px;
             border-radius: 0 3px 3px 0;
-            background: linear-gradient(180deg, #f4f5f6, #e10600);
+            background: linear-gradient(180deg, #f4f5f6, #c47a3a);
             box-shadow: 0 0 10px rgba(225, 6, 0, 0.55);
         }
 
@@ -558,7 +588,7 @@
             background: rgba(255, 255, 255, 0.35);
         }
 
-        .nav-group[data-nav-group]::before { background: linear-gradient(180deg, #f4f5f6, #e10600); }
+        .nav-group[data-nav-group]::before { background: linear-gradient(180deg, #f4f5f6, #c47a3a); }
 
         .nav-group > .nav-item,
         .nav-group.expanded > .nav-item,
@@ -665,7 +695,7 @@
         }
 
         .nav-subitem.active::before {
-            background: #e10600;
+            background: #c47a3a;
             box-shadow: 0 0 8px rgba(225, 6, 0, 0.65);
             width: 0.55rem;
         }
@@ -769,12 +799,12 @@
             bottom: 0;
             width: 4px;
             border-radius: 4px 0 0 4px;
-            background: linear-gradient(180deg, #f4f5f6, #e10600);
+            background: linear-gradient(180deg, #f4f5f6, #c47a3a);
             box-shadow: 0 0 12px rgba(225, 6, 0, 0.55);
         }
 
         .nav-item.nav-dashboard .nav-icon {
-            background: linear-gradient(145deg, #e10600, #9b0400);
+            background: linear-gradient(145deg, #c47a3a, #8b5424);
             color: #fff;
             border-color: rgba(255, 255, 255, 0.22);
             box-shadow: 0 6px 14px rgba(225, 6, 0, 0.38);
@@ -793,7 +823,7 @@
 
         .nav-item.nav-dashboard.active {
             color: #fff;
-            background: linear-gradient(135deg, #e10600 0%, #9b0400 58%, #5c0200 100%);
+            background: linear-gradient(135deg, #c47a3a 0%, #8b5424 58%, #0b1f3a 100%);
             box-shadow:
                 inset 0 1px 0 rgba(255, 255, 255, 0.28),
                 0 10px 24px rgba(225, 6, 0, 0.42);
@@ -841,18 +871,18 @@
         .procar-table-card {
             margin-top: 0.8rem;
             overflow: hidden;
-            border-radius: 16px;
-            border: 1px solid rgba(148, 163, 184, 0.28);
-            background: rgba(248, 250, 252, 0.96);
-            box-shadow: 0 12px 30px rgba(0, 0, 0, 0.16);
+            border-radius: 14px;
+            border: 1px solid var(--table-border);
+            background: var(--table-body);
+            box-shadow: 0 10px 28px var(--shadow);
             display: flex;
             flex-direction: column;
             min-height: 0;
         }
 
         .procar-table-bar {
-            padding: 0.85rem 1.15rem;
-            background: linear-gradient(90deg, #0a0a0c, #e10600 72%, #9b0400);
+            padding: 0.7rem 1rem;
+            background: linear-gradient(90deg, #111827 0%, var(--table-head) 55%, var(--accent) 100%);
             border-bottom: 1px solid rgba(255, 255, 255, 0.08);
             flex: 0 0 auto;
         }
@@ -860,8 +890,8 @@
         .procar-table-bar h3 {
             margin: 0;
             color: #fff;
-            font-size: 0.82rem;
-            font-weight: 800;
+            font-size: 0.78rem;
+            font-weight: 700;
             letter-spacing: 0.06em;
             text-transform: uppercase;
         }
@@ -870,49 +900,62 @@
             flex: 1 1 auto;
             min-height: 0;
             overflow: auto;
+            background: var(--table-body);
         }
 
         .procar-table {
             width: 100%;
-            border-collapse: collapse;
+            border-collapse: separate;
             border-spacing: 0;
             min-width: 760px;
-            color: #0f172a;
-            border: 1px solid #cbd5e1;
+            color: var(--table-text);
+            background: var(--table-body);
+            border: 0;
         }
 
         .procar-table th {
             position: sticky;
             top: 0;
             z-index: 3;
-            padding: 0.48rem 0.5rem;
-            background: #5c1220;
-            border: 1px solid #8f2436;
+            padding: 0.5rem 0.55rem;
+            background: var(--table-head);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-bottom: 1px solid rgba(0, 0, 0, 0.12);
             font-size: 0.68rem;
-            font-weight: 800;
+            font-weight: 700;
             letter-spacing: 0.05em;
             text-transform: uppercase;
             text-align: center;
-            color: #fff;
+            color: var(--table-head-text);
             white-space: nowrap;
         }
 
         [data-theme="light"] .procar-table th {
-            background: #f3d5db;
-            color: #5c1220;
-            border-color: #e7c9cf;
+            background: var(--table-head);
+            color: var(--table-head-text);
+            border-color: rgba(255, 255, 255, 0.1);
         }
 
         .procar-table td {
-            padding: 0.38rem 0.5rem;
+            padding: 0.42rem 0.55rem;
             text-align: center;
-            color: #000;
+            color: var(--table-text);
             font-size: 0.8rem;
-            border: 1px solid #cbd5e1;
+            background: var(--table-body);
+            border: 1px solid var(--table-border);
+        }
+
+        .procar-table tbody tr:nth-child(even) td {
+            background: #f8fafc;
+        }
+
+        .procar-table tbody tr:hover td {
+            background: var(--table-row-hover);
         }
 
         [data-theme="light"] .procar-table td {
-            border-color: #e4c5cb;
+            border-color: var(--table-border);
+            color: var(--table-text);
         }
 
         .ba-lines,
@@ -920,7 +963,18 @@
         .fa-lines,
         .ra-lines,
         .rc-lines {
-            border-collapse: collapse;
+            border-collapse: separate;
+            border-spacing: 0;
+        }
+
+        .ba-lines thead th,
+        .bl-lines thead th,
+        .fa-lines thead th,
+        .ra-lines thead th,
+        .rc-lines thead th {
+            position: sticky;
+            top: 0;
+            z-index: 4;
         }
 
         .ba-lines th,
@@ -960,7 +1014,7 @@
             padding: 0.55rem 0.7rem;
             border-radius: 10px;
             background: #fef2f2;
-            color: #b91c1c;
+            color: #c47a3a;
             border: 1px solid #fecaca;
             font-size: 0.8rem;
         }
@@ -1096,10 +1150,18 @@
             display: none;
         }
 
-        #panel-f-fiche .ff-grid .ff-total,
-        #panel-c-fiche .ff-grid .ff-total {
-            margin-left: 0;
-            justify-self: end;
+        #panel-f-fiche .ff-head,
+        #panel-c-fiche .ff-head {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+
+        #panel-f-fiche .ff-head .ff-total,
+        #panel-c-fiche .ff-head .ff-total {
+            margin-left: auto;
             min-height: 38px;
         }
 
@@ -1117,7 +1179,7 @@
         }
 
         .ff-btn svg { width: 18px; height: 18px; }
-        .ff-btn.primary { background: linear-gradient(180deg, #ef2b24, #c10500); color: #fff; box-shadow: inset 0 1px 0 rgba(255,255,255,0.18); }
+        .ff-btn.primary { background: linear-gradient(180deg, #c47a3a, #8b5424); color: #fff; box-shadow: inset 0 1px 0 rgba(255,255,255,0.18); }
         .ff-btn.muted { background: #e8eef5; color: #1e293b; border: 1px solid #cbd5e1; }
         .ff-btn.secondary { background: #dbeafe; color: #1e3a8a; border: 1px solid #bfdbfe; }
         .ff-btn.primary:hover { filter: brightness(1.05); }
@@ -1190,7 +1252,7 @@
         .ff-icon svg { width: 15px; height: 15px; }
 
         .ff-icon:hover { background: #eff6ff; color: #1d4ed8; }
-        .ff-icon.see:hover { background: #fdf2f4; color: #8f2436; }
+        .ff-icon.see:hover { background: #faf6f1; color: #c47a3a; }
         .ff-icon.edit:hover { background: #fffbeb; color: #d97706; }
         .ff-icon.del:hover { background: #fef2f2; color: #dc2626; }
         .ff-icon.print:hover { background: #f1f5f9; color: #334155; }
@@ -1222,7 +1284,7 @@
             justify-content: space-between;
             align-items: center;
             padding: 0.9rem 1rem;
-            background: linear-gradient(90deg, #0a0a0c, #e10600);
+            background: linear-gradient(90deg, #0a0a0c, #c47a3a);
             color: #fff;
         }
 
@@ -1328,18 +1390,18 @@
 
         [data-theme="light"] .nav-subitem:hover {
             background: rgba(225, 6, 0, 0.08);
-            color: #5c1220;
+            color: #0b1f3a;
         }
 
         [data-theme="light"] .nav-subitem.active {
             background: linear-gradient(90deg, rgba(225, 6, 0, 0.14), rgba(225, 6, 0, 0.04));
-            color: #5c1220;
+            color: #0b1f3a;
             box-shadow: inset 0 0 0 1px rgba(225, 6, 0, 0.22);
         }
 
         [data-theme="light"] .nav-subitem:hover .nav-subicon,
         [data-theme="light"] .nav-subitem.active .nav-subicon {
-            color: #5c1220;
+            color: #0b1f3a;
             background: rgba(143, 36, 54, 0.14);
             border-color: rgba(143, 36, 54, 0.35);
         }
@@ -1347,7 +1409,7 @@
         [data-theme="light"] .nav-icon,
         [data-theme="light"] .nav-subicon {
             background: rgba(143, 36, 54, 0.08);
-            color: #5c1220;
+            color: #0b1f3a;
             border-color: rgba(143, 36, 54, 0.18);
         }
 
@@ -1365,8 +1427,8 @@
         }
 
         [data-theme="light"] .nav-item.nav-dashboard {
-            color: #5c1220;
-            background: linear-gradient(145deg, #fff 0%, #fff5f6 55%, #f8e8eb 100%);
+            color: #0b1f3a;
+            background: linear-gradient(145deg, #fff 0%, #fff5f6 55%, #f5ede4 100%);
             box-shadow:
                 inset 0 1px 0 rgba(255, 255, 255, 0.9),
                 inset 0 0 0 1px rgba(225, 6, 0, 0.22),
@@ -1374,14 +1436,14 @@
         }
 
         [data-theme="light"] .nav-item.nav-dashboard .nav-icon {
-            background: linear-gradient(145deg, #e10600, #9b0400);
+            background: linear-gradient(145deg, #c47a3a, #8b5424);
             color: #fff;
             border-color: rgba(255, 255, 255, 0.4);
         }
 
         [data-theme="light"] .nav-item.nav-dashboard:hover {
-            color: #5c1220;
-            background: linear-gradient(145deg, #fff 0%, #fdecee 48%, #f3d5db 100%);
+            color: #0b1f3a;
+            background: linear-gradient(145deg, #fff 0%, #fdecee 48%, #f5ede4 100%);
             box-shadow:
                 inset 0 0 0 1px rgba(225, 6, 0, 0.32),
                 0 12px 22px rgba(143, 36, 54, 0.14);
@@ -1389,7 +1451,7 @@
 
         [data-theme="light"] .nav-item.nav-dashboard.active {
             color: #fff;
-            background: linear-gradient(135deg, #e10600 0%, #9b0400 58%, #5c0200 100%);
+            background: linear-gradient(135deg, #c47a3a 0%, #8b5424 58%, #0b1f3a 100%);
             box-shadow:
                 inset 0 1px 0 rgba(255, 255, 255, 0.28),
                 0 10px 24px rgba(225, 6, 0, 0.32);
@@ -1402,7 +1464,7 @@
         }
 
         [data-theme="light"] .nav-item.nav-dashboard:hover:not(.active) .nav-icon {
-            background: linear-gradient(145deg, #e10600, #9b0400);
+            background: linear-gradient(145deg, #c47a3a, #8b5424);
             color: #fff;
         }
 
@@ -1413,7 +1475,7 @@
         [data-theme="light"] .btn-logout {
             border-color: rgba(143, 36, 54, 0.28);
             background: rgba(225, 6, 0, 0.06);
-            color: #8f2436;
+            color: #c47a3a;
         }
 
         .main {
@@ -1604,11 +1666,11 @@
             background: #fff;
             border-color: #fca5a5;
         }
-        [data-theme="light"] .sections-lock-screen h1 { color: #b91c1c; }
+        [data-theme="light"] .sections-lock-screen h1 { color: #c47a3a; }
         [data-theme="light"] .sections-lock-screen p { color: #475569; }
         [data-theme="light"] .sections-lock-banner {
             background: linear-gradient(135deg, #fee2e2, #fecaca);
-            color: #7f1d1d;
+            color: #1e3a5f;
             border-color: #fca5a5;
         }
 
@@ -1831,7 +1893,7 @@
         }
         .dash-kpi.achats .dash-kpi-icon { background: linear-gradient(135deg, #2563eb, #1e3a8a); }
         .dash-kpi.ventes .dash-kpi-icon { background: linear-gradient(135deg, #16a34a, #14532d); }
-        .dash-kpi.fa .dash-kpi-icon { background: linear-gradient(135deg, #e10600, #9b0400); }
+        .dash-kpi.fa .dash-kpi-icon { background: linear-gradient(135deg, #c47a3a, #8b5424); }
         .dash-kpi.fv .dash-kpi-icon { background: linear-gradient(135deg, #7c3aed, #4c1d95); }
 
         .dash-charts {
@@ -2053,7 +2115,7 @@
         .dash-volume-table thead th {
             position: sticky;
             top: 0;
-            background: #5c1220;
+            background: #0b1f3a;
             color: #fff;
             font-size: 0.68rem;
             letter-spacing: 0.05em;
@@ -2084,7 +2146,7 @@
         [data-theme="light"] .dash-year-filter select {
             background: #fff;
             color: #121214;
-            border-color: #e4c5cb;
+            border-color: #e0d0c0;
         }
         [data-theme="light"] .dash-volume-chart-wrap {
             background: #faf7f8;
@@ -2093,8 +2155,8 @@
         [data-theme="light"] .dash-axis-label { fill: rgba(18, 18, 20, 0.55); }
         [data-theme="light"] .dash-grid-line { stroke: rgba(143, 36, 54, 0.16); }
         [data-theme="light"] .dash-volume-table thead th {
-            background: #f3d5db;
-            color: #5c1220;
+            background: #f5ede4;
+            color: #0b1f3a;
         }
         [data-theme="light"] .dash-volume-table tbody th { background: #fff7f8; }
         [data-theme="light"] .dash-volume-table td strong { color: #121214; }
@@ -2316,7 +2378,7 @@
             position: sticky;
             top: 0;
             z-index: 2;
-            background: #5c1220;
+            background: #0b1f3a;
             color: #fff;
             font-weight: 600;
             font-size: 0.75rem;
@@ -2841,7 +2903,7 @@
             gap: 1rem;
             margin-bottom: 1.1rem;
             padding-bottom: 0.85rem;
-            border-bottom: 2px solid #e10600;
+            border-bottom: 2px solid #c47a3a;
         }
 
         .ste-head h1 {
@@ -2878,7 +2940,7 @@
             font-weight: 750;
             letter-spacing: 0.12em;
             text-transform: uppercase;
-            color: #e10600;
+            color: #c47a3a;
         }
 
         .ste-grid {
@@ -2904,7 +2966,7 @@
             font-weight: 750;
             letter-spacing: 0.12em;
             text-transform: uppercase;
-            color: #e10600;
+            color: #c47a3a;
         }
 
         .ste-drop {
@@ -2919,7 +2981,7 @@
             border-radius: 14px;
             border: 1.5px dashed rgba(225, 6, 0, 0.45);
             background: #fff;
-            color: #5c1220;
+            color: #0b1f3a;
             text-align: center;
             cursor: pointer;
         }
@@ -2962,7 +3024,7 @@
 
         .ste-card .field input:focus {
             outline: none;
-            border-color: #e10600;
+            border-color: #c47a3a;
             box-shadow: 0 0 0 3px rgba(225, 6, 0, 0.16);
         }
 
@@ -2973,8 +3035,8 @@
         }
 
         .ste-card .btn-primary {
-            border-color: #e10600;
-            background: linear-gradient(135deg, #e10600, #9b0400);
+            border-color: #c47a3a;
+            background: linear-gradient(135deg, #c47a3a, #8b5424);
             color: #fff;
         }
 
@@ -3487,12 +3549,11 @@
                             ['id' => 'f-bon', 'label' => 'Bon Achats', 'cols' => ['Date', 'N° B-A', 'Fournisseur', 'N° Frns', 'Qté totale', 'Total', 'Paiement', 'Échéance', 'Actions']],
                             ['id' => 'f-regl', 'label' => 'Règlement Achats', 'cols' => ['Réf', 'Date', 'Fournisseur', 'Type', 'Nom de Tiré', 'N°', 'Bnq', 'Date Décaiss', 'Montant', 'Statut', 'Action']],
                             ['id' => 'f-bal', 'label' => 'Balance', 'cols' => ['ID Fournisseur', 'Fournisseur', 'Total Achats', 'Montant Payé', 'Solde', 'Reliquat']],
-                            ['id' => 'f-rel', 'label' => 'Relevé Compte', 'cols' => ['Opération', 'Date', 'N° Bn', 'Qte', 'Débit', 'Crédit', 'Solde', 'Type Rég', 'N° Rég', 'Nom Tiré', 'Date Encaiss', 'Payé', 'Dévalidé', 'Impayé', 'Reporté']],
+                            ['id' => 'f-rel', 'label' => 'Relevé Compte', 'cols' => ['Opération', 'Date', 'Nom Fournisseur', 'N° Bn', 'Qte', 'Débit', 'Crédit', 'Solde', 'Type Rég', 'N° Rég', 'Nom Tiré', 'Date Encaiss', 'Payé', 'Déva', 'Imp', 'Repo']],
                         ]],
                         ['id' => 'stock', 'label' => 'Stock', 'items' => [
                             ['id' => 's-prod', 'label' => 'Fiche Produit', 'cols' => ['Code', 'Réf Prod', 'Code Barre', 'Désignation', 'Famille', 'Marque', 'Quantité', 'Stock', "Prix d'achat", 'U', 'Prix/U', 'Statut', 'État', 'Actions']],
                             ['id' => 's-mvt', 'label' => 'Mouvement Stock', 'cols' => ['Réf', 'Désignation', 'Stock Initial', 'Achat', 'Vente', 'Stock Actuel']],
-                            ['id' => 's-ret', 'label' => 'Etat Retour', 'cols' => ['Date', 'N° Retour', 'N° Bon source', 'Client', 'Produit', 'Code-barres', 'Qté', 'Motif', 'Utilisateur', 'Actions']],
                         ]],
                         ['id' => 'catalogue', 'label' => 'Catalogue', 'soon' => true, 'items' => [
                             ['id' => 'cat-liste', 'label' => 'Catalogue'],
@@ -3504,31 +3565,22 @@
                             ['id' => 'c-bl', 'label' => 'Bon Livraison', 'cols' => ['Date', 'N° BL', 'Client', 'ID Clt', 'Qté totale', 'Total', 'Paiement', 'Échéance', 'Actions']],
                             ['id' => 'c-regl', 'label' => 'Règlement Client', 'cols' => ['Réf', 'Date', 'Client', 'Type', 'Nom de Tiré', 'N°', 'Bnq', 'Date Décaiss', 'Montant', 'Statut', 'Action']],
                             ['id' => 'c-bal', 'label' => 'Balance Clients', 'cols' => ['ID Client', 'Client', 'Total Ventes', 'Montant Payé', 'Solde', 'Reliquat']],
-                            ['id' => 'c-rel', 'label' => 'Relevé Compte Client', 'cols' => ['Opération', 'Date', 'N° Bn', 'Client Livré', 'Ville Liv', 'Qte', 'Débit', 'Crédit', 'Solde', 'Type Rég', 'N° Rég', 'Nom Tiré', 'Date Encaiss', 'Payé', 'Dévalidé', 'Impayé', 'Reporté']],
-                            ['id' => 'c-jour', 'label' => 'Etat Journalier', 'cols' => ['Date', 'Réf', 'Code barre', 'Désignation', 'Qté', 'Prix achat', 'Prix vente', 'Marge', 'Stock actuel']],
+                            ['id' => 'c-rel', 'label' => 'Relevé Compte Client', 'cols' => ['Opération', 'Date', 'Nom Client', 'N° Bn', 'Qte', 'Débit', 'Crédit', 'Solde', 'Type Rég', 'N° Rég', 'Nom Tiré', 'Date Encaiss', 'Payé', 'Déva', 'Imp', 'Repo']],
                         ]],
                         ['id' => 'facturation', 'label' => 'Facturation', 'items' => [
                             ['id' => 'fa-achat', 'label' => 'Factures Achats', 'cols' => ['Date', 'Réf', 'Fournisseur', 'Destination', 'Total HT', 'TVA', 'Total TTC', 'Statut', 'Actions']],
                             ['id' => 'fa-regl-achat', 'label' => 'Régl Fact/Achats', 'cols' => ['Date', 'N° Règlement', 'N° Facture', 'Fournisseur', 'Mode', 'Référence', 'Montant', 'Solde Facture', 'Actions']],
                             ['id' => 'fa-vente', 'label' => 'Facture Ventes'],
                             ['id' => 'fa-regl', 'label' => 'Régl Fact/Vente', 'cols' => ['Date', 'N° Règlement', 'N° Facture', 'Client', 'Mode', 'Référence', 'Montant', 'Solde Facture', 'Actions']],
-                            ['id' => 'fa-bal', 'label' => 'Balance'],
                         ]],
                         ['id' => 'monetaire', 'label' => 'Suivi Monétaire', 'items' => [
-                            ['id' => 'm-trans', 'label' => 'Transaction et Charges', 'cols' => ['Date', 'Bénéficiaire', 'Montant', 'Coffre', 'Type', 'Statut', 'Motif', 'Actions']],
-                            ['id' => 'm-charge', 'label' => 'Charge', 'cols' => ['Date', 'Réf', 'Désignation', 'Bénéficiaire', 'Type Rég', 'N°', 'Bnq', 'Tiré', 'Date Décaiss', 'Remarque', 'Actions']],
-                            ['id' => 'm-treso', 'label' => 'Rapport Trésorerie', 'cols' => ['Date', 'Opération', 'Débit', 'Crédit', 'Caisse', 'Date Décaiss', 'Date Encaiss']],
-                        ]],
-                        ['id' => 'personnel', 'label' => 'Personnels', 'items' => [
-                            ['id' => 'p-fiche', 'label' => 'Fiche Personnel', 'cols' => ['Date', 'ID', 'Nom Complet', 'Statut', 'Type contrat', 'Rémunération', 'Échéance', 'Actions']],
-                            ['id' => 'p-sal', 'label' => 'Salaire', 'cols' => ['ID', 'Nom Complet', 'Statut', 'Date Début', 'Type Contrat', 'Salaire', 'Actions']],
-                            ['id' => 'p-etat', 'label' => 'État Paiement', 'cols' => ['Date', 'ID', 'Nom Complet', 'Salaire', 'Jan', 'Fév', 'Mar', 'Avr', 'Mai', 'Juin', 'Juil', 'Aoû', 'Sep', 'Oct', 'Nov', 'Déc', 'Total']],
+                            ['id' => 'm-charge', 'label' => 'Charge', 'cols' => ['Imprimer', 'PDF', 'Date', 'Réf', 'Catégorie', 'Désignation', 'Bénéficiaire', 'Montant', 'Type Rég', 'N°', 'Bnq', 'Tiré', 'Date Encaiss', 'Action']],
+                            ['id' => 'm-treso', 'label' => 'Rapport Trésorerie', 'cols' => ['Date', 'Opération', 'Débit', 'Crédit', 'Caisse', 'Débit facturé', 'Crédit facturé', 'Esp facturé']],
                         ]],
                         ['id' => 'configuration', 'label' => 'Configuration', 'items' => [
                             ['id' => 'cfg-fiche', 'label' => 'Fiche Société', 'panel' => 'configuration', 'config' => 'fiche-ste'],
-                            ['id' => 'cfg-users', 'label' => 'Utilisateur', 'disabled' => true, 'panel' => 'configuration', 'config' => 'utilisateur'],
+                            ['id' => 'cfg-users', 'label' => 'Utilisateur', 'panel' => 'configuration', 'config' => 'utilisateur'],
                             ['id' => 'cfg-auth', 'label' => 'Autorisations', 'disabled' => true],
-                            ['id' => 'cfg-transport', 'label' => 'Transport', 'disabled' => true],
                         ]],
                     ];
                     $navSubIcons = [
@@ -3553,8 +3605,6 @@
                         'fa-vente' => '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><path d="M12 12v6"/><path d="m9 15 3-3 3 3"/></svg>',
                         'fa-regl' => '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="6" width="20" height="12" rx="2"/><circle cx="12" cy="12" r="2"/><path d="M6 12h.01M18 12h.01"/></svg>',
                         'fa-regl-achat' => '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="6" width="20" height="12" rx="2"/><circle cx="12" cy="12" r="2"/><path d="M6 12h.01M18 12h.01"/></svg>',
-                        'fa-bal' => '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m16 16 3-8 3 8c-.87.65-1.92 1-3 1s-2.13-.35-3-1Z"/><path d="m2 16 3-8 3 8c-.87.65-1.92 1-3 1s-2.13-.35-3-1Z"/><path d="M7 21h10"/><path d="M12 3v18"/><path d="M3 7h2c2 0 5-1 7-2 2 1 5 2 7 2h2"/></svg>',
-                        'm-trans' => '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m7 7 10 10"/><path d="M17 7v10H7"/></svg>',
                         'm-charge' => '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 2v20l2-1 2 1 2-1 2 1 2-1 2 1 2-1 2 1V2l-2 1-2-1-2 1-2-1-2 1-2-1-2 1Z"/><path d="M8 10h8"/><path d="M8 14h5"/></svg>',
                         'm-treso' => '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><path d="m7 14 4-4 3 3 5-6"/></svg>',
                         'p-fiche' => '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>',
@@ -3576,7 +3626,7 @@
                     </button>
                 </div>
                 @foreach ($activityNav as $group)
-                    @php $navLive = in_array($group['id'], ['fournisseurs', 'clients', 'stock', 'facturation', 'configuration'], true); @endphp
+                    @php $navLive = in_array($group['id'], ['fournisseurs', 'clients', 'stock', 'facturation', 'monetaire', 'configuration'], true); @endphp
                     <div class="nav-section {{ $navLive ? '' : 'is-held' }}">
                         <div class="nav-group {{ $navLive ? 'expanded is-pinned' : 'is-held' }}" data-nav-group="{{ $group['id'] }}">
                             <button type="button" class="nav-item has-sublist" data-panel="{{ $group['id'] }}" data-toggle-group="{{ $group['id'] }}">
@@ -3807,7 +3857,7 @@
                             'series' => [
                                 ['key' => 'achats', 'label' => 'Achats', 'color' => '#2563eb'],
                                 ['key' => 'ventes', 'label' => 'Ventes', 'color' => '#16a34a'],
-                                ['key' => 'charges', 'label' => 'Charges', 'color' => '#e10600'],
+                                ['key' => 'charges', 'label' => 'Charges', 'color' => '#c47a3a'],
                                 ['key' => 'paye', 'label' => 'Régl. clients payés', 'color' => '#0891b2'],
                                 ['key' => 'impaye', 'label' => 'Régl. clients impayés', 'color' => '#ea580c'],
                             ],
@@ -3951,20 +4001,24 @@
                 @include('partials.bon-achats')
                 @include('partials.reglement-achats')
                 @include('partials.balance-fournisseur')
+                @include('partials.releve-fournisseur')
                 @include('partials.fiche-client')
                 @include('partials.bon-livraison')
                 @include('partials.reglement-client')
                 @include('partials.balance-clients')
+                @include('partials.releve-client')
                 @include('partials.facture-achats')
                 @include('partials.reglement-factures-achats')
                 @include('partials.mouvement-stock')
                 @include('partials.fiche-produit')
                 @include('partials.facture-ventes')
                 @include('partials.reglement-factures-ventes')
+                @include('partials.charge')
+                @include('partials.rapport-tresorerie')
 
                 @foreach ($activityNav as $group)
                     @foreach ($group['items'] as $item)
-                        @if (empty($group['soon']) && empty($item['disabled']) && ! in_array($item['id'] ?? '', ['f-fiche', 'f-bon', 'f-regl', 'f-bal', 'c-fiche', 'c-bl', 'c-regl', 'c-bal', 'fa-achat', 'fa-regl-achat', 'fa-vente', 'fa-regl', 'cfg-fiche', 's-mvt', 's-prod'], true))
+                        @if (empty($group['soon']) && empty($item['disabled']) && ! in_array($item['id'] ?? '', ['f-fiche', 'f-bon', 'f-regl', 'f-bal', 'f-rel', 'c-fiche', 'c-bl', 'c-regl', 'c-bal', 'c-rel', 'fa-achat', 'fa-regl-achat', 'fa-vente', 'fa-regl', 'cfg-fiche', 's-mvt', 's-prod', 'm-charge', 'm-treso'], true))
                             <section class="panel" id="panel-{{ $item['id'] }}">
                                 <div class="content-head">
                                     <h1>{{ $item['label'] }}</h1>
@@ -7689,9 +7743,13 @@
         }
         .card-stat small { font-size: 0.68rem !important; }
         .card-stat strong { font-size: 1.2rem !important; }
-        .ba-summary, .bl-summary, .bf-summary, .cb-summary, .fa-stats, .sm-stats {
+        .ba-summary, .bl-summary, .bf-summary, .cb-summary, .fa-stats, .sm-stats,
+        .relf-kpis, .relc-kpis {
             gap: 0.55rem !important;
-            margin-bottom: 0.75rem !important;
+            margin-bottom: 0 !important;
+        }
+        .ba-toolbar, .bl-toolbar, .bf-toolbar, .cb-toolbar, .relf-toolbar, .relc-toolbar {
+            margin-bottom: 0.85rem !important;
         }
         .ba-card.achats, .bl-card.ventes, .bf-card.achats, .cb-card.ventes,
         .sm-stat:not(.buy):not(.sell):not(.stock), .fa-stat.blue {
@@ -7704,8 +7762,33 @@
             color: #fff !important;
         }
         .ba-card.solde, .bl-card.solde, .bf-card.solde, .cb-card.solde, .sm-stat.buy,
-        .fa-stat.achats {
+        .fa-stat.achats, .ch-card.total,
+        .relf-card.solde, .relc-card.solde {
             background: linear-gradient(160deg, #ef4444, #b91c1c) !important;
+            color: #fff !important;
+        }
+        #panel-m-treso .tr-card.debit {
+            background: linear-gradient(160deg, #facc15, #ca8a04) !important;
+            color: #1a1204 !important;
+        }
+        #panel-m-treso .tr-card.credit {
+            background: linear-gradient(160deg, #3b82f6, #1d4ed8) !important;
+            color: #fff !important;
+        }
+        #panel-m-treso .tr-card.caisse {
+            background: linear-gradient(160deg, #22c55e, #15803d) !important;
+            color: #fff !important;
+        }
+        #panel-m-treso .tr-card.solde {
+            background: linear-gradient(160deg, #ef4444, #b91c1c) !important;
+            color: #fff !important;
+        }
+        #panel-m-treso .tr-card.fa-debit {
+            background: linear-gradient(160deg, #8b5cf6, #6d28d9) !important;
+            color: #fff !important;
+        }
+        #panel-m-treso .tr-card.fa-credit {
+            background: linear-gradient(160deg, #9b1b2e, #6b0f1a) !important;
             color: #fff !important;
         }
         .fa-stat.slate {
@@ -7724,60 +7807,109 @@
         .fa-filters .fa-stat { padding: 0.35rem 0.75rem !important; }
         .fa-filters .fa-stat strong { font-size: 0.98rem !important; margin-top: 0.05rem !important; }
 
-        /* Barres de liste */
+        /* ===== Harmonisation pro globale (clair / sombre) ===== */
         .procar-table-bar, .fa-list-bar, .sm-bar, .mf-bar {
-            padding: 0.5rem 1rem !important;
-            background: linear-gradient(90deg, #14090b 0%, #5c1220 48%, #c41212 100%) !important;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+            padding: 0.55rem 1rem !important;
+            background: linear-gradient(90deg, #111827 0%, var(--table-head) 52%, var(--accent) 100%) !important;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08) !important;
         }
         .procar-table-bar h3, .fa-list-bar h3, .sm-bar h3, .mf-bar h3 {
             font-size: 0.74rem !important;
-            letter-spacing: 0.07em !important;
+            letter-spacing: 0.06em !important;
             font-weight: 700 !important;
+            color: #fff !important;
         }
-        .procar-table-card, .fa-card, .sm-card, .mf-card {
+        .procar-table-card, .fa-card, .sm-card, .mf-card, .table-wrap {
             border-radius: 12px !important;
-            box-shadow: 0 6px 18px rgba(15, 23, 42, 0.1) !important;
-            border-color: rgba(143, 36, 54, 0.28) !important;
-        }
-        [data-theme="light"] .procar-table-card {
-            background: #fff !important;
-            border-color: #e8ced4 !important;
+            box-shadow: 0 8px 24px var(--shadow) !important;
+            border: 1px solid var(--table-border) !important;
+            background: var(--table-body) !important;
         }
 
-        /* Boutons d’ajout / actions principales */
+        .procar-table, .fa-table, .mf-table, .sm-table, .panel .data-table {
+            color: var(--table-text) !important;
+            background: var(--table-body) !important;
+        }
+        .procar-table th, .fa-table th, .mf-table th, .sm-table th, .panel .data-table th,
+        .ba-lines thead th, .bl-lines thead th, .fa-lines thead th, .ra-lines thead th, .rc-lines thead th {
+            background: var(--table-head) !important;
+            color: var(--table-head-text) !important;
+            border-color: rgba(255, 255, 255, 0.1) !important;
+            font-weight: 700 !important;
+        }
+        .procar-table td, .fa-table td, .mf-table td, .sm-table td, .panel .data-table td {
+            color: var(--table-text) !important;
+            background: var(--table-body) !important;
+            border-color: var(--table-border) !important;
+        }
+        .procar-table tbody tr:nth-child(even) td,
+        .fa-table tbody tr:nth-child(even) td,
+        .mf-table tbody tr:nth-child(even) td,
+        .sm-table tbody tr:nth-child(even) td,
+        .panel .data-table tbody tr:nth-child(even) td {
+            background: #f8fafc !important;
+        }
+        .procar-table tbody tr:hover td,
+        .fa-table tbody tr:hover td,
+        .mf-table tbody tr:hover td,
+        .sm-table tbody tr:hover td,
+        .panel .data-table tbody tr:hover td {
+            background: #eef2ff !important;
+        }
+
+        /* Filtres lisibles dans les 2 thèmes */
+        .ba-filters label, .bl-filters label, .bf-filters label, .cb-filters label,
+        .rc-filters label, .ra-filters label, .sm-filters label, .fa-filters label,
+        .relf-filters label, .relc-filters label {
+            color: var(--filter-label) !important;
+        }
+        .ba-filters select, .ba-filters input, .bl-filters select, .bl-filters input,
+        .bf-filters select, .cb-filters select,
+        .rc-filters select, .rc-filters input, .ra-filters select, .ra-filters input,
+        .sm-filters select, .fa-filters input, .fa-filters select,
+        .relf-filters select, .relc-filters select,
+        .relf-filters input, .relc-filters input {
+            height: 34px !important;
+            border-radius: 8px !important;
+            font-size: 0.8rem !important;
+            background: var(--control-bg) !important;
+            color: var(--control-text) !important;
+            border: 1px solid var(--control-border) !important;
+        }
+        .ba-refresh, .bl-refresh, .bf-refresh, .cb-refresh, .rc-refresh, .ra-refresh,
+        .sm-refresh, .fa-refresh, .relf-refresh, .relc-refresh {
+            width: 34px !important;
+            height: 34px !important;
+            border-radius: 8px !important;
+            border: 1px solid var(--control-border) !important;
+            background: var(--control-bg) !important;
+            color: var(--accent-2) !important;
+            box-shadow: 0 1px 3px rgba(15, 23, 42, 0.06);
+        }
+
+        /* Boutons principaux */
+        .ba-add, .bl-add, .fa-nouveau, .rc-add, .ra-add, .btn-primary,
+        .ba-btn.primary, .bl-btn.primary, .rc-btn.primary, .ra-btn.primary, .fa-btn.primary,
+        .ff-btn.primary, .fc-btn.primary, .relf-btn.print, .relc-btn.print {
+            background: linear-gradient(180deg, var(--accent), var(--accent-2)) !important;
+            color: #fff !important;
+            border-color: var(--accent-2) !important;
+            box-shadow: 0 3px 10px rgba(139, 84, 36, 0.25) !important;
+        }
         .ba-add, .bl-add {
             width: 36px !important;
             height: 36px !important;
             border-radius: 10px !important;
-            background: linear-gradient(180deg, #a12b3f, #5c1220) !important;
-            box-shadow: 0 4px 12px rgba(92, 18, 32, 0.22) !important;
         }
-        .ba-add svg, .bl-add svg { width: 18px !important; height: 18px !important; }
         .fa-nouveau, .rc-add, .ra-add {
             height: 34px !important;
             padding: 0 0.9rem !important;
             border-radius: 9px !important;
             font-size: 0.78rem !important;
-            background: linear-gradient(180deg, #a12b3f, #5c1220) !important;
-            box-shadow: 0 3px 10px rgba(92, 18, 32, 0.2) !important;
         }
-        .btn-primary {
+        .btn-primary, .btn-ghost {
             padding: 0.45rem 0.85rem !important;
             border-radius: 9px !important;
-            border: 1px solid rgba(161, 43, 63, 0.45) !important;
-            background: linear-gradient(180deg, #a12b3f, #5c1220) !important;
-            color: #fff !important;
-            box-shadow: 0 3px 10px rgba(92, 18, 32, 0.18);
-        }
-        .btn-ghost {
-            padding: 0.45rem 0.85rem !important;
-            border-radius: 9px !important;
-        }
-        .ba-btn.primary, .bl-btn.primary, .rc-btn.primary, .ra-btn.primary, .fa-btn.primary,
-        .ff-btn.primary, .fc-btn.primary {
-            background: linear-gradient(180deg, #a12b3f, #5c1220) !important;
-            box-shadow: 0 3px 10px rgba(92, 18, 32, 0.18);
         }
         .ba-btn, .bl-btn, .rc-btn, .ra-btn, .fa-btn {
             height: 34px !important;
@@ -7785,43 +7917,97 @@
             font-size: 0.75rem !important;
         }
 
-        /* Filtres + refresh */
-        .ba-filters, .bl-filters, .bf-filters, .cb-filters, .rc-filters, .ra-filters, .sm-filters, .fa-filters {
-            gap: 0.55rem !important;
-            margin-bottom: 0.75rem !important;
+        .content-head { margin-bottom: 0.9rem !important; }
+        .content-head h1 {
+            font-size: 1.32rem !important;
+            letter-spacing: 0.03em;
+            color: var(--text) !important;
         }
-        .ba-filters select, .bl-filters select, .bf-filters select, .cb-filters select,
-        .rc-filters select, .ra-filters select, .sm-filters select,
-        .fa-filters input, .fa-filters select {
-            height: 34px !important;
-            border-radius: 8px !important;
-            font-size: 0.8rem !important;
-            border-color: #d6c0c5 !important;
-        }
-        .ba-refresh, .bl-refresh, .bf-refresh, .cb-refresh, .rc-refresh, .ra-refresh, .sm-refresh, .fa-refresh {
-            width: 34px !important;
-            height: 34px !important;
-            border-radius: 8px !important;
-            border-color: #d6c0c5 !important;
-            background: #fff !important;
-            color: #5c1220 !important;
-            box-shadow: 0 1px 3px rgba(15, 23, 42, 0.06);
-        }
-        [data-theme="light"] .ba-refresh,
-        [data-theme="light"] .bl-refresh,
-        [data-theme="light"] .bf-refresh,
-        [data-theme="light"] .cb-refresh,
-        [data-theme="light"] .rc-refresh,
-        [data-theme="light"] .ra-refresh,
-        [data-theme="light"] .sm-refresh {
-            background: #fff !important;
-            color: #5c1220 !important;
-            border-color: #e4c5cb !important;
+        .content-head p,
+        .ba-sub, .bl-sub, .bf-sub, .cb-sub, .rc-sub, .ra-sub, .fa-sub, .relf-sub, .relc-sub, .ff-sub, .sm-sub {
+            color: var(--muted) !important;
         }
 
-        /* En-têtes de page un peu plus serrés */
-        .content-head { margin-bottom: 0.9rem !important; }
-        .content-head h1 { font-size: 1.35rem; letter-spacing: 0.04em; }
+        /* KPI cards : unifié */
+        .ba-card, .bl-card, .bf-card, .cb-card, .fa-stat, .sm-stat,
+        .relf-card, .relc-card, .rf-card, .rc-card, .ch-card, .tr-card {
+            border-radius: 12px !important;
+            box-shadow: 0 6px 16px rgba(15, 23, 42, 0.14) !important;
+        }
+
+        /* ===== Couleurs métier globales ===== */
+        .procar-table td.solde,
+        .procar-table td.num.solde,
+        .fa-table td.fv-solde.due,
+        .fv-solde.due,
+        .ra-mini.solde strong,
+        .rc-mini.solde strong,
+        .ff-grid input.is-solde,
+        .ff-total.is-due strong,
+        td.amt-solde,
+        .amt-solde {
+            color: var(--color-solde) !important;
+            font-weight: 700 !important;
+        }
+        .procar-table td.paye,
+        .procar-table td.num.paye,
+        .fa-table td.fv-solde.paid,
+        .fv-solde.paid,
+        td.amt-paye,
+        .amt-paye,
+        .flag-paye,
+        .procar-table td.flag-paye {
+            color: var(--color-paye) !important;
+            font-weight: 700 !important;
+        }
+        td.amt-imp,
+        .amt-imp,
+        .flag-imp,
+        .procar-table td.flag-imp,
+        .statut-imp {
+            color: var(--color-imp) !important;
+            font-weight: 700 !important;
+        }
+        .statut-paye {
+            color: var(--color-paye) !important;
+            font-weight: 700 !important;
+        }
+        td.amt-deva,
+        .amt-deva,
+        .flag-deva,
+        .procar-table td.flag-deva,
+        .statut-deva {
+            color: var(--color-deva) !important;
+            font-weight: 700 !important;
+        }
+        td.amt-repo,
+        .amt-repo,
+        .flag-repo,
+        .procar-table td.flag-repo,
+        .statut-repo {
+            color: var(--color-repo) !important;
+            font-weight: 700 !important;
+        }
+        .ra-act.is-on[data-a="Payé"],
+        .rc-act.is-on[data-a="Payé"] {
+            background: var(--color-paye) !important;
+            border-color: var(--color-paye) !important;
+        }
+        .ra-act.is-on[data-a="Imp"],
+        .rc-act.is-on[data-a="Imp"] {
+            background: var(--color-imp) !important;
+            border-color: var(--color-imp) !important;
+        }
+        .ra-act.is-on[data-a="Dévalidé"],
+        .rc-act.is-on[data-a="Dévalidé"] {
+            background: var(--color-deva) !important;
+            border-color: var(--color-deva) !important;
+        }
+        .ra-act.is-on[data-a="Report"],
+        .rc-act.is-on[data-a="Report"] {
+            background: var(--color-repo) !important;
+            border-color: var(--color-repo) !important;
+        }
     </style>
 </body>
 </html>

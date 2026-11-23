@@ -4,10 +4,6 @@
             <h1>Règlement Achats</h1>
             <p class="ra-sub">Règlement des bons d’achat fournisseurs</p>
         </div>
-        <button type="button" class="ra-add" id="raAdd">
-            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/></svg>
-            Ajouter
-        </button>
     </div>
 
     <div class="ra-filters">
@@ -28,8 +24,37 @@
                 <option value="12">Décembre</option>
             </select>
         </label>
-        <label>N° Rég<select id="raRefFilter" data-keep-native="1"><option value="">Tous</option></select></label>
-        <label>Mnt<select id="raAmountFilter" data-keep-native="1"><option value="">Tous</option></select></label>
+        <label>N° Rég<input id="raRefFilter" type="text" placeholder="Rechercher…" autocomplete="off"></label>
+        <label>Mnt<input id="raAmountFilter" type="text" inputmode="decimal" placeholder="Rechercher…" autocomplete="off"></label>
+        <label class="ra-filter-type">Type
+            <select id="raTypeFilter" data-keep-native="1">
+                <option value="">Tous</option>
+                <option>Esp</option>
+                <option>Chq</option>
+                <option>Eff</option>
+                <option>Vir</option>
+                <option>Vers</option>
+            </select>
+        </label>
+        <label class="ra-filter-bnq">Bnq
+            <select id="raBanqueFilter" data-keep-native="1">
+                <option value="">Tous</option>
+                <option>Attijariwafa</option>
+                <option>BMCE</option>
+                <option>Banque Populaire</option>
+                <option>CIH</option>
+                <option>SGMB</option>
+                <option>Crédit Agricole</option>
+                <option>CDM</option>
+                <option>Al Barid Bank</option>
+                <option>Autre</option>
+            </select>
+        </label>
+        <label>Nom Tiré<input id="raTireFilter" type="text" placeholder="Rechercher…" autocomplete="off"></label>
+        <button type="button" class="ra-add" id="raAdd">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/></svg>
+            Ajouter
+        </button>
         <button type="button" class="ra-refresh" id="raRefresh" title="Actualiser" aria-label="Actualiser">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12a9 9 0 1 1-2.64-6.36"/><path d="M21 3v6h-6"/></svg>
         </button>
@@ -133,6 +158,7 @@
                 </div>
 
                 <div class="ra-form-cards">
+                    <div class="ra-mini"><span>Solde Initial</span><strong id="raInitial">0,00</strong></div>
                     <div class="ra-mini"><span>Total TTC</span><strong id="raTotalTtc">0,00</strong></div>
                     <div class="ra-mini solde"><span>Solde TTC</span><strong id="raSoldeTtc">0,00</strong></div>
                 </div>
@@ -169,20 +195,23 @@
     #panel-f-regl .ra-sub { margin: 0.2rem 0 0; color: var(--muted); font-size: 0.82rem; text-transform: none; }
     #panel-f-regl .ra-head { display: flex; align-items: flex-end; justify-content: space-between; gap: 1rem; }
     .ra-add {
-        display: inline-flex; align-items: center; gap: 0.4rem; height: 40px; padding: 0 1rem;
-        border: none; border-radius: 10px; cursor: pointer; font-family: inherit; font-weight: 700; font-size: 0.85rem;
-        background: linear-gradient(180deg, #8f2436, #5c1220); color: #fff;
+        display: inline-flex; align-items: center; gap: 0.35rem; height: 38px; padding: 0 0.85rem;
+        border: none; border-radius: 10px; cursor: pointer; font-family: inherit; font-weight: 700; font-size: 0.8rem;
+        background: linear-gradient(180deg, #c47a3a, #0b1f3a); color: #fff; flex: 0 0 auto;
     }
-    .ra-add svg { width: 16px; height: 16px; }
+    .ra-add svg { width: 15px; height: 15px; }
     .ra-filters {
-        display: grid; grid-template-columns: 160px 180px 160px 38px; gap: 0.75rem;
-        align-items: end; margin-bottom: 1rem;
+        display: flex; flex-wrap: wrap; align-items: end; gap: 0.45rem; margin-bottom: 1rem;
     }
     .ra-filters label {
-        display: flex; flex-direction: column; gap: 0.35rem; min-width: 0;
-        font-size: 0.68rem; font-weight: 800; letter-spacing: 0.06em; text-transform: uppercase; color: #e7d5d8;
+        display: flex; flex-direction: column; gap: 0.35rem; min-width: 0; width: 108px;
+        font-size: 0.68rem; font-weight: 800; letter-spacing: 0.06em; text-transform: uppercase; color: #d6c4b4;
     }
-    .ra-filters select {
+    .ra-filters label:first-child { width: 120px; }
+    .ra-filters .ra-filter-type { width: 92px; }
+    .ra-filters .ra-filter-bnq { width: 132px; }
+    .ra-filters select,
+    .ra-filters input {
         width: 100%; height: 38px; box-sizing: border-box; border-radius: 10px; border: 1px solid #334155;
         background: #fff; color: #000; color-scheme: light; font-family: inherit; font-size: 0.84rem; padding: 0 0.55rem;
     }
@@ -206,13 +235,13 @@
     .ra-window[hidden] { display: none !important; }
     .ra-sheet {
         width: min(1180px, calc(100vw - 2.5rem)); margin: auto; border-radius: 16px; overflow: hidden;
-        background: #0c0c0e; border: 1px solid #4a1824; color: #f4f5f6;
+        background: #0c0c0e; border: 1px solid #1e3a5f; color: #f4f5f6;
         box-shadow: 0 24px 60px rgba(0,0,0,0.45);
     }
     .ra-sheet-head {
         display: flex; align-items: center; justify-content: space-between; gap: 1rem;
         padding: 0.9rem 1.15rem; color: #fff;
-        background: linear-gradient(90deg, #0a0a0c, #5c1220 58%, #8f2436);
+        background: linear-gradient(90deg, #0a0a0c, #0b1f3a 58%, #c47a3a);
     }
     .ra-sheet-head h3 { margin: 0; font-size: 0.92rem; letter-spacing: 0.06em; text-transform: uppercase; }
     .ra-x {
@@ -220,7 +249,7 @@
         background: transparent; color: rgba(255,255,255,0.82); font-size: 1.35rem; line-height: 1;
     }
     .ra-form { padding: 1rem 1.15rem 0.4rem; }
-    .ra-error { margin-bottom: 0.75rem; padding: 0.65rem 0.8rem; border-radius: 10px; background: rgba(127,29,29,0.35); color: #fecaca; border: 1px solid #7f1d1d; font-size: 0.82rem; }
+    .ra-error { margin-bottom: 0.75rem; padding: 0.65rem 0.8rem; border-radius: 10px; background: rgba(127,29,29,0.35); color: #fecaca; border: 1px solid #1e3a5f; font-size: 0.82rem; }
     .ra-grid {
         display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 0.65rem; align-items: end;
     }
@@ -231,7 +260,7 @@
         box-sizing: border-box; width: 100%; height: 38px; border-radius: 10px; border: 1px solid #334155;
         background: #fff; color: #000; color-scheme: light; font-family: inherit; font-size: 0.84rem; padding: 0 0.7rem;
     }
-    .ra-form-cards { display: grid; grid-template-columns: repeat(2, minmax(0, 180px)); gap: 0.65rem; margin: 0.9rem 0 0.7rem; justify-content: end; }
+    .ra-form-cards { display: grid; grid-template-columns: repeat(3, minmax(0, 180px)); gap: 0.65rem; margin: 0.9rem 0 0.7rem; justify-content: end; }
     .ra-mini { border-radius: 12px; padding: 0.55rem 0.7rem; text-align: center; background: #1e293b; border: 1px solid #334155; }
     .ra-mini span { display: block; font-size: 0.62rem; font-weight: 800; letter-spacing: 0.06em; text-transform: uppercase; color: #94a3b8; }
     .ra-mini strong { display: block; margin-top: 0.15rem; font-size: 0.95rem; color: #fff; }
@@ -243,34 +272,34 @@
     .ra-orders-wrap { max-height: 280px; overflow: auto; border: 1px solid #334155; border-radius: 10px; }
     .ra-orders { width: 100%; border-collapse: collapse; min-width: 860px; }
     .ra-orders th {
-        position: sticky; top: 0; background: #5c1220; color: #fff;
+        position: sticky; top: 0; background: #0b1f3a; color: #fff;
         font-size: 0.62rem; letter-spacing: 0.06em; text-transform: uppercase; padding: 0.5rem; text-align: center;
     }
     .ra-orders td { padding: 0.45rem; border-top: 1px solid #1e293b; text-align: center; color: #000; background: #fff; font-size: 0.78rem; }
     .ra-actions { display: flex; justify-content: flex-end; gap: 0.5rem; padding: 0.95rem 0 1rem; }
     .ra-btn { height: 36px; padding: 0 1rem; border-radius: 999px; border: none; font-family: inherit; font-weight: 700; font-size: 0.78rem; cursor: pointer; }
     .ra-btn.ghost { background: #1e293b; color: #e2e8f0; border: 1px solid #475569; }
-    .ra-btn.primary { background: linear-gradient(180deg, #8f2436, #5c1220); color: #fff; }
+    .ra-btn.primary { background: linear-gradient(180deg, #c47a3a, #0b1f3a); color: #fff; }
     .ra-act {
         border: 1px solid #cbd5e1; border-radius: 999px; background: #f8fafc; color: #334155;
         font-size: 0.68rem; font-weight: 700; padding: 0.18rem 0.45rem; cursor: pointer; margin: 0 0.1rem;
     }
-    .ra-act.is-on { background: #5c1220; color: #fff; border-color: #5c1220; }
+    .ra-act.is-on { background: #0b1f3a; color: #fff; border-color: #0b1f3a; }
     .ra-act.is-on[data-a="Payé"] { background: #15803d; border-color: #15803d; }
     .ra-act.is-on[data-a="Report"] { background: #d97706; border-color: #d97706; }
     .ra-act.is-on[data-a="Imp"] { background: #dc2626; border-color: #dc2626; }
     .ra-act.is-on[data-a="Dévalidé"] { background: #7c3aed; border-color: #7c3aed; }
-    [data-theme="light"] .ra-filters label { color: #5c1220; }
-    [data-theme="light"] .ra-refresh { background: #fff; color: #5c1220; border-color: #e4c5cb; }
+    [data-theme="light"] .ra-filters label { color: #0b1f3a; }
+    [data-theme="light"] .ra-refresh { background: #fff; color: #0b1f3a; border-color: #e0d0c0; }
     [data-theme="light"] .ra-sheet { background: #fff; border-color: #e7c9cf; color: #1a1214; }
-    [data-theme="light"] .ra-field label { color: #5c1220; }
+    [data-theme="light"] .ra-field label { color: #0b1f3a; }
     [data-theme="light"] .ra-mini { background: #fff; border-color: #e7c9cf; }
     [data-theme="light"] .ra-mini strong { color: #1a1214; }
     [data-theme="light"] .ra-mini.solde strong { color: #dc2626; }
-    [data-theme="light"] .ra-btn.ghost { background: #fff; color: #5c1220; border-color: #e4c5cb; }
-    [data-theme="light"] .ra-orders-head p { color: #8f2436; }
+    [data-theme="light"] .ra-btn.ghost { background: #fff; color: #0b1f3a; border-color: #e0d0c0; }
+    [data-theme="light"] .ra-orders-head p { color: #c47a3a; }
     @media (max-width: 1100px) {
-        .ra-filters { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+        .ra-filters { flex-wrap: wrap; }
         .ra-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
         .ra-window { left: 0; }
     }
@@ -294,6 +323,8 @@
     let orders = [];
     let selected = {};
     let orderActions = {};
+    let selectedInitial = false;
+    let initialBalance = 0;
     let editingId = null;
     let mode = 'create';
 
@@ -320,32 +351,40 @@
         if (parts.length !== 3) return value;
         return `${parts[2]}/${parts[1]}/${parts[0]}`;
     }
+    function statutClass(value) {
+        const s = String(value || '').trim();
+        if (s === 'Payé') return 'statut-paye amt-paye';
+        if (s === 'Imp') return 'statut-imp amt-imp';
+        if (s === 'Dévalidé') return 'statut-deva amt-deva';
+        if (s === 'Report') return 'statut-repo amt-repo';
+        return '';
+    }
     function todayInput() {
         const d = new Date();
         return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
     }
-    function fillLists() {
-        const refs = [...new Set(rows.map((row) => String(row.reference || '').trim()).filter(Boolean))]
-            .sort((a, b) => a.localeCompare(b, 'fr', { sensitivity: 'base' }));
-        const amounts = [...new Set(rows.map((row) => moneyDot(row.montant)))]
-            .sort((a, b) => Number(a) - Number(b));
-        const refSelect = document.getElementById('raRefFilter');
-        const amountSelect = document.getElementById('raAmountFilter');
-        const currentRef = refSelect.value;
-        const currentAmount = amountSelect.value;
-        refSelect.innerHTML = `<option value="">Tous</option>${refs.map((value) => `<option value="${esc(value)}">${esc(value)}</option>`).join('')}`;
-        amountSelect.innerHTML = `<option value="">Tous</option>${amounts.map((value) => `<option value="${esc(value)}">${esc(money(value))}</option>`).join('')}`;
-        refSelect.value = refs.includes(currentRef) ? currentRef : '';
-        amountSelect.value = amounts.includes(currentAmount) ? currentAmount : '';
+    function norm(value) {
+        return String(value ?? '').trim().toLowerCase();
+    }
+    function contains(haystack, needle) {
+        const q = norm(needle);
+        if (!q) return true;
+        return norm(haystack).includes(q);
     }
     function filteredRows() {
         const month = document.getElementById('raMonth').value;
         const ref = document.getElementById('raRefFilter').value;
         const amount = document.getElementById('raAmountFilter').value;
+        const type = document.getElementById('raTypeFilter').value;
+        const banque = document.getElementById('raBanqueFilter').value;
+        const tire = document.getElementById('raTireFilter').value;
         return rows.filter((row) => {
             if (month && String(row.month || '') !== month) return false;
-            if (ref && String(row.reference || '') !== ref) return false;
-            if (amount && moneyDot(row.montant) !== amount) return false;
+            if (!contains(row.reference, ref) && !contains(row.numero, ref)) return false;
+            if (amount && !contains(moneyDot(row.montant), amount) && !contains(money(row.montant), amount)) return false;
+            if (!contains(row.reglement, type)) return false;
+            if (!contains(row.banque, banque)) return false;
+            if (!contains(row.nom_tire, tire)) return false;
             return true;
         });
     }
@@ -364,8 +403,8 @@
             <td>${esc(row.numero) || '—'}</td>
             <td>${esc(row.banque) || '—'}</td>
             <td>${esc(row.date_decaissement_fr || formatDate(row.date_decaissement))}</td>
-            <td>${esc(money(row.montant))}</td>
-            <td>${esc(row.statut)}</td>
+            <td class="${statutClass(row.statut)}">${esc(money(row.montant))}</td>
+            <td class="${statutClass(row.statut)}">${esc(row.statut)}</td>
             <td>
                 <button type="button" class="ra-icon" data-act="voir" data-id="${row.id}" title="Voir">${eye}</button>
                 <button type="button" class="ra-icon" data-act="modifier" data-id="${row.id}" title="Modifier">${pencil}</button>
@@ -391,7 +430,7 @@
         return Object.keys(selected).filter((id) => selected[id]).map(Number);
     }
     function previewMap() {
-        const map = {};
+        const map = { initial: { paye: 0, solde: initialBalance, allocation: 0 } };
         const amount = parseNum(document.getElementById('raMontant').value);
         let remaining = amount;
         const ids = selectedIds();
@@ -402,7 +441,16 @@
                 allocation: 0,
             };
         });
-        if (!ids.length || amount <= 0) return map;
+        if (selectedInitial && remaining > 0 && initialBalance > 0) {
+            const applied = Math.round(Math.min(initialBalance, remaining) * 100) / 100;
+            map.initial = {
+                paye: applied,
+                solde: Math.round((initialBalance - applied) * 100) / 100,
+                allocation: applied,
+            };
+            remaining = Math.round((remaining - applied) * 100) / 100;
+        }
+        if (!ids.length || remaining <= 0) return map;
         orders.filter((order) => ids.includes(order.id)).forEach((order) => {
             if (remaining <= 0) return;
             const due = Math.max((Number(order.montant_bon) || 0) - (Number(order.montant_paye) || 0), 0);
@@ -419,15 +467,27 @@
     }
     function renderOrders() {
         const map = previewMap();
-        const total = orders.reduce((sum, order) => sum + (Number(order.montant_bon) || 0), 0);
-        const solde = orders.reduce((sum, order) => sum + (Number(map[order.id]?.solde ?? order.solde) || 0), 0);
+        const total = orders.reduce((sum, order) => sum + (Number(order.montant_bon) || 0), 0) + initialBalance;
+        const solde = orders.reduce((sum, order) => sum + (Number(map[order.id]?.solde ?? order.solde) || 0), 0)
+            + (Number(map.initial?.solde ?? initialBalance) || 0);
+        document.getElementById('raInitial').textContent = money(initialBalance);
         document.getElementById('raTotalTtc').textContent = money(total);
         document.getElementById('raSoldeTtc').textContent = money(solde);
-        if (!orders.length) {
-            ordersBody.innerHTML = '<tr><td colspan="7">Aucun bon d’achat pour ce fournisseur</td></tr>';
+        const initialChecked = selectedInitial ? ' checked' : '';
+        const initialRow = `<tr>
+            <td><input type="checkbox" data-select-initial="1"${initialChecked}${initialBalance > 0 ? '' : ' disabled'}></td>
+            <td>SOLDE INITIAL</td>
+            <td>—</td>
+            <td>${esc(money(initialBalance))}</td>
+            <td>${esc(money(map.initial?.paye || 0))}</td>
+            <td>${esc(money(map.initial?.solde ?? initialBalance))}</td>
+            <td>—</td>
+        </tr>`;
+        if (!orders.length && initialBalance <= 0) {
+            ordersBody.innerHTML = '<tr><td colspan="7">Aucun solde ni bon d’achat pour ce fournisseur</td></tr>';
             return;
         }
-        ordersBody.innerHTML = orders.map((order) => {
+        ordersBody.innerHTML = initialRow + orders.map((order) => {
             const preview = map[order.id] || {};
             const checked = selected[order.id] ? ' checked' : '';
             const action = orderActions[order.id] || order.payment_action || 'Inst';
@@ -450,6 +510,8 @@
             orders = [];
             selected = {};
             orderActions = {};
+            selectedInitial = false;
+            initialBalance = 0;
             renderOrders();
             return;
         }
@@ -457,9 +519,14 @@
         const payload = await response.json().catch(() => ({}));
         if (!response.ok) throw new Error(payload.message || 'Chargement des bons impossible.');
         orders = payload.data || [];
+        initialBalance = Number(payload.meta?.initial_balance) || 0;
         selected = {};
         orderActions = {};
+        selectedInitial = initialBalance > 0;
         orders.forEach((order) => { orderActions[order.id] = order.payment_action || 'Inst'; });
+        if (selectedInitial && !document.getElementById('raMontant').value) {
+            document.getElementById('raMontant').value = moneyDot(initialBalance);
+        }
         renderOrders();
     }
     function openModal(row, nextMode) {
@@ -491,18 +558,25 @@
         modal.hidden = false;
         if (row?.supplier_id) {
             loadOrders(row.supplier_id).then(() => {
+                const restoredInitial = Number(row.amount_on_initial) || 0;
+                if (restoredInitial > 0) {
+                    initialBalance = Math.round((initialBalance + restoredInitial) * 100) / 100;
+                    selectedInitial = true;
+                }
                 if (row.allocations?.length) {
                     row.allocations.forEach((allocation) => {
                         selected[allocation.purchase_order_id] = true;
                         orderActions[allocation.purchase_order_id] = allocation.action || 'Inst';
                     });
-                    renderOrders();
                 }
+                renderOrders();
             }).catch((error) => showError(error.message));
         } else {
             orders = [];
             selected = {};
             orderActions = {};
+            selectedInitial = false;
+            initialBalance = 0;
             renderOrders();
         }
     }
@@ -522,7 +596,6 @@
         if (!response.ok) throw new Error(payload.message || 'Chargement impossible.');
         rows = payload.data || [];
         meta = payload.meta || meta;
-        fillLists();
         render();
     }
     document.getElementById('raAdd').addEventListener('click', () => openModal(null, 'create'));
@@ -556,10 +629,20 @@
     });
     document.getElementById('raSelectAll').addEventListener('change', (event) => {
         selected = {};
-        if (event.target.checked) orders.forEach((order) => { selected[order.id] = true; });
+        selectedInitial = false;
+        if (event.target.checked) {
+            if (initialBalance > 0) selectedInitial = true;
+            orders.forEach((order) => { selected[order.id] = true; });
+        }
         renderOrders();
     });
     ordersBody.addEventListener('change', (event) => {
+        const initialBox = event.target.closest('[data-select-initial]');
+        if (initialBox) {
+            selectedInitial = initialBox.checked;
+            renderOrders();
+            return;
+        }
         const box = event.target.closest('[data-select]');
         if (!box) return;
         selected[box.dataset.select] = box.checked;
@@ -572,8 +655,13 @@
         selected[button.dataset.order] = true;
         renderOrders();
     });
-    ['raMonth', 'raRefFilter', 'raAmountFilter'].forEach((id) => {
-        document.getElementById(id).addEventListener('change', render);
+    document.getElementById('raMonth').addEventListener('change', render);
+    document.getElementById('raTypeFilter').addEventListener('change', render);
+    document.getElementById('raBanqueFilter').addEventListener('change', render);
+    ['raRefFilter', 'raAmountFilter', 'raTireFilter'].forEach((id) => {
+        const field = document.getElementById(id);
+        field.addEventListener('input', render);
+        field.addEventListener('change', render);
     });
     document.getElementById('raRefresh').addEventListener('click', () => {
         load().catch((error) => { body.innerHTML = `<tr><td colspan="11">${esc(error.message)}</td></tr>`; });
@@ -587,13 +675,14 @@
         const ids = selectedIds();
         if (!supplierId) { showError('Sélectionnez un fournisseur.'); return; }
         if (montant <= 0) { showError('Saisissez un montant de règlement.'); return; }
-        if (!ids.length) { showError('Cochez au moins un bon d’achat.'); return; }
+        if (!ids.length && !selectedInitial) { showError('Cochez le solde initial ou au moins un bon d’achat.'); return; }
         const map = previewMap();
         const allocations = ids.map((id) => ({
             purchase_order_id: id,
             amount: map[id]?.allocation || 0,
             action: orderActions[id] || 'Inst',
         }));
+        const amountOnInitial = selectedInitial ? (map.initial?.allocation || 0) : 0;
         const save = document.getElementById('raSave');
         save.disabled = true;
         try {
@@ -608,6 +697,7 @@
                     banque: document.getElementById('raBanque').value,
                     nom_tire: document.getElementById('raTire').value,
                     montant,
+                    amount_on_initial: amountOnInitial,
                     date_decaissement: document.getElementById('raDecaiss').value || null,
                     remarque: document.getElementById('raRemarque').value,
                     allocations,

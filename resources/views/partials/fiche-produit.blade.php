@@ -78,7 +78,7 @@
         font-weight: 800;
         letter-spacing: 0.06em;
         text-transform: uppercase;
-        color: #e7d5d8;
+        color: #d6c4b4;
     }
     #panel-s-prod .fp-filters input,
     #panel-s-prod .fp-filters select {
@@ -137,10 +137,10 @@
     #panel-s-prod .procar-table td:nth-child(13) { width: 6.5%; }
     #panel-s-prod .procar-table td:nth-child(1),
     #panel-s-prod .procar-table td:nth-child(2) { font-weight: 700; }
-    [data-theme="light"] #panel-s-prod .fp-filters label { color: #5c1220; }
+    [data-theme="light"] #panel-s-prod .fp-filters label { color: #0b1f3a; }
     [data-theme="light"] #panel-s-prod .fp-filters input,
-    [data-theme="light"] #panel-s-prod .fp-filters select { background: #fff; color: #1a1214; border-color: #e4c5cb; }
-    [data-theme="light"] #panel-s-prod .fp-refresh { background: #fff; color: #5c1220; border-color: #e4c5cb; }
+    [data-theme="light"] #panel-s-prod .fp-filters select { background: #fff; color: #1a1214; border-color: #e0d0c0; }
+    [data-theme="light"] #panel-s-prod .fp-refresh { background: #fff; color: #0b1f3a; border-color: #e0d0c0; }
     [data-theme="light"] #panel-s-prod .fp-actif { color: #15803d; }
     [data-theme="light"] #panel-s-prod .fp-rupture { color: #dc2626; }
     @media (max-width: 1100px) {

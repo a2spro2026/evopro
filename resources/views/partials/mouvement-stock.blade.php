@@ -11,7 +11,7 @@
             <div class="sm-stat"><span>Produits</span><strong id="smCount">0</strong></div>
             <div class="sm-stat buy"><span>Achat</span><strong id="smSumAchat">0</strong></div>
             <div class="sm-stat sell"><span>Vente</span><strong id="smSumVente">0</strong></div>
-            <div class="sm-stat stock"><span>Stock actuel</span><strong id="smSumStock">0</strong></div>
+            <div class="sm-stat stock"><span>ST-Act</span><strong id="smSumStock">0</strong></div>
         </div>
     </div>
 
@@ -36,13 +36,16 @@
                 <option value="12">Décembre</option>
             </select>
         </label>
-        <label>Réf<select id="smRef" data-keep-native="1"><option value="">Tous</option></select></label>
-        <label>Désignation<select id="smDesc" data-keep-native="1"><option value="">Tous</option></select></label>
-        <label>Equiv<select id="smEquiv" data-keep-native="1"><option value="">Tous</option></select></label>
+        <label>Réf<input id="smRef" type="text" list="smRefList" placeholder="Saisir…" autocomplete="off"></label>
+        <datalist id="smRefList"></datalist>
+        <label>Désignation<input id="smDesc" type="text" list="smDescList" placeholder="Saisir…" autocomplete="off"></label>
+        <datalist id="smDescList"></datalist>
+        <label>Equiv<input id="smEquiv" type="text" list="smEquivList" placeholder="Saisir…" autocomplete="off"></label>
+        <datalist id="smEquivList"></datalist>
         <label>Marque<select id="smBrand" data-keep-native="1"><option value="">Tous</option></select></label>
         <label>Famille<select id="smFamily" data-keep-native="1"><option value="">Tous</option></select></label>
-        <label>Achat<select id="smAchat" data-keep-native="1"><option value="">Tous</option></select></label>
-        <label>Vente<select id="smVente" data-keep-native="1"><option value="">Tous</option></select></label>
+        <label>A<select id="smAchat" data-keep-native="1"><option value="">Tous</option></select></label>
+        <label>V<select id="smVente" data-keep-native="1"><option value="">Tous</option></select></label>
         <button type="button" class="sm-refresh" id="smRefresh" title="Actualiser" aria-label="Actualiser">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12a9 9 0 1 1-2.64-6.36"/><path d="M21 3v6h-6"/></svg>
         </button>
@@ -65,7 +68,7 @@
                     <tr>
                         <th class="sm-sticky-col sm-col-ref" rowspan="2">Réf</th>
                         <th class="sm-sticky-col sm-col-desc" rowspan="2">Désignation</th>
-                        <th class="sm-sticky-col sm-col-init" rowspan="2">Stock Initial</th>
+                        <th class="sm-sticky-col sm-col-init" rowspan="2">ST-Ini</th>
                         <th colspan="2">Jan</th>
                         <th colspan="2">Fév</th>
                         <th colspan="2">Mar</th>
@@ -78,21 +81,21 @@
                         <th colspan="2">Oct</th>
                         <th colspan="2">Nov</th>
                         <th colspan="2">Déc</th>
-                        <th class="sm-col-stock" rowspan="2">Stock Actuel</th>
+                        <th class="sm-col-stock" rowspan="2">ST-Act</th>
                     </tr>
                     <tr>
-                        <th class="sm-h-achat">Achat</th><th class="sm-h-vente">Vente</th>
-                        <th class="sm-h-achat">Achat</th><th class="sm-h-vente">Vente</th>
-                        <th class="sm-h-achat">Achat</th><th class="sm-h-vente">Vente</th>
-                        <th class="sm-h-achat">Achat</th><th class="sm-h-vente">Vente</th>
-                        <th class="sm-h-achat">Achat</th><th class="sm-h-vente">Vente</th>
-                        <th class="sm-h-achat">Achat</th><th class="sm-h-vente">Vente</th>
-                        <th class="sm-h-achat">Achat</th><th class="sm-h-vente">Vente</th>
-                        <th class="sm-h-achat">Achat</th><th class="sm-h-vente">Vente</th>
-                        <th class="sm-h-achat">Achat</th><th class="sm-h-vente">Vente</th>
-                        <th class="sm-h-achat">Achat</th><th class="sm-h-vente">Vente</th>
-                        <th class="sm-h-achat">Achat</th><th class="sm-h-vente">Vente</th>
-                        <th class="sm-h-achat">Achat</th><th class="sm-h-vente">Vente</th>
+                        <th class="sm-h-achat">A</th><th class="sm-h-vente">V</th>
+                        <th class="sm-h-achat">A</th><th class="sm-h-vente">V</th>
+                        <th class="sm-h-achat">A</th><th class="sm-h-vente">V</th>
+                        <th class="sm-h-achat">A</th><th class="sm-h-vente">V</th>
+                        <th class="sm-h-achat">A</th><th class="sm-h-vente">V</th>
+                        <th class="sm-h-achat">A</th><th class="sm-h-vente">V</th>
+                        <th class="sm-h-achat">A</th><th class="sm-h-vente">V</th>
+                        <th class="sm-h-achat">A</th><th class="sm-h-vente">V</th>
+                        <th class="sm-h-achat">A</th><th class="sm-h-vente">V</th>
+                        <th class="sm-h-achat">A</th><th class="sm-h-vente">V</th>
+                        <th class="sm-h-achat">A</th><th class="sm-h-vente">V</th>
+                        <th class="sm-h-achat">A</th><th class="sm-h-vente">V</th>
                     </tr>
                 </thead>
                 <tbody id="smBody">
@@ -110,7 +113,7 @@
     .sm-stat { border-radius: 14px; padding: 0.7rem 1rem; color: #fff; background: linear-gradient(135deg, #2563eb, #1e3a8a); }
     .sm-stat span { display: block; font-size: 0.68rem; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; opacity: 0.85; }
     .sm-stat strong { display: block; margin-top: 0.25rem; font-size: 1.35rem; font-variant-numeric: tabular-nums; white-space: nowrap; }
-    .sm-stat.buy { background: linear-gradient(135deg, #e10600, #9b0400); }
+    .sm-stat.buy { background: linear-gradient(135deg, #c47a3a, #8b5424); }
     .sm-stat.sell { background: linear-gradient(135deg, #16a34a, #14532d); }
     .sm-stat.stock { color: #1a1204; background: linear-gradient(135deg, #facc15, #eab308); }
     .sm-filters {
@@ -123,9 +126,9 @@
     }
     .sm-filters label {
         display: flex; flex-direction: column; gap: 0.35rem; min-width: 0;
-        font-size: 0.68rem; font-weight: 800; letter-spacing: 0.06em; text-transform: uppercase; color: #e7d5d8;
+        font-size: 0.68rem; font-weight: 800; letter-spacing: 0.06em; text-transform: uppercase; color: #d6c4b4;
     }
-    .sm-filters select {
+    .sm-filters select, .sm-filters input[type="text"] {
         width: 100%; height: 38px; box-sizing: border-box; border-radius: 10px; border: 1px solid #334155;
         background: #fff; color: #000; color-scheme: light; font-family: inherit; font-size: 0.84rem; padding: 0 0.45rem;
     }
@@ -141,7 +144,7 @@
     }
     .sm-bar {
         padding: 0.8rem 1.1rem; color: #fff;
-        background: linear-gradient(90deg, #0a0a0c, #5c1220 58%, #8f2436); flex: 0 0 auto;
+        background: linear-gradient(90deg, #0a0a0c, #0b1f3a 58%, #c47a3a); flex: 0 0 auto;
     }
     .sm-bar h3 { margin: 0; font-size: 0.82rem; letter-spacing: 0.06em; text-transform: uppercase; }
     .sm-scroll { flex: 1; min-height: 0; overflow: auto; scrollbar-gutter: stable; }
@@ -170,7 +173,7 @@
     .sm-table th {
         position: sticky; z-index: 3;
         padding: 0.45rem 0.2rem; font-size: 0.62rem; letter-spacing: 0.04em; text-transform: uppercase;
-        color: #fff; background: #5c1220; text-align: center; white-space: nowrap;
+        color: #fff; background: #0b1f3a; text-align: center; white-space: nowrap;
         vertical-align: middle; overflow: hidden;
     }
     .sm-table thead tr:first-child th { top: 0; z-index: 4; height: 1.85rem; }
@@ -192,7 +195,7 @@
         text-align: left; padding: 1.4rem 1rem; color: #64748b; font-weight: 600;
         position: sticky; left: 0; background: #fff; border-right: 0;
     }
-    .sm-table .sm-achat { color: #b91c1c; font-weight: 700; border-left: 1px solid rgba(143, 36, 54, 0.28); }
+    .sm-table .sm-achat { color: #c47a3a; font-weight: 700; border-left: 1px solid rgba(143, 36, 54, 0.28); }
     .sm-table .sm-vente { color: #15803d; font-weight: 700; border-right: 2px solid rgba(143, 36, 54, 0.35); }
     .sm-table .sm-stock {
         color: #92400e; font-weight: 800; background: #fffbeb;
@@ -201,10 +204,10 @@
         border-right: 0;
     }
     .sm-table thead .sm-col-stock {
-        position: sticky; right: 0; z-index: 6; background: #5c1220;
+        position: sticky; right: 0; z-index: 6; background: #0b1f3a;
         border-left: 2px solid rgba(255,255,255,0.28); border-right: 0;
     }
-    .sm-table .sm-sticky-col { position: sticky; z-index: 6; background: #5c1220; }
+    .sm-table .sm-sticky-col { position: sticky; z-index: 6; background: #0b1f3a; }
     .sm-table thead .sm-col-ref { left: 0; }
     .sm-table thead .sm-col-desc { left: var(--sm-ref); }
     .sm-table thead .sm-col-init {
@@ -240,25 +243,25 @@
         .sm-filters { grid-template-columns: repeat(2, minmax(0, 1fr)) 38px; }
         .sm-refresh { grid-column: 3; justify-self: end; }
     }
-    [data-theme="light"] .sm-filters label { color: #5c1220; }
-    [data-theme="light"] .sm-refresh { background: #fff; color: #5c1220; border-color: #e4c5cb; }
+    [data-theme="light"] .sm-filters label { color: #0b1f3a; }
+    [data-theme="light"] .sm-refresh { background: #fff; color: #0b1f3a; border-color: #e0d0c0; }
     [data-theme="light"] .sm-card {
         background: #fff; border-color: rgba(143, 36, 54, 0.22);
         box-shadow: 0 8px 28px rgba(15, 31, 53, 0.06);
     }
     [data-theme="light"] .sm-bar {
-        color: #5c1220; background: linear-gradient(90deg, #fff, #f8e8eb 58%, #f3d5db);
+        color: #0b1f3a; background: linear-gradient(90deg, #fff, #f5ede4 58%, #f5ede4);
     }
     [data-theme="light"] .sm-table th {
-        color: #5c1220; background: #f3d5db; box-shadow: inset 0 -1px 0 #e7c9cf;
+        color: #0b1f3a; background: #f5ede4; box-shadow: inset 0 -1px 0 #e7c9cf;
     }
     [data-theme="light"] .sm-table thead tr:nth-child(2) th { background: #ead0d6; }
-    [data-theme="light"] .sm-table .sm-sticky-col { background: #f3d5db; }
-    [data-theme="light"] .sm-table .sm-h-achat { color: #b91c1c; }
+    [data-theme="light"] .sm-table .sm-sticky-col { background: #f5ede4; }
+    [data-theme="light"] .sm-table .sm-h-achat { color: #c47a3a; }
     [data-theme="light"] .sm-table .sm-h-vente { color: #15803d; }
-    [data-theme="light"] .sm-table .sm-col-stock { color: #92400e; background: #f3d5db; }
+    [data-theme="light"] .sm-table .sm-col-stock { color: #92400e; background: #f5ede4; }
     [data-theme="light"] .sm-table th,
-    [data-theme="light"] .sm-table td { border-color: #e4c5cb; }
+    [data-theme="light"] .sm-table td { border-color: #e0d0c0; }
     [data-theme="light"] .sm-table thead tr:first-child th[colspan],
     [data-theme="light"] .sm-table .sm-h-vente,
     [data-theme="light"] .sm-table .sm-vente,
@@ -290,21 +293,34 @@
     function numKey(value) {
         return String(Math.round((Number(value) || 0) * 1000) / 1000);
     }
+    function matches(value, query) {
+        if (!query) return true;
+        return String(value ?? '').trim().toLowerCase().includes(query);
+    }
     function same(value, query) {
         if (!query) return true;
         return String(value ?? '').trim().toLowerCase() === query;
     }
-    const lists = [
-        ['smRef', 'reference', false],
-        ['smDesc', 'designation', false],
-        ['smEquiv', 'equiv', false],
+    const textLists = [
+        ['smRef', 'smRefList', 'reference'],
+        ['smDesc', 'smDescList', 'designation'],
+        ['smEquiv', 'smEquivList', 'equiv'],
+    ];
+    const selectLists = [
         ['smBrand', 'brand', false],
         ['smFamily', 'family', false],
         ['smAchat', 'achat', true],
         ['smVente', 'vente', true],
     ];
     function fillLists() {
-        lists.forEach(([id, key, numeric]) => {
+        textLists.forEach(([, listId, key]) => {
+            const list = document.getElementById(listId);
+            if (!list) return;
+            const values = [...new Set(rows.map((row) => String(row[key] ?? '').trim()).filter(Boolean))]
+                .sort((a, b) => a.localeCompare(b, 'fr', { sensitivity: 'base' }));
+            list.innerHTML = values.map((value) => `<option value="${esc(value)}"></option>`).join('');
+        });
+        selectLists.forEach(([id, key, numeric]) => {
             const select = document.getElementById(id);
             const current = select.value;
             const values = [...new Set(rows.map((row) => numeric ? numKey(row[key]) : String(row[key] ?? '').trim()).filter((value) => value !== ''))];
@@ -336,7 +352,8 @@
             if (month && !activeMonths(row).includes(month)) return false;
             if (achat !== '' && numKey(row.achat) !== achat) return false;
             if (vente !== '' && numKey(row.vente) !== vente) return false;
-            return same(row.reference, ref) && same(row.designation, desc) && same(row.equiv, equiv) && same(row.brand, brand) && same(row.family, family);
+            return matches(row.reference, ref) && matches(row.designation, desc) && matches(row.equiv, equiv)
+                && same(row.brand, brand) && same(row.family, family);
         });
     }
     function monthBag(row, month) {
@@ -388,8 +405,13 @@
         render();
     }
     yearSelect.addEventListener('change', render);
-    ['smMonth', 'smRef', 'smDesc', 'smEquiv', 'smBrand', 'smFamily', 'smAchat', 'smVente'].forEach((id) => {
+    ['smMonth', 'smBrand', 'smFamily', 'smAchat', 'smVente'].forEach((id) => {
         document.getElementById(id).addEventListener('change', render);
+    });
+    ['smRef', 'smDesc', 'smEquiv'].forEach((id) => {
+        const field = document.getElementById(id);
+        field.addEventListener('input', render);
+        field.addEventListener('change', render);
     });
     document.getElementById('smRefresh').addEventListener('click', () => {
         load().catch((error) => { body.innerHTML = `<tr><td class="sm-empty" colspan="28">${esc(error.message)}</td></tr>`; });

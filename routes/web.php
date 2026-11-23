@@ -1,8 +1,11 @@
 <?php
 
+use App\Http\Controllers\ChargeController;
 use App\Http\Controllers\ClientBalanceController;
+use App\Http\Controllers\TreasuryReportController;
 use App\Http\Controllers\ClientController;
 use App\Http\Controllers\ClientPaymentController;
+use App\Http\Controllers\ClientStatementController;
 use App\Http\Controllers\DeliveryOrderController;
 use App\Http\Controllers\PurchaseOrderController;
 use App\Http\Controllers\SupplierController;
@@ -13,6 +16,8 @@ use App\Http\Controllers\SupplierInvoicePaymentController;
 use App\Http\Controllers\SupplierInvoiceController;
 use App\Http\Controllers\SupplierBalanceController;
 use App\Http\Controllers\SupplierPaymentController;
+use App\Http\Controllers\SupplierStatementController;
+use App\Models\Charge;
 use App\Models\PurchaseOrder;
 use App\Models\SalesInvoice;
 use App\Models\SalesInvoicePaymentLine;
@@ -144,8 +149,10 @@ Route::get('/dashboard', function () use ($requireAuth) {
         'reglement_ventes' => $normalizeMix($reglementVentesMix),
     ];
 
-    $totalCharges = (float) collect(AppStore::get('charges'))
-        ->sum(fn ($c) => (float) ($c['montant'] ?? $c['amount'] ?? 0));
+    $totalCharges = Schema::hasTable('charges')
+        ? (float) Charge::query()->sum('montant')
+        : (float) collect(AppStore::get('charges'))
+            ->sum(fn ($c) => (float) ($c['montant'] ?? $c['amount'] ?? 0));
 
     $monthBucket = static function (): array {
         return array_fill(1, 12, 0.0);
@@ -235,15 +242,32 @@ Route::get('/dashboard', function () use ($requireAuth) {
         // Keep empty volume series if MySQL is unavailable.
     }
 
-    foreach (AppStore::get('charges') as $charge) {
-        $date = $parseChargeDate($charge);
-        if (! $date) {
-            continue;
+    if (Schema::hasTable('charges')) {
+        try {
+            foreach (Charge::query()->get(['charge_date', 'montant']) as $charge) {
+                if (empty($charge->charge_date)) {
+                    continue;
+                }
+                $date = \Carbon\Carbon::parse($charge->charge_date);
+                $year = (int) $date->format('Y');
+                $month = (int) $date->format('n');
+                $ensureYear($year);
+                $volumeByYear[$year]['charges'][$month] += (float) $charge->montant;
+            }
+        } catch (\Throwable $e) {
+            // Keep empty charges series if query fails.
         }
-        $year = (int) $date->format('Y');
-        $month = (int) $date->format('n');
-        $ensureYear($year);
-        $volumeByYear[$year]['charges'][$month] += (float) ($charge['montant'] ?? $charge['amount'] ?? 0);
+    } else {
+        foreach (AppStore::get('charges') as $charge) {
+            $date = $parseChargeDate($charge);
+            if (! $date) {
+                continue;
+            }
+            $year = (int) $date->format('Y');
+            $month = (int) $date->format('n');
+            $ensureYear($year);
+            $volumeByYear[$year]['charges'][$month] += (float) ($charge['montant'] ?? $charge['amount'] ?? 0);
+        }
     }
 
     $currentYear = (int) now()->format('Y');
@@ -1265,6 +1289,7 @@ Route::middleware('auth.user')->post('/bons-achats', [PurchaseOrderController::c
 Route::middleware('auth.user')->put('/bons-achats/{purchaseOrder}', [PurchaseOrderController::class, 'update'])->name('bons-achats.update');
 Route::middleware('auth.user')->delete('/bons-achats/{purchaseOrder}', [PurchaseOrderController::class, 'destroy'])->name('bons-achats.destroy');
 Route::middleware('auth.user')->get('/balance-fournisseurs', [SupplierBalanceController::class, 'index'])->name('balance-fournisseurs.index');
+Route::middleware('auth.user')->get('/releve-fournisseurs', [SupplierStatementController::class, 'index'])->name('releve-fournisseurs.index');
 Route::middleware('auth.user')->get('/reglements-achats', [SupplierPaymentController::class, 'index'])->name('reglements-achats.index');
 Route::middleware('auth.user')->get('/reglements-achats/orders', [SupplierPaymentController::class, 'orders'])->name('reglements-achats.orders');
 Route::middleware('auth.user')->post('/reglements-achats', [SupplierPaymentController::class, 'store'])->name('reglements-achats.store');
@@ -1279,6 +1304,7 @@ Route::middleware('auth.user')->post('/bons-livraison', [DeliveryOrderController
 Route::middleware('auth.user')->put('/bons-livraison/{deliveryOrder}', [DeliveryOrderController::class, 'update'])->name('bons-livraison.update');
 Route::middleware('auth.user')->delete('/bons-livraison/{deliveryOrder}', [DeliveryOrderController::class, 'destroy'])->name('bons-livraison.destroy');
 Route::middleware('auth.user')->get('/balance-clients', [ClientBalanceController::class, 'index'])->name('balance-clients.index');
+Route::middleware('auth.user')->get('/releve-clients', [ClientStatementController::class, 'index'])->name('releve-clients.index');
 Route::middleware('auth.user')->get('/reglements-clients', [ClientPaymentController::class, 'index'])->name('reglements-clients.index');
 Route::middleware('auth.user')->get('/reglements-clients/orders', [ClientPaymentController::class, 'orders'])->name('reglements-clients.orders');
 Route::middleware('auth.user')->post('/reglements-clients', [ClientPaymentController::class, 'store'])->name('reglements-clients.store');
@@ -1301,3 +1327,9 @@ Route::middleware('auth.user')->get('/reglements-factures-achats', [SupplierInvo
 Route::middleware('auth.user')->post('/reglements-factures-achats', [SupplierInvoicePaymentController::class, 'store'])->name('reglements-factures-achats.store');
 Route::middleware('auth.user')->put('/reglements-factures-achats/{supplierInvoicePayment}', [SupplierInvoicePaymentController::class, 'update'])->name('reglements-factures-achats.update');
 Route::middleware('auth.user')->delete('/reglements-factures-achats/{supplierInvoicePayment}', [SupplierInvoicePaymentController::class, 'destroy'])->name('reglements-factures-achats.destroy');
+Route::middleware('auth.user')->get('/charges', [ChargeController::class, 'index'])->name('charges.index');
+Route::middleware('auth.user')->post('/charges', [ChargeController::class, 'store'])->name('charges.store');
+Route::middleware('auth.user')->put('/charges/{charge}', [ChargeController::class, 'update'])->name('charges.update');
+Route::middleware('auth.user')->delete('/charges/{charge}', [ChargeController::class, 'destroy'])->name('charges.destroy');
+Route::middleware('auth.user')->post('/charge-categories', [ChargeController::class, 'storeCategory'])->name('charge-categories.store');
+Route::middleware('auth.user')->get('/rapport-tresorerie', [TreasuryReportController::class, 'index'])->name('rapport-tresorerie.index');

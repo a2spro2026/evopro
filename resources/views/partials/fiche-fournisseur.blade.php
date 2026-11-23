@@ -1,6 +1,12 @@
 <section class="panel" id="panel-f-fiche">
-    <div class="content-head">
+    <div class="content-head ff-head">
         <h1>Fiche Fournisseur</h1>
+        <div class="ff-total" id="ffTotal">
+            <div>
+                <small>Total Soldes Fournisseurs</small>
+                <strong id="ffTotalValue">0.00</strong>
+            </div>
+        </div>
     </div>
 
     <form class="ff-card is-locked" id="ficheFournisseurForm" autocomplete="off">
@@ -62,12 +68,6 @@
                 <button type="button" class="ff-btn secondary" id="ffRefresh" title="Actualiser" aria-label="Actualiser">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12a9 9 0 1 1-2.6-6.4"/><path d="M21 3v6h-6"/></svg>
                 </button>
-            </div>
-            <div class="ff-total" id="ffTotal">
-                <div>
-                    <small>Total Soldes Fournisseurs</small>
-                    <strong id="ffTotalValue">0.00</strong>
-                </div>
             </div>
         </div>
     </form>
@@ -207,7 +207,8 @@
             return;
         }
         body.innerHTML = rows.map((row) => {
-            const due = Number(money(row.initial_balance)) !== 0;
+            const solde = money(row.solde ?? row.initial_balance);
+            const due = Number(solde) !== 0;
             return `<tr>
                 <td>${esc(row.code)}</td>
                 <td>${esc(row.name) || '—'}</td>
@@ -215,7 +216,7 @@
                 <td>${esc(row.city) || '—'}</td>
                 <td>${esc(row.reglement) || '—'}</td>
                 <td>${esc(row.echeance) || '—'}</td>
-                <td style="${due ? 'color:#dc2626;font-weight:700' : ''}">${money(row.initial_balance)}</td>
+                <td style="${due ? 'color:#dc2626;font-weight:700' : ''}">${solde}</td>
                 <td>
                     <div class="ff-actions">
                         <button type="button" class="ff-icon see" data-act="voir" data-id="${row.id}" title="Voir" aria-label="Voir">${eye}</button>
@@ -256,7 +257,10 @@
         const lines = [
             ['ID', row.code], ['Nom Fournisseur', row.name], ['Contact', row.contact],
             ['Ville', row.city], ['Règlement', row.reglement], ['Échéance', row.echeance],
-            ['Solde Initial', money(row.initial_balance)], ['Date création', row.created_at],
+            ['Solde Initial saisi', money(row.initial_balance)],
+            ['Bons non soldés', money(row.ba_solde)],
+            ['Solde (total)', money(row.solde ?? row.initial_balance)],
+            ['Date création', row.created_at],
         ].map(([k, v]) => `<tr><th>${k}</th><td>${v || '—'}</td></tr>`).join('');
         win.document.write(`<!DOCTYPE html><html><head><meta charset="utf-8"><title>Fiche ${row.code}</title>
             <style>body{font-family:Arial,sans-serif;padding:32px;color:#1e293b}h1{color:#1e3a5f}table{width:100%;border-collapse:collapse}th,td{border:1px solid #e2e8f0;padding:10px;text-align:left}th{width:180px;background:#f8fafc}</style>
@@ -271,7 +275,10 @@
         const pairs = [
             ['Nom Fournisseur', row.name], ['Contact', row.contact],
             ['Ville', row.city], ['Règlement', row.reglement], ['Échéance', row.echeance],
-            ['Solde Initial', money(row.initial_balance)], ['Date', row.created_at],
+            ['Solde Initial saisi', money(row.initial_balance)],
+            ['Bons non soldés', money(row.ba_solde)],
+            ['Solde (total)', money(row.solde ?? row.initial_balance)],
+            ['Date', row.created_at],
         ];
         modalBody.innerHTML = pairs.map(([k, v]) => `<div class="ff-modal-row"><span>${esc(k)}</span><strong>${esc(v) || '—'}</strong></div>`).join('');
         modal.hidden = false;
@@ -346,6 +353,9 @@
             fillForm(null, false);
         }
     });
+
+    document.addEventListener('evopro-ba-changed', () => { load().catch(() => {}); });
+    document.addEventListener('evopro-regl-achats-changed', () => { load().catch(() => {}); });
 
     setFormLocked(true);
     load().catch((error) => showError(error.message));

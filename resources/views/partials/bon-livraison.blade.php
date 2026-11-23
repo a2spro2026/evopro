@@ -4,43 +4,43 @@
             <h1>Bon Livraison</h1>
             <p class="bl-sub">Bons de livraison clients</p>
         </div>
-        <button type="button" class="bl-add" id="blAdd" title="Ajouter" aria-label="Ajouter">
-            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/></svg>
-        </button>
     </div>
 
-    <div class="bl-summary">
-        <div class="bl-card ventes"><span>Total Ventes</span><strong id="blSumVentes">0,00</strong></div>
-        <div class="bl-card paye"><span>Total Payé</span><strong id="blSumPaye">0,00</strong></div>
-        <div class="bl-card solde"><span>Solde</span><strong id="blSumSolde">0,00</strong></div>
-    </div>
-
-    <div class="bl-filters">
-        <label>Mois
-            <select id="blMonth" data-keep-native="1">
-                <option value="">Tous</option>
-                <option value="1">Janvier</option>
-                <option value="2">Février</option>
-                <option value="3">Mars</option>
-                <option value="4">Avril</option>
-                <option value="5">Mai</option>
-                <option value="6">Juin</option>
-                <option value="7">Juillet</option>
-                <option value="8">Août</option>
-                <option value="9">Septembre</option>
-                <option value="10">Octobre</option>
-                <option value="11">Novembre</option>
-                <option value="12">Décembre</option>
-            </select>
-        </label>
-        <label>Client
-            <select id="blClientFilter" data-keep-native="1">
-                <option value="">Tous</option>
-            </select>
-        </label>
-        <button type="button" class="bl-refresh" id="blRefresh" title="Actualiser" aria-label="Actualiser">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12a9 9 0 1 1-2.64-6.36"/><path d="M21 3v6h-6"/></svg>
-        </button>
+    <div class="bl-toolbar">
+        <div class="bl-filters">
+            <label>Mois
+                <select id="blMonth" data-keep-native="1">
+                    <option value="">Tous</option>
+                    <option value="1">Janvier</option>
+                    <option value="2">Février</option>
+                    <option value="3">Mars</option>
+                    <option value="4">Avril</option>
+                    <option value="5">Mai</option>
+                    <option value="6">Juin</option>
+                    <option value="7">Juillet</option>
+                    <option value="8">Août</option>
+                    <option value="9">Septembre</option>
+                    <option value="10">Octobre</option>
+                    <option value="11">Novembre</option>
+                    <option value="12">Décembre</option>
+                </select>
+            </label>
+            <label class="bl-filter-client">Client
+                <input id="blClientFilter" type="search" list="blClientFilterList" placeholder="Rechercher…" autocomplete="off">
+                <datalist id="blClientFilterList"></datalist>
+            </label>
+            <button type="button" class="bl-add" id="blAdd" title="Ajouter" aria-label="Ajouter">
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/></svg>
+            </button>
+            <button type="button" class="bl-refresh" id="blRefresh" title="Actualiser" aria-label="Actualiser">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12a9 9 0 1 1-2.64-6.36"/><path d="M21 3v6h-6"/></svg>
+            </button>
+        </div>
+        <div class="bl-summary">
+            <div class="bl-card ventes"><span>Total Ventes</span><strong id="blSumVentes">0,00</strong></div>
+            <div class="bl-card paye"><span>Total Payé</span><strong id="blSumPaye">0,00</strong></div>
+            <div class="bl-card solde"><span>Solde</span><strong id="blSumSolde">0,00</strong></div>
+        </div>
     </div>
 
     <div class="procar-table-card">
@@ -173,22 +173,28 @@
 <style>
     #panel-c-bl .bl-sub { margin: 0.2rem 0 0; color: var(--muted); font-size: 0.82rem; text-transform: none; }
     #panel-c-bl .bl-head { display: flex; align-items: flex-end; justify-content: space-between; gap: 1rem; }
-    .bl-summary { display: grid; grid-template-columns: repeat(3, minmax(0, 220px)); gap: 0.75rem; margin-bottom: 1rem; }
-    .bl-card { border-radius: 14px; padding: 0.85rem 1rem; color: #fff; box-shadow: 0 10px 24px rgba(0,0,0,0.2); }
-    .bl-card span { display: block; font-size: 0.68rem; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; opacity: 0.9; }
-    .bl-card strong { display: block; margin-top: 0.25rem; font-size: 1.3rem; font-variant-numeric: tabular-nums; }
+    .bl-toolbar {
+        display: flex; align-items: end; justify-content: space-between; gap: 0.75rem;
+        margin-bottom: 1rem; flex-wrap: wrap;
+    }
+    .bl-summary { display: flex; flex-wrap: wrap; gap: 0.55rem; margin: 0 0 0 auto; }
+    .bl-card { border-radius: 10px; padding: 0.45rem 0.85rem; color: #fff; box-shadow: 0 3px 12px rgba(15,23,42,0.12); min-width: 118px; }
+    .bl-card span { display: block; font-size: 0.6rem; font-weight: 700; letter-spacing: 0.07em; text-transform: uppercase; opacity: 0.9; }
+    .bl-card strong { display: block; margin-top: 0.12rem; font-size: 1.05rem; font-variant-numeric: tabular-nums; }
     .bl-card.ventes { background: linear-gradient(135deg, #2563eb, #1e3a8a); }
     .bl-card.paye { background: linear-gradient(135deg, #16a34a, #14532d); }
-    .bl-card.solde { background: linear-gradient(135deg, #dc2626, #7f1d1d); }
+    .bl-card.solde { background: linear-gradient(135deg, #ef4444, #b91c1c); }
     .bl-filters {
-        display: grid; grid-template-columns: 180px minmax(220px, 1fr) 38px; gap: 0.75rem;
-        align-items: end; margin-bottom: 1rem;
+        display: flex; flex-wrap: wrap; align-items: end; gap: 0.55rem; margin: 0;
     }
     .bl-filters label {
         display: flex; flex-direction: column; gap: 0.35rem; min-width: 0;
-        font-size: 0.68rem; font-weight: 800; letter-spacing: 0.06em; text-transform: uppercase; color: #e7d5d8;
+        font-size: 0.68rem; font-weight: 800; letter-spacing: 0.06em; text-transform: uppercase; color: #d6c4b4;
     }
-    .bl-filters select {
+    .bl-filters label:not(.bl-filter-client) { width: 132px; }
+    .bl-filters .bl-filter-client { width: min(420px, 42vw); min-width: 260px; flex: 1 1 260px; max-width: 520px; }
+    .bl-filters select,
+    .bl-filters input {
         width: 100%; height: 38px; box-sizing: border-box; border-radius: 10px; border: 1px solid #334155;
         background: #fff; color: #000; color-scheme: light; font-family: inherit; font-size: 0.84rem; padding: 0 0.55rem;
     }
@@ -197,15 +203,15 @@
         display: grid; place-items: center; cursor: pointer; background: #111827; color: #f8fafc;
     }
     .bl-refresh svg { width: 16px; height: 16px; }
-    [data-theme="light"] .bl-filters label { color: #5c1220; }
-    [data-theme="light"] .bl-refresh { background: #fff; color: #5c1220; border-color: #e4c5cb; }
+    [data-theme="light"] .bl-filters label { color: #0b1f3a; }
+    [data-theme="light"] .bl-refresh { background: #fff; color: #0b1f3a; border-color: #e0d0c0; }
     .bl-add {
         display: inline-grid; place-items: center;
-        width: 42px; height: 42px; border: none; border-radius: 12px; cursor: pointer;
-        background: linear-gradient(180deg, #8f2436, #5c1220); color: #fff;
+        width: 38px; height: 38px; border: none; border-radius: 10px; cursor: pointer;
+        background: linear-gradient(180deg, #c47a3a, #0b1f3a); color: #fff;
         box-shadow: 0 8px 18px rgba(143, 36, 54, 0.28);
     }
-    .bl-add svg { width: 20px; height: 20px; }
+    .bl-add svg { width: 18px; height: 18px; }
     .bl-add:hover { filter: brightness(1.06); }
     .bl-window {
         position: fixed; top: 0; right: 0; bottom: 0; left: 272px; z-index: 40;
@@ -216,13 +222,13 @@
     .bl-window[hidden] { display: none !important; }
     .bl-sheet {
         width: min(1380px, calc(100vw - 2.5rem)); margin: auto; border-radius: 16px; overflow: hidden;
-        background: #0c0c0e; border: 1px solid #4a1824; color: #f4f5f6;
+        background: #0c0c0e; border: 1px solid #1e3a5f; color: #f4f5f6;
         box-shadow: 0 24px 60px rgba(0,0,0,0.45);
     }
     .bl-sheet-head {
         display: flex; align-items: center; justify-content: space-between; gap: 1rem;
         padding: 0.9rem 1.15rem; color: #fff;
-        background: linear-gradient(90deg, #0a0a0c, #5c1220 58%, #8f2436);
+        background: linear-gradient(90deg, #0a0a0c, #0b1f3a 58%, #c47a3a);
     }
     .bl-sheet-head h3 { margin: 0; font-size: 0.92rem; letter-spacing: 0.06em; text-transform: uppercase; }
     .bl-x {
@@ -231,7 +237,7 @@
     }
     .bl-x:hover { background: rgba(255,255,255,0.12); color: #fff; }
     .bl-form { padding: 1rem 1.15rem 0.4rem; }
-    .bl-error { margin-bottom: 0.75rem; padding: 0.65rem 0.8rem; border-radius: 10px; background: rgba(127,29,29,0.35); color: #fecaca; border: 1px solid #7f1d1d; font-size: 0.82rem; }
+    .bl-error { margin-bottom: 0.75rem; padding: 0.65rem 0.8rem; border-radius: 10px; background: rgba(127,29,29,0.35); color: #fecaca; border: 1px solid #1e3a5f; font-size: 0.82rem; }
     .bl-grid {
         display: grid;
         grid-template-columns: 140px 110px minmax(220px, 1.6fr) 130px 110px 110px;
@@ -260,7 +266,7 @@
     .bl-field select:focus,
     .bl-field input:focus {
         background-color: #fff; color: #000;
-        outline: 2px solid #8f2436; outline-offset: 1px;
+        outline: 2px solid #c47a3a; outline-offset: 1px;
     }
     .bl-field select option { background: #fff; color: #000; }
     .bl-field input::placeholder,
@@ -277,11 +283,11 @@
         width: 32px; height: 32px; border: none; border-radius: 8px; cursor: pointer;
         background: #1e293b; color: #fff; font-size: 1.2rem; line-height: 1; font-weight: 700;
     }
-    .bl-add-line:hover { background: #8f2436; }
+    .bl-add-line:hover { background: #c47a3a; }
     .bl-lines-wrap {
         max-height: min(52vh, 520px); overflow: auto; border: 1px solid #334155; border-radius: 10px;
     }
-    .bl-lines { width: 100%; border-collapse: collapse; table-layout: fixed; min-width: 1180px; }
+    .bl-lines { width: 100%; border-collapse: separate; border-spacing: 0; table-layout: fixed; min-width: 1180px; }
     .bl-lines col.c-ref { width: 10%; }
     .bl-lines col.c-barcode { width: 9%; }
     .bl-lines col.c-equiv { width: 8%; }
@@ -301,11 +307,11 @@
         padding: 0.45rem 0.55rem; text-align: left; cursor: pointer; font-family: inherit;
     }
     .evopro-prod-menu button:hover,
-    .evopro-prod-menu button.is-active { background: #f8e8eb; }
+    .evopro-prod-menu button.is-active { background: #f5ede4; }
     .evopro-prod-menu .ref {
         grid-row: 1 / span 2; align-self: center;
         font-size: 0.72rem; font-weight: 800; letter-spacing: 0.02em;
-        color: #5c1220; font-family: ui-monospace, monospace; word-break: break-all;
+        color: #0b1f3a; font-family: ui-monospace, monospace; word-break: break-all;
     }
     .evopro-prod-menu .name {
         font-size: 0.78rem; font-weight: 650; color: #1a1214; line-height: 1.25;
@@ -326,9 +332,10 @@
     .bl-lines col.c-sub { width: 9%; }
     .bl-lines col.c-x { width: 40px; }
     .bl-lines th {
-        position: sticky; top: 0; background: #5c1220; color: #fff;
+        position: sticky; top: 0; z-index: 5; background: #0b1f3a; color: #fff;
         font-size: 0.62rem; letter-spacing: 0.06em; text-transform: uppercase;
         padding: 0.5rem; text-align: center;
+        box-shadow: 0 1px 0 #c47a3a;
     }
     .bl-lines th:nth-child(4) { text-align: left; padding-left: 0.65rem; }
     .bl-lines td { padding: 0.3rem; border-top: 1px solid #1e293b; }
@@ -371,7 +378,7 @@
     .bl-actions { display: flex; justify-content: flex-end; gap: 0.5rem; padding: 0.95rem 0 1rem; }
     .bl-btn { height: 36px; padding: 0 1rem; border-radius: 999px; border: none; font-family: inherit; font-weight: 700; font-size: 0.78rem; cursor: pointer; }
     .bl-btn.ghost { background: #1e293b; color: #e2e8f0; border: 1px solid #475569; }
-    .bl-btn.primary { background: linear-gradient(180deg, #8f2436, #5c1220); color: #fff; }
+    .bl-btn.primary { background: linear-gradient(180deg, #c47a3a, #0b1f3a); color: #fff; }
     .bl-icon {
         display: inline-grid; place-items: center; width: 28px; height: 28px; padding: 0;
         border: none; border-radius: 8px; background: transparent; color: #94a3b8; cursor: pointer;
@@ -391,25 +398,25 @@
     [data-theme="light"] .bl-sheet { background: #fff; border-color: #e7c9cf; color: #1a1214; }
     [data-theme="light"] .bl-field label,
     [data-theme="light"] .bl-totals small,
-    [data-theme="light"] .bl-lines th { color: #5c1220; background: #f3d5db; }
+    [data-theme="light"] .bl-lines th { color: #0b1f3a; background: #f5ede4; }
     [data-theme="light"] .bl-field input,
     [data-theme="light"] .bl-field select,
     [data-theme="light"] .bl-lines input,
-    [data-theme="light"] .bl-lines select { background: #fff; color: #000; border-color: #e4c5cb; }
+    [data-theme="light"] .bl-lines select { background: #fff; color: #000; border-color: #e0d0c0; }
     [data-theme="light"] .bl-field select {
         background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath fill='%237a5a62' d='M1 1l5 5 5-5'/%3E%3C/svg%3E");
         background-repeat: no-repeat;
         background-position: right 0.7rem center;
         background-size: 12px 8px;
     }
-    [data-theme="light"] .bl-lines-wrap { border-color: #e4c5cb; }
-    [data-theme="light"] .bl-lines th { background: #f3d5db; color: #5c1220; }
+    [data-theme="light"] .bl-lines-wrap { border-color: #e0d0c0; }
+    [data-theme="light"] .bl-lines th { background: #f5ede4; color: #0b1f3a; }
     [data-theme="light"] .bl-lines td { border-top-color: #f0dde1; }
     [data-theme="light"] .bl-totals div { background: #fff; border-color: #e7c9cf; }
-    [data-theme="light"] .bl-add-line { background: #f3d5db; color: #5c1220; }
-    [data-theme="light"] .bl-btn.ghost { background: #fff; color: #5c1220; border-color: #e4c5cb; }
+    [data-theme="light"] .bl-add-line { background: #f5ede4; color: #0b1f3a; }
+    [data-theme="light"] .bl-btn.ghost { background: #fff; color: #0b1f3a; border-color: #e0d0c0; }
     [data-theme="light"] .bl-icon { color: #64748b; }
-    [data-theme="light"] .bl-lines-head p { color: #8f2436; }
+    [data-theme="light"] .bl-lines-head p { color: #c47a3a; }
     [data-theme="light"] .bl-remise span { color: #7a5a62; }
     @media (max-width: 900px) {
         .bl-window { left: 0; }
@@ -551,18 +558,18 @@
                 .sheet { position: relative; z-index: 1; min-height: calc(100vh - 118px); padding-bottom: 12px; }
                 .watermark { position: fixed; inset: 0; display: flex; align-items: center; justify-content: center; overflow: hidden; pointer-events: none; }
                 .watermark span { font-size: 74px; font-weight: 800; letter-spacing: 0.04em; line-height: 1; white-space: nowrap; color: rgba(225, 6, 0, 0.22); transform: rotate(-28deg); text-transform: uppercase; }
-                .banner { width: 100%; display: flex; align-items: center; justify-content: flex-start; gap: 16px; margin: 0 0 12px; padding: 0 0 8px; background: transparent; border-bottom: 2px solid #e10600; }
+                .banner { width: 100%; display: flex; align-items: center; justify-content: flex-start; gap: 16px; margin: 0 0 12px; padding: 0 0 8px; background: transparent; border-bottom: 2px solid #c47a3a; }
                 .banner img { display: block; width: 148px; height: auto; flex: 0 0 auto; background: transparent; }
-                .banner h1 { margin: 0; color: #e10600; font-size: 28px; font-weight: 800; letter-spacing: 0.04em; text-transform: uppercase; }
-                .banner .brand p { margin: 2px 0 0; color: #5c1220; font-size: 12px; font-weight: 700; letter-spacing: 0.04em; text-transform: uppercase; }
-                .doc-title { margin: 0 0 10px; color: #5c1220; font-size: 16px; font-weight: 800; letter-spacing: 0.08em; text-transform: uppercase; }
+                .banner h1 { margin: 0; color: #c47a3a; font-size: 28px; font-weight: 800; letter-spacing: 0.04em; text-transform: uppercase; }
+                .banner .brand p { margin: 2px 0 0; color: #0b1f3a; font-size: 12px; font-weight: 700; letter-spacing: 0.04em; text-transform: uppercase; }
+                .doc-title { margin: 0 0 10px; color: #0b1f3a; font-size: 16px; font-weight: 800; letter-spacing: 0.08em; text-transform: uppercase; }
                 .client { display: inline-block; min-width: 260px; max-width: 420px; border: 1px solid #8d98a3; padding: 8px 12px; font-size: 12px; line-height: 1.4; text-transform: uppercase; }
                 .meta, .lines, .totals { width: 100%; border-collapse: collapse; }
                 .meta { margin-top: 12px; }
                 .meta td { border: 1px solid #6d7580; padding: 5px 8px; font-size: 12px; }
                 .meta b { margin-right: 8px; }
                 .detail-title { margin: 14px 0 6px; color: #1a1a1a; font-size: 13px; font-weight: 800; letter-spacing: 0.04em; text-transform: uppercase; text-decoration: underline; text-underline-offset: 3px; }
-                .lines th { background: #f3d5db; color: #5c1220; border: 1px solid #8f2436; padding: 5px 4px; font-size: 12px; text-align: center; }
+                .lines th { background: #f5ede4; color: #0b1f3a; border: 1px solid #c47a3a; padding: 5px 4px; font-size: 12px; text-align: center; }
                 .lines td { border: 1px solid #c5ccd4; padding: 3px 5px; font-size: 11px; }
                 .lines td.ref, .lines td.qty { text-align: center; }
                 .lines td.desc { text-align: left; text-transform: uppercase; }
@@ -572,7 +579,7 @@
                 .totals td.lbl { background: #f4f6f8; width: 18%; }
                 .words { position: fixed; left: 22px; right: 22px; bottom: 62px; margin: 0; font-size: 12px; font-style: italic; background: #fff; }
                 .words strong { display: block; margin-top: 6px; color: #1d4e9e; font-size: 15px; font-style: normal; letter-spacing: 0.03em; }
-                footer { position: fixed; left: 0; right: 0; bottom: 0; padding: 8px 18px 8px; border-top: 2px solid #e10600; text-align: center; font-size: 9px; line-height: 1.45; color: #333; background: #fff; }
+                footer { position: fixed; left: 0; right: 0; bottom: 0; padding: 8px 18px 8px; border-top: 2px solid #c47a3a; text-align: center; font-size: 9px; line-height: 1.45; color: #333; background: #fff; }
             </style></head><body>
             <div class="watermark"><span>${esc(companyTitle)}</span></div>
             <div class="sheet">
@@ -866,19 +873,17 @@
         }).filter((item) => item && (item.description || item.ref || item.barcode));
     }
     function fillClientFilter() {
-        const select = document.getElementById('blClientFilter');
-        const current = select.value;
+        const list = document.getElementById('blClientFilterList');
         const values = [...new Set(rows.map((row) => String(row.client || '').trim()).filter(Boolean))]
             .sort((a, b) => a.localeCompare(b, 'fr', { sensitivity: 'base' }));
-        select.innerHTML = `<option value="">Tous</option>${values.map((value) => `<option value="${esc(value)}">${esc(value)}</option>`).join('')}`;
-        select.value = values.includes(current) ? current : '';
+        list.innerHTML = values.map((value) => `<option value="${esc(value)}"></option>`).join('');
     }
     function filteredRows() {
         const month = document.getElementById('blMonth').value;
-        const supplier = document.getElementById('blClientFilter').value.trim().toLowerCase();
+        const client = document.getElementById('blClientFilter').value.trim().toLowerCase();
         return rows.filter((row) => {
             if (month && String(row.month || '') !== month) return false;
-            if (supplier && String(row.client || '').trim().toLowerCase() !== supplier) return false;
+            if (client && !String(row.client || '').trim().toLowerCase().includes(client)) return false;
             return true;
         });
     }
@@ -1162,6 +1167,7 @@
         render();
     }
     document.getElementById('blMonth').addEventListener('change', render);
+    document.getElementById('blClientFilter').addEventListener('input', render);
     document.getElementById('blClientFilter').addEventListener('change', render);
     document.getElementById('blRefresh').addEventListener('click', () => {
         load().catch((error) => { body.innerHTML = `<tr><td colspan="9">${esc(error.message)}</td></tr>`; });

@@ -4,10 +4,6 @@
             <h1>Règlement Client</h1>
             <p class="rc-sub">Règlement des bons de livraison clients</p>
         </div>
-        <button type="button" class="rc-add" id="rcAdd">
-            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/></svg>
-            Ajouter
-        </button>
     </div>
 
     <div class="rc-filters">
@@ -28,8 +24,37 @@
                 <option value="12">Décembre</option>
             </select>
         </label>
-        <label>N° Rég<select id="rcRefFilter" data-keep-native="1"><option value="">Tous</option></select></label>
-        <label>Mnt<select id="rcAmountFilter" data-keep-native="1"><option value="">Tous</option></select></label>
+        <label>N° Rég<input id="rcRefFilter" type="text" placeholder="Rechercher…" autocomplete="off"></label>
+        <label>Mnt<input id="rcAmountFilter" type="text" inputmode="decimal" placeholder="Rechercher…" autocomplete="off"></label>
+        <label class="rc-filter-type">Type
+            <select id="rcTypeFilter" data-keep-native="1">
+                <option value="">Tous</option>
+                <option>Esp</option>
+                <option>Chq</option>
+                <option>Eff</option>
+                <option>Vir</option>
+                <option>Vers</option>
+            </select>
+        </label>
+        <label class="rc-filter-bnq">Bnq
+            <select id="rcBanqueFilter" data-keep-native="1">
+                <option value="">Tous</option>
+                <option>Attijariwafa</option>
+                <option>BMCE</option>
+                <option>Banque Populaire</option>
+                <option>CIH</option>
+                <option>SGMB</option>
+                <option>Crédit Agricole</option>
+                <option>CDM</option>
+                <option>Al Barid Bank</option>
+                <option>Autre</option>
+            </select>
+        </label>
+        <label>Nom Tiré<input id="rcTireFilter" type="text" placeholder="Rechercher…" autocomplete="off"></label>
+        <button type="button" class="rc-add" id="rcAdd">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/></svg>
+            Ajouter
+        </button>
         <button type="button" class="rc-refresh" id="rcRefresh" title="Actualiser" aria-label="Actualiser">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12a9 9 0 1 1-2.64-6.36"/><path d="M21 3v6h-6"/></svg>
         </button>
@@ -169,21 +194,24 @@
     #panel-c-regl .rc-sub { margin: 0.2rem 0 0; color: var(--muted); font-size: 0.82rem; text-transform: none; }
     #panel-c-regl .rc-head { display: flex; align-items: flex-end; justify-content: space-between; gap: 1rem; }
     .rc-add {
-        display: inline-flex; align-items: center; gap: 0.4rem; height: 40px; padding: 0 1rem;
-        border: none; border-rcdius: 10px; cursor: pointer; font-family: inherit; font-weight: 700; font-size: 0.85rem;
-        background: linear-gradient(180deg, #8f2436, #5c1220); color: #fff;
+        display: inline-flex; align-items: center; gap: 0.35rem; height: 38px; padding: 0 0.85rem;
+        border: none; border-radius: 10px; cursor: pointer; font-family: inherit; font-weight: 700; font-size: 0.8rem;
+        background: linear-gradient(180deg, #c47a3a, #0b1f3a); color: #fff; flex: 0 0 auto;
     }
-    .rc-add svg { width: 16px; height: 16px; }
+    .rc-add svg { width: 15px; height: 15px; }
     .rc-filters {
-        display: grid; grid-template-columns: 160px 180px 160px 38px; gap: 0.75rem;
-        align-items: end; margin-bottom: 1rem;
+        display: flex; flex-wrap: wrap; align-items: end; gap: 0.45rem; margin-bottom: 1rem;
     }
     .rc-filters label {
-        display: flex; flex-direction: column; gap: 0.35rem; min-width: 0;
-        font-size: 0.68rem; font-weight: 800; letter-spacing: 0.06em; text-transform: uppercase; color: #e7d5d8;
+        display: flex; flex-direction: column; gap: 0.35rem; min-width: 0; width: 108px;
+        font-size: 0.68rem; font-weight: 800; letter-spacing: 0.06em; text-transform: uppercase; color: #d6c4b4;
     }
-    .rc-filters select {
-        width: 100%; height: 38px; box-sizing: border-box; border-rcdius: 10px; border: 1px solid #334155;
+    .rc-filters label:first-child { width: 120px; }
+    .rc-filters .rc-filter-type { width: 92px; }
+    .rc-filters .rc-filter-bnq { width: 132px; }
+    .rc-filters select,
+    .rc-filters input {
+        width: 100%; height: 38px; box-sizing: border-box; border-radius: 10px; border: 1px solid #334155;
         background: #fff; color: #000; color-scheme: light; font-family: inherit; font-size: 0.84rem; padding: 0 0.55rem;
     }
     .rc-refresh {
@@ -206,13 +234,13 @@
     .rc-window[hidden] { display: none !important; }
     .rc-sheet {
         width: min(1180px, calc(100vw - 2.5rem)); margin: auto; border-rcdius: 16px; overflow: hidden;
-        background: #0c0c0e; border: 1px solid #4a1824; color: #f4f5f6;
+        background: #0c0c0e; border: 1px solid #1e3a5f; color: #f4f5f6;
         box-shadow: 0 24px 60px rgba(0,0,0,0.45);
     }
     .rc-sheet-head {
         display: flex; align-items: center; justify-content: space-between; gap: 1rem;
         padding: 0.9rem 1.15rem; color: #fff;
-        background: linear-gradient(90deg, #0a0a0c, #5c1220 58%, #8f2436);
+        background: linear-gradient(90deg, #0a0a0c, #0b1f3a 58%, #c47a3a);
     }
     .rc-sheet-head h3 { margin: 0; font-size: 0.92rem; letter-spacing: 0.06em; text-transform: uppercase; }
     .rc-x {
@@ -220,7 +248,7 @@
         background: transparent; color: rgba(255,255,255,0.82); font-size: 1.35rem; line-height: 1;
     }
     .rc-form { padding: 1rem 1.15rem 0.4rem; }
-    .rc-error { margin-bottom: 0.75rem; padding: 0.65rem 0.8rem; border-rcdius: 10px; background: rgba(127,29,29,0.35); color: #fecaca; border: 1px solid #7f1d1d; font-size: 0.82rem; }
+    .rc-error { margin-bottom: 0.75rem; padding: 0.65rem 0.8rem; border-rcdius: 10px; background: rgba(127,29,29,0.35); color: #fecaca; border: 1px solid #1e3a5f; font-size: 0.82rem; }
     .rc-grid {
         display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 0.65rem; align-items: end;
     }
@@ -243,34 +271,34 @@
     .rc-orders-wrap { max-height: 280px; overflow: auto; border: 1px solid #334155; border-rcdius: 10px; }
     .rc-orders { width: 100%; border-collapse: collapse; min-width: 860px; }
     .rc-orders th {
-        position: sticky; top: 0; background: #5c1220; color: #fff;
+        position: sticky; top: 0; background: #0b1f3a; color: #fff;
         font-size: 0.62rem; letter-spacing: 0.06em; text-transform: uppercase; padding: 0.5rem; text-align: center;
     }
     .rc-orders td { padding: 0.45rem; border-top: 1px solid #1e293b; text-align: center; color: #000; background: #fff; font-size: 0.78rem; }
     .rc-actions { display: flex; justify-content: flex-end; gap: 0.5rem; padding: 0.95rem 0 1rem; }
     .rc-btn { height: 36px; padding: 0 1rem; border-rcdius: 999px; border: none; font-family: inherit; font-weight: 700; font-size: 0.78rem; cursor: pointer; }
     .rc-btn.ghost { background: #1e293b; color: #e2e8f0; border: 1px solid #475569; }
-    .rc-btn.primary { background: linear-gradient(180deg, #8f2436, #5c1220); color: #fff; }
+    .rc-btn.primary { background: linear-gradient(180deg, #c47a3a, #0b1f3a); color: #fff; }
     .rc-act {
         border: 1px solid #cbd5e1; border-rcdius: 999px; background: #f8fafc; color: #334155;
         font-size: 0.68rem; font-weight: 700; padding: 0.18rem 0.45rem; cursor: pointer; margin: 0 0.1rem;
     }
-    .rc-act.is-on { background: #5c1220; color: #fff; border-color: #5c1220; }
+    .rc-act.is-on { background: #0b1f3a; color: #fff; border-color: #0b1f3a; }
     .rc-act.is-on[data-a="Payé"] { background: #15803d; border-color: #15803d; }
     .rc-act.is-on[data-a="Report"] { background: #d97706; border-color: #d97706; }
     .rc-act.is-on[data-a="Imp"] { background: #dc2626; border-color: #dc2626; }
     .rc-act.is-on[data-a="Dévalidé"] { background: #7c3aed; border-color: #7c3aed; }
-    [data-theme="light"] .rc-filters label { color: #5c1220; }
-    [data-theme="light"] .rc-refresh { background: #fff; color: #5c1220; border-color: #e4c5cb; }
+    [data-theme="light"] .rc-filters label { color: #0b1f3a; }
+    [data-theme="light"] .rc-refresh { background: #fff; color: #0b1f3a; border-color: #e0d0c0; }
     [data-theme="light"] .rc-sheet { background: #fff; border-color: #e7c9cf; color: #1a1214; }
-    [data-theme="light"] .rc-field label { color: #5c1220; }
+    [data-theme="light"] .rc-field label { color: #0b1f3a; }
     [data-theme="light"] .rc-mini { background: #fff; border-color: #e7c9cf; }
     [data-theme="light"] .rc-mini strong { color: #1a1214; }
     [data-theme="light"] .rc-mini.solde strong { color: #dc2626; }
-    [data-theme="light"] .rc-btn.ghost { background: #fff; color: #5c1220; border-color: #e4c5cb; }
-    [data-theme="light"] .rc-orders-head p { color: #8f2436; }
+    [data-theme="light"] .rc-btn.ghost { background: #fff; color: #0b1f3a; border-color: #e0d0c0; }
+    [data-theme="light"] .rc-orders-head p { color: #c47a3a; }
     @media (max-width: 1100px) {
-        .rc-filters { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+        .rc-filters { flex-wrap: wrap; }
         .rc-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
         .rc-window { left: 0; }
     }
@@ -320,32 +348,40 @@
         if (parts.length !== 3) return value;
         return `${parts[2]}/${parts[1]}/${parts[0]}`;
     }
+    function statutClass(value) {
+        const s = String(value || '').trim();
+        if (s === 'Payé') return 'statut-paye amt-paye';
+        if (s === 'Imp') return 'statut-imp amt-imp';
+        if (s === 'Dévalidé') return 'statut-deva amt-deva';
+        if (s === 'Report') return 'statut-repo amt-repo';
+        return '';
+    }
     function todayInput() {
         const d = new Date();
         return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
     }
-    function fillLists() {
-        const refs = [...new Set(rows.map((row) => String(row.reference || '').trim()).filter(Boolean))]
-            .sort((a, b) => a.localeCompare(b, 'fr', { sensitivity: 'base' }));
-        const amounts = [...new Set(rows.map((row) => moneyDot(row.montant)))]
-            .sort((a, b) => Number(a) - Number(b));
-        const refSelect = document.getElementById('rcRefFilter');
-        const amountSelect = document.getElementById('rcAmountFilter');
-        const currentRef = refSelect.value;
-        const currentAmount = amountSelect.value;
-        refSelect.innerHTML = `<option value="">Tous</option>${refs.map((value) => `<option value="${esc(value)}">${esc(value)}</option>`).join('')}`;
-        amountSelect.innerHTML = `<option value="">Tous</option>${amounts.map((value) => `<option value="${esc(value)}">${esc(money(value))}</option>`).join('')}`;
-        refSelect.value = refs.includes(currentRef) ? currentRef : '';
-        amountSelect.value = amounts.includes(currentAmount) ? currentAmount : '';
+    function norm(value) {
+        return String(value ?? '').trim().toLowerCase();
+    }
+    function contains(haystack, needle) {
+        const q = norm(needle);
+        if (!q) return true;
+        return norm(haystack).includes(q);
     }
     function filteredRows() {
         const month = document.getElementById('rcMonth').value;
         const ref = document.getElementById('rcRefFilter').value;
         const amount = document.getElementById('rcAmountFilter').value;
+        const type = document.getElementById('rcTypeFilter').value;
+        const banque = document.getElementById('rcBanqueFilter').value;
+        const tire = document.getElementById('rcTireFilter').value;
         return rows.filter((row) => {
             if (month && String(row.month || '') !== month) return false;
-            if (ref && String(row.reference || '') !== ref) return false;
-            if (amount && moneyDot(row.montant) !== amount) return false;
+            if (!contains(row.reference, ref) && !contains(row.numero, ref)) return false;
+            if (amount && !contains(moneyDot(row.montant), amount) && !contains(money(row.montant), amount)) return false;
+            if (!contains(row.reglement, type)) return false;
+            if (!contains(row.banque, banque)) return false;
+            if (!contains(row.nom_tire, tire)) return false;
             return true;
         });
     }
@@ -364,8 +400,8 @@
             <td>${esc(row.numero) || '—'}</td>
             <td>${esc(row.banque) || '—'}</td>
             <td>${esc(row.date_decaissement_fr || formatDate(row.date_decaissement))}</td>
-            <td>${esc(money(row.montant))}</td>
-            <td>${esc(row.statut)}</td>
+            <td class="${statutClass(row.statut)}">${esc(money(row.montant))}</td>
+            <td class="${statutClass(row.statut)}">${esc(row.statut)}</td>
             <td>
                 <button type="button" class="rc-icon" data-act="voir" data-id="${row.id}" title="Voir">${eye}</button>
                 <button type="button" class="rc-icon" data-act="modifier" data-id="${row.id}" title="Modifier">${pencil}</button>
@@ -522,7 +558,6 @@
         if (!response.ok) throw new Error(payload.message || 'Chargement impossible.');
         rows = payload.data || [];
         meta = payload.meta || meta;
-        fillLists();
         render();
     }
     document.getElementById('rcAdd').addEventListener('click', () => openModal(null, 'create'));
@@ -572,8 +607,13 @@
         selected[button.dataset.order] = true;
         renderOrders();
     });
-    ['rcMonth', 'rcRefFilter', 'rcAmountFilter'].forEach((id) => {
-        document.getElementById(id).addEventListener('change', render);
+    document.getElementById('rcMonth').addEventListener('change', render);
+    document.getElementById('rcTypeFilter').addEventListener('change', render);
+    document.getElementById('rcBanqueFilter').addEventListener('change', render);
+    ['rcRefFilter', 'rcAmountFilter', 'rcTireFilter'].forEach((id) => {
+        const field = document.getElementById(id);
+        field.addEventListener('input', render);
+        field.addEventListener('change', render);
     });
     document.getElementById('rcRefresh').addEventListener('click', () => {
         load().catch((error) => { body.innerHTML = `<tr><td colspan="11">${esc(error.message)}</td></tr>`; });
