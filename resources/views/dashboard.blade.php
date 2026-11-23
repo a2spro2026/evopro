@@ -1495,8 +1495,8 @@
             gap: 1rem;
             flex-shrink: 0;
             position: relative;
-            z-index: 25;
-            overflow: hidden;
+            z-index: 60;
+            overflow: visible;
             overscroll-behavior: none;
             padding: 1rem 1.75rem;
             border-bottom: 1px solid var(--line);
@@ -1510,6 +1510,9 @@
             align-items: center;
             gap: 0.65rem;
             flex-shrink: 0;
+            overflow: visible;
+            position: relative;
+            z-index: 61;
         }
 
         .commercial-presence-bar {
@@ -1609,7 +1612,7 @@
         .topbar-btn.sections-lock.is-locked .icon-lock { display: none; }
         .topbar-btn.sections-lock.is-locked .icon-unlock { display: block; }
 
-        .notif-wrap { position: relative; }
+        .notif-wrap { position: relative; z-index: 70; }
         .topbar-btn.notif-btn { position: relative; color: var(--text); }
         .topbar-btn.notif-btn.has-alerts {
             color: #ca8a04;
@@ -1639,19 +1642,19 @@
             50% { transform: scale(1.06); box-shadow: 0 0 0 6px rgba(250, 204, 21, 0); }
         }
         .notif-panel {
-            position: absolute;
-            top: calc(100% + 10px);
-            right: 0;
-            z-index: 90;
+            position: fixed;
+            top: 72px;
+            right: 18px;
+            z-index: 1200;
             width: min(380px, calc(100vw - 24px));
-            max-height: min(420px, 70vh);
+            max-height: min(420px, calc(100vh - 90px));
             overflow: hidden;
             display: flex;
             flex-direction: column;
             border-radius: 14px;
             border: 1px solid var(--line);
             background: var(--panel, #fff);
-            box-shadow: 0 18px 40px rgba(15, 23, 42, 0.18);
+            box-shadow: 0 18px 40px rgba(15, 23, 42, 0.22);
             color: var(--text);
         }
         .notif-panel[hidden] { display: none !important; }
@@ -5749,8 +5752,21 @@
                 }[ch]));
             }
 
+            function placePanel() {
+                const rect = bell.getBoundingClientRect();
+                const width = Math.min(380, window.innerWidth - 24);
+                let left = rect.right - width;
+                if (left < 12) left = 12;
+                if (left + width > window.innerWidth - 12) left = Math.max(12, window.innerWidth - width - 12);
+                panel.style.top = Math.round(rect.bottom + 10) + 'px';
+                panel.style.left = Math.round(left) + 'px';
+                panel.style.right = 'auto';
+                panel.style.width = width + 'px';
+            }
+
             function setOpen(next) {
                 open = !!next;
+                if (open) placePanel();
                 panel.hidden = !open;
                 bell.setAttribute('aria-expanded', open ? 'true' : 'false');
             }
@@ -5816,6 +5832,13 @@
             document.addEventListener('keydown', (event) => {
                 if (event.key === 'Escape' && open) setOpen(false);
             });
+
+            window.addEventListener('resize', () => {
+                if (open) placePanel();
+            });
+            window.addEventListener('scroll', () => {
+                if (open) placePanel();
+            }, true);
 
             loadAlerts();
             setInterval(loadAlerts, 60000);
