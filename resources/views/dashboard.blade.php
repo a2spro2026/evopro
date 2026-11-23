@@ -5779,7 +5779,7 @@
                     badge.textContent = count > 99 ? '99+' : String(count);
                     countLabel.textContent = count + (count > 1 ? ' alertes' : ' alerte');
                     list.innerHTML = alerts.map((alert) => `
-                        <button type="button" class="notif-item ${alert.severity === 'urgent' ? 'is-urgent' : ''}" data-panel-target="${esc(alert.panel || '')}">
+                        <button type="button" class="notif-item ${alert.severity === 'urgent' ? 'is-urgent' : ''}" data-alert-id="${esc(alert.id || '')}" data-panel-target="${esc(alert.panel || '')}">
                             <span class="notif-title">${esc(alert.title || 'Alerte')}</span>
                             <span class="notif-msg">${esc(alert.message || '—')}</span>
                             <span class="notif-detail">${esc(alert.detail || '')}</span>
@@ -5815,12 +5815,36 @@
                 if (open) loadAlerts();
             });
 
-            list.addEventListener('click', (event) => {
-                const item = event.target.closest('[data-panel-target]');
+            list.addEventListener('click', async (event) => {
+                const item = event.target.closest('[data-alert-id]');
                 if (!item) return;
-                const target = item.getAttribute('data-panel-target');
+                const alertId = item.getAttribute('data-alert-id') || '';
+                const target = item.getAttribute('data-panel-target') || '';
                 setOpen(false);
                 if (target) showPanel(target);
+                if (!alertId) return;
+                alerts = alerts.filter((alert) => alert.id !== alertId);
+                paint();
+                try {
+                    const csrf = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '';
+                    const response = await fetch('/notifications/alerts/dismiss', {
+                        method: 'POST',
+                        headers: {
+                            Accept: 'application/json',
+                            'Content-Type': 'application/json',
+                            'X-Requested-With': 'XMLHttpRequest',
+                            'X-CSRF-TOKEN': csrf,
+                        },
+                        credentials: 'same-origin',
+                        body: JSON.stringify({ id: alertId }),
+                    });
+                    if (!response.ok) throw new Error('dismiss');
+                    const payload = await response.json();
+                    alerts = Array.isArray(payload.data) ? payload.data : alerts;
+                    paint();
+                } catch (error) {
+                    loadAlerts();
+                }
             });
 
             document.addEventListener('click', (event) => {

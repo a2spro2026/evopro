@@ -1335,3 +1335,4 @@ Route::middleware('auth.user')->delete('/charges/{charge}', [ChargeController::c
 Route::middleware('auth.user')->post('/charge-categories', [ChargeController::class, 'storeCategory'])->name('charge-categories.store');
 Route::middleware('auth.user')->get('/rapport-tresorerie', [TreasuryReportController::class, 'index'])->name('rapport-tresorerie.index');
 Route::middleware('auth.user')->get('/notifications/alerts', [NotificationAlertController::class, 'index'])->name('notifications.alerts');
+Route::middleware('auth.user')->post('/notifications/alerts/dismiss', [NotificationAlertController::class, 'dismiss'])->name('notifications.alerts.dismiss');

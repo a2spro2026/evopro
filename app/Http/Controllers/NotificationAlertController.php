@@ -3,19 +3,80 @@
 namespace App\Http\Controllers;
 
 use App\Models\ClientPayment;
+use App\Models\NotificationDismissal;
 use App\Models\SupplierPayment;
 use Carbon\Carbon;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Schema;
 
 class NotificationAlertController extends Controller
 {
     public function index(): JsonResponse
     {
+        $dismissed = $this->dismissedKeys();
+        $sorted = $this->buildAlerts()
+            ->reject(fn (array $alert) => in_array($alert['id'], $dismissed, true))
+            ->values();
+
+        return response()->json([
+            'count' => $sorted->count(),
+            'data' => $sorted,
+        ]);
+    }
+
+    public function dismiss(Request $request): JsonResponse
+    {
+        $data = $request->validate([
+            'id' => ['required', 'string', 'max:120'],
+        ]);
+
+        $userKey = $this->userKey();
+        if ($userKey === '' || ! Schema::hasTable('notification_dismissals')) {
+            return response()->json(['ok' => false], 422);
+        }
+
+        NotificationDismissal::query()->firstOrCreate([
+            'user_key' => $userKey,
+            'alert_key' => $data['id'],
+        ]);
+
+        $sorted = $this->buildAlerts()
+            ->reject(fn (array $alert) => in_array($alert['id'], $this->dismissedKeys(), true))
+            ->values();
+
+        return response()->json([
+            'ok' => true,
+            'count' => $sorted->count(),
+            'data' => $sorted,
+        ]);
+    }
+
+    private function userKey(): string
+    {
+        $auth = session('auth_user', []);
+
+        return trim((string) ($auth['id'] ?? $auth['login'] ?? ''));
+    }
+
+    private function dismissedKeys(): array
+    {
+        $userKey = $this->userKey();
+        if ($userKey === '' || ! Schema::hasTable('notification_dismissals')) {
+            return [];
+        }
+
+        return NotificationDismissal::query()
+            ->where('user_key', $userKey)
+            ->pluck('alert_key')
+            ->all();
+    }
+
+    private function buildAlerts()
+    {
         $today = Carbon::today();
         $limit = $today->copy()->addDays(2);
         $alerts = collect();
-
         $bankMethods = ['Chq', 'Eff', 'Vir', 'Vers'];
 
         if (Schema::hasTable('supplier_payments')) {
@@ -95,7 +156,7 @@ class NotificationAlertController extends Controller
             ]);
         }
 
-        $sorted = $alerts
+        return $alerts
             ->sortBy(function (array $alert) {
                 $prio = $alert['severity'] === 'urgent' ? '0' : '1';
                 $kind = match ($alert['kind']) {
@@ -107,10 +168,5 @@ class NotificationAlertController extends Controller
                 return $prio.'-'.$kind.'-'.$date.'-'.$alert['title'];
             })
             ->values();
-
-        return response()->json([
-            'count' => $sorted->count(),
-            'data' => $sorted,
-        ]);
     }
 }
