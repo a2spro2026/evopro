@@ -224,18 +224,23 @@
     .fa-depot { display: inline-flex; padding: 0.15rem 0.5rem; border-radius: 6px; font-size: 0.75rem; font-weight: 700; }
     .fa-depot.a { background: rgba(37,99,235,0.25); color: #93c5fd; }
     .fa-depot.b { background: rgba(139,92,246,0.25); color: #c4b5fd; }
-    .fa-row-actions { display: flex; justify-content: center; gap: 0.15rem; }
+    .fa-row-actions { display: inline-flex; justify-content: center; align-items: center; gap: 0.15rem; flex-wrap: nowrap; min-width: 176px; }
     .fa-icon {
-        width: 28px; height: 28px; border: none; border-radius: 8px; background: transparent; color: #94a3b8; cursor: pointer;
+        display: inline-grid; place-items: center; flex: 0 0 28px;
+        width: 28px; height: 28px; padding: 0; border: none; border-radius: 8px;
+        background: transparent; color: #64748b; cursor: pointer;
     }
-    .fa-icon svg { width: 15px; height: 15px; }
-    .fa-icon:hover { background: rgba(255,255,255,0.08); color: #fff; }
-    .fa-icon.see:hover { color: #f0c9cf; }
-    .fa-icon.edit:hover { color: #fbbf24; }
-    .fa-icon.print:hover { color: #e2e8f0; }
-    .fa-icon.pdf:hover { color: #fb923c; }
-    .fa-icon.pay:hover { color: #34d399; }
-    .fa-icon.del:hover { color: #f87171; }
+    .fa-icon svg { width: 15px; height: 15px; display: block; }
+    .fa-icon:hover { background: rgba(15, 23, 42, 0.06); color: #0b1f3a; }
+    .fa-icon.see:hover { color: #c47a3a; }
+    .fa-icon.edit:hover { color: #d97706; }
+    .fa-icon.print:hover { color: #334155; }
+    .fa-icon.pdf:hover { color: #ea580c; }
+    .fa-icon.pay:hover { color: #15803d; }
+    .fa-icon.del { color: #dc2626; }
+    .fa-icon.del:hover { background: #fef2f2; color: #b91c1c; }
+    .fa-table th:last-child,
+    .fa-table td:last-child { min-width: 188px; width: 1%; white-space: nowrap; }
     .fa-window {
         position: fixed; top: 0; right: 0; bottom: 0; left: 272px; z-index: 40;
         display: flex; align-items: flex-start; justify-content: center; padding: 1.25rem;
@@ -437,6 +442,8 @@
     [data-theme="light"] .fa-ttc { color: #000; }
     [data-theme="light"] .fa-icon { color: #64748b; }
     [data-theme="light"] .fa-icon:hover { background: rgba(143, 36, 54, 0.08); color: #0b1f3a; }
+    [data-theme="light"] .fa-icon.del { color: #dc2626; }
+    [data-theme="light"] .fa-icon.del:hover { background: #fef2f2; color: #b91c1c; }
     [data-theme="light"] .fa-sheet {
         background: #fff;
         border-color: #e7c9cf;
@@ -523,7 +530,7 @@
     const pencil = '<svg viewBox="0 0 24 24"><path d="M4 20h4l10-10-4-4L4 16v4z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg>';
     const printer = '<svg viewBox="0 0 24 24"><path d="M6 9V3h12v6M6 18H4a2 2 0 0 1-2-2v-5h20v5a2 2 0 0 1-2 2h-2M6 14h12v7H6z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg>';
     const file = '<svg viewBox="0 0 24 24"><path d="M6 3h8l4 4v14H6z" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M14 3v5h5" fill="none" stroke="currentColor" stroke-width="1.8"/></svg>';
-    const trash = '<svg viewBox="0 0 24 24"><path d="M4 7h16M9 7V4h6v3M8 7l1 13h6l1-13" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>';
+    const trash = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M8 6V4h8v2"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6M14 11v6"/></svg>';
     const payer = '<svg viewBox="0 0 24 24"><rect x="3" y="6" width="18" height="12" rx="2" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M3 10h18M7 15h4" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>';
 
     function moneyDot(value) {
