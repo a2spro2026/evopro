@@ -56,15 +56,8 @@ class UtilisateurHelper
     public static function nextRef(?array $utilisateurs = null): string
     {
         $utilisateurs ??= self::normalizeAll(AppStore::get('utilisateurs'));
-        $max = 0;
 
-        foreach ($utilisateurs as $user) {
-            if (preg_match('/(\d+)/', (string) ($user['ref'] ?? ''), $matches)) {
-                $max = max($max, (int) $matches[1]);
-            }
-        }
-
-        return str_pad((string) ($max + 1), 4, '0', STR_PAD_LEFT);
+        return str_pad((string) (count($utilisateurs) + 1), 4, '0', STR_PAD_LEFT);
     }
 
     /**
@@ -73,11 +66,9 @@ class UtilisateurHelper
      */
     public static function normalizeRow(array $row, int $index = 0): array
     {
-        $ref = self::normalizeRef($row['ref'] ?? '', $index);
-
         return [
             'id' => $row['id'] ?? uniqid('usr_', true),
-            'ref' => $ref,
+            'ref' => str_pad((string) ($index + 1), 4, '0', STR_PAD_LEFT),
             'date' => trim((string) ($row['date'] ?? '')) ?: now()->format('d/m/Y'),
             'nom_complet' => trim((string) ($row['nom_complet'] ?? '')),
             'ville' => trim((string) ($row['ville'] ?? '')),
