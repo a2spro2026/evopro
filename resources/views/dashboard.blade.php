@@ -3365,6 +3365,72 @@
             border-top: 1px solid var(--line);
         }
 
+        /* Side panel stays dark: keep readable controls in both themes */
+        .side-panel .field input,
+        .side-panel .field textarea,
+        .side-panel .field select {
+            width: 100%;
+            box-sizing: border-box;
+            padding: 0.62rem 0.85rem;
+            border-radius: 10px;
+            border: 1px solid rgba(110, 168, 255, 0.28);
+            background-color: #102038;
+            color: #f4f8ff;
+            -webkit-text-fill-color: #f4f8ff;
+            color-scheme: dark;
+            font-family: inherit;
+            font-size: 0.88rem;
+            caret-color: #f4f8ff;
+        }
+
+        .side-panel .field input::placeholder,
+        .side-panel .field textarea::placeholder {
+            color: rgba(203, 213, 225, 0.55);
+            -webkit-text-fill-color: rgba(203, 213, 225, 0.55);
+        }
+
+        .side-panel .field input:focus,
+        .side-panel .field textarea:focus,
+        .side-panel .field select:focus {
+            outline: none;
+            background-color: #152a48;
+            color: #f4f8ff;
+            -webkit-text-fill-color: #f4f8ff;
+            border-color: rgba(126, 196, 255, 0.55);
+            box-shadow: 0 0 0 2px rgba(59, 158, 255, 0.18);
+        }
+
+        .side-panel .field input:read-only,
+        .side-panel .field textarea:read-only,
+        .side-panel .field select:disabled {
+            opacity: 0.78;
+            cursor: default;
+        }
+
+        .side-panel .field label {
+            color: rgba(203, 213, 225, 0.78);
+        }
+
+        .side-panel .field select {
+            cursor: pointer;
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath fill='%23c9d7ea' d='M1.4.6 6 5.2 10.6.6 12 2 6 8 0 2z'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 0.85rem center;
+            padding-right: 2.2rem;
+        }
+
+        [data-theme="light"] .side-panel .field input,
+        [data-theme="light"] .side-panel .field textarea,
+        [data-theme="light"] .side-panel .field select,
+        [data-theme="light"] .side-panel .field input:focus,
+        [data-theme="light"] .side-panel .field textarea:focus,
+        [data-theme="light"] .side-panel .field select:focus {
+            background-color: #102038;
+            color: #f4f8ff;
+            -webkit-text-fill-color: #f4f8ff;
+        }
+
         .field select {
             width: 100%;
             padding: 0.62rem 0.72rem;
