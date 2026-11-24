@@ -39,16 +39,41 @@ class UtilisateurHelper
         return self::statueLabels()[$normalized] ?? ucfirst($normalized);
     }
 
+    public static function normalizeRef(?string $ref, int $index = 0): string
+    {
+        $ref = trim((string) $ref);
+
+        if (preg_match('/^(?:USR[-\s]*)?(\d+)$/i', $ref, $matches)) {
+            return str_pad((string) ((int) $matches[1]), 4, '0', STR_PAD_LEFT);
+        }
+
+        return str_pad((string) max(1, $index + 1), 4, '0', STR_PAD_LEFT);
+    }
+
+    /**
+     * @param  array<int, array<string, mixed>>|null  $utilisateurs
+     */
+    public static function nextRef(?array $utilisateurs = null): string
+    {
+        $utilisateurs ??= self::normalizeAll(AppStore::get('utilisateurs'));
+        $max = 0;
+
+        foreach ($utilisateurs as $user) {
+            if (preg_match('/(\d+)/', (string) ($user['ref'] ?? ''), $matches)) {
+                $max = max($max, (int) $matches[1]);
+            }
+        }
+
+        return str_pad((string) ($max + 1), 4, '0', STR_PAD_LEFT);
+    }
+
     /**
      * @param  array<string, mixed>  $row
      * @return array<string, mixed>
      */
     public static function normalizeRow(array $row, int $index = 0): array
     {
-        $ref = trim((string) ($row['ref'] ?? ''));
-        if ($ref === '') {
-            $ref = 'USR-'.str_pad((string) max(1, $index + 1), 4, '0', STR_PAD_LEFT);
-        }
+        $ref = self::normalizeRef($row['ref'] ?? '', $index);
 
         return [
             'id' => $row['id'] ?? uniqid('usr_', true),

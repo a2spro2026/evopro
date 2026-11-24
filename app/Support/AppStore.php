@@ -150,7 +150,7 @@ class AppStore
             'utilisateurs' => [
                 [
                     'id' => 'usr_default_admin',
-                    'ref' => 'USR-0001',
+                    'ref' => '0001',
                     'date' => now()->format('d/m/Y'),
                     'nom_complet' => 'Zerragui Abdelilah',
                     'ville' => '',

@@ -1085,7 +1085,7 @@ Route::middleware('auth.user')->post('/utilisateurs', function (Request $request
 
     $utilisateurs[] = UtilisateurHelper::normalizeRow([
         'id' => uniqid('usr_', true),
-        'ref' => 'USR-'.str_pad((string) (count($utilisateurs) + 1), 4, '0', STR_PAD_LEFT),
+        'ref' => UtilisateurHelper::nextRef($utilisateurs),
         'date' => $data['date'],
         'nom_complet' => trim($data['nom_complet']),
         'ville' => trim((string) ($data['ville'] ?? '')),
