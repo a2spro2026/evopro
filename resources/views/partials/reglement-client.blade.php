@@ -50,7 +50,7 @@
                 <option>Autre</option>
             </select>
         </label>
-        <label>Nom Tiré<input id="rcTireFilter" type="text" placeholder="Rechercher…" autocomplete="off"></label>
+        <label class="rc-filter-tire">Nom Tiré<input id="rcTireFilter" type="text" placeholder="Rechercher…" autocomplete="off"></label>
         <button type="button" class="rc-add" id="rcAdd">
             <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/></svg>
             Ajouter
@@ -139,9 +139,9 @@
                             <option>Autre</option>
                         </select>
                     </div>
-                    <div class="rc-field">
+                    <div class="rc-field rc-span-2">
                         <label for="rcTire">Nom de Tiré</label>
-                        <input id="rcTire" maxlength="150">
+                        <input id="rcTire" maxlength="255">
                     </div>
                     <div class="rc-field">
                         <label for="rcMontant">Montant Régl</label>
@@ -209,6 +209,7 @@
     .rc-filters label:first-child { width: 120px; }
     .rc-filters .rc-filter-type { width: 92px; }
     .rc-filters .rc-filter-bnq { width: 132px; }
+    .rc-filters .rc-filter-tire { width: 220px; }
     .rc-filters select,
     .rc-filters input {
         width: 100%; height: 38px; box-sizing: border-box; border-radius: 10px; border: 1px solid #334155;

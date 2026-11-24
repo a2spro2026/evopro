@@ -119,7 +119,7 @@ class ClientPaymentController extends Controller
             'reglement' => ['nullable', 'in:Esp,Chq,Eff,Vir,Vers'],
             'numero' => ['nullable', 'string', 'max:50'],
             'banque' => ['nullable', 'string', 'max:100'],
-            'nom_tire' => ['nullable', 'string', 'max:150'],
+            'nom_tire' => ['nullable', 'string', 'max:255'],
             'montant' => ['required', 'numeric', 'min:0.01'],
             'date_decaissement' => ['nullable', 'date'],
             'remarque' => ['nullable', 'string', 'max:1000'],

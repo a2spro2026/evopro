@@ -50,7 +50,7 @@
                 <option>Autre</option>
             </select>
         </label>
-        <label>Nom Tiré<input id="raTireFilter" type="text" placeholder="Rechercher…" autocomplete="off"></label>
+        <label class="ra-filter-tire">Nom Tiré<input id="raTireFilter" type="text" placeholder="Rechercher…" autocomplete="off"></label>
         <button type="button" class="ra-add" id="raAdd">
             <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/></svg>
             Ajouter
@@ -139,9 +139,9 @@
                             <option>Autre</option>
                         </select>
                     </div>
-                    <div class="ra-field">
+                    <div class="ra-field ra-span-2">
                         <label for="raTire">Nom de Tiré</label>
-                        <input id="raTire" maxlength="150">
+                        <input id="raTire" maxlength="255">
                     </div>
                     <div class="ra-field">
                         <label for="raMontant">Montant Régl</label>
@@ -210,6 +210,7 @@
     .ra-filters label:first-child { width: 120px; }
     .ra-filters .ra-filter-type { width: 92px; }
     .ra-filters .ra-filter-bnq { width: 132px; }
+    .ra-filters .ra-filter-tire { width: 220px; }
     .ra-filters select,
     .ra-filters input {
         width: 100%; height: 38px; box-sizing: border-box; border-radius: 10px; border: 1px solid #334155;

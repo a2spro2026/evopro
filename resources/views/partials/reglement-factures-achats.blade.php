@@ -52,7 +52,7 @@
                     <option>Autre</option>
                 </select>
             </label>
-            <label>Nom Tiré<input type="search" id="fraTireFilter" placeholder="Rechercher…" autocomplete="off"></label>
+            <label class="fa-filter-tire">Nom Tiré<input type="search" id="fraTireFilter" placeholder="Rechercher…" autocomplete="off"></label>
         </div>
         <div class="fa-stats">
             <div class="fa-stat regl"><span>Total Rég</span><strong id="fraSum">0,00</strong></div>
@@ -173,7 +173,7 @@
     .fra-lines .c-type { width: 92px; }
     .fra-lines .c-ref { width: 120px; }
     .fra-lines .c-bnq { width: 120px; }
-    .fra-lines .c-tire { width: 160px; }
+    .fra-lines .c-tire { width: 280px; }
     .fra-lines .c-solde { width: 110px; }
     .fra-lines .c-x { width: 34px; }
     .fra-lines select {
@@ -190,6 +190,7 @@
     #panel-fa-regl-achat .fa-filters input,
     #panel-fa-regl-achat .fa-filters select { width: 108px; min-width: 0; }
     #panel-fa-regl-achat .fa-filters input.fa-name { width: 150px; }
+    #panel-fa-regl-achat .fa-filters .fa-filter-tire input { width: 220px; }
     #panel-fa-regl-achat .fa-filters .fa-stats { margin-left: auto; }
     #panel-fa-regl-achat .fa-filters .fa-stat {
         min-width: 118px; padding: 0.28rem 0.65rem; border-radius: 10px;
