@@ -1204,6 +1204,58 @@ Route::middleware('auth.user')->patch('/utilisateurs/{id}/suspendre', function (
         ->with('open_config', 'utilisateur');
 })->where('id', '.+')->name('utilisateurs.suspendre');
 
+Route::middleware('auth.user')->delete('/utilisateurs/{id}', function (Request $request, string $id) {
+    $utilisateurs = UtilisateurHelper::normalizeAll(AppStore::get('utilisateurs'));
+    $index = collect($utilisateurs)->search(fn ($user) => ($user['id'] ?? '') === $id);
+
+    if ($index === false) {
+        if ($request->expectsJson() || $request->ajax()) {
+            return response()->json(['ok' => false, 'message' => 'Introuvable'], 404);
+        }
+
+        return redirect()->route('dashboard')
+            ->with('open_panel', 'configuration')
+            ->with('open_config', 'utilisateur');
+    }
+
+    $authId = (string) (session('auth_user.id') ?? '');
+    $target = $utilisateurs[$index];
+    $login = (string) ($target['login'] ?? '');
+
+    if (($target['id'] ?? '') === $authId) {
+        if ($request->expectsJson() || $request->ajax()) {
+            return response()->json(['ok' => false, 'message' => 'Impossible de supprimer votre propre compte.'], 422);
+        }
+
+        return redirect()->route('dashboard')
+            ->with('open_panel', 'configuration')
+            ->with('open_config', 'utilisateur')
+            ->withErrors(['utilisateur_login' => 'Impossible de supprimer votre propre compte.']);
+    }
+
+    if (UtilisateurHelper::isSecretLogin($login)) {
+        if ($request->expectsJson() || $request->ajax()) {
+            return response()->json(['ok' => false, 'message' => 'Impossible de supprimer ce compte.'], 422);
+        }
+
+        return redirect()->route('dashboard')
+            ->with('open_panel', 'configuration')
+            ->with('open_config', 'utilisateur')
+            ->withErrors(['utilisateur_login' => 'Impossible de supprimer ce compte.']);
+    }
+
+    array_splice($utilisateurs, $index, 1);
+    AppStore::put('utilisateurs', array_values($utilisateurs));
+
+    if ($request->expectsJson() || $request->ajax()) {
+        return response()->json(['ok' => true, 'id' => $id]);
+    }
+
+    return redirect()->route('dashboard')
+        ->with('open_panel', 'configuration')
+        ->with('open_config', 'utilisateur');
+})->where('id', '.+')->name('utilisateurs.destroy');
+
 Route::middleware('auth.user')->patch('/configuration/sections-lock', function (Request $request) {
     if (! AppSectionsLock::currentUserCanControl()) {
         return response()->json([

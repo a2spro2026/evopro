@@ -5111,6 +5111,9 @@
                                                             >
                                                                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M10 15V9"/><path d="M14 15V9"/></svg>
                                                             </button>
+                                                            <button type="button" class="action-btn supprimer" title="Supprimer" aria-label="Supprimer">
+                                                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18"/><path d="M8 6V4h8v2"/><path d="M19 6l-1 14H6L5 6"/></svg>
+                                                            </button>
                                                         </div>
                                                     </td>
                                                 </tr>
@@ -7374,6 +7377,28 @@
                     window.location.href = '{{ route('dashboard') }}?open_panel=configuration&open_config=utilisateur';
                 } catch (error) {
                     window.alert(error.message || 'Impossible de modifier le statut.');
+                }
+                return;
+            }
+
+            if (btn.classList.contains('supprimer')) {
+                const label = user.nom_complet || user.login || user.ref || 'cet utilisateur';
+                if (!window.confirm(`Supprimer ${label} ?`)) return;
+
+                try {
+                    const response = await fetch(`{{ url('/utilisateurs') }}/${encodeURIComponent(user.id)}`, {
+                        method: 'DELETE',
+                        headers: {
+                            'Accept': 'application/json',
+                            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '',
+                            'X-Requested-With': 'XMLHttpRequest',
+                        },
+                    });
+                    const data = await response.json().catch(() => ({}));
+                    if (!response.ok) throw new Error(data.message || 'delete_failed');
+                    window.location.href = '{{ route('dashboard') }}?open_panel=configuration&open_config=utilisateur';
+                } catch (error) {
+                    window.alert(error.message || 'Impossible de supprimer cet utilisateur.');
                 }
             }
         });
